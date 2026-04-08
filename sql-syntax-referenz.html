@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #336791;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+/* ── Tabs ── */
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(51, 103, 145, .1);
+}
+
+/* ── Content ── */
+.con { max-width: 1200px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+/* ── Search ── */
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+/* ── Accordion ── */
+.ac   { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+/* ── Standard Tables ── */
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Cards ── */
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+/* ── Query + Result Block (das Herzstück!) ── */
+.query-block {
+  border: 1px solid #1e2530;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: rgba(0, 0, 0, .3);
+}
+
+.query-desc {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, .02);
+  border-bottom: 1px solid #1e2530;
+  font-size: 12px;
+  color: #6c7a8e;
+  font-style: italic;
+}
+
+.query-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.query-code {
+  border-right: 1px solid #1e2530;
+  display: flex;
+  flex-direction: column;
+}
+
+.query-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  text-transform: uppercase;
+}
+
+.sql-label    { color: #336791;  background: rgba(51,103,145,.1); }
+.result-label { color: #4caf50; background: rgba(76,175,80,.08); }
+
+.query-code pre {
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0;
+  flex: 1;
+}
+
+/* ── Ergebnis-Tabelle (sieht aus wie ein Terminal-Output) ── */
+.query-result {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: 8px;
+}
+
+.result-table {
+  width: auto;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.result-table th {
+  background: rgba(51, 103, 145, .2);
+  color: #336791;
+  padding: 5px 10px;
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: .5px;
+  border-bottom: 1px solid #33679144;
+  white-space: nowrap;
+}
+
+.result-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(30, 37, 48, .3);
+  color: #cdd6f4;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.result-table tr:last-child td { border-bottom: none; }
+.result-table tr:hover td { background: rgba(51,103,145,.08); }
+
+.result-count {
+  padding: 4px 10px;
+  font-size: 10px;
+  color: #4caf50;
+  background: rgba(76, 175, 80, .05);
+  border-top: 1px solid #1e2530;
+  text-align: right;
+  font-style: italic;
+}
+
+@media (max-width: 860px) {
+  .query-body { grid-template-columns: 1fr; }
+  .query-code { border-right: none; border-bottom: 1px solid #1e2530; }
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#336791">&#x1F5C4;</span>
+      <span style="color:#336791">SQL</span> Syntax
+    </div>
+    <div id="hdr-sub">
+      PostgreSQL · SQLite · MySQL/MariaDB · Standard SQL –
+      mit Query-Ergebnis-Vorschau
+    </div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="select">SELECT</button>
+    <button class="tb" data-tab="groupby">GROUP BY</button>
+    <button class="tb" data-tab="joins">JOINs</button>
+    <button class="tb" data-tab="subqueries">Unterabfragen</button>
+    <button class="tb" data-tab="ddl">DDL</button>
+    <button class="tb" data-tab="dml">DML</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="performance">Performance</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<!-- ═══════════ INHALT ═══════════ -->
+<div class="con">
+
+  <!-- SELECT Tab (first = active) -->
+  <div id="tp-select" class="tp active">
+    
+<div style="background:rgba(51,103,145,.08);border:1px solid rgba(51,103,145,.3);
+            border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:12px;
+            line-height:1.8">
+  <strong style="color:#336791">Beispiel-Datenbank</strong> –
+  Alle Queries dieser Referenz arbeiten auf denselben zwei Tabellen,
+  damit du das Ergebnis direkt nachvollziehen kannst.<br>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+    <div>
+      <div style="color:#336791;font-weight:700;margin-bottom:4px;font-size:11px">
+        📋 kunden
+      </div>
+      <code style="color:#6c7a8e;font-size:11px">id · name · stadt · alter · kontostand</code>
+    </div>
+    <div>
+      <div style="color:#4ec9b0;font-weight:700;margin-bottom:4px;font-size:11px">
+        📋 bestellungen
+      </div>
+      <code style="color:#6c7a8e;font-size:11px">id · kunden_id · produkt · betrag · datum</code>
+    </div>
+  </div>
+</div>
+    
+<div class="query-block">
+  <div class="query-desc">Alle Spalten aus einer Tabelle lesen</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span> *
+<span style="color:#569cd6">FROM</span> kunden;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>id</th><th>name</th><th>stadt</th><th>alter</th><th>kontostand</th></tr></thead>
+          <tbody><tr><td>1</td><td>Alice Müller</td><td>Berlin</td><td>32</td><td>1250.00</td></tr><tr><td>2</td><td>Bob Schmidt</td><td>Hamburg</td><td>25</td><td>340.50</td></tr><tr><td>3</td><td>Carol Weber</td><td>Berlin</td><td>41</td><td>8900.00</td></tr><tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr></tbody>
+        </table>
+        <div class="result-count">4 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  * bedeutet alle Spalten – in Produktion immer explizite Spalten angeben!
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">Bestimmte Spalten auswählen und umbenennen</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    name,
+    stadt,
+    kontostand <span style="color:#569cd6">AS</span> guthaben
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> kontostand <span style="color:#569cd6">DESC</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>stadt</th><th>guthaben</th></tr></thead>
+          <tbody><tr><td>Carol Weber</td><td>Berlin</td><td>8900.00</td></tr><tr><td>Eva Braun</td><td>Hamburg</td><td>2100.75</td></tr><tr><td>Alice Müller</td><td>Berlin</td><td>1250.00</td></tr><tr><td>Frank Richter</td><td>Berlin</td><td>780.00</td></tr><tr><td>Bob Schmidt</td><td>Hamburg</td><td>340.50</td></tr><tr><td>Dave Fischer</td><td>München</td><td>50.00</td></tr></tbody>
+        </table>
+        <div class="result-count">6 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  AS benennt die Spalte im Ergebnis um. ORDER BY DESC = absteigend.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">WHERE – Zeilen filtern</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span> name, stadt, <span style="color:#569cd6">alter</span>
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> stadt = <span style="color:#ce9178">'Berlin'</span>
+  <span style="color:#569cd6">AND</span> <span style="color:#569cd6">alter</span> &gt; <span style="color:#b5cea8">30</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>stadt</th><th>alter</th></tr></thead>
+          <tbody><tr><td>Alice Müller</td><td>Berlin</td><td>32</td></tr><tr><td>Carol Weber</td><td>Berlin</td><td>41</td></tr></tbody>
+        </table>
+        <div class="result-count">2 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  AND, OR, NOT für Verknüpfung. Strings in einfache Anführungszeichen.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">LIKE, IN, BETWEEN – flexible Filter</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- LIKE: Muster mit % (beliebig viele) und _ (genau 1)</span>
+<span style="color:#569cd6">SELECT</span> name <span style="color:#569cd6">FROM</span> kunden <span style="color:#569cd6">WHERE</span> name <span style="color:#569cd6">LIKE</span> <span style="color:#ce9178">'%er'</span>;
+
+<span style="color:#546e7a">-- IN: Werteliste</span>
+<span style="color:#569cd6">SELECT</span> name <span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> stadt <span style="color:#569cd6">IN</span> (<span style="color:#ce9178">'Berlin'</span>, <span style="color:#ce9178">'München'</span>);
+
+<span style="color:#546e7a">-- BETWEEN: Bereich (inklusiv!)</span>
+<span style="color:#569cd6">SELECT</span> name, kontostand
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> kontostand <span style="color:#569cd6">BETWEEN</span> <span style="color:#b5cea8">300</span> <span style="color:#569cd6">AND</span> <span style="color:#b5cea8">2000</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>kontostand</th></tr></thead>
+          <tbody><tr><td>Bob Schmidt</td><td>340.50</td></tr><tr><td>Frank Richter</td><td>780.00</td></tr><tr><td>Alice Müller</td><td>1250.00</td></tr></tbody>
+        </table>
+        <div class="result-count">3 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  BETWEEN ist inklusiv: 300 ≤ kontostand ≤ 2000
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">DISTINCT – Duplikate entfernen</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span> <span style="color:#569cd6">DISTINCT</span> stadt
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> stadt;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>stadt</th></tr></thead>
+          <tbody><tr><td>Berlin</td></tr><tr><td>Hamburg</td></tr><tr><td>München</td></tr></tbody>
+        </table>
+        <div class="result-count">3 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  DISTINCT entfernt doppelte Ergebniszeilen.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">LIMIT &amp; OFFSET – Paginierung</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Erste 3 Kunden</span>
+<span style="color:#569cd6">SELECT</span> name, kontostand
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> kontostand <span style="color:#569cd6">DESC</span>
+<span style="color:#569cd6">LIMIT</span> <span style="color:#b5cea8">3</span> <span style="color:#569cd6">OFFSET</span> <span style="color:#b5cea8">0</span>;
+
+<span style="color:#546e7a">-- Nächste 3 (Seite 2)</span>
+<span style="color:#546e7a">-- LIMIT 3 OFFSET 3;</span></pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>kontostand</th></tr></thead>
+          <tbody><tr><td>Carol Weber</td><td>8900.00</td></tr><tr><td>Eva Braun</td><td>2100.75</td></tr><tr><td>Alice Müller</td><td>1250.00</td></tr></tbody>
+        </table>
+        <div class="result-count">3 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  MySQL: LIMIT 3, 3 — PostgreSQL/SQLite: LIMIT 3 OFFSET 3
+</div>
+</div>
+  </div>
+
+  <!-- GROUP BY Tab -->
+  <div id="tp-groupby" class="tp">
+    
+<div class="query-block">
+  <div class="query-desc">GROUP BY + Aggregatfunktionen</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    stadt,
+    <span style="color:#dcdcaa">COUNT</span>(*)          <span style="color:#569cd6">AS</span> anzahl_kunden,
+    <span style="color:#dcdcaa">AVG</span>(kontostand)   <span style="color:#569cd6">AS</span> durchschnitt,
+    <span style="color:#dcdcaa">MAX</span>(kontostand)   <span style="color:#569cd6">AS</span> maximum
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> stadt
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> anzahl_kunden <span style="color:#569cd6">DESC</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>stadt</th><th>anzahl_kunden</th><th>durchschnitt</th><th>maximum</th></tr></thead>
+          <tbody><tr><td>Berlin</td><td>3</td><td>3310.00</td><td>8900.00</td></tr><tr><td>Hamburg</td><td>2</td><td>1220.63</td><td>2100.75</td></tr><tr><td>München</td><td>1</td><td>50.00</td><td>50.00</td></tr></tbody>
+        </table>
+        <div class="result-count">3 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  COUNT(*) zählt alle Zeilen. COUNT(spalte) ignoriert NULL-Werte.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">HAVING – Gruppen filtern (nach GROUP BY)</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    stadt,
+    <span style="color:#dcdcaa">COUNT</span>(*) <span style="color:#569cd6">AS</span> anzahl
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> stadt
+<span style="color:#569cd6">HAVING</span> <span style="color:#dcdcaa">COUNT</span>(*) &gt; <span style="color:#b5cea8">1</span>
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> anzahl <span style="color:#569cd6">DESC</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>stadt</th><th>anzahl</th></tr></thead>
+          <tbody><tr><td>Berlin</td><td>3</td></tr><tr><td>Hamburg</td><td>2</td></tr></tbody>
+        </table>
+        <div class="result-count">2 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  WHERE filtert vor GROUP BY. HAVING filtert nach GROUP BY.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">Aggregatfunktionen im Überblick</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    <span style="color:#dcdcaa">COUNT</span>(*)                    <span style="color:#569cd6">AS</span> zeilen_gesamt,
+    <span style="color:#dcdcaa">COUNT</span>(<span style="color:#569cd6">DISTINCT</span> stadt)       <span style="color:#569cd6">AS</span> verschiedene_städte,
+    <span style="color:#dcdcaa">SUM</span>(kontostand)             <span style="color:#569cd6">AS</span> gesamtguthaben,
+    <span style="color:#dcdcaa">AVG</span>(kontostand)             <span style="color:#569cd6">AS</span> durchschnitt,
+    <span style="color:#dcdcaa">MIN</span>(kontostand)             <span style="color:#569cd6">AS</span> minimum,
+    <span style="color:#dcdcaa">MAX</span>(kontostand)             <span style="color:#569cd6">AS</span> maximum,
+    <span style="color:#dcdcaa">ROUND</span>(<span style="color:#dcdcaa">AVG</span>(<span style="color:#569cd6">alter</span>), <span style="color:#b5cea8">1</span>)        <span style="color:#569cd6">AS</span> durchschnittsalter
+<span style="color:#569cd6">FROM</span> kunden;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>zeilen_gesamt</th><th>verschiedene_städte</th><th>gesamtguthaben</th><th>durchschnitt</th><th>minimum</th><th>maximum</th><th>durchschnittsalter</th></tr></thead>
+          <tbody><tr><td>6</td><td>3</td><td>13421.25</td><td>2236.88</td><td>50.00</td><td>8900.00</td><td>31.7</td></tr></tbody>
+        </table>
+        <div class="result-count">1 Zeile</div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+  </div>
+
+  <!-- JOINs Tab -->
+  <div id="tp-joins" class="tp">
+    
+<div class="query-block">
+  <div class="query-desc">INNER JOIN – nur übereinstimmende Zeilen</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    k.name,
+    b.produkt,
+    b.betrag
+<span style="color:#569cd6">FROM</span> kunden k
+<span style="color:#569cd6">INNER</span> <span style="color:#569cd6">JOIN</span> bestellungen b
+    <span style="color:#569cd6">ON</span> k.id = b.kunden_id
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> k.name;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>produkt</th><th>betrag</th></tr></thead>
+          <tbody><tr><td>Alice Müller</td><td>Laptop</td><td>999.00</td></tr><tr><td>Alice Müller</td><td>Maus</td><td>29.99</td></tr><tr><td>Bob Schmidt</td><td>Tastatur</td><td>59.99</td></tr><tr><td>Carol Weber</td><td>Monitor</td><td>399.00</td></tr><tr><td>Dave Fischer</td><td>Kabel</td><td>9.99</td></tr><tr><td>Eva Braun</td><td>Laptop</td><td>999.00</td></tr><tr><td>Frank Richter</td><td>Maus</td><td>29.99</td></tr></tbody>
+        </table>
+        <div class="result-count">7 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  k und b sind Aliase. Dave Fischer hat bestellt, also erscheint er. Kunden ohne Bestellung fehlen.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">LEFT JOIN – alle linken Zeilen, auch ohne Match</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    k.name,
+    <span style="color:#dcdcaa">COUNT</span>(b.id) <span style="color:#569cd6">AS</span> anzahl_bestellungen,
+    <span style="color:#dcdcaa">COALESCE</span>(<span style="color:#dcdcaa">SUM</span>(b.betrag), <span style="color:#b5cea8">0</span>) <span style="color:#569cd6">AS</span> gesamtumsatz
+<span style="color:#569cd6">FROM</span> kunden k
+<span style="color:#569cd6">LEFT</span> <span style="color:#569cd6">JOIN</span> bestellungen b
+    <span style="color:#569cd6">ON</span> k.id = b.kunden_id
+<span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> k.id, k.name
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> gesamtumsatz <span style="color:#569cd6">DESC</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>anzahl_bestellungen</th><th>gesamtumsatz</th></tr></thead>
+          <tbody><tr><td>Alice Müller</td><td>2</td><td>1028.99</td></tr><tr><td>Carol Weber</td><td>1</td><td>399.00</td></tr><tr><td>Eva Braun</td><td>1</td><td>999.00</td></tr><tr><td>Bob Schmidt</td><td>1</td><td>59.99</td></tr><tr><td>Frank Richter</td><td>1</td><td>29.99</td></tr><tr><td>Dave Fischer</td><td>1</td><td>9.99</td></tr></tbody>
+        </table>
+        <div class="result-count">6 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  LEFT JOIN: alle kunden erscheinen, auch ohne Bestellung. COALESCE(SUM(...), 0) ersetzt NULL durch 0.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">JOIN-Typen im Überblick</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- INNER JOIN: Schnittmenge (nur Übereinstimmungen)</span>
+<span style="color:#546e7a">-- LEFT  JOIN: Alle Links + Übereinstimmungen rechts</span>
+<span style="color:#546e7a">-- RIGHT JOIN: Alle Rechts + Übereinstimmungen links</span>
+<span style="color:#546e7a">-- FULL  JOIN: Alle aus beiden Tabellen</span>
+<span style="color:#546e7a">-- CROSS JOIN: Kartesisches Produkt (jede mit jeder)</span>
+
+<span style="color:#546e7a">-- Beispiel FULL JOIN</span>
+<span style="color:#569cd6">SELECT</span> k.name, b.produkt
+<span style="color:#569cd6">FROM</span> kunden k
+<span style="color:#569cd6">FULL</span> <span style="color:#569cd6">OUTER</span> <span style="color:#569cd6">JOIN</span> bestellungen b
+    <span style="color:#569cd6">ON</span> k.id = b.kunden_id;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>Typ</th><th>Ergebnis wenn kein Match</th></tr></thead>
+          <tbody><tr><td>INNER JOIN</td><td>Zeile fehlt auf BEIDEN Seiten</td></tr><tr><td>LEFT JOIN</td><td>NULL in rechten Spalten</td></tr><tr><td>RIGHT JOIN</td><td>NULL in linken Spalten</td></tr><tr><td>FULL JOIN</td><td>NULL auf der jeweiligen Seite</td></tr><tr><td>CROSS JOIN</td><td>Kein ON nötig – n×m Zeilen</td></tr></tbody>
+        </table>
+        <div class="result-count">5 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+  </div>
+
+  <!-- Unterabfragen Tab -->
+  <div id="tp-subqueries" class="tp">
+    
+<div class="query-block">
+  <div class="query-desc">Unterabfrage in WHERE</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Kunden deren Kontostand über dem Durchschnitt liegt</span>
+<span style="color:#569cd6">SELECT</span> name, kontostand
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> kontostand &gt; (
+    <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">AVG</span>(kontostand)
+    <span style="color:#569cd6">FROM</span> kunden
+)
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> kontostand <span style="color:#569cd6">DESC</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>kontostand</th></tr></thead>
+          <tbody><tr><td>Carol Weber</td><td>8900.00</td></tr><tr><td>Eva Braun</td><td>2100.75</td></tr></tbody>
+        </table>
+        <div class="result-count">2 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  Die innere Abfrage wird einmal ausgeführt und gibt einen Wert zurück.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">EXISTS – prüft ob Unterabfrage Zeilen liefert</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Kunden die mindestens eine Bestellung haben</span>
+<span style="color:#569cd6">SELECT</span> name
+<span style="color:#569cd6">FROM</span> kunden k
+<span style="color:#569cd6">WHERE</span> <span style="color:#569cd6">EXISTS</span> (
+    <span style="color:#569cd6">SELECT</span> <span style="color:#b5cea8">1</span>
+    <span style="color:#569cd6">FROM</span> bestellungen b
+    <span style="color:#569cd6">WHERE</span> b.kunden_id = k.id
+);</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th></tr></thead>
+          <tbody><tr><td>Alice Müller</td></tr><tr><td>Bob Schmidt</td></tr><tr><td>Carol Weber</td></tr><tr><td>Dave Fischer</td></tr><tr><td>Eva Braun</td></tr><tr><td>Frank Richter</td></tr></tbody>
+        </table>
+        <div class="result-count">6 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  EXISTS ist oft schneller als IN bei großen Tabellen. SELECT 1 reicht – der Wert wird nicht gelesen.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">WITH – Common Table Expressions (CTE)</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- CTE macht komplexe Queries lesbar</span>
+<span style="color:#569cd6">WITH</span> kunden_umsatz <span style="color:#569cd6">AS</span> (
+    <span style="color:#569cd6">SELECT</span>
+        k.id,
+        k.name,
+        k.stadt,
+        <span style="color:#dcdcaa">SUM</span>(b.betrag) <span style="color:#569cd6">AS</span> umsatz
+    <span style="color:#569cd6">FROM</span> kunden k
+    <span style="color:#569cd6">JOIN</span> bestellungen b <span style="color:#569cd6">ON</span> k.id = b.kunden_id
+    <span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> k.id, k.name, k.stadt
+),
+stadt_durchschnitt <span style="color:#569cd6">AS</span> (
+    <span style="color:#569cd6">SELECT</span> stadt, <span style="color:#dcdcaa">AVG</span>(umsatz) <span style="color:#569cd6">AS</span> avg_umsatz
+    <span style="color:#569cd6">FROM</span> kunden_umsatz
+    <span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> stadt
+)
+<span style="color:#569cd6">SELECT</span>
+    ku.name,
+    ku.umsatz,
+    sd.avg_umsatz <span style="color:#569cd6">AS</span> stadtdurchschnitt
+<span style="color:#569cd6">FROM</span> kunden_umsatz ku
+<span style="color:#569cd6">JOIN</span> stadt_durchschnitt sd <span style="color:#569cd6">ON</span> ku.stadt = sd.stadt
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> ku.umsatz <span style="color:#569cd6">DESC</span>;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>umsatz</th><th>stadtdurchschnitt</th></tr></thead>
+          <tbody><tr><td>Alice Müller</td><td>1028.99</td><td>714.00</td></tr><tr><td>Carol Weber</td><td>399.00</td><td>714.00</td></tr><tr><td>Bob Schmidt</td><td>59.99</td><td>514.50</td></tr><tr><td>Eva Braun</td><td>999.00</td><td>514.50</td></tr><tr><td>Dave Fischer</td><td>9.99</td><td>9.99</td></tr><tr><td>Frank Richter</td><td>29.99</td><td>29.99</td></tr></tbody>
+        </table>
+        <div class="result-count">6 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  CTEs können mehrfach referenziert und aufeinander aufgebaut werden.
+</div>
+</div>
+<div class="query-block">
+  <div class="query-desc">Window Functions – Berechnung über Fenster</div>
+  <div class="query-body">
+    <div class="query-code">
+      <div class="query-label sql-label">SQL</div>
+      <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">SELECT</span>
+    name,
+    stadt,
+    kontostand,
+    <span style="color:#dcdcaa">RANK</span>() <span style="color:#569cd6">OVER</span> (
+        <span style="color:#569cd6">PARTITION</span> <span style="color:#569cd6">BY</span> stadt
+        <span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> kontostand <span style="color:#569cd6">DESC</span>
+    ) <span style="color:#569cd6">AS</span> rang_in_stadt,
+    <span style="color:#dcdcaa">AVG</span>(kontostand) <span style="color:#569cd6">OVER</span> (
+        <span style="color:#569cd6">PARTITION</span> <span style="color:#569cd6">BY</span> stadt
+    ) <span style="color:#569cd6">AS</span> stadt_durchschnitt
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> stadt, rang_in_stadt;</pre>
+    </div>
+    <div class="query-result">
+      <div class="query-label result-label">Ergebnis</div>
+      <div class="result-wrap">
+        <table class="result-table">
+          <thead><tr><th>name</th><th>stadt</th><th>kontostand</th><th>rang_in_stadt</th><th>stadt_durchschnitt</th></tr></thead>
+          <tbody><tr><td>Carol Weber</td><td>Berlin</td><td>8900.00</td><td>1</td><td>3310.00</td></tr><tr><td>Alice Müller</td><td>Berlin</td><td>1250.00</td><td>2</td><td>3310.00</td></tr><tr><td>Frank Richter</td><td>Berlin</td><td>780.00</td><td>3</td><td>3310.00</td></tr><tr><td>Eva Braun</td><td>Hamburg</td><td>2100.75</td><td>1</td><td>1220.63</td></tr><tr><td>Bob Schmidt</td><td>Hamburg</td><td>340.50</td><td>2</td><td>1220.63</td></tr><tr><td>Dave Fischer</td><td>München</td><td>50.00</td><td>1</td><td>50.00</td></tr></tbody>
+        </table>
+        <div class="result-count">6 Zeilen</div>
+      </div>
+    </div>
+  </div>
+  
+<div style="margin-top:8px;padding:6px 10px;background:rgba(51,103,145,.1);
+            border-left:2px solid #336791;border-radius:0 4px 4px 0;
+            font-size:11px;color:#6c7a8e;line-height:1.6">
+  PARTITION BY = Gruppe. ORDER BY im OVER = Reihenfolge innerhalb der Gruppe. Die Gesamtzahl der Zeilen bleibt gleich – kein GROUP BY!
+</div>
+</div>
+  </div>
+
+  <div id="tp-ddl" class="tp ">
+
+<div class="ac open" id="ac-ddl0"
+     style="border:1px solid #33679144;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ddl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3367910e">
+    <span style="display:flex;align-items:center;gap:6px;color:#336791">
+      <span style="display:inline-block;width:8px;height:8px;background:#336791;border-radius:50%;margin-right:2px"></span>CREATE TABLE – vollständiges Beispiel
+    </span>
+    <span class="aa" style="color:#336791;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="create table – vollständiges beispiel">
+  <div style="color:#336791;font-weight:700;font-size:12px;margin-bottom:8px">
+    CREATE TABLE – vollständiges Beispiel
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">TABLE</span> kunden (
+    <span style="color:#546e7a">-- Primärschlüssel (PostgreSQL: SERIAL oder GENERATED)</span>
+    id          <span style="color:#569cd6">SERIAL</span>          <span style="color:#569cd6">PRIMARY</span> <span style="color:#569cd6">KEY</span>,
+
+    <span style="color:#546e7a">-- Pflichtfelder (NOT NULL)</span>
+    name        <span style="color:#4ec9b0">VARCHAR</span>(<span style="color:#b5cea8">100</span>)    <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">NULL</span>,
+    email       <span style="color:#4ec9b0">VARCHAR</span>(<span style="color:#b5cea8">200</span>)    <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">NULL</span>    <span style="color:#569cd6">UNIQUE</span>,
+    erstellt_am <span style="color:#4ec9b0">TIMESTAMP</span>       <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">NULL</span>    <span style="color:#569cd6">DEFAULT</span> <span style="color:#dcdcaa">NOW</span>(),
+
+    <span style="color:#546e7a">-- Optionale Felder</span>
+    stadt       <span style="color:#4ec9b0">VARCHAR</span>(<span style="color:#b5cea8">50</span>),
+    <span style="color:#569cd6">alter</span>       <span style="color:#4ec9b0">INTEGER</span>         <span style="color:#569cd6">CHECK</span> (<span style="color:#569cd6">alter</span> &gt;= <span style="color:#b5cea8">0</span> <span style="color:#569cd6">AND</span> <span style="color:#569cd6">alter</span> &lt;= <span style="color:#b5cea8">150</span>),
+    kontostand  <span style="color:#4ec9b0">DECIMAL</span>(<span style="color:#b5cea8">12</span>, <span style="color:#b5cea8">2</span>)  <span style="color:#569cd6">DEFAULT</span> <span style="color:#b5cea8">0.00</span>,
+
+    <span style="color:#546e7a">-- Foreign Key</span>
+    kategorie_id <span style="color:#4ec9b0">INTEGER</span> <span style="color:#569cd6">REFERENCES</span> kategorien(id)
+                         <span style="color:#569cd6">ON</span> <span style="color:#569cd6">DELETE</span> <span style="color:#569cd6">SET</span> <span style="color:#569cd6">NULL</span>
+                         <span style="color:#569cd6">ON</span> <span style="color:#569cd6">UPDATE</span> CASCADE
+);
+
+<span style="color:#546e7a">-- Index manuell erstellen (beschleunigt Suche nach stadt)</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">INDEX</span> idx_kunden_stadt <span style="color:#569cd6">ON</span> kunden(stadt);
+
+<span style="color:#546e7a">-- Unique Composite Index</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">UNIQUE</span> <span style="color:#569cd6">INDEX</span> idx_name_email
+    <span style="color:#569cd6">ON</span> kunden(name, email);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ddl1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ddl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>ALTER TABLE – Tabelle ändern
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="alter table – tabelle ändern">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    ALTER TABLE – Tabelle ändern
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Spalte hinzufügen</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">ADD</span> <span style="color:#569cd6">COLUMN</span> telefon <span style="color:#4ec9b0">VARCHAR</span>(<span style="color:#b5cea8">20</span>);
+
+<span style="color:#546e7a">-- Spalte entfernen</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">DROP</span> <span style="color:#569cd6">COLUMN</span> telefon;
+
+<span style="color:#546e7a">-- Spalte umbenennen</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">RENAME</span> <span style="color:#569cd6">COLUMN</span> <span style="color:#569cd6">alter</span> <span style="color:#569cd6">TO</span> geburtsjahr;
+
+<span style="color:#546e7a">-- Datentyp ändern (PostgreSQL)</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">COLUMN</span> kontostand TYPE <span style="color:#4ec9b0">DECIMAL</span>(<span style="color:#b5cea8">14</span>, <span style="color:#b5cea8">2</span>);
+
+<span style="color:#546e7a">-- NOT NULL hinzufügen / entfernen</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">COLUMN</span> stadt <span style="color:#569cd6">SET</span> <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">NULL</span>;
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">COLUMN</span> stadt <span style="color:#569cd6">DROP</span> <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">NULL</span>;
+
+<span style="color:#546e7a">-- Constraint hinzufügen</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">ADD</span> <span style="color:#569cd6">CONSTRAINT</span> chk_kontostand
+        <span style="color:#569cd6">CHECK</span> (kontostand &gt;= <span style="color:#b5cea8">0</span>);
+
+<span style="color:#546e7a">-- Constraint entfernen</span>
+<span style="color:#569cd6">ALTER</span> <span style="color:#569cd6">TABLE</span> kunden
+    <span style="color:#569cd6">DROP</span> <span style="color:#569cd6">CONSTRAINT</span> chk_kontostand;</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ddl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ddl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Datentypen – PostgreSQL &amp; SQLite
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="datentypen – postgresql &amp; sqlite">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Datentypen – PostgreSQL &amp; SQLite
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- ── INTEGER ────────────────────────────────────────────</span>
+<span style="color:#4ec9b0">SMALLINT</span>            <span style="color:#546e7a">-- 2 Byte,  -32.768 bis 32.767</span>
+<span style="color:#4ec9b0">INTEGER</span> / <span style="color:#4ec9b0">INT</span>       <span style="color:#546e7a">-- 4 Byte,  -2.1 Mrd bis 2.1 Mrd</span>
+<span style="color:#4ec9b0">BIGINT</span>              <span style="color:#546e7a">-- 8 Byte,  sehr groß</span>
+<span style="color:#569cd6">SERIAL</span>              <span style="color:#546e7a">-- Auto-Increment INTEGER (PostgreSQL)</span>
+<span style="color:#4ec9b0">BIGSERIAL</span>           <span style="color:#546e7a">-- Auto-Increment BIGINT (PostgreSQL)</span>
+
+<span style="color:#546e7a">-- ── GLEITKOMMA ─────────────────────────────────────────</span>
+<span style="color:#4ec9b0">DECIMAL</span>(p, s)       <span style="color:#546e7a">-- Exakt, p=Gesamtstellen, s=Nachkommastellen</span>
+<span style="color:#4ec9b0">NUMERIC</span>(p, s)       <span style="color:#546e7a">-- Synonym zu DECIMAL</span>
+<span style="color:#4ec9b0">REAL</span>                <span style="color:#546e7a">-- 4 Byte IEEE 754</span>
+<span style="color:#4ec9b0">DOUBLE</span> <span style="color:#4ec9b0">PRECISION</span>    <span style="color:#546e7a">-- 8 Byte IEEE 754</span>
+
+<span style="color:#546e7a">-- ── TEXT ───────────────────────────────────────────────</span>
+<span style="color:#4ec9b0">CHAR</span>(n)             <span style="color:#546e7a">-- Feste Länge, mit Leerzeichen aufgefüllt</span>
+<span style="color:#4ec9b0">VARCHAR</span>(n)          <span style="color:#546e7a">-- Variable Länge bis n Zeichen</span>
+<span style="color:#4ec9b0">TEXT</span>                <span style="color:#546e7a">-- Unbegrenzte Länge (PostgreSQL, SQLite)</span>
+
+<span style="color:#546e7a">-- ── DATUM &amp; ZEIT ───────────────────────────────────────</span>
+<span style="color:#4ec9b0">DATE</span>                <span style="color:#546e7a">-- Nur Datum: 2024-01-15</span>
+<span style="color:#4ec9b0">TIME</span>                <span style="color:#546e7a">-- Nur Zeit: 14:30:00</span>
+<span style="color:#4ec9b0">TIMESTAMP</span>           <span style="color:#546e7a">-- Datum + Zeit: 2024-01-15 14:30:00</span>
+<span style="color:#4ec9b0">TIMESTAMPTZ</span>         <span style="color:#546e7a">-- Mit Zeitzone (PostgreSQL)</span>
+<span style="color:#4ec9b0">INTERVAL</span>            <span style="color:#546e7a">-- Zeitspanne: 1 year 2 months 3 days</span>
+
+<span style="color:#546e7a">-- ── SONSTIGES ──────────────────────────────────────────</span>
+<span style="color:#4ec9b0">BOOLEAN</span>             <span style="color:#546e7a">-- TRUE / FALSE / NULL</span>
+<span style="color:#4ec9b0">UUID</span>                <span style="color:#546e7a">-- 8a9c4b3e-... (PostgreSQL)</span>
+<span style="color:#4ec9b0">JSON</span> / <span style="color:#4ec9b0">JSONB</span>        <span style="color:#546e7a">-- JSON (JSONB = binär, indizierbar)</span>
+<span style="color:#4ec9b0">BYTEA</span>               <span style="color:#546e7a">-- Binärdaten</span>
+<span style="color:#4ec9b0">ARRAY</span>               <span style="color:#546e7a">-- z.B. INTEGER[], TEXT[]</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-dml" class="tp ">
+
+<div class="ac open" id="ac-dml0"
+     style="border:1px solid #33679144;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dml0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3367910e">
+    <span style="display:flex;align-items:center;gap:6px;color:#336791">
+      <span style="display:inline-block;width:8px;height:8px;background:#336791;border-radius:50%;margin-right:2px"></span>INSERT – Daten einfügen
+    </span>
+    <span class="aa" style="color:#336791;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="insert – daten einfügen">
+  <div style="color:#336791;font-weight:700;font-size:12px;margin-bottom:8px">
+    INSERT – Daten einfügen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Einzelner Satz</span>
+<span style="color:#569cd6">INSERT</span> <span style="color:#569cd6">INTO</span> kunden (name, email, stadt, <span style="color:#569cd6">alter</span>, kontostand)
+<span style="color:#569cd6">VALUES</span> (<span style="color:#ce9178">'Anna Klein'</span>, <span style="color:#ce9178">'anna@example.com'</span>, <span style="color:#ce9178">'Berlin'</span>, <span style="color:#b5cea8">27</span>, <span style="color:#b5cea8">500.00</span>);
+
+<span style="color:#546e7a">-- Mehrere Sätze auf einmal</span>
+<span style="color:#569cd6">INSERT</span> <span style="color:#569cd6">INTO</span> kunden (name, email, stadt)
+<span style="color:#569cd6">VALUES</span>
+    (<span style="color:#ce9178">'Max Muster'</span>,  <span style="color:#ce9178">'max@example.com'</span>,  <span style="color:#ce9178">'Hamburg'</span>),
+    (<span style="color:#ce9178">'Lisa Grund'</span>,  <span style="color:#ce9178">'lisa@example.com'</span>, <span style="color:#ce9178">'München'</span>),
+    (<span style="color:#ce9178">'Tom Werner'</span>,  <span style="color:#ce9178">'tom@example.com'</span>,  <span style="color:#ce9178">'Berlin'</span>);
+
+<span style="color:#546e7a">-- Aus einer anderen Tabelle kopieren</span>
+<span style="color:#569cd6">INSERT</span> <span style="color:#569cd6">INTO</span> kunden_archiv (name, email, stadt)
+<span style="color:#569cd6">SELECT</span> name, email, stadt
+<span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> erstellt_am &lt; <span style="color:#ce9178">'2023-01-01'</span>;
+
+<span style="color:#546e7a">-- UPSERT: Einfügen oder Aktualisieren (PostgreSQL)</span>
+<span style="color:#569cd6">INSERT</span> <span style="color:#569cd6">INTO</span> kunden (id, name, email)
+<span style="color:#569cd6">VALUES</span> (<span style="color:#b5cea8">1</span>, <span style="color:#ce9178">'Alice Updated'</span>, <span style="color:#ce9178">'alice@neu.de'</span>)
+<span style="color:#569cd6">ON</span> CONFLICT (id) DO <span style="color:#569cd6">UPDATE</span>
+    <span style="color:#569cd6">SET</span> name  = EXCLUDED.name,
+        email = EXCLUDED.email;
+
+<span style="color:#546e7a">-- ON CONFLICT DO NOTHING (ignorieren wenn Duplikat)</span>
+<span style="color:#569cd6">INSERT</span> <span style="color:#569cd6">INTO</span> kunden (email, name)
+<span style="color:#569cd6">VALUES</span> (<span style="color:#ce9178">'alice@example.com'</span>, <span style="color:#ce9178">'Alice'</span>)
+<span style="color:#569cd6">ON</span> CONFLICT (email) DO NOTHING;</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-dml1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dml1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>UPDATE – Daten aktualisieren
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="update – daten aktualisieren">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    UPDATE – Daten aktualisieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Einzelnes Feld aktualisieren</span>
+<span style="color:#569cd6">UPDATE</span> kunden
+<span style="color:#569cd6">SET</span> kontostand = kontostand + <span style="color:#b5cea8">100</span>
+<span style="color:#569cd6">WHERE</span> id = <span style="color:#b5cea8">1</span>;
+
+<span style="color:#546e7a">-- Mehrere Felder gleichzeitig</span>
+<span style="color:#569cd6">UPDATE</span> kunden
+<span style="color:#569cd6">SET</span>
+    stadt      = <span style="color:#ce9178">'Frankfurt'</span>,
+    kontostand = <span style="color:#b5cea8">0</span>
+<span style="color:#569cd6">WHERE</span> name = <span style="color:#ce9178">'Dave Fischer'</span>;
+
+<span style="color:#546e7a">-- Update mit JOIN (Daten aus anderer Tabelle)</span>
+<span style="color:#569cd6">UPDATE</span> kunden k
+<span style="color:#569cd6">SET</span> kontostand = kontostand + b.gesamt
+<span style="color:#569cd6">FROM</span> (
+    <span style="color:#569cd6">SELECT</span> kunden_id, <span style="color:#dcdcaa">SUM</span>(betrag) <span style="color:#569cd6">AS</span> gesamt
+    <span style="color:#569cd6">FROM</span> bestellungen
+    <span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> kunden_id
+) b
+<span style="color:#569cd6">WHERE</span> k.id = b.kunden_id;
+
+<span style="color:#546e7a">-- RETURNING – zeigt was geändert wurde (PostgreSQL)</span>
+<span style="color:#569cd6">UPDATE</span> kunden
+<span style="color:#569cd6">SET</span> kontostand = kontostand * <span style="color:#b5cea8">1.05</span>
+<span style="color:#569cd6">WHERE</span> stadt = <span style="color:#ce9178">'Berlin'</span>
+<span style="color:#569cd6">RETURNING</span> id, name, kontostand;</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-dml2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dml2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>DELETE &amp; TRUNCATE
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="delete &amp; truncate">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    DELETE &amp; TRUNCATE
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Bestimmte Zeilen löschen</span>
+<span style="color:#569cd6">DELETE</span> <span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> kontostand &lt; <span style="color:#b5cea8">100</span>
+  <span style="color:#569cd6">AND</span> <span style="color:#569cd6">alter</span> &lt; <span style="color:#b5cea8">20</span>;
+
+<span style="color:#546e7a">-- Mit Unterabfrage</span>
+<span style="color:#569cd6">DELETE</span> <span style="color:#569cd6">FROM</span> bestellungen
+<span style="color:#569cd6">WHERE</span> kunden_id <span style="color:#569cd6">IN</span> (
+    <span style="color:#569cd6">SELECT</span> id <span style="color:#569cd6">FROM</span> kunden <span style="color:#569cd6">WHERE</span> aktiv = <span style="color:#569cd6">FALSE</span>
+);
+
+<span style="color:#546e7a">-- Mit RETURNING (PostgreSQL)</span>
+<span style="color:#569cd6">DELETE</span> <span style="color:#569cd6">FROM</span> kunden
+<span style="color:#569cd6">WHERE</span> id = <span style="color:#b5cea8">5</span>
+<span style="color:#569cd6">RETURNING</span> name, email;
+
+<span style="color:#546e7a">-- TRUNCATE: Alle Zeilen schnell löschen</span>
+<span style="color:#546e7a">-- (kein WHERE möglich, aber viel schneller als DELETE *)</span>
+<span style="color:#569cd6">TRUNCATE</span> <span style="color:#569cd6">TABLE</span> bestellungen;
+
+<span style="color:#546e7a">-- Mit Cascade (abhängige Tabellen mitlöschen)</span>
+<span style="color:#569cd6">TRUNCATE</span> <span style="color:#569cd6">TABLE</span> kunden CASCADE;
+
+<span style="color:#546e7a">-- Wichtig: TRUNCATE setzt Sequenzen (SERIAL) nicht zurück!</span>
+<span style="color:#546e7a">-- Dafür: TRUNCATE kunden RESTART IDENTITY;</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-dml3"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dml3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Transaktionen
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="transaktionen">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Transaktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Transaktion: Entweder alles oder nichts</span>
+<span style="color:#569cd6">BEGIN</span>;
+
+    <span style="color:#569cd6">UPDATE</span> kunden
+    <span style="color:#569cd6">SET</span> kontostand = kontostand - <span style="color:#b5cea8">500</span>
+    <span style="color:#569cd6">WHERE</span> id = <span style="color:#b5cea8">1</span>;   <span style="color:#546e7a">-- Alice zahlt 500€</span>
+
+    <span style="color:#569cd6">UPDATE</span> kunden
+    <span style="color:#569cd6">SET</span> kontostand = kontostand + <span style="color:#b5cea8">500</span>
+    <span style="color:#569cd6">WHERE</span> id = <span style="color:#b5cea8">2</span>;   <span style="color:#546e7a">-- Bob bekommt 500€</span>
+
+    <span style="color:#546e7a">-- Nur wenn beide erfolgreich:</span>
+<span style="color:#569cd6">COMMIT</span>;
+
+<span style="color:#546e7a">-- Bei Fehler: Alles zurückrollen</span>
+<span style="color:#569cd6">BEGIN</span>;
+    <span style="color:#569cd6">UPDATE</span> kunden <span style="color:#569cd6">SET</span> kontostand = -<span style="color:#b5cea8">99999</span> <span style="color:#569cd6">WHERE</span> id = <span style="color:#b5cea8">1</span>;
+<span style="color:#569cd6">ROLLBACK</span>;   <span style="color:#546e7a">-- Alice behält ihr Guthaben</span>
+
+<span style="color:#546e7a">-- Savepoints – teilweises Rollback</span>
+<span style="color:#569cd6">BEGIN</span>;
+    <span style="color:#569cd6">INSERT</span> <span style="color:#569cd6">INTO</span> kunden (name, email) <span style="color:#569cd6">VALUES</span> (<span style="color:#ce9178">'Test'</span>, <span style="color:#ce9178">'t@t.de'</span>);
+    <span style="color:#569cd6">SAVEPOINT</span> vor_update;
+
+    <span style="color:#569cd6">UPDATE</span> kunden <span style="color:#569cd6">SET</span> kontostand = -<span style="color:#b5cea8">1</span> <span style="color:#569cd6">WHERE</span> name = <span style="color:#ce9178">'Test'</span>;
+
+    <span style="color:#569cd6">ROLLBACK</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">SAVEPOINT</span> vor_update;   <span style="color:#546e7a">-- nur UPDATE rückgängig</span>
+
+<span style="color:#569cd6">COMMIT</span>;   <span style="color:#546e7a">-- INSERT bleibt erhalten</span>
+
+<span style="color:#546e7a">-- Isolationslevel (Standard: READ COMMITTED)</span>
+<span style="color:#569cd6">BEGIN</span> <span style="color:#569cd6">TRANSACTION</span> ISOLATION LEVEL SERIALIZABLE;
+    <span style="color:#546e7a">-- ...</span>
+<span style="color:#569cd6">COMMIT</span>;</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #33679144;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3367910e">
+    <span style="display:flex;align-items:center;gap:6px;color:#336791">
+      <span style="display:inline-block;width:8px;height:8px;background:#336791;border-radius:50%;margin-right:2px"></span>String-Funktionen
+    </span>
+    <span class="aa" style="color:#336791;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#336791">UPPER(s) / LOWER(s)</code></td><td style="color:#cdd6f4">Groß- / Kleinbuchstaben</td><td style="color:#6c7a8e">UPPER('hallo') → 'HALLO'</td></tr><tr><td style="width:220px"><code style="color:#336791">TRIM(s)</code></td><td style="color:#cdd6f4">Whitespace entfernen</td><td style="color:#6c7a8e">TRIM('  hi  ') → 'hi'</td></tr><tr><td style="width:220px"><code style="color:#336791">LENGTH(s)</code></td><td style="color:#cdd6f4">Länge in Zeichen</td><td style="color:#6c7a8e">LENGTH('Hallo') → 5</td></tr><tr><td style="width:220px"><code style="color:#336791">SUBSTRING(s, pos, len)</code></td><td style="color:#cdd6f4">Teilstring</td><td style="color:#6c7a8e">SUBSTRING('Hallo', 2, 3) → 'all'</td></tr><tr><td style="width:220px"><code style="color:#336791">REPLACE(s, old, new)</code></td><td style="color:#cdd6f4">Ersetzen</td><td style="color:#6c7a8e">REPLACE('aaa','a','b') → 'bbb'</td></tr><tr><td style="width:220px"><code style="color:#336791">CONCAT(a, b, ...)</code></td><td style="color:#cdd6f4">Zusammensetzen</td><td style="color:#6c7a8e">CONCAT('Hi', ' ', 'Bob') → 'Hi Bob'</td></tr><tr><td style="width:220px"><code style="color:#336791">LIKE / ILIKE</code></td><td style="color:#cdd6f4">% = beliebig, _ = ein Zeichen</td><td style="color:#6c7a8e">name LIKE '%er' (case-sens.)</td></tr><tr><td style="width:220px"><code style="color:#336791">REGEXP_REPLACE(s,pat,rep)</code></td><td style="color:#cdd6f4">Regex-Ersetzen (PostgreSQL)</td><td style="color:#6c7a8e">REGEXP_REPLACE(s,'\\d+','N')</td></tr><tr><td style="width:220px"><code style="color:#336791">SPLIT_PART(s, sep, n)</code></td><td style="color:#cdd6f4">n-tes Teil nach Split (PostgreSQL)</td><td style="color:#6c7a8e">SPLIT_PART('a,b,c',',',2) → b</td></tr><tr><td style="width:220px"><code style="color:#336791">TO_CHAR(val, fmt)</code></td><td style="color:#cdd6f4">Formatieren (PostgreSQL)</td><td style="color:#6c7a8e">TO_CHAR(NOW(),'DD.MM.YYYY')</td></tr><tr><td style="width:220px"><code style="color:#336791">INITCAP(s)</code></td><td style="color:#cdd6f4">Ersten Buchstaben groß</td><td style="color:#6c7a8e">INITCAP('hallo welt') → 'Hallo Welt'</td></tr><tr><td style="width:220px"><code style="color:#336791">LPAD(s,n,p) / RPAD</code></td><td style="color:#cdd6f4">Auffüllen auf Länge n</td><td style="color:#6c7a8e">LPAD('42',5,'0') → '00042'</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Datums-Funktionen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4ec9b0">NOW() / CURRENT_TIMESTAMP</code></td><td style="color:#cdd6f4">Aktueller Zeitstempel</td><td style="color:#6c7a8e">NOW() → 2024-01-15 14:30:00</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">CURRENT_DATE</code></td><td style="color:#cdd6f4">Aktuelles Datum</td><td style="color:#6c7a8e">CURRENT_DATE → 2024-01-15</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">DATE_TRUNC(unit, ts)</code></td><td style="color:#cdd6f4">Auf Einheit runden (PostgreSQL)</td><td style="color:#6c7a8e">DATE_TRUNC('month', NOW())</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">EXTRACT(field FROM ts)</code></td><td style="color:#cdd6f4">Feld extrahieren</td><td style="color:#6c7a8e">EXTRACT(YEAR FROM NOW()) → 2024</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">DATE_PART(field, ts)</code></td><td style="color:#cdd6f4">Wie EXTRACT (PostgreSQL)</td><td style="color:#6c7a8e">DATE_PART('hour', NOW())</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">AGE(ts1, ts2)</code></td><td style="color:#cdd6f4">Differenz als INTERVAL (PostgreSQL)</td><td style="color:#6c7a8e">AGE(NOW(), geburtsdatum)</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">ts + INTERVAL</code></td><td style="color:#cdd6f4">Zeitraum addieren</td><td style="color:#6c7a8e">NOW() + INTERVAL '7 days'</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">TO_DATE(s, fmt)</code></td><td style="color:#cdd6f4">String zu Datum</td><td style="color:#6c7a8e">TO_DATE('15.01.2024','DD.MM.YYYY')</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">TO_TIMESTAMP(s, fmt)</code></td><td style="color:#cdd6f4">String zu Timestamp</td><td style="color:#6c7a8e">TO_TIMESTAMP('2024-01-15','YYYY-MM-DD')</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>NULL-Behandlung
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#c792ea">COALESCE(a, b, c, ...)</code></td><td style="color:#cdd6f4">Ersten Nicht-NULL-Wert</td><td style="color:#6c7a8e">COALESCE(NULL, NULL, 42) → 42</td></tr><tr><td style="width:220px"><code style="color:#c792ea">NULLIF(a, b)</code></td><td style="color:#cdd6f4">NULL wenn a = b, sonst a</td><td style="color:#6c7a8e">NULLIF(0, 0) → NULL</td></tr><tr><td style="width:220px"><code style="color:#c792ea">IS NULL / IS NOT NULL</code></td><td style="color:#cdd6f4">NULL-Check (nie = NULL!)</td><td style="color:#6c7a8e">WHERE email IS NOT NULL</td></tr><tr><td style="width:220px"><code style="color:#c792ea">CASE WHEN x IS NULL...</code></td><td style="color:#cdd6f4">NULL in CASE behandeln</td><td style="color:#6c7a8e">CASE WHEN val IS NULL THEN 0 ELSE val END</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>CASE – bedingte Ausdrücke
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">Simple CASE</code></td><td style="color:#cdd6f4">CASE wert WHEN a THEN x END</td><td style="color:#6c7a8e">CASE stadt WHEN 'Berlin' THEN 'BE' END</td></tr><tr><td style="width:220px"><code style="color:#ffb347">Searched CASE</code></td><td style="color:#cdd6f4">CASE WHEN pred THEN x END</td><td style="color:#6c7a8e">CASE WHEN alter &lt; 30 THEN 'jung' END</td></tr><tr><td style="width:220px"><code style="color:#ffb347">CASE als Spalte</code></td><td style="color:#cdd6f4">In SELECT verwendbar</td><td style="color:#6c7a8e">SELECT CASE WHEN ... END AS kategorie</td></tr><tr><td style="width:220px"><code style="color:#ffb347">CASE in ORDER BY</code></td><td style="color:#cdd6f4">Benutzerdefinierte Reihenfolge</td><td style="color:#6c7a8e">ORDER BY CASE prio WHEN 'hoch' THEN 1 END</td></tr><tr><td style="width:220px"><code style="color:#ffb347">CASE in WHERE</code></td><td style="color:#cdd6f4">Dynamische Bedingungen</td><td style="color:#6c7a8e">WHERE CASE WHEN debug THEN TRUE ELSE aktiv END</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-performance" class="tp">
+
+<div class="ac open" id="ac-perf0"
+     style="border:1px solid #33679144;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('perf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3367910e">
+    <span style="display:flex;align-items:center;gap:6px;color:#336791">
+      <span style="display:inline-block;width:8px;height:8px;background:#336791;border-radius:50%;margin-right:2px"></span>Indizes erstellen &amp; verstehen
+    </span>
+    <span class="aa" style="color:#336791;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="indizes erstellen &amp; verstehen">
+  <div style="color:#336791;font-weight:700;font-size:12px;margin-bottom:8px">
+    Indizes erstellen &amp; verstehen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Standard B-Tree Index (für =, &lt;, &gt;, BETWEEN, ORDER BY)</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">INDEX</span> idx_kunden_stadt
+    <span style="color:#569cd6">ON</span> kunden(stadt);
+
+<span style="color:#546e7a">-- Zusammengesetzter Index (Reihenfolge wichtig!)</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">INDEX</span> idx_name_stadt
+    <span style="color:#569cd6">ON</span> kunden(name, stadt);
+<span style="color:#546e7a">-- Nützt: WHERE name = ... AND stadt = ...</span>
+<span style="color:#546e7a">-- Nützt: WHERE name = ...</span>
+<span style="color:#546e7a">-- Nützt NICHT: WHERE stadt = ... (ohne name)</span>
+
+<span style="color:#546e7a">-- Unique Index (verhindert Duplikate + beschleunigt)</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">UNIQUE</span> <span style="color:#569cd6">INDEX</span> idx_email
+    <span style="color:#569cd6">ON</span> kunden(email);
+
+<span style="color:#546e7a">-- Partieller Index (nur für Teilmenge)</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">INDEX</span> idx_aktive_kunden
+    <span style="color:#569cd6">ON</span> kunden(name)
+    <span style="color:#569cd6">WHERE</span> aktiv = <span style="color:#569cd6">TRUE</span>;
+
+<span style="color:#546e7a">-- Index auf Ausdruck</span>
+<span style="color:#569cd6">CREATE</span> <span style="color:#569cd6">INDEX</span> idx_name_lower
+    <span style="color:#569cd6">ON</span> kunden(<span style="color:#dcdcaa">LOWER</span>(name));
+<span style="color:#546e7a">-- Nützt: WHERE LOWER(name) = 'alice müller'</span>
+
+<span style="color:#546e7a">-- Index entfernen</span>
+<span style="color:#569cd6">DROP</span> <span style="color:#569cd6">INDEX</span> idx_kunden_stadt;
+
+<span style="color:#546e7a">-- Index-Typen (PostgreSQL)</span>
+<span style="color:#546e7a">-- BTREE (Standard): = &lt; &gt; BETWEEN LIKE 'prefix%'</span>
+<span style="color:#546e7a">-- HASH:             nur =</span>
+<span style="color:#546e7a">-- GIN:              Array, JSON, Volltextsuche</span>
+<span style="color:#546e7a">-- GiST:            Geometrie, Bereichstypen</span>
+<span style="color:#546e7a">-- BRIN:            sehr große sequentielle Tabellen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-perf1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('perf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>EXPLAIN – Queryplan analysieren
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="explain – queryplan analysieren">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    EXPLAIN – Queryplan analysieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Queryplan ohne Ausführung</span>
+<span style="color:#569cd6">EXPLAIN</span>
+<span style="color:#569cd6">SELECT</span> * <span style="color:#569cd6">FROM</span> kunden <span style="color:#569cd6">WHERE</span> stadt = <span style="color:#ce9178">'Berlin'</span>;
+
+<span style="color:#546e7a">-- Queryplan MIT Ausführung und echten Zeiten</span>
+<span style="color:#569cd6">EXPLAIN</span> <span style="color:#569cd6">ANALYZE</span>
+<span style="color:#569cd6">SELECT</span> k.name, <span style="color:#dcdcaa">COUNT</span>(b.id)
+<span style="color:#569cd6">FROM</span> kunden k
+<span style="color:#569cd6">LEFT</span> <span style="color:#569cd6">JOIN</span> bestellungen b <span style="color:#569cd6">ON</span> k.id = b.kunden_id
+<span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> k.name;
+
+<span style="color:#546e7a">-- Was zu suchen ist:</span>
+<span style="color:#546e7a">-- Seq Scan:        Tabelle komplett durchsucht (oft schlecht)</span>
+<span style="color:#546e7a">-- Index Scan:      Index genutzt (gut)</span>
+<span style="color:#546e7a">-- Index Only Scan: Nur Index gelesen, keine Tabelle (sehr gut)</span>
+<span style="color:#546e7a">-- Hash Join:       Für große Tabellen</span>
+<span style="color:#546e7a">-- Nested Loop:     Gut für kleine Tabellen</span>
+<span style="color:#546e7a">-- Merge Join:      Wenn beide Seiten sortiert sind</span>
+
+<span style="color:#546e7a">-- Zeilen mit hohem "cost" oder "actual rows &gt;&gt; estimated rows"</span>
+<span style="color:#546e7a">-- sind Kandidaten für Optimierung</span>
+
+<span style="color:#546e7a">-- Statistiken aktualisieren (verbessert Planer-Schätzungen)</span>
+<span style="color:#569cd6">ANALYZE</span> kunden;</pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button id="exb0" onclick="switchEx(0)" style="border:1px solid #336791;color:#336791;background:rgba(51,103,145,.15);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Top-N pro Gruppe</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Rekursive CTE – Hierarchie</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Pivot – Zeilen zu Spalten</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Gaps &amp; Islands</button>
+  
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Die 2 Kunden mit höchstem Kontostand pro Stadt</span>
+<span style="color:#569cd6">WITH</span> rang <span style="color:#569cd6">AS</span> (
+    <span style="color:#569cd6">SELECT</span>
+        name,
+        stadt,
+        kontostand,
+        <span style="color:#dcdcaa">ROW_NUMBER</span>() <span style="color:#569cd6">OVER</span> (
+            <span style="color:#569cd6">PARTITION</span> <span style="color:#569cd6">BY</span> stadt
+            <span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> kontostand <span style="color:#569cd6">DESC</span>
+        ) <span style="color:#569cd6">AS</span> rn
+    <span style="color:#569cd6">FROM</span> kunden
+)
+<span style="color:#569cd6">SELECT</span> name, stadt, kontostand
+<span style="color:#569cd6">FROM</span> rang
+<span style="color:#569cd6">WHERE</span> rn &lt;= <span style="color:#b5cea8">2</span>
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> stadt, kontostand <span style="color:#569cd6">DESC</span>;
+
+<span style="color:#546e7a">-- Ergebnis:</span>
+<span style="color:#546e7a">-- Alice Müller  | Berlin  | 8900.00  (Rang 1)</span>
+<span style="color:#546e7a">-- Carol Weber   | Berlin  | 1250.00  (Rang 2)</span>
+<span style="color:#546e7a">-- Eva Braun     | Hamburg | 2100.75  (Rang 1)</span>
+<span style="color:#546e7a">-- Bob Schmidt   | Hamburg |  340.50  (Rang 2)</span>
+<span style="color:#546e7a">-- Dave Fischer  | München |   50.00  (Rang 1 – einziger)</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Kategorie-Tabelle mit Eltern-Kind-Beziehung</span>
+<span style="color:#546e7a">-- CREATE TABLE kategorien (id INT, name TEXT, eltern_id INT);</span>
+
+<span style="color:#569cd6">WITH</span> <span style="color:#569cd6">RECURSIVE</span> kategorie_pfad <span style="color:#569cd6">AS</span> (
+    <span style="color:#546e7a">-- Basisfall: Startkategorie</span>
+    <span style="color:#569cd6">SELECT</span>
+        id,
+        name,
+        eltern_id,
+        name::<span style="color:#4ec9b0">TEXT</span> <span style="color:#569cd6">AS</span> pfad,
+        <span style="color:#b5cea8">0</span> <span style="color:#569cd6">AS</span> tiefe
+    <span style="color:#569cd6">FROM</span> kategorien
+    <span style="color:#569cd6">WHERE</span> eltern_id <span style="color:#569cd6">IS</span> <span style="color:#569cd6">NULL</span>   <span style="color:#546e7a">-- Wurzelkategorien</span>
+
+    <span style="color:#569cd6">UNION</span> <span style="color:#569cd6">ALL</span>
+
+    <span style="color:#546e7a">-- Rekursiver Fall: Kinder der bisherigen</span>
+    <span style="color:#569cd6">SELECT</span>
+        k.id,
+        k.name,
+        k.eltern_id,
+        kp.pfad || <span style="color:#ce9178">' &gt; '</span> || k.name,
+        kp.tiefe + <span style="color:#b5cea8">1</span>
+    <span style="color:#569cd6">FROM</span> kategorien k
+    <span style="color:#569cd6">JOIN</span> kategorie_pfad kp <span style="color:#569cd6">ON</span> k.eltern_id = kp.id
+)
+<span style="color:#569cd6">SELECT</span> tiefe, name, pfad
+<span style="color:#569cd6">FROM</span> kategorie_pfad
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> pfad;
+
+<span style="color:#546e7a">-- Ergebnis:</span>
+<span style="color:#546e7a">-- 0 | Elektronik     | Elektronik</span>
+<span style="color:#546e7a">-- 1 | Computer       | Elektronik &gt; Computer</span>
+<span style="color:#546e7a">-- 2 | Laptops        | Elektronik &gt; Computer &gt; Laptops</span>
+<span style="color:#546e7a">-- 1 | Smartphones    | Elektronik &gt; Smartphones</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Umsatz pro Monat und Stadt als Kreuztabelle</span>
+<span style="color:#569cd6">SELECT</span>
+    <span style="color:#dcdcaa">TO_CHAR</span>(datum, <span style="color:#ce9178">'YYYY-MM'</span>) <span style="color:#569cd6">AS</span> monat,
+    <span style="color:#dcdcaa">SUM</span>(<span style="color:#569cd6">CASE</span> <span style="color:#569cd6">WHEN</span> k.stadt = <span style="color:#ce9178">'Berlin'</span>  <span style="color:#569cd6">THEN</span> b.betrag <span style="color:#569cd6">ELSE</span> <span style="color:#b5cea8">0</span> <span style="color:#569cd6">END</span>) <span style="color:#569cd6">AS</span> berlin,
+    <span style="color:#dcdcaa">SUM</span>(<span style="color:#569cd6">CASE</span> <span style="color:#569cd6">WHEN</span> k.stadt = <span style="color:#ce9178">'Hamburg'</span> <span style="color:#569cd6">THEN</span> b.betrag <span style="color:#569cd6">ELSE</span> <span style="color:#b5cea8">0</span> <span style="color:#569cd6">END</span>) <span style="color:#569cd6">AS</span> hamburg,
+    <span style="color:#dcdcaa">SUM</span>(<span style="color:#569cd6">CASE</span> <span style="color:#569cd6">WHEN</span> k.stadt = <span style="color:#ce9178">'München'</span> <span style="color:#569cd6">THEN</span> b.betrag <span style="color:#569cd6">ELSE</span> <span style="color:#b5cea8">0</span> <span style="color:#569cd6">END</span>) <span style="color:#569cd6">AS</span> münchen,
+    <span style="color:#dcdcaa">SUM</span>(b.betrag)                                                  <span style="color:#569cd6">AS</span> gesamt
+<span style="color:#569cd6">FROM</span> bestellungen b
+<span style="color:#569cd6">JOIN</span> kunden k <span style="color:#569cd6">ON</span> b.kunden_id = k.id
+<span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> <span style="color:#dcdcaa">TO_CHAR</span>(datum, <span style="color:#ce9178">'YYYY-MM'</span>)
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> monat;
+
+<span style="color:#546e7a">-- Ergebnis (vereinfacht):</span>
+<span style="color:#546e7a">-- 2024-01 | 1028.99 |   0.00 |  0.00 | 1028.99</span>
+<span style="color:#546e7a">-- 2024-02 |  399.00 |   0.00 |  9.99 |  408.99</span>
+<span style="color:#546e7a">-- 2024-03 |   29.99 | 999.00 |  0.00 | 1028.99</span>
+
+<span style="color:#546e7a">-- PostgreSQL hat auch crosstab() via tablefunc-Extension</span>
+<span style="color:#546e7a">-- für dynamisches Pivoting</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Zusammenhängende Bereiche in Sequenzen finden</span>
+<span style="color:#546e7a">-- Typisch: lückenlose Zeiträume, aufeinanderfolgende IDs</span>
+
+<span style="color:#546e7a">-- Beispiel: Benutzer war wie lange aktiv? (online_log Tabelle)</span>
+<span style="color:#546e7a">-- CREATE TABLE online_log (user_id INT, tag DATE, online BOOL);</span>
+
+<span style="color:#569cd6">WITH</span> nummeriert <span style="color:#569cd6">AS</span> (
+    <span style="color:#569cd6">SELECT</span>
+        user_id,
+        tag,
+        tag - (<span style="color:#dcdcaa">ROW_NUMBER</span>() <span style="color:#569cd6">OVER</span> (
+            <span style="color:#569cd6">PARTITION</span> <span style="color:#569cd6">BY</span> user_id
+            <span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> tag
+        ) * <span style="color:#4ec9b0">INTERVAL</span> <span style="color:#ce9178">'1 day'</span>)::<span style="color:#4ec9b0">DATE</span> <span style="color:#569cd6">AS</span> gruppe
+    <span style="color:#569cd6">FROM</span> online_log
+    <span style="color:#569cd6">WHERE</span> online = <span style="color:#569cd6">TRUE</span>
+),
+islands <span style="color:#569cd6">AS</span> (
+    <span style="color:#569cd6">SELECT</span>
+        user_id,
+        <span style="color:#dcdcaa">MIN</span>(tag) <span style="color:#569cd6">AS</span> von,
+        <span style="color:#dcdcaa">MAX</span>(tag) <span style="color:#569cd6">AS</span> bis,
+        <span style="color:#dcdcaa">COUNT</span>(*) <span style="color:#569cd6">AS</span> anzahl_tage
+    <span style="color:#569cd6">FROM</span> nummeriert
+    <span style="color:#569cd6">GROUP</span> <span style="color:#569cd6">BY</span> user_id, gruppe
+)
+<span style="color:#569cd6">SELECT</span>
+    user_id,
+    von,
+    bis,
+    anzahl_tage
+<span style="color:#569cd6">FROM</span> islands
+<span style="color:#569cd6">ORDER</span> <span style="color:#569cd6">BY</span> user_id, von;
+
+<span style="color:#546e7a">-- Ergebnis:</span>
+<span style="color:#546e7a">-- user_id | von        | bis        | anzahl_tage</span>
+<span style="color:#546e7a">-- 1       | 2024-01-01 | 2024-01-05 | 5   (Island 1)</span>
+<span style="color:#546e7a">-- 1       | 2024-01-08 | 2024-01-10 | 3   (Island 2)</span>
+<span style="color:#546e7a">-- 2       | 2024-01-02 | 2024-01-04 | 3   (Island 1)</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#33679111;border:1px solid #33679144;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#336791">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S postgresql sqlite mariadb</code><br><code style="color:#ffb347">yay -S dbeaver beekeeper-studio-bin</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #33679144;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3367910e">
+    <span style="display:flex;align-items:center;gap:6px;color:#336791">
+      <span style="display:inline-block;width:8px;height:8px;background:#336791;border-radius:50%;margin-right:2px"></span>⚙ PostgreSQL (Arch)
+    </span>
+    <span class="aa" style="color:#336791;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#336791;font-weight:700">PostgreSQL</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">postgresql</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S postgresql
+sudo -u postgres initdb -D /var/lib/postgres/data
+sudo systemctl start postgresql</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#336791;font-weight:700">psql</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">postgresql</span>
+  </div>
+  <code style="color:#ffb347">psql -U postgres
+psql -U user -d datenbank -h host</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#336791;font-weight:700">pgAdmin</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pgadmin4 (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S pgadmin4  # Grafische Verwaltung</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#336791;font-weight:700">pg_dump</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">postgresql</span>
+  </div>
+  <code style="color:#ffb347">pg_dump -U postgres mydb &gt; backup.sql
+psql -U postgres mydb &lt; backup.sql</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ SQLite (Arch)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">SQLite</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">sqlite</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S sqlite
+sqlite3 meine.db</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">sqlite3 CLI</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">sqlite</span>
+  </div>
+  <code style="color:#ffb347">.tables  |  .schema  |  .mode column  |  .headers on
+.read skript.sql  |  .quit</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">DB Browser</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">sqlitebrowser</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S sqlitebrowser  # Grafisches Tool</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">SQLiteStudio</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S sqlitestudio</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ MySQL / MariaDB (Arch)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">MariaDB</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">mariadb</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S mariadb
+sudo mariadb-install-db
+sudo systemctl start mariadb</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">mysql CLI</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">mariadb</span>
+  </div>
+  <code style="color:#ffb347">mysql -u root -p
+mysql -u user -p datenbank &lt; skript.sql</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">DBeaver</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dbeaver (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S dbeaver  # Universal-DB-Client</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ GUI-Tools &amp; Erweiterungen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">DBeaver</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S dbeaver  # Alle DBs, kostenfrei</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">pgAdmin 4</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S pgadmin4</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">TablePlus</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S tableplus (kommerziell)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">DataGrip</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S datagrip (JetBrains, kommerziell)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Beekeeper Studio</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S beekeeper-studio-bin  # Open Source Alternative</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>⚙ ORM &amp; Query Builder
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">SQLAlchemy</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Python</span>
+  </div>
+  <code style="color:#ffb347">pip install sqlalchemy
+# db.execute(select(User).where(User.aktiv))</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">Prisma</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Node.js</span>
+  </div>
+  <code style="color:#ffb347">npm install @prisma/client
+# prisma db push</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">TypeORM</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Node.js</span>
+  </div>
+  <code style="color:#ffb347">npm install typeorm
+# @Entity() @Column() @PrimaryKey()</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">Diesel</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Rust</span>
+  </div>
+  <code style="color:#ffb347">cargo add diesel
+# diesel setup &amp;&amp; diesel migration generate</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">GORM</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Go</span>
+  </div>
+  <code style="color:#ffb347">go get gorm.io/gorm
+# db.Find(&amp;users).Where("aktiv = ?", true)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">Ecto</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Elixir</span>
+  </div>
+  <code style="color:#ffb347">mix deps.get ecto_sql
+# Repo.all(from u in User, where: u.aktiv)</code>
+</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// Akkordeon auf- / zuklappen
+function tA(id) {
+  const el   = document.getElementById('ac-' + id);
+  const body = el.querySelector('.ab');
+  const open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+// Tab-Navigation
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Beispiel-Tabs
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach((panel, j) => {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach((btn, j) => {
+    if (j === index) {
+      btn.style.borderColor = '#336791';
+      btn.style.color       = '#336791';
+      btn.style.background  = 'rgba(51, 103, 145, .15)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

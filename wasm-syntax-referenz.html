@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAssembly (WAT) Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #654ff0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0d0b14, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(101,79,240,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(101,79,240,.03); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(101,79,240,.08); padding: 1px 5px; border-radius: 3px; color: #654ff0; }
+.cd { background: rgba(0,0,0,.6); border: 1px solid rgba(101,79,240,.15); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#654ff0">⬡</span>
+      <span style="color:#654ff0">WebAssembly</span>
+      <span style="color:var(--dim);font-weight:400;font-size:14px"> WAT</span>
+    </div>
+    <div id="hdr-sub">Wasm 2.0 · Stack-Maschine · i32/i64/f32/f64 · SIMD · WASI · JS-Interop · Rust/C/Go/Zig</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="instruktionen">Instruktionen</button>
+    <button class="tb" data-tab="kontrolle">Kontrollfluss</button>
+    <button class="tb" data-tab="speicher">Speicher & JS</button>
+    <button class="tb" data-tab="praxis">Praxis & Sprachen</button>
+    <button class="tb" data-tab="stdlib">JS API & Patterns</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#654ff00e;border:1px solid #654ff044;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#654ff0">WebAssembly – portabel, sicher, near-native schnell.</strong>
+  Stack-Maschine. Kompilierungsziel für C, Rust, Go, Zig...<br>
+  <span style="color:#cdd6f4">
+    Typen: <code style="color:#4ec9b0">i32 i64 f32 f64</code> &nbsp;·&nbsp;
+    Variablen: <code style="color:#ffcb6b">$name</code> &nbsp;·&nbsp;
+    Kommentar: <code style="color:#546e7a">;;  (; ;)</code> &nbsp;·&nbsp;
+    Instruktionen wie <code style="color:#82aaff">i32.add</code> &nbsp;·&nbsp;
+    Online: <a href="https://webassembly.github.io/wabt/demo/wat2wasm/" style="color:#d4a017">wat2wasm Demo</a>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>Was WebAssembly ist
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="was webassembly ist">
+  <div style="color:#654ff0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Was WebAssembly ist
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; WebAssembly (Wasm) – W3C Standard 2019</span>
+<span style="color:#546e7a">;; Binäres Laufzeitformat + portables Kompilierungsziel</span>
+<span style="color:#546e7a">;; WAT = WebAssembly Text Format (menschenlesbar)</span>
+
+<span style="color:#546e7a">;; STACK-MASCHINE: Instruktionen schieben Werte auf einen Stack</span>
+<span style="color:#546e7a">;; Kein Register-Konzept wie x86 – alles geht über den Stack</span>
+
+<span style="color:#546e7a">;; Das einfachste Wasm-Modul:</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$addiere</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>     <span style="color:#546e7a">;; Stack: [a]</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>     <span style="color:#546e7a">;; Stack: [a, b]</span>
+    <span style="color:#82aaff">i32.add</span>          <span style="color:#546e7a">;; Stack: [a+b]</span>
+  <span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"addiere"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$addiere</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; WARUM WASM?</span>
+<span style="color:#546e7a">;; 1. Near-native Performance im Browser (besser als JS für CPU-intensive Tasks)</span>
+<span style="color:#546e7a">;; 2. Sicher: sandboxed, kein Zugriff auf Speicher außerhalb</span>
+<span style="color:#546e7a">;; 3. Portabel: läuft überall (Browser, Server, Edge, IoT)</span>
+<span style="color:#546e7a">;; 4. Kompaktes Binärformat (kleiner als JS, schnelles Parsen)</span>
+<span style="color:#546e7a">;; 5. Sprachunabhängig: Kompilierungsziel für C, C++, Rust, Go, Zig...</span>
+
+<span style="color:#546e7a">;; TYPEN – nur 4 Werttypen (MVP):</span>
+<span style="color:#546e7a">;; i32  – 32-Bit Integer (Standard für Boolesche Werte!)</span>
+<span style="color:#546e7a">;; i64  – 64-Bit Integer</span>
+<span style="color:#546e7a">;; f32  – 32-Bit Float</span>
+<span style="color:#546e7a">;; f64  – 64-Bit Float (Standard-Float)</span>
+<span style="color:#546e7a">;; + v128 – 128-Bit SIMD Vektor (neuere Erweiterung)</span>
+<span style="color:#546e7a">;; + funcref, externref – Referenztypen</span>
+
+<span style="color:#546e7a">;; KEIN:</span>
+<span style="color:#546e7a">;; - Heap (nur lineares Speicher-Array: memory)</span>
+<span style="color:#546e7a">;; - Strings (sind Byte-Arrays im Speicher)</span>
+<span style="color:#546e7a">;; - Exceptions (wurden später hinzugefügt)</span>
+<span style="color:#546e7a">;; - Threads (optional, Atomics)</span>
+<span style="color:#546e7a">;; - GC (optional, GC-Proposal)</span>
+
+<span style="color:#546e7a">;; Konvertieren &amp; ausführen:</span>
+<span style="color:#546e7a">;; wat2wasm datei.wat -o datei.wasm    (wabt-tools)</span>
+<span style="color:#546e7a">;; node -e "WebAssembly.instantiateStreaming(fetch('f.wasm'))"</span>
+<span style="color:#546e7a">;; wasmtime datei.wasm                 (standalone runtime)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Modulstruktur &amp; Sektionen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="modulstruktur &amp; sektionen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Modulstruktur &amp; Sektionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; Ein vollständiges Wasm-Modul zeigt alle Sektionen</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#546e7a">;; ── TYP-SEKTION: Funktionssignaturen ─────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">type</span> <span style="color:#ffcb6b">$add_type</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">i32</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── IMPORT-SEKTION: Aus Host-Umgebung importieren ─────────────</span>
+  <span style="color:#546e7a">;; Format: (import "modul" "name" ...)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"env"</span> <span style="color:#c3e88d">"log_int"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$log_int</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"env"</span> <span style="color:#c3e88d">"speicher"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>   <span style="color:#546e7a">;; Mind. 1 Page (64 KB)</span>
+
+  <span style="color:#546e7a">;; ── SPEICHER: 1 Page = 64 KB ──────────────────────────────────</span>
+  <span style="color:#546e7a">;; (memory 1)          ;; Min 1 Page</span>
+  <span style="color:#546e7a">;; (memory 1 10)       ;; Min 1, Max 10 Pages</span>
+  <span style="color:#546e7a">;; (memory (export "mem") 1)  ;; Direkt exportieren</span>
+
+  <span style="color:#546e7a">;; ── GLOBALE VARIABLEN ─────────────────────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">global</span> <span style="color:#ffcb6b">$zaehler</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">mut</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">global</span> <span style="color:#ffcb6b">$PI</span> <span style="color:#4ec9b0">f64</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">f64.const</span> <span style="color:#f78c6c">3.14159265358979</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── TABELLE (für indirekten Aufruf / funcref) ─────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">table</span> <span style="color:#f78c6c">4</span> <span style="color:#4ec9b0">funcref</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── DATENSEKTION: Speicher initialisieren ─────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">data</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span> <span style="color:#c3e88d">"Hallo, Wasm! "</span><span style="color:#654ff0">)</span>   <span style="color:#546e7a">;; Null-terminierter String</span>
+
+  <span style="color:#546e7a">;; ── FUNKTIONEN ────────────────────────────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$addiere</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#82aaff">i32.add</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$start</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">42</span>
+    <span style="color:#c792ea">call</span> <span style="color:#ffcb6b">$log_int</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── START: automatisch beim Laden aufrufen ────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">start</span> <span style="color:#ffcb6b">$start</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── EXPORT-SEKTION ────────────────────────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"addiere"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$addiere</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"zaehler"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">global</span> <span style="color:#ffcb6b">$zaehler</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#546e7a">;; (export "mem"   (memory 0))       ;; Speicher exportieren</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Stack-Maschine verstehen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="stack-maschine verstehen">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Stack-Maschine verstehen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; WASM IST EINE STACK-MASCHINE</span>
+<span style="color:#546e7a">;; Instruktionen konsumieren Argumente vom Stack und pushen Ergebnisse</span>
+
+<span style="color:#546e7a">;; Beispiel: (a + b) * (c - d)</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$komplex</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$c</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$d</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>    <span style="color:#546e7a">;; Stack: [a]</span>
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>    <span style="color:#546e7a">;; Stack: [a, b]</span>
+  <span style="color:#82aaff">i32.add</span>         <span style="color:#546e7a">;; Stack: [a+b]         -- konsumiert a,b; pusht Ergebnis</span>
+
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$c</span>    <span style="color:#546e7a">;; Stack: [a+b, c]</span>
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$d</span>    <span style="color:#546e7a">;; Stack: [a+b, c, d]</span>
+  <span style="color:#82aaff">i32.sub</span>         <span style="color:#546e7a">;; Stack: [a+b, c-d]</span>
+
+  <span style="color:#82aaff">i32.mul</span>         <span style="color:#546e7a">;; Stack: [(a+b)*(c-d)] -- fertig!</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; ZWEI SCHREIBWEISEN für denselben Code:</span>
+
+<span style="color:#546e7a">;; 1. Flach (Stack-Stil) – wie echtes WAT</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$add_flach</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">i32</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#82aaff">local.get</span> <span style="color:#f78c6c">0</span>     <span style="color:#546e7a">;; Index statt Name!</span>
+  <span style="color:#82aaff">local.get</span> <span style="color:#f78c6c">1</span>
+  <span style="color:#82aaff">i32.add</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; 2. Verschachtelt (S-Expression-Stil) – lesbarer</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$add_nested</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">i32</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#82aaff">i32.add</span>
+    <span style="color:#654ff0">(</span><span style="color:#82aaff">local.get</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#82aaff">local.get</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span>
+<span style="color:#546e7a">;; Beide erzeugen IDENTISCHES Binärformat!</span>
+
+<span style="color:#546e7a">;; LOKALE VARIABLEN</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$mit_locals</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$x</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$temp</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>    <span style="color:#546e7a">;; Lokale Variable deklarieren</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$erg</span>  <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$x</span>
+  <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">2</span>
+  <span style="color:#82aaff">i32.mul</span>
+  <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$temp</span>       <span style="color:#546e7a">;; temp = x * 2</span>
+
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$temp</span>
+  <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+  <span style="color:#82aaff">i32.add</span>
+  <span style="color:#82aaff">local.tee</span> <span style="color:#ffcb6b">$erg</span>        <span style="color:#546e7a">;; erg = temp+1, LÄSST Wert auf Stack!</span>
+
+  <span style="color:#546e7a">;; Stack enthält noch erg → ist der Rückgabewert</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-instruktionen" class="tp">
+
+<div class="ac open" id="ac-pa0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>⊞ Arithmetik &amp; Vergleiche (i32/i64)
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Instruktion</th>
+    <th>Stack vorher</th>
+    <th>Stack nachher</th>
+    <th>Beschreibung</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.const n</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Integer-Literal auf Stack pushen</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.add</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Addition</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.sub</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Subtraktion (top ist rechter Operand)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.mul</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Multiplikation</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.div_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Division (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.div_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Division (unsigned)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.rem_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Rest (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.rem_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Rest (unsigned)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.and</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Bitwise AND</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.or</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Bitwise OR</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.xor</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Bitwise XOR</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.shl</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Shift left</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.shr_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Shift right (signed/arithmetisch)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.shr_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Shift right (unsigned/logisch)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.eq</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">== → 1 oder 0</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.ne</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">!= → 1 oder 0</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.lt_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&lt; (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.lt_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&lt; (unsigned)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.gt_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&gt; (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.le_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&lt;= (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.ge_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&gt;= (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.eqz</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">== 0 → 1 oder 0 (nützlich für if!)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.clz</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Count leading zeros</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.ctz</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Count trailing zeros</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.popcnt</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Population count (gesetzte Bits)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#654ff0">i32.abs</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Absolutwert (auch für i64, f32, f64)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pa1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>~ Float-Instruktionen (f32/f64)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Instruktion</th>
+    <th>Stack vorher</th>
+    <th>Stack nachher</th>
+    <th>Beschreibung</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.const 3.14</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Float-Literal</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.add</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Addition</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.sub</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Subtraktion</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.mul</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Multiplikation</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.div</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Division</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.sqrt</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Quadratwurzel</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.abs</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Absolutwert</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.neg</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Negieren</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.ceil</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Aufrunden</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.floor</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Abrunden</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.nearest</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Runden (round half to even)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.trunc</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Richtung 0 runden</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.min</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Minimum</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.max</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Maximum</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.eq</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">== → 1 oder 0</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.lt</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&lt; → 1 oder 0</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.gt</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">&gt; → 1 oder 0</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4fc3f7">f64.copysign</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64 f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">Vorzeichen kopieren</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pa2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>▣ Speicher laden / schreiben
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Instruktion</th>
+    <th>Stack vorher</th>
+    <th>Stack nachher</th>
+    <th>Beschreibung</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.load</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Lade i32 von Adresse (4 Bytes)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.load8_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Lade 1 Byte, sign-extend</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.load8_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Lade 1 Byte, zero-extend</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.load16_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Lade 2 Bytes, sign-extend</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.load16_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Lade 2 Bytes, zero-extend</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.store</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#6c7a8e;font-size:11px">Schreibe i32 an Adresse</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.store8</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#6c7a8e;font-size:11px">Schreibe niedrigstes Byte</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">i32.store16</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#6c7a8e;font-size:11px">Schreibe 2 Bytes</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">memory.size</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Aktuelle Größe in Pages (1 Page = 64KB)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">memory.grow</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Speicher um n Pages erweitern (gibt alte Größe oder -1)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">memory.copy</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#6c7a8e;font-size:11px">Speicher kopieren (dst, src, len)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#c792ea">memory.fill</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32 i32 i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[]</td>
+      <td style="color:#6c7a8e;font-size:11px">Speicher füllen (dst, val, len)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pa3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⇄ Konvertierung
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Instruktion</th>
+    <th>Stack vorher</th>
+    <th>Stack nachher</th>
+    <th>Beschreibung</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i32.wrap_i64</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">i64 → i32 (lower 32 bits)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i32.trunc_f32_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">f32 → i32 (signed, traps on NaN)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i32.trunc_f64_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">f64 → i32 (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i32.trunc_sat_f64_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">f64 → i32 (saturierend, kein Trap)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i64.extend_i32_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i64]</td>
+      <td style="color:#6c7a8e;font-size:11px">i32 → i64 (sign-extend)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i64.extend_i32_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i64]</td>
+      <td style="color:#6c7a8e;font-size:11px">i32 → i64 (zero-extend)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">f32.demote_f64</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f32]</td>
+      <td style="color:#6c7a8e;font-size:11px">f64 → f32 (Präzision verloren)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">f64.promote_f32</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">f32 → f64</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">f64.convert_i32_s</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">i32 → f64 (signed)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">f64.convert_i32_u</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f64]</td>
+      <td style="color:#6c7a8e;font-size:11px">i32 → f64 (unsigned)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">i32.reinterpret_f32</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[f32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Bits reinterpretieren (kein Wertumwandlung!)</td>
+    </tr>
+    <tr>
+      <td style="width:220px"><code style="color:#4ec9b0">f32.reinterpret_i32</code></td>
+      <td style="color:#4ec9b0;font-size:11px;font-family:monospace">[i32]</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:monospace">[f32]</td>
+      <td style="color:#6c7a8e;font-size:11px">Bits reinterpretieren</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-kontrolle" class="tp">
+
+<div class="ac open" id="ac-kf0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>Kontrollfluss – if, block, loop
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="kontrollfluss – if, block, loop">
+  <div style="color:#654ff0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Kontrollfluss – if, block, loop
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; ── IF / ELSE ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">;; Bedingung ist i32: 0 = false, alles andere = true</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$ist_positiv</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$n</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+  <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span>
+  <span style="color:#82aaff">i32.gt_s</span>        <span style="color:#546e7a">;; n &gt; 0 → 1 oder 0</span>
+  <span style="color:#c792ea">if</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#546e7a">;; if konsumiert i32 vom Stack</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>   <span style="color:#546e7a">;; dann-Zweig</span>
+  <span style="color:#c792ea">else</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span>   <span style="color:#546e7a">;; sonst-Zweig</span>
+  <span style="color:#c792ea">end</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; if ohne Ergebnis (void)</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$drucke_wenn_positiv</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$n</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+  <span style="color:#82aaff">i32.eqz</span>
+  <span style="color:#c792ea">if</span>              <span style="color:#546e7a">;; if n == 0: überspringe</span>
+  <span style="color:#c792ea">else</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+    <span style="color:#c792ea">call</span> <span style="color:#ffcb6b">$log_int</span>
+  <span style="color:#c792ea">end</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; ── BLOCK: strukturierter Sprung ──────────────────────────────────</span>
+<span style="color:#546e7a">;; br $label = break/springe zum Ende von block</span>
+<span style="color:#546e7a">;; (aus block heraus = nach block)</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$suche</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$arr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$len</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$val</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$i</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$found</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#c792ea">block</span> <span style="color:#ffcb6b">$gefunden</span>
+    <span style="color:#c792ea">loop</span> <span style="color:#ffcb6b">$schleife</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$len</span>
+      <span style="color:#82aaff">i32.ge_u</span>
+      <span style="color:#c792ea">br_if</span> <span style="color:#ffcb6b">$gefunden</span>     <span style="color:#546e7a">;; i &gt;= len → Schleife verlassen</span>
+
+      <span style="color:#546e7a">;; arr[i] laden</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$arr</span>      <span style="color:#546e7a">;; Basis-Adresse</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+      <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+      <span style="color:#82aaff">i32.mul</span>
+      <span style="color:#82aaff">i32.add</span>             <span style="color:#546e7a">;; Adresse = arr + i*4</span>
+      <span style="color:#82aaff">i32.load</span>            <span style="color:#546e7a">;; Wert laden</span>
+
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$val</span>
+      <span style="color:#82aaff">i32.eq</span>
+      <span style="color:#c792ea">if</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$found</span>
+        <span style="color:#c792ea">br</span> <span style="color:#ffcb6b">$gefunden</span>      <span style="color:#546e7a">;; Gefunden! Raus aus block</span>
+      <span style="color:#c792ea">end</span>
+
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+      <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+      <span style="color:#82aaff">i32.add</span>
+      <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$i</span>        <span style="color:#546e7a">;; i++</span>
+
+      <span style="color:#c792ea">br</span> <span style="color:#ffcb6b">$schleife</span>        <span style="color:#546e7a">;; Zurück zum Schleifen-Anfang</span>
+    <span style="color:#c792ea">end</span>                   <span style="color:#546e7a">;; end loop</span>
+  <span style="color:#c792ea">end</span>                     <span style="color:#546e7a">;; end block</span>
+
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$found</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; ── LOOP ─────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">;; ACHTUNG: br in loop = zurück zum ANFANG (nicht Ende!)</span>
+<span style="color:#546e7a">;; br in block = zum ENDE (heraus)</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$summe</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$n</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$i</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$acc</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#c792ea">loop</span> <span style="color:#ffcb6b">$wieder</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+    <span style="color:#82aaff">i32.lt_s</span>          <span style="color:#546e7a">;; i &lt; n?</span>
+    <span style="color:#c792ea">if</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$acc</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+      <span style="color:#82aaff">i32.add</span>
+      <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$acc</span>  <span style="color:#546e7a">;; acc += i</span>
+
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+      <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+      <span style="color:#82aaff">i32.add</span>
+      <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$i</span>    <span style="color:#546e7a">;; i++</span>
+
+      <span style="color:#c792ea">br</span> <span style="color:#ffcb6b">$wieder</span>      <span style="color:#546e7a">;; Weiter</span>
+    <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$acc</span>      <span style="color:#546e7a">;; Ergebnis zurück</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Funktionen &amp; Aufrufe
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen &amp; aufrufe">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen &amp; Aufrufe
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; ── DIREKTE AUFRUFE ──────────────────────────────────────────────</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$quadrat</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$x</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$x</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$x</span>
+    <span style="color:#82aaff">i32.mul</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$summe_quadrate</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#c792ea">call</span> <span style="color:#ffcb6b">$quadrat</span>       <span style="color:#546e7a">;; a²  – Stack: [a²]</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#c792ea">call</span> <span style="color:#ffcb6b">$quadrat</span>       <span style="color:#546e7a">;; b²  – Stack: [a², b²]</span>
+
+    <span style="color:#82aaff">i32.add</span>             <span style="color:#546e7a">;; a² + b²</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── MEHRERE RÜCKGABEWERTE (MVP 2.0) ──────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$min_max</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>    <span style="color:#546e7a">;; Zwei Rückgabewerte!</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#82aaff">i32.lt_s</span>
+    <span style="color:#c792ea">if</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>      <span style="color:#546e7a">;; min, max</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#c792ea">else</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>      <span style="color:#546e7a">;; min, max</span>
+      <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#c792ea">end</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Destrukturierung: beide Werte landen auf Stack</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$test</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">5</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">3</span>
+    <span style="color:#c792ea">call</span> <span style="color:#ffcb6b">$min_max</span>       <span style="color:#546e7a">;; Stack: [3, 5]  (min unten, max oben)</span>
+    drop                <span style="color:#546e7a">;; max verwerfen</span>
+    drop                <span style="color:#546e7a">;; min verwerfen</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── INDIREKTER AUFRUF (funcref / Tabelle) ────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">table</span> <span style="color:#f78c6c">2</span> <span style="color:#4ec9b0">funcref</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">elem</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span> <span style="color:#ffcb6b">$quadrat</span> <span style="color:#ffcb6b">$summe_quadrate</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$dispatch</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$idx</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$x</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$x</span>        <span style="color:#546e7a">;; Argument für Funktion</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$idx</span>      <span style="color:#546e7a">;; Tabellen-Index</span>
+    <span style="color:#c792ea">call_indirect</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">type</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span> <span style="color:#546e7a">;; Aufruf via Tabelle – wie Funktionszeiger!</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"summe_quadrate"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$summe_quadrate</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"dispatch"</span>       <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$dispatch</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-speicher" class="tp">
+
+<div class="ac open" id="ac-sp0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('sp0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>Speicher &amp; Strings
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="speicher &amp; strings">
+  <div style="color:#654ff0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Speicher &amp; Strings
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; Wasm-Speicher = lineares Byte-Array</span>
+<span style="color:#546e7a">;; Kein Heap-Management – du machst alles selbst (oder via Compiler)</span>
+<span style="color:#546e7a">;; 1 Memory Page = 65.536 Bytes (64 KB)</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"mem"</span><span style="color:#654ff0">)</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span>   <span style="color:#546e7a">;; 1 Page = 64KB, auch exportieren</span>
+
+  <span style="color:#546e7a">;; Konstante Strings in Datasektion</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">data</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">100</span><span style="color:#654ff0">)</span> <span style="color:#c3e88d">"Hallo, Wasm! "</span><span style="color:#654ff0">)</span>  <span style="color:#546e7a">;; bei Offset 100</span>
+
+  <span style="color:#546e7a">;; Zahlen schreiben und lesen</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$set_int</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$addr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$val</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$addr</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$val</span>
+    <span style="color:#82aaff">i32.store</span>           <span style="color:#546e7a">;; 4 Bytes schreiben</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$get_int</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$addr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$addr</span>
+    <span style="color:#82aaff">i32.load</span>            <span style="color:#546e7a">;; 4 Bytes lesen</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Array-Zugriff (4-Byte-Integers)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$arr_get</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$base</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$idx</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$base</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$idx</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+    <span style="color:#82aaff">i32.mul</span>
+    <span style="color:#82aaff">i32.add</span>             <span style="color:#546e7a">;; Adresse = base + idx * 4</span>
+    <span style="color:#82aaff">i32.load</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$arr_set</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$base</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$idx</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$val</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$base</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$idx</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+    <span style="color:#82aaff">i32.mul</span>
+    <span style="color:#82aaff">i32.add</span>             <span style="color:#546e7a">;; Adresse berechnen</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$val</span>
+    <span style="color:#82aaff">i32.store</span>           <span style="color:#546e7a">;; Schreiben</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; String-Länge berechnen (null-terminiert)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$strlen</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$len</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#c792ea">block</span> <span style="color:#ffcb6b">$fertig</span>
+      <span style="color:#c792ea">loop</span> <span style="color:#ffcb6b">$weiter</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$len</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">i32.load8_u</span>     <span style="color:#546e7a">;; Ein Byte lesen</span>
+        <span style="color:#82aaff">i32.eqz</span>         <span style="color:#546e7a">;; Null-Terminator?</span>
+        <span style="color:#c792ea">br_if</span> <span style="color:#ffcb6b">$fertig</span>   <span style="color:#546e7a">;; Ja → fertig</span>
+
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$len</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$len</span>  <span style="color:#546e7a">;; len++</span>
+
+        <span style="color:#c792ea">br</span> <span style="color:#ffcb6b">$weiter</span>
+      <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$len</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; memcpy – n Bytes von src nach dst kopieren</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$memcpy</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$dst</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$src</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$n</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$dst</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$src</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+    <span style="color:#82aaff">memory.copy</span>         <span style="color:#546e7a">;; Eingebaute Bulk-Memory Instruktion!</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"set_int"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$set_int</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"get_int"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$get_int</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"strlen"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$strlen</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-sp1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('sp1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>JavaScript-Interop
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="javascript-interop">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    JavaScript-Interop
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; Wasm und JavaScript kommunizieren über:</span>
+<span style="color:#546e7a">;; 1. Funktionsaufrufe (Import/Export)</span>
+<span style="color:#546e7a">;; 2. Gemeinsamer Speicher (Memory)</span>
+<span style="color:#546e7a">;; 3. Globals</span>
+
+<span style="color:#546e7a">;; ── WAT SEITE ────────────────────────────────────────────────────</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#546e7a">;; JS-Funktion importieren</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"env"</span> <span style="color:#c3e88d">"js_log"</span>     <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$js_log</span>     <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">i32</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"env"</span> <span style="color:#c3e88d">"js_random"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$js_random</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"env"</span> <span style="color:#c3e88d">"speicher"</span>   <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">global</span> <span style="color:#ffcb6b">$offset</span> <span style="color:#4ec9b0">i32</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$wasm_berechne</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#82aaff">f64.add</span>
+    <span style="color:#82aaff">f64.sqrt</span>             <span style="color:#546e7a">;; sqrt(a + b)</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"berechne"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$wasm_berechne</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; ── JAVASCRIPT SEITE ─────────────────────────────────────────────</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; const speicher = new WebAssembly.Memory({ initial: 1 });</span>
+<span style="color:#546e7a">;; const bytes = new Uint8Array(speicher.buffer);</span>
+<span style="color:#546e7a">;; const ints  = new Int32Array(speicher.buffer);</span>
+<span style="color:#546e7a">;; const floats = new Float64Array(speicher.buffer);</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; const imports = {</span>
+<span style="color:#546e7a">;;   env: {</span>
+<span style="color:#546e7a">;;     js_log: (ptr, len) =&gt; {</span>
+<span style="color:#546e7a">;;       const text = new TextDecoder().decode(bytes.slice(ptr, ptr + len));</span>
+<span style="color:#546e7a">;;       console.log(text);</span>
+<span style="color:#546e7a">;;     },</span>
+<span style="color:#546e7a">;;     js_random: () =&gt; Math.random(),</span>
+<span style="color:#546e7a">;;     speicher,</span>
+<span style="color:#546e7a">;;   }</span>
+<span style="color:#546e7a">;; };</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; const { instance } = await WebAssembly.instantiateStreaming(</span>
+<span style="color:#546e7a">;;   fetch("modul.wasm"), imports</span>
+<span style="color:#546e7a">;; );</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; ;; Wasm-Funktion aufrufen:</span>
+<span style="color:#546e7a">;; const ergebnis = instance.exports.berechne(3.0, 4.0);</span>
+<span style="color:#546e7a">;; console.log(ergebnis);  ;; sqrt(7) ≈ 2.645</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; ;; In Speicher schreiben (String):</span>
+<span style="color:#546e7a">;; const encoder = new TextEncoder();</span>
+<span style="color:#546e7a">;; const encoded = encoder.encode("Hallo!");</span>
+<span style="color:#546e7a">;; bytes.set(encoded, 0);  ;; Ab Offset 0</span>
+
+<span style="color:#546e7a">;; ── WASI – Wasm System Interface ─────────────────────────────────</span>
+<span style="color:#546e7a">;; WASI ermöglicht Dateisystem, Netzwerk, etc. in standalone Runtimes</span>
+
+<span style="color:#546e7a">;; (import "wasi_snapshot_preview1" "fd_write"</span>
+<span style="color:#546e7a">;;   (func $fd_write (param i32 i32 i32 i32) (result i32)))</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; Dann: wasmtime --wasi modul.wasm</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-praxis" class="tp">
+
+<div class="ac open" id="ac-pr0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>Wasm aus anderen Sprachen
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="wasm aus anderen sprachen">
+  <div style="color:#654ff0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Wasm aus anderen Sprachen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; In der Praxis schreibt man WAT selten von Hand.</span>
+<span style="color:#546e7a">;; Man kompiliert von höheren Sprachen nach Wasm.</span>
+
+<span style="color:#546e7a">;; ── RUST → WASM ──────────────────────────────────────────────────</span>
+<span style="color:#546e7a">;; Cargo.toml:</span>
+<span style="color:#546e7a">;; [lib]</span>
+<span style="color:#546e7a">;; crate-type = ["cdylib"]</span>
+<span style="color:#546e7a">;; [dependencies]</span>
+<span style="color:#546e7a">;; wasm-bindgen = "0.2"</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; src/lib.rs:</span>
+<span style="color:#546e7a">;; use wasm_bindgen::prelude::*;</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; #[wasm_bindgen]</span>
+<span style="color:#546e7a">;; pub fn addiere(a: i32, b: i32) -&gt; i32 { a + b }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; #[wasm_bindgen]</span>
+<span style="color:#546e7a">;; pub fn fibonacci(n: u32) -&gt; u32 { ... }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; Bauen:</span>
+<span style="color:#546e7a">;; wasm-pack build --target web</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; In HTML nutzen:</span>
+<span style="color:#546e7a">;; import init, { addiere } from './pkg/mein_crate.js';</span>
+<span style="color:#546e7a">;; await init();</span>
+<span style="color:#546e7a">;; console.log(addiere(3, 4));  // 7</span>
+
+<span style="color:#546e7a">;; ── C / C++ → WASM (Emscripten) ──────────────────────────────────</span>
+<span style="color:#546e7a">;; emcc main.c -o main.html -s WASM=1</span>
+<span style="color:#546e7a">;; emcc lib.c -o lib.js -s EXPORTED_FUNCTIONS='["_addiere"]'</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; #include &lt;emscripten.h&gt;</span>
+<span style="color:#546e7a">;; EMSCRIPTEN_KEEPALIVE int addiere(int a, int b) { return a+b; }</span>
+
+<span style="color:#546e7a">;; ── ZIG → WASM ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">;; const std = @import("std");</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; export fn addiere(a: i32, b: i32) i32 { return a + b; }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; Bauen:</span>
+<span style="color:#546e7a">;; zig build-lib main.zig -target wasm32-freestanding -dynamic</span>
+
+<span style="color:#546e7a">;; ── ASSEMBLYSCRIPT → WASM (TypeScript-ähnlich) ───────────────────</span>
+<span style="color:#546e7a">;; export function addiere(a: i32, b: i32): i32 {</span>
+<span style="color:#546e7a">;;   return a + b;</span>
+<span style="color:#546e7a">;; }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; Bauen: npx asc assembly/index.ts -o build/release.wasm</span>
+
+<span style="color:#546e7a">;; ── WASM-TOOLS ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">;; wasm-pack        – Rust → Wasm + JS-Bindings</span>
+<span style="color:#546e7a">;; Emscripten       – C/C++ → Wasm</span>
+<span style="color:#546e7a">;; wat2wasm         – WAT → Wasm (Teil von wabt)</span>
+<span style="color:#546e7a">;; wasm2wat         – Wasm → WAT (Dekompilieren!)</span>
+<span style="color:#546e7a">;; wasm-opt         – Wasm optimieren (Binaryen)</span>
+<span style="color:#546e7a">;; wasmtime         – Standalone Wasm-Runtime (Rust)</span>
+<span style="color:#546e7a">;; wasmer           – Alternative Runtime</span>
+<span style="color:#546e7a">;; wazero           – Go-basierte Runtime</span>
+
+<span style="color:#546e7a">;; WASM BINÄR UNTERSUCHEN:</span>
+<span style="color:#546e7a">;; wasm2wat modul.wasm         ;; Dekompilieren</span>
+<span style="color:#546e7a">;; wasm-objdump -x modul.wasm  ;; Header anzeigen</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>WebAssembly JS API
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Instruktion / API</th><th>Beschreibung</th><th>Beispiel / Signatur</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="webassembly.compile(buffer)" data-d="modul aus arraybuffer kompilieren">
+      <td style="width:230px"><code style="color:#654ff0">WebAssembly.compile(buffer)</code></td>
+      <td style="color:#6c7a8e">Modul aus ArrayBuffer kompilieren</td>
+      <td style="color:#c3e88d;font-size:11px">returns Promise&lt;Module&gt;</td>
+    </tr>
+    <tr class="cr" data-m="webassembly.instantiate(src, imports)" data-d="kompilieren + instanziieren">
+      <td style="width:230px"><code style="color:#654ff0">WebAssembly.instantiate(src, imports)</code></td>
+      <td style="color:#6c7a8e">Kompilieren + Instanziieren</td>
+      <td style="color:#c3e88d;font-size:11px">returns {module, instance}</td>
+    </tr>
+    <tr class="cr" data-m="webassembly.instantiatestreaming(fetch, imports)" data-d="streamed instantiieren">
+      <td style="width:230px"><code style="color:#654ff0">WebAssembly.instantiateStreaming(fetch, imports)</code></td>
+      <td style="color:#6c7a8e">Streamed instantiieren</td>
+      <td style="color:#c3e88d;font-size:11px">Schnellster Weg!</td>
+    </tr>
+    <tr class="cr" data-m="webassembly.validate(buffer)" data-d="validieren ohne ausführen">
+      <td style="width:230px"><code style="color:#654ff0">WebAssembly.validate(buffer)</code></td>
+      <td style="color:#6c7a8e">Validieren ohne Ausführen</td>
+      <td style="color:#c3e88d;font-size:11px">returns bool</td>
+    </tr>
+    <tr class="cr" data-m="new webassembly.module(buffer)" data-d="synchron kompilieren">
+      <td style="width:230px"><code style="color:#654ff0">new WebAssembly.Module(buffer)</code></td>
+      <td style="color:#6c7a8e">Synchron kompilieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="new webassembly.instance(module, imports)" data-d="synchron instanziieren">
+      <td style="width:230px"><code style="color:#654ff0">new WebAssembly.Instance(module, imports)</code></td>
+      <td style="color:#6c7a8e">Synchron instanziieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="new webassembly.memory({initial})" data-d="neuen speicher erstellen">
+      <td style="width:230px"><code style="color:#654ff0">new WebAssembly.Memory({initial})</code></td>
+      <td style="color:#6c7a8e">Neuen Speicher erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">{initial: 1, maximum: 10}</td>
+    </tr>
+    <tr class="cr" data-m="new webassembly.table({initial, element})" data-d="neue tabelle">
+      <td style="width:230px"><code style="color:#654ff0">new WebAssembly.Table({initial, element})</code></td>
+      <td style="color:#6c7a8e">Neue Tabelle</td>
+      <td style="color:#c3e88d;font-size:11px">{initial: 4, element: "anyfunc"}</td>
+    </tr>
+    <tr class="cr" data-m="new webassembly.global({value, mutable})" data-d="neue globale variable">
+      <td style="width:230px"><code style="color:#654ff0">new WebAssembly.Global({value, mutable})</code></td>
+      <td style="color:#6c7a8e">Neue globale Variable</td>
+      <td style="color:#c3e88d;font-size:11px">{value: "i32", mutable: true}</td>
+    </tr>
+    <tr class="cr" data-m="memory.buffer" data-d="arraybuffer des speichers">
+      <td style="width:230px"><code style="color:#654ff0">memory.buffer</code></td>
+      <td style="color:#6c7a8e">ArrayBuffer des Speichers</td>
+      <td style="color:#c3e88d;font-size:11px">new Uint8Array(memory.buffer)</td>
+    </tr>
+    <tr class="cr" data-m="memory.grow(pages)" data-d="speicher erweitern">
+      <td style="width:230px"><code style="color:#654ff0">memory.grow(pages)</code></td>
+      <td style="color:#6c7a8e">Speicher erweitern</td>
+      <td style="color:#c3e88d;font-size:11px">memory.grow(1) → alte Größe</td>
+    </tr>
+    <tr class="cr" data-m="instance.exports.name" data-d="exportierte funktion aufrufen">
+      <td style="width:230px"><code style="color:#654ff0">instance.exports.name</code></td>
+      <td style="color:#6c7a8e">Exportierte Funktion aufrufen</td>
+      <td style="color:#c3e88d;font-size:11px">instance.exports.add(1, 2)</td>
+    </tr>
+    <tr class="cr" data-m="module.exports" data-d="exportliste eines moduls">
+      <td style="width:230px"><code style="color:#654ff0">module.exports</code></td>
+      <td style="color:#6c7a8e">Exportliste eines Moduls</td>
+      <td style="color:#c3e88d;font-size:11px">WebAssembly.Module.exports(mod)</td>
+    </tr>
+    <tr class="cr" data-m="module.imports" data-d="importliste eines moduls">
+      <td style="width:230px"><code style="color:#654ff0">module.imports</code></td>
+      <td style="color:#6c7a8e">Importliste eines Moduls</td>
+      <td style="color:#c3e88d;font-size:11px">WebAssembly.Module.imports(mod)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Nützliche WAT-Patterns
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Instruktion / API</th><th>Beschreibung</th><th>Beispiel / Signatur</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="(i32.const 0) (i32.const 1)" data-d="boolean false / true">
+      <td style="width:230px"><code style="color:#4fc3f7">(i32.const 0) (i32.const 1)</code></td>
+      <td style="color:#6c7a8e">Boolean false / true</td>
+      <td style="color:#c3e88d;font-size:11px">Wasm hat kein bool – i32 0/1</td>
+    </tr>
+    <tr class="cr" data-m="i32.eqz" data-d="logisches not für i32">
+      <td style="width:230px"><code style="color:#4fc3f7">i32.eqz</code></td>
+      <td style="color:#6c7a8e">Logisches NOT für i32</td>
+      <td style="color:#c3e88d;font-size:11px">x == 0 → 0 oder 1</td>
+    </tr>
+    <tr class="cr" data-m="(i32.and (i32.const 1))" data-d="niedrigstes bit maskieren">
+      <td style="width:230px"><code style="color:#4fc3f7">(i32.and (i32.const 1))</code></td>
+      <td style="color:#6c7a8e">Niedrigstes Bit maskieren</td>
+      <td style="color:#c3e88d;font-size:11px">Gerade/Ungerade prüfen</td>
+    </tr>
+    <tr class="cr" data-m="local.tee $x" data-d="wert setzen und auf stack lassen">
+      <td style="width:230px"><code style="color:#4fc3f7">local.tee $x</code></td>
+      <td style="color:#6c7a8e">Wert setzen UND auf Stack lassen</td>
+      <td style="color:#c3e88d;font-size:11px">Kombiniert set + get</td>
+    </tr>
+    <tr class="cr" data-m="drop" data-d="obersten stack-wert verwerfen">
+      <td style="width:230px"><code style="color:#4fc3f7">drop</code></td>
+      <td style="color:#6c7a8e">Obersten Stack-Wert verwerfen</td>
+      <td style="color:#c3e88d;font-size:11px">Rückgabewert ignorieren</td>
+    </tr>
+    <tr class="cr" data-m="select" data-d="ternär-operator auf stack">
+      <td style="width:230px"><code style="color:#4fc3f7">select</code></td>
+      <td style="color:#6c7a8e">Ternär-Operator auf Stack</td>
+      <td style="color:#c3e88d;font-size:11px">[a b cond] → cond?a:b</td>
+    </tr>
+    <tr class="cr" data-m="unreachable" data-d="trap auslösen (wie panic)">
+      <td style="width:230px"><code style="color:#4fc3f7">unreachable</code></td>
+      <td style="color:#6c7a8e">Trap auslösen (wie panic)</td>
+      <td style="color:#c3e88d;font-size:11px">Niemals erreichbarer Pfad</td>
+    </tr>
+    <tr class="cr" data-m="nop" data-d="nichts tun">
+      <td style="width:230px"><code style="color:#4fc3f7">nop</code></td>
+      <td style="color:#6c7a8e">Nichts tun</td>
+      <td style="color:#c3e88d;font-size:11px">Platzhalter</td>
+    </tr>
+    <tr class="cr" data-m="(memory.copy)" data-d="bulk-memory kopieren (effizienter)">
+      <td style="width:230px"><code style="color:#4fc3f7">(memory.copy)</code></td>
+      <td style="color:#6c7a8e">Bulk-Memory kopieren (effizienter)</td>
+      <td style="color:#c3e88d;font-size:11px">Benötigt bulk-memory Feature</td>
+    </tr>
+    <tr class="cr" data-m="br_table $a $b $default" data-d="indirekter sprung (switch)">
+      <td style="width:230px"><code style="color:#4fc3f7">br_table $a $b $default</code></td>
+      <td style="color:#6c7a8e">Indirekter Sprung (switch)</td>
+      <td style="color:#c3e88d;font-size:11px">[idx] → springt zu $a, $b oder $default</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #654ff0;color:#654ff0;background:rgba(101,79,240,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Fibonacci &amp; Prüfsumme</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Wasm + JavaScript Integration</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">SIMD – Vektoroperationen</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; Vollständiges Wasm-Modul: Fibonacci + CRC32-Checksumme</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── FIBONACCI (iterativ) ──────────────────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$fib</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$n</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$t</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$i</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$a</span>       <span style="color:#546e7a">;; a = 0</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$b</span>       <span style="color:#546e7a">;; b = 1</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+    <span style="color:#82aaff">i32.eqz</span>
+    <span style="color:#c792ea">if</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+      <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">0</span>      <span style="color:#546e7a">;; fib(0) = 0</span>
+    <span style="color:#c792ea">else</span>
+      <span style="color:#c792ea">block</span> <span style="color:#ffcb6b">$fertig</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+        <span style="color:#c792ea">loop</span> <span style="color:#ffcb6b">$naechste</span>
+          <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+          <span style="color:#82aaff">local.tee</span> <span style="color:#ffcb6b">$t</span>    <span style="color:#546e7a">;; t = b (auch auf Stack für $fertig falls n==1)</span>
+          drop
+
+          <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+          <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+          <span style="color:#82aaff">i32.add</span>
+          <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$b</span>    <span style="color:#546e7a">;; b = a + b</span>
+
+          <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$t</span>
+          <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$a</span>    <span style="color:#546e7a">;; a = t (alter Wert von b)</span>
+
+          <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+          <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+          <span style="color:#82aaff">i32.add</span>
+          <span style="color:#82aaff">local.tee</span> <span style="color:#ffcb6b">$i</span>    <span style="color:#546e7a">;; i++</span>
+
+          <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$n</span>
+          <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+          <span style="color:#82aaff">i32.sub</span>
+          <span style="color:#82aaff">i32.lt_s</span>        <span style="color:#546e7a">;; i &lt; n-1?</span>
+          <span style="color:#c792ea">br_if</span> <span style="color:#ffcb6b">$naechste</span>
+        <span style="color:#c792ea">end</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>      <span style="color:#546e7a">;; Rückgabe</span>
+      <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── ARRAY-SUMME ──────────────────────────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$array_sum</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$len</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$i</span>   <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$sum</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+    <span style="color:#c792ea">block</span> <span style="color:#ffcb6b">$done</span>
+      <span style="color:#c792ea">loop</span> <span style="color:#ffcb6b">$again</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$len</span>
+        <span style="color:#82aaff">i32.ge_u</span>
+        <span style="color:#c792ea">br_if</span> <span style="color:#ffcb6b">$done</span>             <span style="color:#546e7a">;; i &gt;= len: fertig</span>
+
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$sum</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>          <span style="color:#546e7a">;; Basisadresse</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+        <span style="color:#82aaff">i32.mul</span>
+        <span style="color:#82aaff">i32.add</span>                 <span style="color:#546e7a">;; Offset: i * 4</span>
+        <span style="color:#82aaff">i32.load</span>                <span style="color:#546e7a">;; arr[i]</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$sum</span>          <span style="color:#546e7a">;; sum += arr[i]</span>
+
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$i</span>            <span style="color:#546e7a">;; i++</span>
+
+        <span style="color:#c792ea">br</span> <span style="color:#ffcb6b">$again</span>
+      <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$sum</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; ── MAXIMUM ──────────────────────────────────────────────────</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$array_max</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$len</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$i</span>   <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$max</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+
+    <span style="color:#546e7a">;; max = arr[0]</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>
+    <span style="color:#82aaff">i32.load</span>
+    <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$max</span>
+
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$i</span>
+
+    <span style="color:#c792ea">block</span> <span style="color:#ffcb6b">$done</span>
+      <span style="color:#c792ea">loop</span> <span style="color:#ffcb6b">$again</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$len</span>
+        <span style="color:#82aaff">i32.ge_u</span>
+        <span style="color:#c792ea">br_if</span> <span style="color:#ffcb6b">$done</span>
+
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+        <span style="color:#82aaff">i32.mul</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">i32.load</span>                <span style="color:#546e7a">;; arr[i]</span>
+        <span style="color:#82aaff">local.tee</span> <span style="color:#ffcb6b">$i</span>            <span style="color:#546e7a">;; Zwischenspeichern... warte, $i ist schon belegt!</span>
+        drop
+        <span style="color:#546e7a">;; Korrekter Code:</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$max</span>
+        <span style="color:#546e7a">;; (verwende select für max)</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+        <span style="color:#82aaff">i32.mul</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">i32.load</span>                <span style="color:#546e7a">;; arr[i]</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$max</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">4</span>
+        <span style="color:#82aaff">i32.mul</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">i32.load</span>
+        <span style="color:#82aaff">i32.gt_s</span>                <span style="color:#546e7a">;; arr[i] &gt; max?</span>
+        <span style="color:#c792ea">select</span>                  <span style="color:#546e7a">;; arr[i] &gt; max ? arr[i] : max</span>
+        <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$max</span>
+
+        <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#82aaff">i32.add</span>
+        <span style="color:#82aaff">local.set</span> <span style="color:#ffcb6b">$i</span>
+        <span style="color:#c792ea">br</span> <span style="color:#ffcb6b">$again</span>
+      <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$max</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"fib"</span>        <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$fib</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"array_sum"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$array_sum</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"array_max"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$array_max</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"mem"</span>        <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; Vollständiges Beispiel: Wasm-Modul + JS-Wrapper</span>
+
+<span style="color:#546e7a">;; ── WAT MODUL (rechner.wat) ────────────────────────────────────</span>
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#546e7a">;; JS-Funktionen importieren</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"console"</span> <span style="color:#c3e88d">"log_i32"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$log_i32</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"console"</span> <span style="color:#c3e88d">"log_f64"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$log_f64</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">import</span> <span style="color:#c3e88d">"env"</span>     <span style="color:#c3e88d">"memory"</span>  <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Globaler Zustand</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">global</span> <span style="color:#ffcb6b">$ergebnis</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">mut</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#82aaff">f64.const</span> <span style="color:#f78c6c">0</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Grundlegende Berechnungen</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$addiere</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#82aaff">f64.add</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$wurzel</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$x</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$x</span>
+    <span style="color:#82aaff">f64.sqrt</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Pythagorischer Abstand</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$pythagoras</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">f64</span><span style="color:#654ff0">)</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a</span>
+    <span style="color:#82aaff">f64.mul</span>           <span style="color:#546e7a">;; a²</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b</span>
+    <span style="color:#82aaff">f64.mul</span>           <span style="color:#546e7a">;; b²</span>
+
+    <span style="color:#82aaff">f64.add</span>           <span style="color:#546e7a">;; a² + b²</span>
+    <span style="color:#82aaff">f64.sqrt</span>          <span style="color:#546e7a">;; sqrt(a² + b²)</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; String in Speicher schreiben (für JS)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$schreibe_string</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$wert</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#546e7a">;; Konvertiere Zahl zu ASCII-Ziffern</span>
+    <span style="color:#546e7a">;; Vereinfacht: schreibe 1-stellige Zahl</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$ptr</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$wert</span>
+    <span style="color:#82aaff">i32.const</span> <span style="color:#f78c6c">48</span>      <span style="color:#546e7a">;; '0'</span>
+    <span style="color:#82aaff">i32.add</span>           <span style="color:#546e7a">;; ASCII-Zeichen</span>
+    <span style="color:#82aaff">i32.store8</span>        <span style="color:#546e7a">;; 1 Byte schreiben</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"addiere"</span>    <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$addiere</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"wurzel"</span>     <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$wurzel</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"pythagoras"</span> <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$pythagoras</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">export</span> <span style="color:#c3e88d">"ergebnis"</span>   <span style="color:#654ff0">(</span><span style="color:#c792ea">global</span> <span style="color:#ffcb6b">$ergebnis</span><span style="color:#654ff0">)</span><span style="color:#654ff0">)</span>
+<span style="color:#654ff0">)</span>
+
+<span style="color:#546e7a">;; ── JAVASCRIPT WRAPPER ─────────────────────────────────────────</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; // rechner.js</span>
+<span style="color:#546e7a">;; class WasmRechner {</span>
+<span style="color:#546e7a">;;   static async create() {</span>
+<span style="color:#546e7a">;;     const memory = new WebAssembly.Memory({ initial: 1 });</span>
+<span style="color:#546e7a">;;     const bytes  = new Uint8Array(memory.buffer);</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;;     const imports = {</span>
+<span style="color:#546e7a">;;       console: {</span>
+<span style="color:#546e7a">;;         log_i32: (n)   =&gt; console.log('i32:', n),</span>
+<span style="color:#546e7a">;;         log_f64: (n)   =&gt; console.log('f64:', n),</span>
+<span style="color:#546e7a">;;       },</span>
+<span style="color:#546e7a">;;       env: { memory }</span>
+<span style="color:#546e7a">;;     };</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;;     const { instance } = await WebAssembly.instantiateStreaming(</span>
+<span style="color:#546e7a">;;       fetch('rechner.wasm'), imports</span>
+<span style="color:#546e7a">;;     );</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;;     return new WasmRechner(instance, bytes);</span>
+<span style="color:#546e7a">;;   }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;;   constructor(instance, bytes) {</span>
+<span style="color:#546e7a">;;     this.wasm  = instance.exports;</span>
+<span style="color:#546e7a">;;     this.bytes = bytes;</span>
+<span style="color:#546e7a">;;   }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;;   addiere(a, b)    { return this.wasm.addiere(a, b); }</span>
+<span style="color:#546e7a">;;   wurzel(x)        { return this.wasm.wurzel(x); }</span>
+<span style="color:#546e7a">;;   pythagoras(a, b) { return this.wasm.pythagoras(a, b); }</span>
+<span style="color:#546e7a">;; }</span>
+<span style="color:#546e7a">;;</span>
+<span style="color:#546e7a">;; // Verwendung:</span>
+<span style="color:#546e7a">;; const rechner = await WasmRechner.create();</span>
+<span style="color:#546e7a">;; console.log(rechner.addiere(3.0, 4.0));      // 7</span>
+<span style="color:#546e7a">;; console.log(rechner.wurzel(144.0));           // 12</span>
+<span style="color:#546e7a">;; console.log(rechner.pythagoras(3.0, 4.0));   // 5</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">;; SIMD (v128) – 128-Bit Vektoroperationen</span>
+<span style="color:#546e7a">;; Macht 4x float32 oder 2x float64 GLEICHZEITIG!</span>
+
+<span style="color:#654ff0">(</span><span style="color:#c792ea">module</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">memory</span> <span style="color:#f78c6c">1</span><span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; 4 Float32-Werte addieren (SIMD vs. skalar)</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$simd_add_f32x4</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a_ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>   <span style="color:#546e7a">;; Zeiger auf 4 f32-Werte</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b_ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>   <span style="color:#546e7a">;; Zeiger auf 4 f32-Werte</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$c_ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>   <span style="color:#546e7a">;; Ausgabe-Zeiger</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a_ptr</span>
+    <span style="color:#82aaff">v128.load</span>           <span style="color:#546e7a">;; Lädt 4 f32 auf einmal in v128-Register</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b_ptr</span>
+    <span style="color:#82aaff">v128.load</span>
+
+    f32x4.add           <span style="color:#546e7a">;; Addiert alle 4 Paare gleichzeitig!</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$c_ptr</span>
+    <span style="color:#82aaff">v128.store</span>          <span style="color:#546e7a">;; Schreibt 4 Ergebnisse auf einmal</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Dot Product (Skalarprodukt) von zwei 4D-Vektoren</span>
+  <span style="color:#654ff0">(</span><span style="color:#c792ea">func</span> <span style="color:#ffcb6b">$dot_product_4d</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$a_ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">param</span> <span style="color:#ffcb6b">$b_ptr</span> <span style="color:#4ec9b0">i32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">result</span> <span style="color:#4ec9b0">f32</span><span style="color:#654ff0">)</span>
+    <span style="color:#654ff0">(</span><span style="color:#c792ea">local</span> <span style="color:#ffcb6b">$result</span> <span style="color:#4ec9b0">v128</span><span style="color:#654ff0">)</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$a_ptr</span>
+    <span style="color:#82aaff">v128.load</span>
+
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$b_ptr</span>
+    <span style="color:#82aaff">v128.load</span>
+
+    f32x4.mul           <span style="color:#546e7a">;; a[i] * b[i] für alle 4</span>
+
+    <span style="color:#546e7a">;; Summe der 4 Produkte</span>
+    <span style="color:#546e7a">;; (vereinfacht – normalerweise via f32x4.extract_lane + add)</span>
+    <span style="color:#82aaff">local.tee</span> <span style="color:#ffcb6b">$result</span>
+    drop
+    <span style="color:#546e7a">;; Eigenlich: reduce_add</span>
+    f32x4.extract_lane <span style="color:#f78c6c">0</span>
+    <span style="color:#82aaff">local.get</span> <span style="color:#ffcb6b">$result</span>
+    f32x4.extract_lane <span style="color:#f78c6c">1</span>
+    f32x4.add
+
+    <span style="color:#546e7a">;; ... (für alle 4 Lanes)</span>
+    <span style="color:#546e7a">;; In Praxis: Compiler macht das optimal</span>
+  <span style="color:#654ff0">)</span>
+
+  <span style="color:#546e7a">;; Nützliche SIMD-Instruktionen:</span>
+  <span style="color:#546e7a">;; v128.const       – SIMD-Konstante</span>
+  <span style="color:#546e7a">;; v128.load/store  – 128 Bit laden/schreiben</span>
+  <span style="color:#546e7a">;; i8x16.add/.sub/.mul  – 16x 8-Bit Integer</span>
+  <span style="color:#546e7a">;; i16x8.add/.sub/.mul  – 8x 16-Bit Integer</span>
+  <span style="color:#546e7a">;; i32x4.add/.sub/.mul  – 4x 32-Bit Integer</span>
+  <span style="color:#546e7a">;; f32x4.add/.mul/.sqrt – 4x float32</span>
+  <span style="color:#546e7a">;; f64x2.add/.mul/.sqrt – 2x float64</span>
+  <span style="color:#546e7a">;; i32x4.extract_lane n – Einzelnes Element heraus</span>
+  <span style="color:#546e7a">;; i32x4.replace_lane n – Einzelnes Element ersetzen</span>
+  <span style="color:#546e7a">;; i8x16.shuffle        – Elemente neu anordnen</span>
+<span style="color:#654ff0">)</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#654ff00e;border:1px solid #654ff044;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#654ff0">Schnellstart:</strong> <code style="color:#ffb347">sudo pacman -S wabt wasmtime</code><br>Online WAT ausprobieren: <a href="https://webassembly.github.io/wabt/demo/wat2wasm/" style="color:#d4a017">webassembly.github.io/wabt/demo/wat2wasm</a></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #654ff044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#654ff00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#654ff0">
+      <span style="display:inline-block;width:8px;height:8px;background:#654ff0;border-radius:50%;margin-right:2px"></span>⚙ Tools installieren
+    </span>
+    <span class="aa" style="color:#654ff0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#654ff0">wabt (wat2wasm etc.)</code></td><td style="color:#cdd6f4">github.com/WebAssembly/wabt</td><td style="color:#6c7a8e">sudo pacman -S wabt
+wat2wasm datei.wat -o datei.wasm
+wasm2wat datei.wasm</td></tr><tr><td style="width:240px"><code style="color:#654ff0">wasmtime</code></td><td style="color:#cdd6f4">wasmtime.dev</td><td style="color:#6c7a8e">curl https://wasmtime.dev/install.sh -sSf | bash
+wasmtime datei.wasm</td></tr><tr><td style="width:240px"><code style="color:#654ff0">wasmer</code></td><td style="color:#cdd6f4">wasmer.io</td><td style="color:#6c7a8e">curl https://get.wasmer.io -sSfL | sh
+wasmer datei.wasm</td></tr><tr><td style="width:240px"><code style="color:#654ff0">wasm-opt</code></td><td style="color:#cdd6f4">github.com/WebAssembly/binaryen</td><td style="color:#6c7a8e">sudo pacman -S binaryen
+wasm-opt -O3 datei.wasm -o opt.wasm</td></tr><tr><td style="width:240px"><code style="color:#654ff0">wasm-pack (Rust)</code></td><td style="color:#cdd6f4">rustwasm.github.io/wasm-pack</td><td style="color:#6c7a8e">cargo install wasm-pack
+wasm-pack build --target web</td></tr><tr><td style="width:240px"><code style="color:#654ff0">Node.js</code></td><td style="color:#cdd6f4">nodejs.org</td><td style="color:#6c7a8e">Node kann .wasm direkt laden:
+const fs = require("fs");
+const bytes = fs.readFileSync("f.wasm");
+const { instance } = await WebAssembly.instantiate(bytes);</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Werkzeugkette &amp; Workflow
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">wat2wasm f.wat -o f.wasm</code></td><td style="color:#cdd6f4">WAT → Wasm binary</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm2wat f.wasm -o f.wat</code></td><td style="color:#cdd6f4">Wasm → WAT (Dekompilieren)</td><td style="color:#6c7a8e">Auch fremde .wasm lesen!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm-objdump -x f.wasm</code></td><td style="color:#cdd6f4">Header &amp; Sektionen</td><td style="color:#6c7a8e">Imports, exports, Größen</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm-objdump -d f.wasm</code></td><td style="color:#cdd6f4">Disassemblieren</td><td style="color:#6c7a8e">Instruktions-Dump</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm-validate f.wasm</code></td><td style="color:#cdd6f4">Validieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm-opt -O3 f.wasm</code></td><td style="color:#cdd6f4">Optimieren</td><td style="color:#6c7a8e">-O2 sicher, -O3 aggressiv</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm-opt --strip-debug f.wasm</code></td><td style="color:#cdd6f4">Debug-Info entfernen</td><td style="color:#6c7a8e">Kleinere Datei</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasm-strip f.wasm</code></td><td style="color:#cdd6f4">Minimieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasmtime run f.wasm</code></td><td style="color:#cdd6f4">Standalone ausführen</td><td style="color:#6c7a8e">Ohne Browser!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasmtime run --wasi f.wasm</code></td><td style="color:#cdd6f4">Mit WASI (Dateisystem etc)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">wasmtime compile f.wasm</code></td><td style="color:#cdd6f4">AOT-Kompilieren</td><td style="color:#6c7a8e">Für schnelleres Starten</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Browser-Debugging
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">Chrome DevTools</code></td><td style="color:#cdd6f4">Sources Tab</td><td style="color:#6c7a8e">Wasm-Dateien werden als WAT angezeigt!
+Breakpoints möglich!</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Firefox DevTools</code></td><td style="color:#cdd6f4">Debugger Tab</td><td style="color:#6c7a8e">Wasm Debugger-Support</td></tr><tr><td style="width:240px"><code style="color:#c792ea">wasm-pack --dev</code></td><td style="color:#cdd6f4">Debug-Build</td><td style="color:#6c7a8e">Mit DWARF-Debug-Symbolen</td></tr><tr><td style="width:240px"><code style="color:#c792ea">console.log aus Wasm</code></td><td style="color:#cdd6f4">via Import</td><td style="color:#6c7a8e">(import "console" "log" (func $log (param i32)))</td></tr><tr><td style="width:240px"><code style="color:#c792ea">wasm-bindgen</code></td><td style="color:#cdd6f4">Rust ↔ JS Brücke</td><td style="color:#6c7a8e">Ermöglicht JS-Typen in Rust</td></tr><tr><td style="width:240px"><code style="color:#c792ea">wasminspect</code></td><td style="color:#cdd6f4">Interaktiver Debugger</td><td style="color:#6c7a8e">github.com/nokotan/wasminspect</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Lernressourcen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">MDN WebAssembly</code></td><td style="color:#cdd6f4">developer.mozilla.org</td><td style="color:#6c7a8e">Beste Einführung + API-Referenz</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">WebAssembly Spec</code></td><td style="color:#cdd6f4">webassembly.github.io/spec</td><td style="color:#6c7a8e">Offizieller Standard</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">WASM Explorer</code></td><td style="color:#cdd6f4">mbebenita.github.io/WasmExplorer</td><td style="color:#6c7a8e">C/Rust → Wasm → WAT im Browser</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Wasm by Example</code></td><td style="color:#cdd6f4">wasmbyexample.dev</td><td style="color:#6c7a8e">Praktische Beispiele</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Compiler Explorer</code></td><td style="color:#cdd6f4">godbolt.org</td><td style="color:#6c7a8e">C/Rust → Wasm live</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">wabt online</code></td><td style="color:#cdd6f4">webassembly.github.io/wabt/demo</td><td style="color:#6c7a8e">wat2wasm im Browser</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Awesome Wasm</code></td><td style="color:#cdd6f4">github.com/mbasso/awesome-wasm</td><td style="color:#6c7a8e">Kuratierte Tool-Liste</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Lin Clark Talks</code></td><td style="color:#cdd6f4">youtube.com</td><td style="color:#6c7a8e">"A Cartoon Intro to WebAssembly" – exzellent!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wasm-Ökosystem 2024
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">WASI</code></td><td style="color:#cdd6f4">Wasm System Interface</td><td style="color:#6c7a8e">Filesystem, Sockets, ... ohne Browser</td></tr><tr><td style="width:240px"><code style="color:#ffb347">WASIp2</code></td><td style="color:#cdd6f4">WASI Preview 2 (Component Model)</td><td style="color:#6c7a8e">Moderne WASI-Version</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Component Model</code></td><td style="color:#cdd6f4">Wasm Components</td><td style="color:#6c7a8e">Module mit sauberem Interface (IDL: WIT)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">WASM-GC</code></td><td style="color:#cdd6f4">Garbage Collection Proposal</td><td style="color:#6c7a8e">OCaml, Kotlin, Java → Wasm ohne GC selbst</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Threads</code></td><td style="color:#cdd6f4">Wasm Threads</td><td style="color:#6c7a8e">SharedArrayBuffer + Atomics</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Tail Calls</code></td><td style="color:#cdd6f4">Optimierte Tail Calls</td><td style="color:#6c7a8e">Wichtig für funktionale Sprachen</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Wasmtime 20+</code></td><td style="color:#cdd6f4">WASI Preview 2 ready</td><td style="color:#6c7a8e">Rust-basierte Runtime von Bytecode Alliance</td></tr><tr><td style="width:240px"><code style="color:#ffb347">WASM in Edge</code></td><td style="color:#cdd6f4">Fastly, Cloudflare Workers</td><td style="color:#6c7a8e">Serverless am Network Edge via Wasm</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#654ff0';
+      btn.style.color       = '#654ff0';
+      btn.style.background  = 'rgba(101,79,240,.08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

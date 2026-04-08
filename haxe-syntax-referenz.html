@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haxe Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #f68712;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(246,135,18,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#f68712">&#x2B22;</span>
+      <span style="color:#f68712">Haxe</span> Syntax
+    </div>
+    <div id="hdr-sub">Haxe 4.x · JS · Python · C++ · HashLink · Enum · Abstract Types · Makros · HaxeFlixel</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="typen">Typen & OOP</button>
+    <button class="tb" data-tab="funktional">Funktional & Pattern</button>
+    <button class="tb" data-tab="targets">Targets & Makros</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#f687120e;border:1px solid #f6871244;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#f68712">Haxe – EIN Code, viele Targets.</strong>
+  JS · Python · C++ · C# · Java · PHP · Lua · HashLink · JVM aus einer Codebase.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">trace()</code> = print &nbsp;·&nbsp;
+    String-Interpolation nur mit <code style="color:#c3e88d">'einfachen Quotes'</code> &nbsp;·&nbsp;
+    <code style="color:#c3e88d">10 / 3 = 3.333</code> (Float!) &nbsp;·&nbsp;
+    <code style="color:#c3e88d">abstract</code> = Compile-Zeit-Wrapper
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #f6871244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f687120e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f68712">
+      <span style="display:inline-block;width:8px;height:8px;background:#f68712;border-radius:50%;margin-right:2px"></span>Haxe – Ein Code, viele Targets
+    </span>
+    <span class="aa" style="color:#f68712;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="haxe – ein code, viele targets">
+  <div style="color:#f68712;font-weight:700;font-size:12px;margin-bottom:8px">
+    Haxe – Ein Code, viele Targets
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Haxe – von Nicolas Cannasse (2005)</span>
+<span style="color:#546e7a">// Kompiliert zu JS, Python, C++, C#, Java, PHP, Lua, HashLink, JVM</span>
+<span style="color:#546e7a">// Statisch typisiert, starke Inferenz, Multi-Paradigma</span>
+
+<span style="color:#546e7a">// Dateien: Klassen müssen dem Dateinamen entsprechen (wie Java)</span>
+<span style="color:#546e7a">// Main.hx enthält class Main</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Main</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> main() {
+        <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Hallo, Welt!"</span>);   <span style="color:#546e7a">// trace = print/console.log</span>
+
+        <span style="color:#546e7a">// Kompilieren:</span>
+        <span style="color:#546e7a">// haxe --main Main --js out.js</span>
+        <span style="color:#546e7a">// haxe --main Main --python out.py</span>
+        <span style="color:#546e7a">// haxe --main Main --cpp bin/</span>
+        <span style="color:#546e7a">// haxe --main Main --cs bin/</span>
+        <span style="color:#546e7a">// haxe --main Main --hl out.hl  (HashLink, schnellste native Option)</span>
+    }
+}
+
+<span style="color:#546e7a">// WARUM HAXE?</span>
+<span style="color:#546e7a">// 1. EIN Codebase für Web (JS), Desktop (C++/HL), Mobile, Server</span>
+<span style="color:#546e7a">// 2. Stärker typisiert als TypeScript</span>
+<span style="color:#546e7a">// 3. Enum + Pattern Matching (wie Rust/OCaml)</span>
+<span style="color:#546e7a">// 4. Compile-Zeit Makros</span>
+<span style="color:#546e7a">// 5. Abstract Types (Unit-Safety, Operator-Overloading)</span>
+<span style="color:#546e7a">// 6. Exzellente Performance (kompiliert zu nativem Code oder JS)</span>
+<span style="color:#546e7a">// 7. Sehr beliebt in Spieleentwicklung (HaxeFlixel, Heaps.io)</span>
+
+<span style="color:#546e7a">// HXML – Build-Dateien (wie Makefile für Haxe)</span>
+<span style="color:#546e7a">// build.hxml:</span>
+<span style="color:#546e7a">// --main Main</span>
+<span style="color:#546e7a">// --js out.js</span>
+<span style="color:#546e7a">// -lib haxeflixel</span>
+<span style="color:#546e7a">// Dann: haxe build.hxml</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Int</code></td>
+      <td style="color:#c3e88d;font-size:11px">-2147483648 .. 2147483647  |  42</td>
+      <td style="color:#6c7a8e">32-Bit Integer. target-abhängig</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Float</code></td>
+      <td style="color:#c3e88d;font-size:11px">3.14  |  1.5e10  |  Math.PI</td>
+      <td style="color:#6c7a8e">Double precision (64-Bit)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Boolean</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">String</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  'Hallo'  |  '$name'</td>
+      <td style="color:#6c7a8e">Unicode-String. String-Interpolation mit ''</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Null&lt;T&gt;</code></td>
+      <td style="color:#c3e88d;font-size:11px">null  |  Null&lt;Int&gt;</td>
+      <td style="color:#6c7a8e">Nullable Wrapper. Nur auf bestimmten Targets nullable!</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Array&lt;T&gt;</code></td>
+      <td style="color:#c3e88d;font-size:11px">[1, 2, 3]  |  new Array&lt;Int&gt;()</td>
+      <td style="color:#6c7a8e">Dynamisches Array</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Map&lt;K,V&gt;</code></td>
+      <td style="color:#c3e88d;font-size:11px">["key" =&gt; 42]  |  new Map()</td>
+      <td style="color:#6c7a8e">Hash-Map. StringMap&lt;V&gt; für String-Keys</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Dynamic</code></td>
+      <td style="color:#c3e88d;font-size:11px">var x:Dynamic = 42; x = "Hallo";</td>
+      <td style="color:#6c7a8e">Beliebiger Typ (dynamisch, vermeiden!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Any</code></td>
+      <td style="color:#c3e88d;font-size:11px">var x:Any = 42;</td>
+      <td style="color:#6c7a8e">Wie Dynamic aber sicherer</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Void</code></td>
+      <td style="color:#c3e88d;font-size:11px">function f():Void {}</td>
+      <td style="color:#6c7a8e">Kein Rückgabewert</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Enum&lt;T&gt;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Option&lt;T&gt;  |  Either&lt;A,B&gt;</td>
+      <td style="color:#6c7a8e">Algebraische Datentypen</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">T-&gt;U</code></td>
+      <td style="color:#c3e88d;font-size:11px">Int-&gt;String  |  (Int,Int)-&gt;Bool</td>
+      <td style="color:#6c7a8e">Funktionstyp (Pfeilnotation)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">{ f:Int }</code></td>
+      <td style="color:#c3e88d;font-size:11px">{ name:String, alter:Int }</td>
+      <td style="color:#6c7a8e">Struktureller Typ (Anonymous Structure)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Variablen &amp; Grundoperationen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen &amp; grundoperationen">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen &amp; Grundoperationen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Variablen</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> main() {
+        <span style="color:#546e7a">// var – veränderlich (Typ inferiert!)</span>
+        <span style="color:#c792ea">var</span> x = <span style="color:#f78c6c">42</span>;
+        <span style="color:#c792ea">var</span> name = <span style="color:#c3e88d">"Alice"</span>;
+        <span style="color:#c792ea">var</span> aktiv = <span style="color:#c792ea">true</span>;
+        <span style="color:#c792ea">var</span> pi = <span style="color:#f78c6c">3.14159</span>;
+
+        <span style="color:#546e7a">// Expliziter Typ</span>
+        <span style="color:#c792ea">var</span> n:<span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">100</span>;
+        <span style="color:#c792ea">var</span> msg:<span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"Hallo"</span>;
+
+        <span style="color:#546e7a">// final – unveränderlich</span>
+        <span style="color:#c792ea">final</span> <span style="color:#4ec9b0">MAX</span> = <span style="color:#f78c6c">1000</span>;
+        <span style="color:#c792ea">final</span> <span style="color:#4ec9b0">GRUSS</span> = <span style="color:#c3e88d">"Hallo, Welt!"</span>;
+
+        <span style="color:#546e7a">// Mehrfach-Zuweisung</span>
+        <span style="color:#c792ea">var</span> a = <span style="color:#f78c6c">1</span>, b = <span style="color:#f78c6c">2</span>, c = <span style="color:#f78c6c">3</span>;
+
+        <span style="color:#546e7a">// String-Interpolation (nur mit einfachen Anführungszeichen!)</span>
+        <span style="color:#c792ea">var</span> begruessung = <span style="color:#c3e88d">'Hallo, $name! Du bist ${x + 1} Jahre alt.'</span>;
+        <span style="color:#c792ea">trace</span>(begruessung);
+
+        <span style="color:#546e7a">// Multiline String</span>
+        <span style="color:#c792ea">var</span> text = <span style="color:#c3e88d">"Zeile 1</span>
+<span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">2</span><span style="color:#c3e88d">";</span>
+
+        <span style="color:#546e7a">// Arithmetik</span>
+        <span style="color:#c792ea">var</span> summe = <span style="color:#f78c6c">10</span> + <span style="color:#f78c6c">3</span>;      <span style="color:#546e7a">// 13</span>
+        <span style="color:#c792ea">var</span> diff  = <span style="color:#f78c6c">10</span> - <span style="color:#f78c6c">3</span>;      <span style="color:#546e7a">// 7</span>
+        <span style="color:#c792ea">var</span> prod  = <span style="color:#f78c6c">10</span> * <span style="color:#f78c6c">3</span>;      <span style="color:#546e7a">// 30</span>
+        <span style="color:#c792ea">var</span> quot  = <span style="color:#f78c6c">10</span> / <span style="color:#f78c6c">3</span>;      <span style="color:#546e7a">// 3.333... (IMMER Float!)</span>
+        <span style="color:#c792ea">var</span> div   = <span style="color:#4ec9b0">Std</span>.int(<span style="color:#f78c6c">10</span> / <span style="color:#f78c6c">3</span>); <span style="color:#546e7a">// 3 (Integer-Division)</span>
+        <span style="color:#c792ea">var</span> rest  = <span style="color:#f78c6c">10</span> % <span style="color:#f78c6c">3</span>;      <span style="color:#546e7a">// 1</span>
+
+        <span style="color:#546e7a">// Vergleich</span>
+        <span style="color:#c792ea">trace</span>(<span style="color:#f78c6c">1</span> == <span style="color:#f78c6c">1</span>);    <span style="color:#546e7a">// true</span>
+        <span style="color:#c792ea">trace</span>(<span style="color:#f78c6c">1</span> != <span style="color:#f78c6c">2</span>);    <span style="color:#546e7a">// true</span>
+        <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"a"</span> == <span style="color:#c3e88d">"a"</span>); <span style="color:#546e7a">// true (Wertvergleich!)</span>
+
+        <span style="color:#546e7a">// Null-Handling</span>
+        <span style="color:#c792ea">var</span> opt:<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">String</span>&gt; = <span style="color:#c792ea">null</span>;
+        <span style="color:#c792ea">if</span> (opt != <span style="color:#c792ea">null</span>) <span style="color:#c792ea">trace</span>(opt.length);
+
+        <span style="color:#546e7a">// Typ-Konvertierung</span>
+        <span style="color:#c792ea">var</span> s = <span style="color:#4ec9b0">Std</span>.string(<span style="color:#f78c6c">42</span>);        <span style="color:#546e7a">// "42"</span>
+        <span style="color:#c792ea">var</span> i = <span style="color:#4ec9b0">Std</span>.parseInt(<span style="color:#c3e88d">"42"</span>);    <span style="color:#546e7a">// Null&lt;Int&gt;!</span>
+        <span style="color:#c792ea">var</span> f = <span style="color:#4ec9b0">Std</span>.parseFloat(<span style="color:#c3e88d">"3.14"</span>); <span style="color:#546e7a">// Null&lt;Float&gt;!</span>
+        <span style="color:#c792ea">var</span> i2 = <span style="color:#4ec9b0">Std</span>.int(<span style="color:#f78c6c">3.7</span>);        <span style="color:#546e7a">// 3 (truncate)</span>
+    }
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-typen" class="tp">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #f6871244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f687120e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f68712">
+      <span style="display:inline-block;width:8px;height:8px;background:#f68712;border-radius:50%;margin-right:2px"></span>Klassen &amp; Interfaces
+    </span>
+    <span class="aa" style="color:#f68712;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="klassen &amp; interfaces">
+  <div style="color:#f68712;font-weight:700;font-size:12px;margin-bottom:8px">
+    Klassen &amp; Interfaces
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── KLASSE ───────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Person</span> {
+    <span style="color:#546e7a">// Felder</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> name:<span style="color:#4ec9b0">String</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> alter:<span style="color:#4ec9b0">Int</span>;
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> _email:<span style="color:#4ec9b0">String</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">var</span> anzahl:<span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">0</span>;
+
+    <span style="color:#546e7a">// Computed Property (get/set)</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> istErwachsen(get, never):<span style="color:#4ec9b0">Bool</span>;
+    <span style="color:#c792ea">function</span> get_istErwachsen():<span style="color:#4ec9b0">Bool</span> <span style="color:#c792ea">return</span> alter &gt;= <span style="color:#f78c6c">18</span>;
+
+    <span style="color:#546e7a">// Read-write property</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> email(get, set):<span style="color:#4ec9b0">String</span>;
+    <span style="color:#c792ea">function</span> get_email():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> _email;
+    <span style="color:#c792ea">function</span> set_email(v:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">if</span> (v.indexOf(<span style="color:#c3e88d">"@"</span>) &lt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#c3e88d">"Ungültige E-Mail!"</span>;
+        <span style="color:#c792ea">return</span> _email = v;
+    }
+
+    <span style="color:#546e7a">// Konstruktor</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(name:<span style="color:#4ec9b0">String</span>, alter:<span style="color:#4ec9b0">Int</span>, email:<span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">""</span>) {
+        <span style="color:#c792ea">this</span>.name = name;
+        <span style="color:#c792ea">this</span>.alter = alter;
+        <span style="color:#c792ea">this</span>._email = email;
+        anzahl++;
+    }
+
+    <span style="color:#546e7a">// Methode</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> vorstellen():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'Ich bin $name, $alter Jahre alt.'</span>;
+    }
+
+    <span style="color:#546e7a">// Static Methode</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> erstelle(name:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Person</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(name, <span style="color:#f78c6c">0</span>);
+    }
+
+    <span style="color:#546e7a">// toString – automatisch bei trace()</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'Person($name, $alter)'</span>;
+    }
+}
+
+<span style="color:#546e7a">// ── VERERBUNG ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Student</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Person</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> studiengang:<span style="color:#4ec9b0">String</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(name:<span style="color:#4ec9b0">String</span>, alter:<span style="color:#4ec9b0">Int</span>, studiengang:<span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">super</span>(name, alter);
+        <span style="color:#c792ea">this</span>.studiengang = studiengang;
+    }
+
+    <span style="color:#c792ea">override</span> <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> vorstellen():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">super</span>.vorstellen() + <span style="color:#c3e88d">', studiert $studiengang'</span>;
+    }
+}
+
+<span style="color:#546e7a">// ── INTERFACE ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Serialisierbar</span> {
+    <span style="color:#c792ea">function</span> toJSON():<span style="color:#4ec9b0">String</span>;
+    <span style="color:#c792ea">function</span> fromJSON(json:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Void</span>;
+}
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Vergleichbar</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">function</span> vergleicheMit(other:<span style="color:#4ec9b0">T</span>):<span style="color:#4ec9b0">Int</span>;
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Produkt</span> <span style="color:#c792ea">implements</span> <span style="color:#4ec9b0">Serialisierbar</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> id:<span style="color:#4ec9b0">Int</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> name:<span style="color:#4ec9b0">String</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(id:<span style="color:#4ec9b0">Int</span>, name:<span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">this</span>.id = id; <span style="color:#c792ea">this</span>.name = name;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toJSON():<span style="color:#4ec9b0">String</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'{"id":$id,"name":"$name"}'</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> fromJSON(json:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Void</span>
+        <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"TODO: parsen"</span>);
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Enum – algebraische Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="enum – algebraische datentypen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Enum – algebraische Datentypen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Haxe Enums sind SEHR mächtig – wie Rust/OCaml!</span>
+
+<span style="color:#546e7a">// ── EINFACHER ENUM ────────────────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Farbe</span> {
+    <span style="color:#4ec9b0">Rot</span>;
+    <span style="color:#4ec9b0">Gruen</span>;
+    <span style="color:#4ec9b0">Blau</span>;
+}
+
+<span style="color:#546e7a">// ── ENUM MIT PARAMETERN ───────────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Form</span> {
+    <span style="color:#4ec9b0">Kreis</span>(radius:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#4ec9b0">Rechteck</span>(breite:<span style="color:#4ec9b0">Float</span>, hoehe:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#4ec9b0">Dreieck</span>(a:<span style="color:#4ec9b0">Float</span>, b:<span style="color:#4ec9b0">Float</span>, c:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#4ec9b0">Punkt</span>;
+}
+
+<span style="color:#c792ea">function</span> berechneFlaeche(f:<span style="color:#4ec9b0">Form</span>):<span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">switch</span> f {
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Kreis</span>(r): <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * r * r;
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Rechteck</span>(b, h): b * h;
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Dreieck</span>(a, b, c):
+            <span style="color:#c792ea">var</span> s = (a + b + c) / <span style="color:#f78c6c">2</span>;
+            <span style="color:#4ec9b0">Math</span>.sqrt(s * (s-a) * (s-b) * (s-c));
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Punkt</span>: <span style="color:#f78c6c">0.0</span>;
+    }
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">var</span> k = <span style="color:#4ec9b0">Form</span>.<span style="color:#4ec9b0">Kreis</span>(<span style="color:#f78c6c">5.0</span>);
+<span style="color:#c792ea">trace</span>(berechneFlaeche(k));  <span style="color:#546e7a">// 78.539...</span>
+
+<span style="color:#546e7a">// ── OPTION UND RESULT PATTERN ─────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#4ec9b0">Some</span>(value:<span style="color:#4ec9b0">T</span>);
+    <span style="color:#4ec9b0">None</span>;
+}
+
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">E</span>&gt; {
+    <span style="color:#4ec9b0">Ok</span>(value:<span style="color:#4ec9b0">T</span>);
+    <span style="color:#4ec9b0">Err</span>(error:<span style="color:#4ec9b0">E</span>);
+}
+
+<span style="color:#546e7a">// ── ENUM ALS BITMAP ───────────────────────────────────────────────</span>
+<span style="color:#ff9800">@:enum</span> <span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Berechtigung</span>(<span style="color:#4ec9b0">Int</span>) from <span style="color:#4ec9b0">Int</span> to <span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Lesen</span>    = <span style="color:#f78c6c">1</span>;
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Schreiben</span> = <span style="color:#f78c6c">2</span>;
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Ausfuehren</span> = <span style="color:#f78c6c">4</span>;
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Alle</span>     = <span style="color:#f78c6c">7</span>;
+}
+
+<span style="color:#546e7a">// ── PATTERN MATCHING MIT SWITCH ───────────────────────────────────</span>
+<span style="color:#c792ea">var</span> beschreibung = <span style="color:#c792ea">switch</span> k {
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Kreis</span>(r) <span style="color:#c792ea">if</span> r &gt; <span style="color:#f78c6c">10</span>: <span style="color:#c3e88d">"Großer Kreis"</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Kreis</span>(r): <span style="color:#c3e88d">'Kreis mit r=$r'</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Rechteck</span>(b, h) <span style="color:#c792ea">if</span> b == h: <span style="color:#c3e88d">"Quadrat"</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Rechteck</span>(b, h): <span style="color:#c3e88d">'Rechteck ${b}x$h'</span>;
+    <span style="color:#c792ea">case</span> _: <span style="color:#c3e88d">"Andere Form"</span>;
+};
+
+<span style="color:#546e7a">// Switch auf Typen</span>
+<span style="color:#c792ea">function</span> verarbeite(x:<span style="color:#4ec9b0">Dynamic</span>):<span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">switch</span> (<span style="color:#4ec9b0">Type</span>.typeof(x)) {
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">TInt</span>: <span style="color:#c3e88d">"Integer: "</span> + x;
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">TFloat</span>: <span style="color:#c3e88d">"Float: "</span> + x;
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">TBool</span>: <span style="color:#c3e88d">"Bool: "</span> + x;
+        <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">TClass</span>(<span style="color:#4ec9b0">String</span>): <span style="color:#c3e88d">"String: "</span> + x;
+        <span style="color:#c792ea">case</span> _: <span style="color:#c3e88d">"Anderer Typ"</span>;
+    }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Abstract Types – Haxes Superpower
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="abstract types – haxes superpower">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Abstract Types – Haxes Superpower
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Abstract Types sind Haxes einzigartigstes Feature!</span>
+<span style="color:#546e7a">// Compile-Zeit-Wrapper um bestehende Typen</span>
+<span style="color:#546e7a">// Kein Runtime-Overhead!</span>
+
+<span style="color:#546e7a">// ── EINFACHER ABSTRACT ────────────────────────────────────────────</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Meter</span>(<span style="color:#4ec9b0">Float</span>) {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Float</span>) <span style="color:#c792ea">this</span> = v;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> toFloat():<span style="color:#4ec9b0">Float</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+
+    <span style="color:#546e7a">// Operator-Überladung!</span>
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> + <span style="color:#4ec9b0">B</span>)
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> plus(other:<span style="color:#4ec9b0">Meter</span>):<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Meter</span>(<span style="color:#c792ea">this</span> + other.toFloat());
+
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> * <span style="color:#4ec9b0">B</span>)
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> mal(skalar:<span style="color:#4ec9b0">Float</span>):<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Meter</span>(<span style="color:#c792ea">this</span> * skalar);
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this m'</span>;
+}
+
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Kilogramm</span>(<span style="color:#4ec9b0">Float</span>) {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Float</span>) <span style="color:#c792ea">this</span> = v;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this kg'</span>;
+}
+
+<span style="color:#546e7a">// Typensicherheit zur Compile-Zeit!</span>
+<span style="color:#c792ea">var</span> distanz = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Meter</span>(<span style="color:#f78c6c">5.0</span>);
+<span style="color:#c792ea">var</span> gewicht = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Kilogramm</span>(<span style="color:#f78c6c">70.0</span>);
+<span style="color:#546e7a">// var falsch = distanz + gewicht;  // COMPILE-FEHLER! Typen inkompatibel</span>
+
+<span style="color:#546e7a">// ── FROM / TO CONVERSIONS ─────────────────────────────────────────</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">NichtLeererString</span>(<span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(s:<span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">if</span> (s.length == <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#c3e88d">"String darf nicht leer sein!"</span>;
+        <span style="color:#c792ea">this</span> = s;
+    }
+
+    <span style="color:#546e7a">// Implizite Konvertierung FROM String</span>
+    <span style="color:#ff9800">@:from</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> von(s:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">NichtLeererString</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">NichtLeererString</span>(s);
+    }
+
+    <span style="color:#546e7a">// Implizite Konvertierung TO String</span>
+    <span style="color:#ff9800">@:to</span> <span style="color:#c792ea">function</span> zuString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+}
+
+<span style="color:#c792ea">var</span> s:<span style="color:#4ec9b0">NichtLeererString</span> = <span style="color:#c3e88d">"Hallo"</span>;  <span style="color:#546e7a">// Automatisch konvertiert!</span>
+<span style="color:#c792ea">var</span> normal:<span style="color:#4ec9b0">String</span> = s;              <span style="color:#546e7a">// Automatisch zurück</span>
+
+<span style="color:#546e7a">// ── ABSTRACT ENUM (kompakter als enum) ────────────────────────────</span>
+<span style="color:#ff9800">@:enum</span> <span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Richtung</span>(<span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Nord</span> = <span style="color:#c3e88d">"N"</span>;
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Sued</span> = <span style="color:#c3e88d">"S"</span>;
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">Ost</span>  = <span style="color:#c3e88d">"O"</span>;
+    <span style="color:#c792ea">var</span> <span style="color:#4ec9b0">West</span> = <span style="color:#c3e88d">"W"</span>;
+}
+
+<span style="color:#c792ea">var</span> r:<span style="color:#4ec9b0">Richtung</span> = <span style="color:#4ec9b0">Nord</span>;
+<span style="color:#c792ea">trace</span>(r);   <span style="color:#546e7a">// "N"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Typedef &amp; Strukturelle Typen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="typedef &amp; strukturelle typen">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Typedef &amp; Strukturelle Typen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── TYPEDEF – Typen-Alias ─────────────────────────────────────────</span>
+<span style="color:#c792ea">typedef</span> <span style="color:#4ec9b0">Koordinate</span> = { x:<span style="color:#4ec9b0">Float</span>, y:<span style="color:#4ec9b0">Float</span> };
+<span style="color:#c792ea">typedef</span> <span style="color:#4ec9b0">Callback</span> = (error:<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">String</span>&gt;, result:<span style="color:#4ec9b0">Dynamic</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Void</span>;
+<span style="color:#c792ea">typedef</span> <span style="color:#4ec9b0">StringMap</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">Map</span>&lt;<span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">T</span>&gt;;
+
+<span style="color:#546e7a">// Typedef mit Erweiterung</span>
+<span style="color:#c792ea">typedef</span> <span style="color:#4ec9b0">NamedKoordinate</span> = <span style="color:#4ec9b0">Koordinate</span> &amp; { name:<span style="color:#4ec9b0">String</span> };
+
+<span style="color:#546e7a">// ── ANONYME STRUKTUREN ────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Haxe unterstützt strukturelle Typisierung!</span>
+<span style="color:#c792ea">var</span> punkt:{ x:<span style="color:#4ec9b0">Float</span>, y:<span style="color:#4ec9b0">Float</span> } = { x: <span style="color:#f78c6c">3.0</span>, y: <span style="color:#f78c6c">4.0</span> };
+<span style="color:#c792ea">trace</span>(punkt.x);   <span style="color:#546e7a">// 3.0</span>
+
+<span style="color:#546e7a">// Funktion akzeptiert jeden Typ mit .length</span>
+<span style="color:#c792ea">function</span> getLaenge(obj:{ length:<span style="color:#4ec9b0">Int</span> }):<span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">return</span> obj.length;
+}
+getLaenge([<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]);      <span style="color:#546e7a">// 3</span>
+getLaenge(<span style="color:#c3e88d">"Hallo"</span>);      <span style="color:#546e7a">// 5</span>
+
+<span style="color:#546e7a">// ── GENERICS ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Stack</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">var</span> items:<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = [];
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>() {}
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> push(item:<span style="color:#4ec9b0">T</span>):<span style="color:#4ec9b0">Void</span> items.push(item);
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> pop():<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#c792ea">return</span> items.pop();
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> peek():<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#c792ea">return</span> items[items.length - <span style="color:#f78c6c">1</span>];
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> isEmpty():<span style="color:#4ec9b0">Bool</span> <span style="color:#c792ea">return</span> items.length == <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> size():<span style="color:#4ec9b0">Int</span> <span style="color:#c792ea">return</span> items.length;
+}
+
+<span style="color:#c792ea">var</span> intStack = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Stack</span>&lt;<span style="color:#4ec9b0">Int</span>&gt;();
+intStack.push(<span style="color:#f78c6c">1</span>); intStack.push(<span style="color:#f78c6c">2</span>);
+<span style="color:#c792ea">trace</span>(intStack.pop());   <span style="color:#546e7a">// 2</span>
+
+<span style="color:#546e7a">// Generische Funktion mit Constraint</span>
+<span style="color:#c792ea">function</span> maximum&lt;<span style="color:#4ec9b0">T</span>:<span style="color:#4ec9b0">Comparable</span>&lt;<span style="color:#4ec9b0">T</span>&gt;&gt;(a:<span style="color:#4ec9b0">T</span>, b:<span style="color:#4ec9b0">T</span>):<span style="color:#4ec9b0">T</span> {
+    <span style="color:#c792ea">return</span> a.compareTo(b) &gt;= <span style="color:#f78c6c">0</span> ? a : b;
+}
+
+<span style="color:#546e7a">// ── USING – Statische Erweiterungen ──────────────────────────────</span>
+<span style="color:#546e7a">// using = Extension Methods aus statischen Klassen</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">StringExt</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> capitalize(s:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">if</span> (s.length == <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">return</span> s;
+        <span style="color:#c792ea">return</span> s.charAt(<span style="color:#f78c6c">0</span>).toUpperCase() + s.substr(<span style="color:#f78c6c">1</span>);
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> istEmail(s:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Bool</span> {
+        <span style="color:#c792ea">return</span> s.indexOf(<span style="color:#c3e88d">"@"</span>) &gt;= <span style="color:#f78c6c">0</span>;
+    }
+}
+
+<span style="color:#546e7a">// using StringExt;  // Am Anfang der Datei</span>
+<span style="color:#546e7a">// dann:</span>
+<span style="color:#546e7a">// "hallo".capitalize();    // "Hallo"</span>
+<span style="color:#546e7a">// "a@b.de".istEmail();    // true</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-funktional" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #f6871244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f687120e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f68712">
+      <span style="display:inline-block;width:8px;height:8px;background:#f68712;border-radius:50%;margin-right:2px"></span>Funktionen &amp; Lambdas
+    </span>
+    <span class="aa" style="color:#f68712;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen &amp; lambdas">
+  <div style="color:#f68712;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen &amp; Lambdas
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── FUNKTIONEN ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> addiere(a:<span style="color:#4ec9b0">Int</span>, b:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">return</span> a + b;
+}
+
+<span style="color:#546e7a">// Kurzschreibweise (Expression Body)</span>
+<span style="color:#c792ea">function</span> quadrat(x:<span style="color:#4ec9b0">Float</span>):<span style="color:#4ec9b0">Float</span> <span style="color:#c792ea">return</span> x * x;
+
+<span style="color:#546e7a">// Optionale Parameter</span>
+<span style="color:#c792ea">function</span> verbinde(host:<span style="color:#4ec9b0">String</span>, port:<span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">80</span>, ?ssl:<span style="color:#4ec9b0">Bool</span>):<span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">var</span> schema = (ssl == <span style="color:#c792ea">true</span>) ? <span style="color:#c3e88d">"https"</span> : <span style="color:#c3e88d">"http"</span>;
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$schema://$host:$port'</span>;
+}
+
+<span style="color:#546e7a">// Rest-Parameter mit Array</span>
+<span style="color:#c792ea">function</span> summe(zahlen:<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">Int</span>&gt;):<span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Lambda</span>.fold(zahlen, (a, b) <span style="color:#89ddff">-&gt;</span> a + b, <span style="color:#f78c6c">0</span>);
+}
+
+<span style="color:#546e7a">// ── ARROW FUNCTIONS / LAMBDAS ─────────────────────────────────────</span>
+<span style="color:#c792ea">var</span> verdopple = (x:<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> x * <span style="color:#f78c6c">2</span>;
+<span style="color:#c792ea">var</span> addiere2  = (a:<span style="color:#4ec9b0">Int</span>, b:<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> a + b;
+<span style="color:#c792ea">var</span> log       = (s:<span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> { <span style="color:#c792ea">trace</span>(s); };
+
+<span style="color:#546e7a">// Typ-Annotation für Lambdas</span>
+<span style="color:#c792ea">var</span> f:<span style="color:#4ec9b0">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = x <span style="color:#89ddff">-&gt;</span> x * x;
+<span style="color:#c792ea">var</span> g:(<span style="color:#4ec9b0">Int</span>, <span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = (a, b) <span style="color:#89ddff">-&gt;</span> a + b;
+
+<span style="color:#546e7a">// ── HIGHER-ORDER FUNCTIONS ────────────────────────────────────────</span>
+<span style="color:#c792ea">var</span> zahlen = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>];
+
+<span style="color:#546e7a">// Array API</span>
+<span style="color:#c792ea">var</span> gerade   = zahlen.filter(x <span style="color:#89ddff">-&gt;</span> x % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>);  <span style="color:#546e7a">// [2,4,6,8,10]</span>
+<span style="color:#c792ea">var</span> quadrate = zahlen.map(x <span style="color:#89ddff">-&gt;</span> x * x);           <span style="color:#546e7a">// [1,4,9,16,...]</span>
+<span style="color:#c792ea">trace</span>(zahlen.contains(<span style="color:#f78c6c">5</span>));                        <span style="color:#546e7a">// true</span>
+<span style="color:#c792ea">trace</span>(zahlen.indexOf(<span style="color:#f78c6c">5</span>));                         <span style="color:#546e7a">// 4</span>
+
+<span style="color:#546e7a">// Lambda-Klasse für Sequences</span>
+<span style="color:#c792ea">var</span> iter = zahlen.iterator();
+
+<span style="color:#546e7a">// ── FUNCTION REFERENCES ───────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> drucke(x:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">Void</span> <span style="color:#c792ea">trace</span>(x);
+zahlen.iter(drucke);   <span style="color:#546e7a">// Alle ausgeben</span>
+
+<span style="color:#546e7a">// Closure – captured Variables</span>
+<span style="color:#c792ea">function</span> macheMult(faktor:<span style="color:#4ec9b0">Int</span>):(<span style="color:#4ec9b0">Int</span><span style="color:#89ddff">-&gt;</span><span style="color:#4ec9b0">Int</span>) {
+    <span style="color:#c792ea">return</span> x <span style="color:#89ddff">-&gt;</span> x * faktor;   <span style="color:#546e7a">// faktor wird captured!</span>
+}
+
+<span style="color:#c792ea">var</span> mal3 = macheMult(<span style="color:#f78c6c">3</span>);
+<span style="color:#c792ea">trace</span>(mal3(<span style="color:#f78c6c">5</span>));    <span style="color:#546e7a">// 15</span>
+
+<span style="color:#546e7a">// ── PARTIAL APPLICATION (manuell) ─────────────────────────────────</span>
+<span style="color:#c792ea">function</span> add(a:<span style="color:#4ec9b0">Int</span>, b:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">Int</span> <span style="color:#c792ea">return</span> a + b;
+<span style="color:#c792ea">var</span> add5 = (b:<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> add(<span style="color:#f78c6c">5</span>, b);
+<span style="color:#c792ea">trace</span>(add5(<span style="color:#f78c6c">3</span>));    <span style="color:#546e7a">// 8</span>
+
+<span style="color:#546e7a">// ── REKURSION ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> fak(n:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (n &lt;= <span style="color:#f78c6c">1</span>) <span style="color:#f78c6c">1</span> <span style="color:#c792ea">else</span> n * fak(n - <span style="color:#f78c6c">1</span>);
+}
+
+<span style="color:#546e7a">// Tail-recursive (manuell, Haxe hat keine auto-TCO)</span>
+<span style="color:#c792ea">function</span> fakTail(n:<span style="color:#4ec9b0">Int</span>, acc:<span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">1</span>):<span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (n &lt;= <span style="color:#f78c6c">1</span>) acc <span style="color:#c792ea">else</span> fakTail(n - <span style="color:#f78c6c">1</span>, n * acc);
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Pattern Matching &amp; switch
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="pattern matching &amp; switch">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Pattern Matching &amp; switch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Haxes switch ist SEHR mächtig (kein fall-through!)</span>
+
+<span style="color:#546e7a">// ── EINFACHES SWITCH ──────────────────────────────────────────────</span>
+<span style="color:#c792ea">var</span> tag = <span style="color:#f78c6c">3</span>;
+<span style="color:#c792ea">var</span> name = <span style="color:#c792ea">switch</span> tag {
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">1</span>: <span style="color:#c3e88d">"Montag"</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">2</span>: <span style="color:#c3e88d">"Dienstag"</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>: <span style="color:#c3e88d">"Mittwoch oder Donnerstag"</span>;   <span style="color:#546e7a">// Mehrere Werte!</span>
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">5</span>: <span style="color:#c3e88d">"Freitag"</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">6</span> | <span style="color:#f78c6c">7</span>: <span style="color:#c3e88d">"Wochenende"</span>;               <span style="color:#546e7a">// | Operator</span>
+    <span style="color:#c792ea">case</span> _ <span style="color:#c792ea">if</span> (tag &lt; <span style="color:#f78c6c">0</span>): <span style="color:#c3e88d">"Ungültig"</span>;
+    <span style="color:#c792ea">case</span> _: <span style="color:#c3e88d">"Unbekannt"</span>;
+}
+
+<span style="color:#546e7a">// ── SWITCH ALS AUSDRUCK ───────────────────────────────────────────</span>
+<span style="color:#c792ea">var</span> kategorie = <span style="color:#c792ea">switch</span> (alter) {
+    <span style="color:#c792ea">case</span> _ <span style="color:#c792ea">if</span> (alter &lt; <span style="color:#f78c6c">0</span>): <span style="color:#c792ea">throw</span> <span style="color:#c3e88d">"Ungültig"</span>;
+    <span style="color:#c792ea">case</span> _ <span style="color:#c792ea">if</span> (alter &lt; <span style="color:#f78c6c">13</span>): <span style="color:#c3e88d">"Kind"</span>;
+    <span style="color:#c792ea">case</span> _ <span style="color:#c792ea">if</span> (alter &lt; <span style="color:#f78c6c">18</span>): <span style="color:#c3e88d">"Teenager"</span>;
+    <span style="color:#c792ea">case</span> _ <span style="color:#c792ea">if</span> (alter &lt; <span style="color:#f78c6c">65</span>): <span style="color:#c3e88d">"Erwachsener"</span>;
+    <span style="color:#c792ea">case</span> _: <span style="color:#c3e88d">"Senior"</span>;
+}
+
+<span style="color:#546e7a">// ── ENUM PATTERN MATCHING ─────────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#4ec9b0">Ok</span>(wert:<span style="color:#4ec9b0">T</span>);
+    <span style="color:#4ec9b0">Fehler</span>(msg:<span style="color:#4ec9b0">String</span>);
+}
+
+<span style="color:#c792ea">var</span> r = <span style="color:#4ec9b0">Ergebnis</span>.<span style="color:#4ec9b0">Ok</span>(<span style="color:#f78c6c">42</span>);
+<span style="color:#c792ea">switch</span> r {
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Ok</span>(wert): <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Wert: "</span> + wert);
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Fehler</span>(msg): <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Fehler: "</span> + msg);
+}
+
+<span style="color:#546e7a">// ── DESTRUCTURING ────────────────────────────────────────────────</span>
+<span style="color:#c792ea">var</span> punkt = { x: <span style="color:#f78c6c">3.0</span>, y: <span style="color:#f78c6c">4.0</span> };
+<span style="color:#c792ea">var</span> { x, y } = punkt;   <span style="color:#546e7a">// Destructuring!</span>
+<span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">'x=$x, y=$y'</span>);
+
+<span style="color:#546e7a">// Array-Destructuring</span>
+<span style="color:#c792ea">var</span> [a, b, <span style="color:#89ddff">...</span>rest] = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>];
+<span style="color:#c792ea">trace</span>(a);       <span style="color:#546e7a">// 1</span>
+<span style="color:#c792ea">trace</span>(b);       <span style="color:#546e7a">// 2</span>
+<span style="color:#c792ea">trace</span>(rest);    <span style="color:#546e7a">// [3, 4, 5]</span>
+
+<span style="color:#546e7a">// ── GUARD CLAUSES ─────────────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> verarbeite(liste:<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">Int</span>&gt;):<span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">if</span> (liste.length == <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0.0</span>;
+    <span style="color:#c792ea">var</span> max = liste[<span style="color:#f78c6c">0</span>];
+    <span style="color:#c792ea">for</span> (x <span style="color:#c792ea">in</span> liste) <span style="color:#c792ea">if</span> (x &gt; max) max = x;
+    <span style="color:#c792ea">return</span> max;
+}
+
+<span style="color:#546e7a">// ── STRING MATCHING ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> parseToken(token:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Dynamic</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">switch</span> token {
+        <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"true"</span>: <span style="color:#c792ea">true</span>;
+        <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"false"</span>: <span style="color:#c792ea">false</span>;
+        <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"null"</span>: <span style="color:#c792ea">null</span>;
+        <span style="color:#c792ea">case</span> _ <span style="color:#c792ea">if</span> (<span style="color:#4ec9b0">Std</span>.parseInt(token) != <span style="color:#c792ea">null</span>): <span style="color:#4ec9b0">Std</span>.parseInt(token);
+        <span style="color:#c792ea">case</span> _: token;
+    }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── TRY / CATCH ───────────────────────────────────────────────────</span>
+<span style="color:#c792ea">try</span> {
+    <span style="color:#c792ea">var</span> n = <span style="color:#4ec9b0">Std</span>.parseInt(<span style="color:#c3e88d">"keine Zahl"</span>);
+    <span style="color:#c792ea">if</span> (n == <span style="color:#c792ea">null</span>) <span style="color:#c792ea">throw</span> <span style="color:#c3e88d">"Kein Integer!"</span>;
+    <span style="color:#c792ea">trace</span>(n);
+} <span style="color:#c792ea">catch</span> (e:<span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"String-Fehler: "</span> + e);
+} <span style="color:#c792ea">catch</span> (e:<span style="color:#4ec9b0">Dynamic</span>) {
+    <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Fehler: "</span> + e);
+}
+
+<span style="color:#546e7a">// ── EIGENE EXCEPTIONS ─────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ValidationException</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">haxe</span>.<span style="color:#4ec9b0">Exception</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> feld:<span style="color:#4ec9b0">String</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(feld:<span style="color:#4ec9b0">String</span>, msg:<span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">super</span>(msg);
+        <span style="color:#c792ea">this</span>.feld = feld;
+    }
+}
+
+<span style="color:#c792ea">function</span> validiereEmail(email:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Void</span> {
+    <span style="color:#c792ea">if</span> (email.indexOf(<span style="color:#c3e88d">"@"</span>) &lt; <span style="color:#f78c6c">0</span>)
+        <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ValidationException</span>(<span style="color:#c3e88d">"email"</span>, <span style="color:#c3e88d">"Ungültige E-Mail: "</span> + email);
+}
+
+<span style="color:#c792ea">try</span> {
+    validiereEmail(<span style="color:#c3e88d">"kein-at"</span>);
+} <span style="color:#c792ea">catch</span> (e:<span style="color:#4ec9b0">ValidationException</span>) {
+    <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">'Feld "${e.feld}": ${e.message}'</span>);
+} <span style="color:#c792ea">catch</span> (e:<span style="color:#4ec9b0">haxe</span>.<span style="color:#4ec9b0">Exception</span>) {
+    <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Exception: "</span> + e.message);
+}
+
+<span style="color:#546e7a">// ── RESULT-PATTERN (funktional) ────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">E</span>&gt; {
+    <span style="color:#4ec9b0">Ok</span>(value:<span style="color:#4ec9b0">T</span>);
+    <span style="color:#4ec9b0">Err</span>(error:<span style="color:#4ec9b0">E</span>);
+}
+
+<span style="color:#c792ea">function</span> parseZahl(s:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">Int</span>, <span style="color:#4ec9b0">String</span>&gt; {
+    <span style="color:#c792ea">var</span> n = <span style="color:#4ec9b0">Std</span>.parseInt(s);
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (n != <span style="color:#c792ea">null</span>) <span style="color:#4ec9b0">Ok</span>(n) <span style="color:#c792ea">else</span> <span style="color:#4ec9b0">Err</span>(<span style="color:#c3e88d">'Kein Integer: $s'</span>);
+}
+
+<span style="color:#c792ea">switch</span> parseZahl(<span style="color:#c3e88d">"42"</span>) {
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Ok</span>(n): <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Zahl: "</span> + n);
+    <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Err</span>(msg): <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"Fehler: "</span> + msg);
+}
+
+<span style="color:#546e7a">// ── NULL-SAFETY (Haxe 4.3+) ──────────────────────────────────────</span>
+<span style="color:#546e7a">// Haxe hat optionale strikte Null-Safety via Compiler-Flag</span>
+<span style="color:#546e7a">// --macro nullSafety.NullSafety.enable()</span>
+
+<span style="color:#546e7a">// Dann: null nur in Null&lt;T&gt; erlaubt</span>
+<span style="color:#c792ea">var</span> s:<span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"Hallo"</span>;      <span style="color:#546e7a">// Nie null</span>
+<span style="color:#c792ea">var</span> ns:<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">String</span>&gt; = <span style="color:#c792ea">null</span>;  <span style="color:#546e7a">// Explizit nullable</span>
+
+<span style="color:#546e7a">// Safe-Navigation via null-check</span>
+<span style="color:#c792ea">var</span> len = (ns != <span style="color:#c792ea">null</span>) ? ns.length : <span style="color:#f78c6c">0</span>;</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-targets" class="tp">
+
+<div class="ac open" id="ac-tg0"
+     style="border:1px solid #f6871244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tg0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f687120e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f68712">
+      <span style="display:inline-block;width:8px;height:8px;background:#f68712;border-radius:50%;margin-right:2px"></span>Conditional Compilation &amp; Targets
+    </span>
+    <span class="aa" style="color:#f68712;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="conditional compilation &amp; targets">
+  <div style="color:#f68712;font-weight:700;font-size:12px;margin-bottom:8px">
+    Conditional Compilation &amp; Targets
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// #if target ... #end – Code nur für bestimmte Targets</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">PlatformInfo</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> getBeschreibung():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#ff9800">#if</span> <span style="color:#4ec9b0">js</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Läuft im Browser/Node.js"</span>;
+        <span style="color:#ff9800">#elseif</span> <span style="color:#4ec9b0">python</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Läuft in Python "</span> + <span style="color:#4ec9b0">python</span>.<span style="color:#4ec9b0">Syntax</span>.pythonCode(<span style="color:#c3e88d">"import sys; sys.version"</span>);
+        <span style="color:#ff9800">#elseif</span> <span style="color:#4ec9b0">cpp</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Nativ C++ kompiliert"</span>;
+        <span style="color:#ff9800">#elseif</span> <span style="color:#4ec9b0">cs</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"C# / .NET"</span>;
+        <span style="color:#ff9800">#elseif</span> <span style="color:#4ec9b0">java</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Java Virtual Machine"</span>;
+        <span style="color:#ff9800">#elseif</span> hl
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"HashLink VM"</span>;
+        <span style="color:#ff9800">#elseif</span> <span style="color:#4ec9b0">lua</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Lua"</span>;
+        <span style="color:#ff9800">#elseif</span> <span style="color:#4ec9b0">php</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"PHP"</span>;
+        <span style="color:#ff9800">#else</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Unbekannte Plattform"</span>;
+        <span style="color:#ff9800">#end</span>
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> getSystemInfo():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#ff9800">#if</span> sys
+        <span style="color:#546e7a">// sys-API nur auf System-Targets (nicht Browser!)</span>
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Sys</span>.systemName();
+        <span style="color:#ff9800">#else</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Kein sys-Zugriff (Browser-Target)"</span>;
+        <span style="color:#ff9800">#end</span>
+    }
+}
+
+<span style="color:#546e7a">// ── PLATTFORM-SPEZIFISCHE TYPEN ────────────────────────────────────</span>
+<span style="color:#ff9800">#if</span> <span style="color:#4ec9b0">js</span>
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">js</span>.<span style="color:#4ec9b0">Browser</span>;
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">js</span>.html.<span style="color:#4ec9b0">Element</span>;
+
+<span style="color:#c792ea">function</span> getDom(id:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">Element</span>&gt; {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Browser</span>.document.getElementById(id);
+}
+<span style="color:#ff9800">#end</span>
+
+<span style="color:#ff9800">#if</span> <span style="color:#4ec9b0">python</span>
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">python</span>.lib.<span style="color:#4ec9b0">Os</span>;
+<span style="color:#c792ea">function</span> getEnv(key:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Os</span>.environ.get(key, <span style="color:#c3e88d">""</span>);
+}
+<span style="color:#ff9800">#end</span>
+
+<span style="color:#546e7a">// ── EIGENE DEFINES ─────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// haxe --main Main --define debug --js out.js</span>
+
+<span style="color:#ff9800">#if</span> debug
+<span style="color:#c792ea">function</span> log(msg:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Void</span> <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"[DEBUG] "</span> + msg);
+<span style="color:#ff9800">#else</span>
+<span style="color:#c792ea">function</span> log(msg:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Void</span> {};  <span style="color:#546e7a">// Kein Code im Release!</span>
+<span style="color:#ff9800">#end</span>
+
+<span style="color:#546e7a">// ── EXTERN – C/JS/Java Bindings ───────────────────────────────────</span>
+<span style="color:#546e7a">// Extern Classes = Bindings zu nativen APIs</span>
+<span style="color:#ff9800">@:jsRequire</span>(<span style="color:#c3e88d">"fs"</span>)  <span style="color:#546e7a">// Node.js require("fs")</span>
+<span style="color:#c792ea">extern</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">NodeFS</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> readFileSync(path:<span style="color:#4ec9b0">String</span>, encoding:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">String</span>;
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> writeFileSync(path:<span style="color:#4ec9b0">String</span>, content:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">Void</span>;
+}
+
+<span style="color:#546e7a">// #if js</span>
+<span style="color:#546e7a">// var inhalt = NodeFS.readFileSync("datei.txt", "utf8");</span>
+<span style="color:#546e7a">// #end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tg1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tg1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Makros (Compile-Zeit)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="makros (compile-zeit)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Makros (Compile-Zeit)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Haxe Makros laufen ZUR COMPILE-ZEIT in Haxe!</span>
+<span style="color:#546e7a">// Unterschied zu C-Makros: Typsicher, mächtig, kein Text-Ersetzen</span>
+
+<span style="color:#546e7a">// ── AUSDRUCK-MAKRO ────────────────────────────────────────────────</span>
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">haxe</span>.<span style="color:#c792ea">macro</span>.<span style="color:#4ec9b0">Context</span>;
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">haxe</span>.<span style="color:#c792ea">macro</span>.<span style="color:#4ec9b0">Expr</span>;
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Makros</span> {
+    <span style="color:#546e7a">// Makro-Funktion: gibt Ausdruck zurück</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">macro</span> <span style="color:#c792ea">function</span> log(e:<span style="color:#4ec9b0">Expr</span>):<span style="color:#4ec9b0">Expr</span> {
+        <span style="color:#546e7a">// Position für Fehlermeldungen</span>
+        <span style="color:#c792ea">var</span> pos = <span style="color:#4ec9b0">Context</span>.currentPos();
+
+        <span style="color:#546e7a">// Quelldatei und Zeile zur Compile-Zeit!</span>
+        <span style="color:#c792ea">var</span> file = <span style="color:#4ec9b0">Context</span>.getPosInfos(pos).file;
+        <span style="color:#c792ea">var</span> line = <span style="color:#4ec9b0">Context</span>.getPosInfos(pos).min;
+
+        <span style="color:#546e7a">// Generiere: trace("[file:line] " + e)</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">macro</span> {
+            <span style="color:#c792ea">trace</span>(<span style="color:#c3e88d">"LOG: "</span> + $e);
+        };
+    }
+
+    <span style="color:#546e7a">// Typ-Inspektion zur Compile-Zeit</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">macro</span> <span style="color:#c792ea">function</span> feldNamen(t:<span style="color:#4ec9b0">Expr</span>):<span style="color:#4ec9b0">ExprOf</span>&lt;<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">String</span>&gt;&gt; {
+        <span style="color:#c792ea">var</span> typ = <span style="color:#4ec9b0">Context</span>.getType(<span style="color:#4ec9b0">ExprTools</span>.toString(t));
+        <span style="color:#c792ea">var</span> felder = <span style="color:#c792ea">switch</span> typ {
+            <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">TInst</span>(ref, _):
+                ref.get().fields.get().map(f <span style="color:#89ddff">-&gt;</span> f.name);
+            <span style="color:#c792ea">case</span> _: [];
+        };
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">macro</span> $v{felder};
+    }
+}
+
+<span style="color:#546e7a">// Verwendung:</span>
+<span style="color:#546e7a">// Makros.log("Irgendein Wert: " + x);</span>
+<span style="color:#546e7a">// var felder = Makros.feldNamen(Person);  // ["name", "alter", ...]</span>
+
+<span style="color:#546e7a">// ── BUILD-MAKRO ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Transformiert ganze Klassen zur Compile-Zeit!</span>
+<span style="color:#546e7a">// @:build(MeinBuildMakro.baue())</span>
+
+<span style="color:#546e7a">// Anwendungsfälle:</span>
+<span style="color:#546e7a">// - JSON-Schema aus Typen generieren</span>
+<span style="color:#546e7a">// - Automatische toString() implementieren</span>
+<span style="color:#546e7a">// - Routing aus Methoden-Annotationen bauen</span>
+<span style="color:#546e7a">// - i18n – Übersetzungen zur Compile-Zeit einbinden</span>
+
+<span style="color:#546e7a">// ── REIFICATION ─────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// macro {} = Haxe-Code zu Expr umwandeln</span>
+<span style="color:#546e7a">// $e = Expr einfügen (unquote)</span>
+<span style="color:#546e7a">// $v{val} = Wert zu Literal</span>
+<span style="color:#546e7a">// $i{name} = String zu Identifier</span>
+<span style="color:#546e7a">// $p{path} = Pfad zu Ausdruck</span>
+
+<span style="color:#546e7a">// Kleines Beispiel: Tuple generieren</span>
+<span style="color:#c792ea">macro</span> <span style="color:#c792ea">function</span> makeTuple(args:<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">Expr</span>&gt;):<span style="color:#4ec9b0">Expr</span> {
+    <span style="color:#c792ea">return</span> {
+        expr: <span style="color:#4ec9b0">EArrayDecl</span>(args),
+        pos: <span style="color:#4ec9b0">Context</span>.currentPos()
+    };
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #f6871244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f687120e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f68712">
+      <span style="display:inline-block;width:8px;height:8px;background:#f68712;border-radius:50%;margin-right:2px"></span>Array-Methoden
+    </span>
+    <span class="aa" style="color:#f68712;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m=".length" data-d="anzahl elemente">
+      <td style="width:230px"><code style="color:#f68712">.length</code></td>
+      <td style="color:#6c7a8e">Anzahl Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].length → 3</td>
+    </tr>
+    <tr class="cr" data-m=".push(item)" data-d="anhängen">
+      <td style="width:230px"><code style="color:#f68712">.push(item)</code></td>
+      <td style="color:#6c7a8e">Anhängen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.push(42)</td>
+    </tr>
+    <tr class="cr" data-m=".pop()" data-d="letztes entfernen &amp; zurückgeben">
+      <td style="width:230px"><code style="color:#f68712">.pop()</code></td>
+      <td style="color:#6c7a8e">Letztes entfernen &amp; zurückgeben</td>
+      <td style="color:#c3e88d;font-size:11px">arr.pop() → 42</td>
+    </tr>
+    <tr class="cr" data-m=".shift()" data-d="erstes entfernen &amp; zurückgeben">
+      <td style="width:230px"><code style="color:#f68712">.shift()</code></td>
+      <td style="color:#6c7a8e">Erstes entfernen &amp; zurückgeben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".unshift(item)" data-d="vorne einfügen">
+      <td style="width:230px"><code style="color:#f68712">.unshift(item)</code></td>
+      <td style="color:#6c7a8e">Vorne einfügen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".insert(pos, item)" data-d="an position einfügen">
+      <td style="width:230px"><code style="color:#f68712">.insert(pos, item)</code></td>
+      <td style="color:#6c7a8e">An Position einfügen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.insert(1, "x")</td>
+    </tr>
+    <tr class="cr" data-m=".remove(item)" data-d="erstes vorkommen entfernen">
+      <td style="width:230px"><code style="color:#f68712">.remove(item)</code></td>
+      <td style="color:#6c7a8e">Erstes Vorkommen entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.remove(42) → Bool</td>
+    </tr>
+    <tr class="cr" data-m=".splice(pos, len)" data-d="ausschneiden">
+      <td style="width:230px"><code style="color:#f68712">.splice(pos, len)</code></td>
+      <td style="color:#6c7a8e">Ausschneiden</td>
+      <td style="color:#c3e88d;font-size:11px">arr.splice(1, 2) → entfernte</td>
+    </tr>
+    <tr class="cr" data-m=".slice(from, ?to)" data-d="teilarray (nicht in-place)">
+      <td style="width:230px"><code style="color:#f68712">.slice(from, ?to)</code></td>
+      <td style="color:#6c7a8e">Teilarray (nicht in-place)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.slice(1, 3)</td>
+    </tr>
+    <tr class="cr" data-m=".indexof(item)" data-d="index (-1 wenn nicht gefunden)">
+      <td style="width:230px"><code style="color:#f68712">.indexOf(item)</code></td>
+      <td style="color:#6c7a8e">Index (-1 wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.indexOf(42)</td>
+    </tr>
+    <tr class="cr" data-m=".contains(item)" data-d="enthält?">
+      <td style="width:230px"><code style="color:#f68712">.contains(item)</code></td>
+      <td style="color:#6c7a8e">Enthält?</td>
+      <td style="color:#c3e88d;font-size:11px">arr.contains(42) → Bool</td>
+    </tr>
+    <tr class="cr" data-m=".map(fn)" data-d="transformieren → neues array">
+      <td style="width:230px"><code style="color:#f68712">.map(fn)</code></td>
+      <td style="color:#6c7a8e">Transformieren → neues Array</td>
+      <td style="color:#c3e88d;font-size:11px">arr.map(x -&gt; x*2)</td>
+    </tr>
+    <tr class="cr" data-m=".filter(fn)" data-d="filtern → neues array">
+      <td style="width:230px"><code style="color:#f68712">.filter(fn)</code></td>
+      <td style="color:#6c7a8e">Filtern → neues Array</td>
+      <td style="color:#c3e88d;font-size:11px">arr.filter(x -&gt; x &gt; 0)</td>
+    </tr>
+    <tr class="cr" data-m=".foreach(fn)" data-d="iterieren">
+      <td style="width:230px"><code style="color:#f68712">.forEach(fn)</code></td>
+      <td style="color:#6c7a8e">Iterieren</td>
+      <td style="color:#c3e88d;font-size:11px">arr.forEach(x -&gt; trace(x))</td>
+    </tr>
+    <tr class="cr" data-m=".iter(fn)" data-d="iterieren (deprecated)">
+      <td style="width:230px"><code style="color:#f68712">.iter(fn)</code></td>
+      <td style="color:#6c7a8e">Iterieren (deprecated)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".sort(fn)" data-d="in-place sortieren">
+      <td style="width:230px"><code style="color:#f68712">.sort(fn)</code></td>
+      <td style="color:#6c7a8e">In-place sortieren</td>
+      <td style="color:#c3e88d;font-size:11px">arr.sort((a,b) -&gt; a-b)</td>
+    </tr>
+    <tr class="cr" data-m=".copy()" data-d="flache kopie">
+      <td style="width:230px"><code style="color:#f68712">.copy()</code></td>
+      <td style="color:#6c7a8e">Flache Kopie</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".concat(other)" data-d="verbinden">
+      <td style="width:230px"><code style="color:#f68712">.concat(other)</code></td>
+      <td style="color:#6c7a8e">Verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">arr.concat([4,5,6])</td>
+    </tr>
+    <tr class="cr" data-m=".join(sep)" data-d="zu string verbinden">
+      <td style="width:230px"><code style="color:#f68712">.join(sep)</code></td>
+      <td style="color:#6c7a8e">Zu String verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">arr.join(",") → "1,2,3"</td>
+    </tr>
+    <tr class="cr" data-m=".reverse()" data-d="umkehren (in-place)">
+      <td style="width:230px"><code style="color:#f68712">.reverse()</code></td>
+      <td style="color:#6c7a8e">Umkehren (in-place)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="array.from(it)" data-d="aus iterable erstellen">
+      <td style="width:230px"><code style="color:#f68712">Array.from(it)</code></td>
+      <td style="color:#6c7a8e">Aus Iterable erstellen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>String-Methoden
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m=".length" data-d="anzahl zeichen">
+      <td style="width:230px"><code style="color:#4fc3f7">.length</code></td>
+      <td style="color:#6c7a8e">Anzahl Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".length → 5</td>
+    </tr>
+    <tr class="cr" data-m=".charat(i)" data-d="zeichen bei index">
+      <td style="width:230px"><code style="color:#4fc3f7">.charAt(i)</code></td>
+      <td style="color:#6c7a8e">Zeichen bei Index</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".charAt(0) → "H"</td>
+    </tr>
+    <tr class="cr" data-m=".charcodeat(i)" data-d="unicode-wert">
+      <td style="width:230px"><code style="color:#4fc3f7">.charCodeAt(i)</code></td>
+      <td style="color:#6c7a8e">Unicode-Wert</td>
+      <td style="color:#c3e88d;font-size:11px">"A".charCodeAt(0) → 65</td>
+    </tr>
+    <tr class="cr" data-m=".indexof(s)" data-d="position (-1 wenn nicht gefunden)">
+      <td style="width:230px"><code style="color:#4fc3f7">.indexOf(s)</code></td>
+      <td style="color:#6c7a8e">Position (-1 wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".indexOf("l") → 2</td>
+    </tr>
+    <tr class="cr" data-m=".lastindexof(s)" data-d="letzte position">
+      <td style="width:230px"><code style="color:#4fc3f7">.lastIndexOf(s)</code></td>
+      <td style="color:#6c7a8e">Letzte Position</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".substr(start, ?len)" data-d="teilstring ab start">
+      <td style="width:230px"><code style="color:#4fc3f7">.substr(start, ?len)</code></td>
+      <td style="color:#6c7a8e">Teilstring ab Start</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".substr(1, 3) → "all"</td>
+    </tr>
+    <tr class="cr" data-m=".substring(from, to)" data-d="teilstring (beide indizes)">
+      <td style="width:230px"><code style="color:#4fc3f7">.substring(from, to)</code></td>
+      <td style="color:#6c7a8e">Teilstring (beide Indizes)</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".substring(1, 4) → "all"</td>
+    </tr>
+    <tr class="cr" data-m=".touppercase()" data-d="großbuchstaben">
+      <td style="width:230px"><code style="color:#4fc3f7">.toUpperCase()</code></td>
+      <td style="color:#6c7a8e">Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo".toUpperCase() → "HALLO"</td>
+    </tr>
+    <tr class="cr" data-m=".tolowercase()" data-d="kleinbuchstaben">
+      <td style="width:230px"><code style="color:#4fc3f7">.toLowerCase()</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".trim()" data-d="whitespace entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">.trim()</code></td>
+      <td style="color:#6c7a8e">Whitespace entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">" hi ".trim() → "hi"</td>
+    </tr>
+    <tr class="cr" data-m=".ltrim() / rtrim()" data-d="links/rechts trimmen">
+      <td style="width:230px"><code style="color:#4fc3f7">.ltrim() / rtrim()</code></td>
+      <td style="color:#6c7a8e">Links/Rechts trimmen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".split(sep)" data-d="aufteilen → array&lt;string&gt;">
+      <td style="width:230px"><code style="color:#4fc3f7">.split(sep)</code></td>
+      <td style="color:#6c7a8e">Aufteilen → Array&lt;String&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">"a,b".split(",") → ["a","b"]</td>
+    </tr>
+    <tr class="cr" data-m=".replace(a, b)" data-d="erstes vorkommen ersetzen">
+      <td style="width:230px"><code style="color:#4fc3f7">.replace(a, b)</code></td>
+      <td style="color:#6c7a8e">Erstes Vorkommen ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">"aaa".replace("a","b") → "baa"</td>
+    </tr>
+    <tr class="cr" data-m=".contains(s)" data-d="enthält?">
+      <td style="width:230px"><code style="color:#4fc3f7">.contains(s)</code></td>
+      <td style="color:#6c7a8e">Enthält?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".contains("all") → true</td>
+    </tr>
+    <tr class="cr" data-m=".startswith(s)" data-d="beginnt mit?">
+      <td style="width:230px"><code style="color:#4fc3f7">.startsWith(s)</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".endswith(s)" data-d="endet mit?">
+      <td style="width:230px"><code style="color:#4fc3f7">.endsWith(s)</code></td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="string.fromcharcode(n)" data-d="unicode zu string">
+      <td style="width:230px"><code style="color:#4fc3f7">String.fromCharCode(n)</code></td>
+      <td style="color:#6c7a8e">Unicode zu String</td>
+      <td style="color:#c3e88d;font-size:11px">String.fromCharCode(65) → "A"</td>
+    </tr>
+    <tr class="cr" data-m="std.string(x)" data-d="wert zu string">
+      <td style="width:230px"><code style="color:#4fc3f7">Std.string(x)</code></td>
+      <td style="color:#6c7a8e">Wert zu String</td>
+      <td style="color:#c3e88d;font-size:11px">Std.string(42) → "42"</td>
+    </tr>
+    <tr class="cr" data-m="stringtools.pad()" data-d="auffüllen (links/rechts)">
+      <td style="width:230px"><code style="color:#4fc3f7">StringTools.pad()</code></td>
+      <td style="color:#6c7a8e">Auffüllen (links/rechts)</td>
+      <td style="color:#c3e88d;font-size:11px">StringTools.lpad("42",5,"0")</td>
+    </tr>
+    <tr class="cr" data-m="ereg" data-d="reguläre ausdrücke">
+      <td style="width:230px"><code style="color:#4fc3f7">EReg</code></td>
+      <td style="color:#6c7a8e">Reguläre Ausdrücke</td>
+      <td style="color:#c3e88d;font-size:11px">~/^\d+$/.match("123")</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Lambda &amp; Map
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="lambda.map(it, fn)" data-d="transformieren">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.map(it, fn)</code></td>
+      <td style="color:#6c7a8e">Transformieren</td>
+      <td style="color:#c3e88d;font-size:11px">Lambda.map(arr, x -&gt; x*2)</td>
+    </tr>
+    <tr class="cr" data-m="lambda.filter(it, fn)" data-d="filtern">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.filter(it, fn)</code></td>
+      <td style="color:#6c7a8e">Filtern</td>
+      <td style="color:#c3e88d;font-size:11px">Lambda.filter(arr, x -&gt; x&gt;0)</td>
+    </tr>
+    <tr class="cr" data-m="lambda.fold(it, fn, i)" data-d="akkumulieren">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.fold(it, fn, i)</code></td>
+      <td style="color:#6c7a8e">Akkumulieren</td>
+      <td style="color:#c3e88d;font-size:11px">Lambda.fold(arr, (a,b)-&gt;a+b, 0)</td>
+    </tr>
+    <tr class="cr" data-m="lambda.iter(it, fn)" data-d="iterieren">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.iter(it, fn)</code></td>
+      <td style="color:#6c7a8e">Iterieren</td>
+      <td style="color:#c3e88d;font-size:11px">Lambda.iter(arr, trace)</td>
+    </tr>
+    <tr class="cr" data-m="lambda.count(it)" data-d="anzahl elemente">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.count(it)</code></td>
+      <td style="color:#6c7a8e">Anzahl Elemente</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="lambda.has(it, val)" data-d="enthält?">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.has(it, val)</code></td>
+      <td style="color:#6c7a8e">Enthält?</td>
+      <td style="color:#c3e88d;font-size:11px">Lambda.has(arr, 42)</td>
+    </tr>
+    <tr class="cr" data-m="lambda.find(it, fn)" data-d="erstes passendes element">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.find(it, fn)</code></td>
+      <td style="color:#6c7a8e">Erstes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="lambda.exists(it, fn)" data-d="mindestens eines passt?">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.exists(it, fn)</code></td>
+      <td style="color:#6c7a8e">Mindestens eines passt?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="lambda.array(it)" data-d="iterator zu array">
+      <td style="width:230px"><code style="color:#c792ea">Lambda.array(it)</code></td>
+      <td style="color:#6c7a8e">Iterator zu Array</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="new map&lt;k,v&gt;()" data-d="map erstellen">
+      <td style="width:230px"><code style="color:#c792ea">new Map&lt;K,V&gt;()</code></td>
+      <td style="color:#6c7a8e">Map erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">["a" =&gt; 1, "b" =&gt; 2]</td>
+    </tr>
+    <tr class="cr" data-m="map.set(k, v)" data-d="wert setzen">
+      <td style="width:230px"><code style="color:#c792ea">map.set(k, v)</code></td>
+      <td style="color:#6c7a8e">Wert setzen</td>
+      <td style="color:#c3e88d;font-size:11px">m.set("x", 42)</td>
+    </tr>
+    <tr class="cr" data-m="map.get(k)" data-d="wert holen (null&lt;v&gt;)">
+      <td style="width:230px"><code style="color:#c792ea">map.get(k)</code></td>
+      <td style="color:#6c7a8e">Wert holen (Null&lt;V&gt;)</td>
+      <td style="color:#c3e88d;font-size:11px">m.get("x") → 42 oder null</td>
+    </tr>
+    <tr class="cr" data-m="map.exists(k)" data-d="key vorhanden?">
+      <td style="width:230px"><code style="color:#c792ea">map.exists(k)</code></td>
+      <td style="color:#6c7a8e">Key vorhanden?</td>
+      <td style="color:#c3e88d;font-size:11px">m.exists("x") → Bool</td>
+    </tr>
+    <tr class="cr" data-m="map.remove(k)" data-d="eintrag löschen">
+      <td style="width:230px"><code style="color:#c792ea">map.remove(k)</code></td>
+      <td style="color:#6c7a8e">Eintrag löschen</td>
+      <td style="color:#c3e88d;font-size:11px">m.remove("x") → Bool</td>
+    </tr>
+    <tr class="cr" data-m="map.keys()" data-d="alle keys als iterator">
+      <td style="width:230px"><code style="color:#c792ea">map.keys()</code></td>
+      <td style="color:#6c7a8e">Alle Keys als Iterator</td>
+      <td style="color:#c3e88d;font-size:11px">for (k in m.keys()) ...</td>
+    </tr>
+    <tr class="cr" data-m="map.iterator()" data-d="alle values als iterator">
+      <td style="width:230px"><code style="color:#c792ea">map.iterator()</code></td>
+      <td style="color:#6c7a8e">Alle Values als Iterator</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="map.keyvalueiterator()" data-d="key-value-paare">
+      <td style="width:230px"><code style="color:#c792ea">map.keyValueIterator()</code></td>
+      <td style="color:#6c7a8e">Key-Value-Paare</td>
+      <td style="color:#c3e88d;font-size:11px">for (k =&gt; v in m) ...</td>
+    </tr>
+    <tr class="cr" data-m="map.copy()" data-d="kopie erstellen">
+      <td style="width:230px"><code style="color:#c792ea">map.copy()</code></td>
+      <td style="color:#6c7a8e">Kopie erstellen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #f68712;color:#f68712;background:rgba(246,135,18,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Cross-Platform Spiel (Struktur)</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generics &amp; Funktionale Patterns</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Abstract Types – Einheitensystem</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Makros: toString Generator</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Haxes beliebtester Anwendungsfall: Spielentwicklung</span>
+<span style="color:#546e7a">// Mit HaxeFlixel, Heaps.io, OpenFL</span>
+
+<span style="color:#546e7a">// game/entities/Spieler.hx</span>
+<span style="color:#c792ea">package</span> game.entities;
+
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Richtung</span> {
+    <span style="color:#4ec9b0">Links</span>; <span style="color:#4ec9b0">Rechts</span>; <span style="color:#4ec9b0">Hoch</span>; <span style="color:#4ec9b0">Runter</span>;
+}
+
+<span style="color:#c792ea">typedef</span> <span style="color:#4ec9b0">SpielStats</span> = {
+    punkte:<span style="color:#4ec9b0">Int</span>,
+    leben:<span style="color:#4ec9b0">Int</span>,
+    level:<span style="color:#4ec9b0">Int</span>,
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Spieler</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> x:<span style="color:#4ec9b0">Float</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> y:<span style="color:#4ec9b0">Float</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> stats:<span style="color:#4ec9b0">SpielStats</span>;
+    <span style="color:#c792ea">var</span> geschwindigkeit:<span style="color:#4ec9b0">Float</span> = <span style="color:#f78c6c">200.0</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(startX:<span style="color:#4ec9b0">Float</span>, startY:<span style="color:#4ec9b0">Float</span>) {
+        x = startX;
+        y = startY;
+        stats = { punkte: <span style="color:#f78c6c">0</span>, leben: <span style="color:#f78c6c">3</span>, level: <span style="color:#f78c6c">1</span> };
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> bewege(richtung:<span style="color:#4ec9b0">Richtung</span>, dt:<span style="color:#4ec9b0">Float</span>):<span style="color:#4ec9b0">Void</span> {
+        <span style="color:#c792ea">var</span> pixel = geschwindigkeit * dt;
+        <span style="color:#c792ea">switch</span> richtung {
+            <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Links</span>:  x -= pixel;
+            <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Rechts</span>: x += pixel;
+            <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Hoch</span>:   y -= pixel;
+            <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">Runter</span>: y += pixel;
+        }
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> sammelPunkte(punkte:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">Void</span> {
+        stats = { <span style="color:#89ddff">...</span>stats, punkte: stats.punkte + punkte };
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> verliereLeben():<span style="color:#4ec9b0">Bool</span> {
+        stats = { <span style="color:#89ddff">...</span>stats, leben: stats.leben - <span style="color:#f78c6c">1</span> };
+        <span style="color:#c792ea">return</span> stats.leben &gt; <span style="color:#f78c6c">0</span>;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'Spieler(${x},${y}) ${stats.punkte}pts ${stats.leben}♥'</span>;
+    }
+}
+
+<span style="color:#546e7a">// game/Main.hx</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Main</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> main() {
+        <span style="color:#c792ea">var</span> spieler = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Spieler</span>(<span style="color:#f78c6c">400</span>, <span style="color:#f78c6c">300</span>);
+        spieler.sammelPunkte(<span style="color:#f78c6c">100</span>);
+        spieler.bewege(<span style="color:#4ec9b0">Rechts</span>, <span style="color:#f78c6c">0.016</span>);
+        <span style="color:#c792ea">trace</span>(spieler);
+
+        <span style="color:#546e7a">// Plattform-spezifische Initialisierung</span>
+        <span style="color:#ff9800">#if</span> <span style="color:#4ec9b0">js</span>
+        <span style="color:#4ec9b0">js</span>.<span style="color:#4ec9b0">Browser</span>.window.requestAnimationFrame(update);
+        <span style="color:#ff9800">#elseif</span> hl
+        <span style="color:#546e7a">// HashLink Gameloop</span>
+        <span style="color:#c792ea">var</span> w = <span style="color:#c792ea">new</span> hl.ui.<span style="color:#4ec9b0">Window</span>(<span style="color:#c3e88d">"Spiel"</span>, <span style="color:#f78c6c">800</span>, <span style="color:#f78c6c">600</span>);
+        <span style="color:#c792ea">while</span> (w.update()) { update(<span style="color:#f78c6c">0.016</span>); }
+        <span style="color:#ff9800">#end</span>
+    }
+
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> update(dt:<span style="color:#4ec9b0">Float</span>):<span style="color:#4ec9b0">Void</span> {
+        <span style="color:#546e7a">// Game loop...</span>
+    }
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Haxe kombiniert OOP und funktionale Programmierung elegant</span>
+
+<span style="color:#546e7a">// ── OPTION TYPE ───────────────────────────────────────────────────</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">T</span>&gt;(<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">T</span>&gt;) {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">T</span>&gt;) <span style="color:#c792ea">this</span> = v;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> some&lt;<span style="color:#4ec9b0">T</span>&gt;(v:<span style="color:#4ec9b0">T</span>):<span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Option</span>(v);
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> none&lt;<span style="color:#4ec9b0">T</span>&gt;():<span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Option</span>(<span style="color:#c792ea">null</span>);
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> isSome():<span style="color:#4ec9b0">Bool</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> != <span style="color:#c792ea">null</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> isNone():<span style="color:#4ec9b0">Bool</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> == <span style="color:#c792ea">null</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> get():<span style="color:#4ec9b0">T</span> {
+        <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> == <span style="color:#c792ea">null</span>) <span style="color:#c792ea">throw</span> <span style="color:#c3e88d">"Option.get() auf None!"</span>;
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> getOrElse(def:<span style="color:#4ec9b0">T</span>):<span style="color:#4ec9b0">T</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> != <span style="color:#c792ea">null</span>) <span style="color:#c792ea">this</span> <span style="color:#c792ea">else</span> def;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> map&lt;<span style="color:#4ec9b0">U</span>&gt;(fn:<span style="color:#4ec9b0">T</span><span style="color:#89ddff">-&gt;</span><span style="color:#4ec9b0">U</span>):<span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">U</span>&gt;
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> != <span style="color:#c792ea">null</span>) some(fn(<span style="color:#c792ea">this</span>)) <span style="color:#c792ea">else</span> none();
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> flatMap&lt;<span style="color:#4ec9b0">U</span>&gt;(fn:<span style="color:#4ec9b0">T</span><span style="color:#89ddff">-&gt;</span><span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">U</span>&gt;):<span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">U</span>&gt;
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> != <span style="color:#c792ea">null</span>) fn(<span style="color:#c792ea">this</span>) <span style="color:#c792ea">else</span> none();
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> filter(pred:<span style="color:#4ec9b0">T</span><span style="color:#89ddff">-&gt;</span><span style="color:#4ec9b0">Bool</span>):<span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">T</span>&gt;
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> != <span style="color:#c792ea">null</span> &amp;&amp; pred(<span style="color:#c792ea">this</span>)) <span style="color:#c792ea">this</span> <span style="color:#c792ea">else</span> none();
+}
+
+<span style="color:#546e7a">// ── PIPELINE MIT OPTION ───────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> findeNutzer(id:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">Option</span>&lt;<span style="color:#4ec9b0">String</span>&gt; {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">if</span> (id == <span style="color:#f78c6c">1</span>) <span style="color:#4ec9b0">Option</span>.some(<span style="color:#c3e88d">"Alice"</span>) <span style="color:#c792ea">else</span> <span style="color:#4ec9b0">Option</span>.none();
+}
+
+<span style="color:#c792ea">function</span> verarbeite(name:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">return</span> name.toUpperCase();
+}
+
+<span style="color:#c792ea">var</span> ergebnis = findeNutzer(<span style="color:#f78c6c">1</span>)
+    .filter(n <span style="color:#89ddff">-&gt;</span> n.length &gt; <span style="color:#f78c6c">3</span>)
+    .map(verarbeite)
+    .getOrElse(<span style="color:#c3e88d">"UNBEKANNT"</span>);
+
+<span style="color:#c792ea">trace</span>(ergebnis);   <span style="color:#546e7a">// "ALICE"</span>
+
+<span style="color:#546e7a">// ── GENERISCHER CACHE ─────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Cache</span>&lt;<span style="color:#4ec9b0">K</span>, <span style="color:#4ec9b0">V</span>&gt; {
+    <span style="color:#c792ea">var</span> store:<span style="color:#4ec9b0">Map</span>&lt;<span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">V</span>&gt;;
+    <span style="color:#c792ea">var</span> keyFn:<span style="color:#4ec9b0">K</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(keyFn:<span style="color:#4ec9b0">K</span><span style="color:#89ddff">-&gt;</span><span style="color:#4ec9b0">String</span>) {
+        store = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Map</span>();
+        <span style="color:#c792ea">this</span>.keyFn = keyFn;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> get(key:<span style="color:#4ec9b0">K</span>):<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">V</span>&gt;
+        <span style="color:#c792ea">return</span> store.get(keyFn(key));
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> set(key:<span style="color:#4ec9b0">K</span>, value:<span style="color:#4ec9b0">V</span>):<span style="color:#4ec9b0">Void</span>
+        store.set(keyFn(key), value);
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> getOrCompute(key:<span style="color:#4ec9b0">K</span>, fn:<span style="color:#4ec9b0">K</span><span style="color:#89ddff">-&gt;</span><span style="color:#4ec9b0">V</span>):<span style="color:#4ec9b0">V</span> {
+        <span style="color:#c792ea">var</span> k = keyFn(key);
+        <span style="color:#c792ea">if</span> (!store.exists(k))
+            store.set(k, fn(key));
+        <span style="color:#c792ea">return</span> store.get(k);
+    }
+}
+
+<span style="color:#c792ea">var</span> userCache = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Cache</span>&lt;<span style="color:#4ec9b0">Int</span>, <span style="color:#4ec9b0">String</span>&gt;(id <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">'user_$id'</span>);
+userCache.set(<span style="color:#f78c6c">1</span>, <span style="color:#c3e88d">"Alice"</span>);
+<span style="color:#c792ea">trace</span>(userCache.get(<span style="color:#f78c6c">1</span>));   <span style="color:#546e7a">// "Alice"</span>
+<span style="color:#c792ea">trace</span>(userCache.get(<span style="color:#f78c6c">2</span>));   <span style="color:#546e7a">// null</span>
+
+<span style="color:#546e7a">// ── BUILDER PATTERN ──────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">QueryBuilder</span> {
+    <span style="color:#c792ea">var</span> tabelle:<span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">""</span>;
+    <span style="color:#c792ea">var</span> bedingungen:<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">String</span>&gt; = [];
+    <span style="color:#c792ea">var</span> limit:<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">Int</span>&gt; = <span style="color:#c792ea">null</span>;
+    <span style="color:#c792ea">var</span> orderBy:<span style="color:#4ec9b0">Null</span>&lt;<span style="color:#4ec9b0">String</span>&gt; = <span style="color:#c792ea">null</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>() {}
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> von(tabelle:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">QueryBuilder</span> {
+        <span style="color:#c792ea">this</span>.tabelle = tabelle; <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> wo(bedingung:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">QueryBuilder</span> {
+        bedingungen.push(bedingung); <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> begrenzeAuf(n:<span style="color:#4ec9b0">Int</span>):<span style="color:#4ec9b0">QueryBuilder</span> {
+        limit = n; <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> sortierteNach(feld:<span style="color:#4ec9b0">String</span>):<span style="color:#4ec9b0">QueryBuilder</span> {
+        orderBy = feld; <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>;
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> baue():<span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">var</span> sql = <span style="color:#c3e88d">'SELECT * FROM $tabelle'</span>;
+        <span style="color:#c792ea">if</span> (bedingungen.length &gt; <span style="color:#f78c6c">0</span>)
+            sql += <span style="color:#c3e88d">' WHERE '</span> + bedingungen.join(<span style="color:#c3e88d">" AND "</span>);
+        <span style="color:#c792ea">if</span> (orderBy != <span style="color:#c792ea">null</span>) sql += <span style="color:#c3e88d">' ORDER BY $orderBy'</span>;
+        <span style="color:#c792ea">if</span> (limit != <span style="color:#c792ea">null</span>)   sql += <span style="color:#c3e88d">' LIMIT $limit'</span>;
+        <span style="color:#c792ea">return</span> sql;
+    }
+}
+
+<span style="color:#c792ea">var</span> query = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">QueryBuilder</span>()
+    .von(<span style="color:#c3e88d">"nutzer"</span>)
+    .wo(<span style="color:#c3e88d">"aktiv = true"</span>)
+    .wo(<span style="color:#c3e88d">"alter &gt; 18"</span>)
+    .sortierteNach(<span style="color:#c3e88d">"name"</span>)
+    .begrenzeAuf(<span style="color:#f78c6c">10</span>)
+    .baue();
+
+<span style="color:#c792ea">trace</span>(query);
+<span style="color:#546e7a">// SELECT * FROM nutzer WHERE aktiv = true AND alter &gt; 18 ORDER BY name LIMIT 10</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Abstract Types: Compile-Zeit-Typsicherheit für Einheiten</span>
+<span style="color:#546e7a">// Kein Runtime-Overhead! Kompiliert wie einfache Floats</span>
+
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Meter</span>(<span style="color:#4ec9b0">Float</span>) from <span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Float</span>) <span style="color:#c792ea">this</span> = v;
+
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> + <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> plus(b:<span style="color:#4ec9b0">Meter</span>):<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> + (b:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> - <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> minus(b:<span style="color:#4ec9b0">Meter</span>):<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> - (b:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> * <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> mal(b:<span style="color:#4ec9b0">Float</span>):<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> * b;
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> / <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> durch(b:<span style="color:#4ec9b0">Float</span>):<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> / b;
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> &lt; <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> kleiner(b:<span style="color:#4ec9b0">Meter</span>):<span style="color:#4ec9b0">Bool</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> &lt; (b:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> &gt; <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> groesser(b:<span style="color:#4ec9b0">Meter</span>):<span style="color:#4ec9b0">Bool</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> &gt; (b:<span style="color:#4ec9b0">Float</span>);
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toKilometer():<span style="color:#4ec9b0">Kilometer</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> / <span style="color:#f78c6c">1000</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this m'</span>;
+}
+
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Kilometer</span>(<span style="color:#4ec9b0">Float</span>) from <span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Float</span>) <span style="color:#c792ea">this</span> = v;
+
+    <span style="color:#ff9800">@:op</span>(<span style="color:#4ec9b0">A</span> + <span style="color:#4ec9b0">B</span>) <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> plus(b:<span style="color:#4ec9b0">Kilometer</span>):<span style="color:#4ec9b0">Kilometer</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> + (b:<span style="color:#4ec9b0">Float</span>);
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toMeter():<span style="color:#4ec9b0">Meter</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> * <span style="color:#f78c6c">1000</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this km'</span>;
+}
+
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Sekunde</span>(<span style="color:#4ec9b0">Float</span>) from <span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Float</span>) <span style="color:#c792ea">this</span> = v;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toMinuten():<span style="color:#4ec9b0">Minute</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> / <span style="color:#f78c6c">60</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this s'</span>;
+}
+
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">Minute</span>(<span style="color:#4ec9b0">Float</span>) from <span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(v:<span style="color:#4ec9b0">Float</span>) <span style="color:#c792ea">this</span> = v;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toSekunden():<span style="color:#4ec9b0">Sekunde</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> * <span style="color:#f78c6c">60</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this min'</span>;
+}
+
+<span style="color:#546e7a">// Geschwindigkeit als abstrakt typisierter Wert</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">MeterProSekunde</span>(<span style="color:#4ec9b0">Float</span>) from <span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this m/s'</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toKmH():<span style="color:#4ec9b0">KilometerProStunde</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> * <span style="color:#f78c6c">3.6</span>;
+}
+
+<span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">KilometerProStunde</span>(<span style="color:#4ec9b0">Float</span>) from <span style="color:#4ec9b0">Float</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toString():<span style="color:#4ec9b0">String</span> <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'$this km/h'</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> toMs():<span style="color:#4ec9b0">MeterProSekunde</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> / <span style="color:#f78c6c">3.6</span>;
+}
+
+<span style="color:#546e7a">// ── VERWENDUNG ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Main</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> main() {
+        <span style="color:#c792ea">var</span> d:<span style="color:#4ec9b0">Meter</span> = <span style="color:#f78c6c">1500</span>;         <span style="color:#546e7a">// 1500 m</span>
+        <span style="color:#c792ea">var</span> t:<span style="color:#4ec9b0">Sekunde</span> = <span style="color:#f78c6c">300</span>;        <span style="color:#546e7a">// 300 s = 5 min</span>
+
+        <span style="color:#546e7a">// var falsch = d + t;      // COMPILE-FEHLER! Meter + Sekunde</span>
+
+        <span style="color:#c792ea">var</span> v:<span style="color:#4ec9b0">MeterProSekunde</span> = (d:<span style="color:#4ec9b0">Float</span>) / (t:<span style="color:#4ec9b0">Float</span>);
+        <span style="color:#c792ea">trace</span>(v);                   <span style="color:#546e7a">// 5.0 m/s</span>
+        <span style="color:#c792ea">trace</span>(v.toKmH());          <span style="color:#546e7a">// 18.0 km/h</span>
+
+        <span style="color:#c792ea">var</span> distanzInKm = d.toKilometer();
+        <span style="color:#c792ea">trace</span>(distanzInKm);        <span style="color:#546e7a">// 1.5 km</span>
+
+        <span style="color:#546e7a">// Alles wird zu Float kompiliert – null overhead!</span>
+    }
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Compile-Zeit-Makro: automatisch toString() für alle Klassen!</span>
+<span style="color:#546e7a">// Das ist die Stärke von Haxe Makros</span>
+
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">haxe</span>.<span style="color:#c792ea">macro</span>.<span style="color:#4ec9b0">Context</span>;
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">haxe</span>.<span style="color:#c792ea">macro</span>.<span style="color:#4ec9b0">Expr</span>;
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">haxe</span>.<span style="color:#c792ea">macro</span>.<span style="color:#4ec9b0">Type</span>;
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">AutoToString</span> {
+    <span style="color:#546e7a">// Build-Makro – transformiert die ganze Klasse</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">macro</span> <span style="color:#c792ea">function</span> baue():<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">Field</span>&gt; {
+        <span style="color:#c792ea">var</span> fields = <span style="color:#4ec9b0">Context</span>.getBuildFields();
+        <span style="color:#c792ea">var</span> pos = <span style="color:#4ec9b0">Context</span>.currentPos();
+
+        <span style="color:#546e7a">// Felder der aktuellen Klasse sammeln</span>
+        <span style="color:#c792ea">var</span> klassenName = <span style="color:#4ec9b0">Context</span>.getLocalClass().get().name;
+
+        <span style="color:#546e7a">// toString-Implementierung generieren</span>
+        <span style="color:#c792ea">var</span> feldAusdruecke:<span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">Expr</span>&gt; = [];
+        <span style="color:#c792ea">for</span> (feld <span style="color:#c792ea">in</span> fields) {
+            <span style="color:#c792ea">switch</span> feld.kind {
+                <span style="color:#c792ea">case</span> <span style="color:#4ec9b0">FVar</span>(_, _):
+                    <span style="color:#c792ea">var</span> name = feld.name;
+                    <span style="color:#546e7a">// Füge "feldName="+feldName zum String hinzu</span>
+                    feldAusdruecke.push(<span style="color:#c792ea">macro</span> $v{name} + <span style="color:#c3e88d">"="</span> + $i{name});
+                <span style="color:#c792ea">case</span> _:
+            }
+        }
+
+        <span style="color:#546e7a">// toString-Funktion erstellen</span>
+        <span style="color:#c792ea">var</span> koerper:<span style="color:#4ec9b0">Expr</span> = <span style="color:#c792ea">if</span> (feldAusdruecke.length == <span style="color:#f78c6c">0</span>) {
+            <span style="color:#c792ea">macro</span> $v{klassenName} + <span style="color:#c3e88d">"()"</span>;
+        } <span style="color:#c792ea">else</span> {
+            <span style="color:#c792ea">var</span> teile = feldAusdruecke;
+            <span style="color:#c792ea">macro</span> $v{klassenName} + <span style="color:#c3e88d">"("</span> + ${
+                teile.reduceRight(
+                    (a, b) <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">macro</span> $b + <span style="color:#c3e88d">", "</span> + $a,
+                    teile[<span style="color:#f78c6c">0</span>]
+                )
+            } + <span style="color:#c3e88d">")"</span>;
+        };
+
+        <span style="color:#546e7a">// Neues Feld zur Klasse hinzufügen</span>
+        <span style="color:#c792ea">var</span> toStringFeld:<span style="color:#4ec9b0">Field</span> = {
+            name: <span style="color:#c3e88d">"toString"</span>,
+            access: [<span style="color:#4ec9b0">APublic</span>, <span style="color:#4ec9b0">AOverride</span>],
+            kind: <span style="color:#4ec9b0">FFun</span>({
+                args: [],
+                ret: (<span style="color:#c792ea">macro</span> :<span style="color:#4ec9b0">String</span>),
+                expr: <span style="color:#c792ea">macro</span> <span style="color:#c792ea">return</span> $koerper,
+            }),
+            pos: pos,
+        };
+
+        fields.push(toStringFeld);
+        <span style="color:#c792ea">return</span> fields;
+    }
+}
+
+<span style="color:#546e7a">// Verwendung mit @:build</span>
+<span style="color:#ff9800">@:build</span>(<span style="color:#4ec9b0">AutoToString</span>.baue())
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Person</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> name:<span style="color:#4ec9b0">String</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> alter:<span style="color:#4ec9b0">Int</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> email:<span style="color:#4ec9b0">String</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">function</span> <span style="color:#c792ea">new</span>(name:<span style="color:#4ec9b0">String</span>, alter:<span style="color:#4ec9b0">Int</span>, email:<span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">this</span>.name = name;
+        <span style="color:#c792ea">this</span>.alter = alter;
+        <span style="color:#c792ea">this</span>.email = email;
+    }
+    <span style="color:#546e7a">// toString() wird AUTOMATISCH generiert!</span>
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Main</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">function</span> main() {
+        <span style="color:#c792ea">var</span> p = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>, <span style="color:#c3e88d">"alice@example.com"</span>);
+        <span style="color:#c792ea">trace</span>(p);
+        <span style="color:#546e7a">// Person(name=Alice, alter=30, email=alice@example.com)</span>
+        <span style="color:#546e7a">// Kein manuelles toString() geschrieben!</span>
+    }
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#f687120e;border:1px solid #f6871244;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#f68712">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S haxe && haxelib setup ~/haxelib</code><br>Dann: <code style="color:#ffb347">haxe --main Main --js out.js && node out.js</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #f6871244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f687120e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f68712">
+      <span style="display:inline-block;width:8px;height:8px;background:#f68712;border-radius:50%;margin-right:2px"></span>⚙ Haxe installieren (Linux)
+    </span>
+    <span class="aa" style="color:#f68712;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Target</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#f68712">Arch/CachyOS</code></td><td style="color:#cdd6f4">haxe</td><td style="color:#6c7a8e">sudo pacman -S haxe
+haxe --version</td></tr><tr><td style="width:240px"><code style="color:#f68712">Ubuntu/Debian</code></td><td style="color:#cdd6f4">haxe</td><td style="color:#6c7a8e">sudo apt install haxe
+haxe --version</td></tr><tr><td style="width:240px"><code style="color:#f68712">haxe.org direktdownload</code></td><td style="color:#cdd6f4">haxe.org</td><td style="color:#6c7a8e">wget https://haxe.org/website-content/downloads/...
+# .tar.gz entpacken</td></tr><tr><td style="width:240px"><code style="color:#f68712">lix (Paket-Manager)</code></td><td style="color:#cdd6f4">github.com/lix</td><td style="color:#6c7a8e">npm install -g lix
+lix install haxe stable</td></tr><tr><td style="width:240px"><code style="color:#f68712">Nix</code></td><td style="color:#cdd6f4">nixpkgs</td><td style="color:#6c7a8e">nix-shell -p haxe</td></tr><tr><td style="width:240px"><code style="color:#f68712">HashLink (für native)</code></td><td style="color:#cdd6f4">hashlink.haxe.org</td><td style="color:#6c7a8e">sudo pacman -S hashlink
+hl script.hl</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ haxe CLI &amp; hxml
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Target</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --js out.js</code></td><td style="color:#cdd6f4">Zu JavaScript kompilieren</td><td style="color:#6c7a8e">Direktes Browser/Node-JS</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --python out.py</code></td><td style="color:#cdd6f4">Zu Python kompilieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --cpp bin/</code></td><td style="color:#cdd6f4">Zu C++ kompilieren</td><td style="color:#6c7a8e">Native Binary!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --hl out.hl</code></td><td style="color:#cdd6f4">Zu HashLink kompilieren</td><td style="color:#6c7a8e">hl out.hl zum Ausführen</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --cs bin/</code></td><td style="color:#cdd6f4">Zu C# kompilieren</td><td style="color:#6c7a8e">.NET kompatibel</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --java bin/</code></td><td style="color:#cdd6f4">Zu Java kompilieren</td><td style="color:#6c7a8e">JVM kompatibel</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --php bin/</code></td><td style="color:#cdd6f4">Zu PHP kompilieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --main Main --lua out.lua</code></td><td style="color:#cdd6f4">Zu Lua kompilieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe build.hxml</code></td><td style="color:#cdd6f4">HXML-Datei ausführen</td><td style="color:#6c7a8e">Bevorzugter Workflow</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --run Main</code></td><td style="color:#cdd6f4">Direktes Ausführen (Neko)</td><td style="color:#6c7a8e">Kein Kompilieren nötig</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxelib install paket</code></td><td style="color:#cdd6f4">Bibliothek installieren</td><td style="color:#6c7a8e">haxelib install haxeflixel</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxelib update</code></td><td style="color:#cdd6f4">Alle Bibliotheken aktualisieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxelib list</code></td><td style="color:#cdd6f4">Installierte Bibliotheken</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxelib run formatter</code></td><td style="color:#cdd6f4">Code formatieren</td><td style="color:#6c7a8e">haxelib install formatter</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">haxe --display</code></td><td style="color:#cdd6f4">IDE-Unterstützung</td><td style="color:#6c7a8e">Für LSP-Integration</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Libraries
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Target</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">HaxeFlixel</code></td><td style="color:#cdd6f4">haxeflixel.com</td><td style="color:#6c7a8e">2D Game Framework (wie LibGDX)
+haxelib install flixel</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Heaps.io</code></td><td style="color:#cdd6f4">heaps.io</td><td style="color:#6c7a8e">2D/3D Engine von Nicolas Cannasse selbst
+haxelib install heaps</td></tr><tr><td style="width:240px"><code style="color:#c792ea">OpenFL</code></td><td style="color:#cdd6f4">openfl.org</td><td style="color:#6c7a8e">Flash-API Cross-Platform
+haxelib install openfl</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Armory3D</code></td><td style="color:#cdd6f4">armory3d.org</td><td style="color:#6c7a8e">3D Game Engine (Blender-basiert)</td></tr><tr><td style="width:240px"><code style="color:#c792ea">hxcpp</code></td><td style="color:#cdd6f4">github.com/HaxeFoundation</td><td style="color:#6c7a8e">C++ Target Unterstützung
+haxelib install hxcpp</td></tr><tr><td style="width:240px"><code style="color:#c792ea">tink_core</code></td><td style="color:#cdd6f4">github.com/haxetink</td><td style="color:#6c7a8e">Funktionale Utilities: Pair, Option, Outcome
+haxelib install tink_core</td></tr><tr><td style="width:240px"><code style="color:#c792ea">hxformat</code></td><td style="color:#cdd6f4">github.com/HaxeCheckstyle</td><td style="color:#6c7a8e">Code-Formatter</td></tr><tr><td style="width:240px"><code style="color:#c792ea">checkstyle</code></td><td style="color:#cdd6f4">github.com/HaxeCheckstyle</td><td style="color:#6c7a8e">Linter</td></tr><tr><td style="width:240px"><code style="color:#c792ea">utest</code></td><td style="color:#cdd6f4">github.com/haxe-utest</td><td style="color:#6c7a8e">Unit-Testing Framework</td></tr><tr><td style="width:240px"><code style="color:#c792ea">buddy</code></td><td style="color:#cdd6f4">github.com/ciscoheat</td><td style="color:#6c7a8e">BDD Testing Framework</td></tr><tr><td style="width:240px"><code style="color:#c792ea">haxe-json</code></td><td style="color:#cdd6f4">haxe.org</td><td style="color:#6c7a8e">Eingebaut: haxe.Json.parse/stringify</td></tr><tr><td style="width:240px"><code style="color:#c792ea">haxe-xml</code></td><td style="color:#cdd6f4">haxe.org</td><td style="color:#6c7a8e">Eingebaut: Xml.parse()</td></tr><tr><td style="width:240px"><code style="color:#c792ea">haxe-crypto</code></td><td style="color:#cdd6f4">haxelib</td><td style="color:#6c7a8e">Kryptographie</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Editoren &amp; IDEs
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Target</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">VS Code + Haxe Extension</code></td><td style="color:#cdd6f4">marketplace</td><td style="color:#6c7a8e">vshaxe (offizielle Extension)
+code --install-extension nadako.vshaxe</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">IntelliJ IDEA</code></td><td style="color:#cdd6f4">plugins.jetbrains.com</td><td style="color:#6c7a8e">Haxe Plugin (sehr gut!)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">HaxeDevelop</code></td><td style="color:#cdd6f4">haxedevelop.org</td><td style="color:#6c7a8e">Spezialisierte IDE (Windows/Linux)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Neovim</code></td><td style="color:#cdd6f4">nvim-lspconfig</td><td style="color:#6c7a8e">haxe_language_server
+require("lspconfig").haxe_ls.setup{}</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Heaps Editor</code></td><td style="color:#cdd6f4">heaps.io</td><td style="color:#6c7a8e">Für Heaps-Projekte: Eingebauter Editor</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">FlashDevelop</code></td><td style="color:#cdd6f4">flashdevelop.org</td><td style="color:#6c7a8e">Windows, gutes Autocomplete</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Build-Targets im Vergleich
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Target</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">JavaScript</code></td><td style="color:#cdd6f4">haxe ... --js out.js</td><td style="color:#6c7a8e">Browser + Node.js. Schnellste Iteration</td></tr><tr><td style="width:240px"><code style="color:#ffb347">HashLink</code></td><td style="color:#cdd6f4">haxe ... --hl out.hl</td><td style="color:#6c7a8e">Native VM, sehr schnell. Für Desktop-Spiele</td></tr><tr><td style="width:240px"><code style="color:#ffb347">C++</code></td><td style="color:#cdd6f4">haxe ... --cpp bin/</td><td style="color:#6c7a8e">Maximale Performance. Kompiliert langsam</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Python</code></td><td style="color:#cdd6f4">haxe ... --python out.py</td><td style="color:#6c7a8e">Gut für Scripting und Backend</td></tr><tr><td style="width:240px"><code style="color:#ffb347">C#</code></td><td style="color:#cdd6f4">haxe ... --cs bin/</td><td style="color:#6c7a8e">.NET-Ökosystem nutzen</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Java/JVM</code></td><td style="color:#cdd6f4">haxe ... --jvm out.jar</td><td style="color:#6c7a8e">Java-Ökosystem, direkt als JAR</td></tr><tr><td style="width:240px"><code style="color:#ffb347">PHP</code></td><td style="color:#cdd6f4">haxe ... --php bin/</td><td style="color:#6c7a8e">Webserver-Deployment</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Lua</code></td><td style="color:#cdd6f4">haxe ... --lua out.lua</td><td style="color:#6c7a8e">Eingebettetes Scripting (z.B. LÖVE)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Neko</code></td><td style="color:#cdd6f4">haxe --run Main</td><td style="color:#6c7a8e">Schnelles Prototyping, kein Extra-Kompilieren</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#f68712';
+      btn.style.color       = '#f68712';
+      btn.style.background  = 'rgba(246,135,18,.1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

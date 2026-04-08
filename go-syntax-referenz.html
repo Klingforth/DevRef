@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #00acd7;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(0, 172, 215, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#00acd7">&#x2015;</span>
+      <span style="color:#00acd7">Go</span> Syntax
+    </div>
+    <div id="hdr-sub">Go 1.21+ · Goroutines · Generics · Linux</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="structs">Structs & Interfaces</button>
+    <button class="tb" data-tab="concurrency">Nebenläufigkeit</button>
+    <button class="tb" data-tab="packages">Packages & Testing</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-types" class="tp active">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>Ganzzahlen &amp; Floats
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Literal</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">int</code></td>
+      <td style="color:#c3e88d;font-size:11px">var n int = 42  |  n := 42</td>
+      <td style="color:#6c7a8e">Plattformabhängig: 32 oder 64 Bit. Fast immer richtig.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">int8/16/32/64</code></td>
+      <td style="color:#c3e88d;font-size:11px">var n int32 = 2147483647</td>
+      <td style="color:#6c7a8e">Explizite Größe wenn nötig. int32 = rune-Alias.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">uint/8/16/32/64</code></td>
+      <td style="color:#c3e88d;font-size:11px">var n uint = 42</td>
+      <td style="color:#6c7a8e">Vorzeichenlos. uint8 = byte-Alias.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">float32</code></td>
+      <td style="color:#c3e88d;font-size:11px">var f float32 = 3.14</td>
+      <td style="color:#6c7a8e">32-Bit IEEE 754. Selten nötig – float64 bevorzugen.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">float64</code></td>
+      <td style="color:#c3e88d;font-size:11px">var f float64 = 3.14159  |  f := 3.14</td>
+      <td style="color:#6c7a8e">64-Bit IEEE 754. Standard-Float in Go.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">complex64/128</code></td>
+      <td style="color:#c3e88d;font-size:11px">var c = 1 + 2i  |  complex(1, 2)</td>
+      <td style="color:#6c7a8e">Komplexe Zahlen – selten benötigt.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">byte</code></td>
+      <td style="color:#c3e88d;font-size:11px">var b byte = 65  // = uint8</td>
+      <td style="color:#6c7a8e">Alias für uint8. Für Byte-Daten und ASCII.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">rune</code></td>
+      <td style="color:#c3e88d;font-size:11px">var r rune = 'A'  // = int32</td>
+      <td style="color:#6c7a8e">Alias für int32. Repräsentiert einen Unicode-Codepunkt.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#00acd7">uintptr</code></td>
+      <td style="color:#c3e88d;font-size:11px">var p uintptr</td>
+      <td style="color:#6c7a8e">Groß genug für einen Pointer-Wert. Für unsafe-Code.</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>String &amp; Bool
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Literal</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:150px"><code style="color:#c792ea">string</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  `raw\nliteral`  |  ""</td>
+      <td style="color:#6c7a8e">Immutabler UTF-8 Byte-Slice. Keine Null-Terminierung.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#c792ea">Raw String</code></td>
+      <td style="color:#c3e88d;font-size:11px">`Kein\nEscape nötig`</td>
+      <td style="color:#6c7a8e">Backtick-String: alles wörtlich, Newlines erlaubt.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#c792ea">bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Kein implicit truthy/falsy. Nur true und false.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#c792ea">Rune</code></td>
+      <td style="color:#c3e88d;font-size:11px">'A'  |  '\n'  |  '\u0041'  |  '💡'</td>
+      <td style="color:#6c7a8e">Einfache Anführungszeichen. int32-Wert des Unicode-Codepunkts.</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Zusammengesetzte Typen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Literal</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">array</code></td>
+      <td style="color:#c3e88d;font-size:11px">[3]int{1, 2, 3}  |  [...]string{"a", "b"}</td>
+      <td style="color:#6c7a8e">Feste Größe, Teil des Typs. [3]int != [4]int!</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">slice</code></td>
+      <td style="color:#c3e88d;font-size:11px">[]int{1, 2, 3}  |  make([]int, 5)  |  make([]int, 3, 10)</td>
+      <td style="color:#6c7a8e">Dynamisches Array. Referenz auf zugrunde liegendes Array.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">map</code></td>
+      <td style="color:#c3e88d;font-size:11px">map[string]int{"a": 1}  |  make(map[string]int)</td>
+      <td style="color:#6c7a8e">Hash-Map. Keys müssen comparable sein.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">struct</code></td>
+      <td style="color:#c3e88d;font-size:11px">struct{ Name string; Alter int }</td>
+      <td style="color:#6c7a8e">Wertetyp. Methoden separat via func (t T) Method().</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">pointer</code></td>
+      <td style="color:#c3e88d;font-size:11px">*int  |  &amp;variable  |  new(int)</td>
+      <td style="color:#6c7a8e">Zeiger auf Speicheradresse. nil = kein Zeiger.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">interface</code></td>
+      <td style="color:#c3e88d;font-size:11px">interface{ Method() string }</td>
+      <td style="color:#6c7a8e">Implizit implementiert – kein implements-Keyword!</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">channel</code></td>
+      <td style="color:#c3e88d;font-size:11px">chan int  |  chan&lt;- int  |  &lt;-chan int</td>
+      <td style="color:#6c7a8e">Typsicher. chan&lt;- = nur senden. &lt;-chan = nur empfangen.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#4ec9b0">func</code></td>
+      <td style="color:#c3e88d;font-size:11px">func(int, string) error</td>
+      <td style="color:#6c7a8e">First-Class. Closures. Mehrere Rückgabewerte.</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Variablendeklaration
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Literal</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:150px"><code style="color:#ffb347">var</code></td>
+      <td style="color:#c3e88d;font-size:11px">var name string
+var x int = 42
+var a, b = 1, "hi"</td>
+      <td style="color:#6c7a8e">Explizit. Auch auf Package-Ebene möglich.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#ffb347">:=</code></td>
+      <td style="color:#c3e88d;font-size:11px">name := "Alice"
+x, y := 1, 2</td>
+      <td style="color:#6c7a8e">Kurze Deklaration. Nur in Funktionen. Mindestens eine neue Variable!</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#ffb347">const</code></td>
+      <td style="color:#c3e88d;font-size:11px">const Pi = 3.14159
+const (
+  A = 1
+  B = 2
+)</td>
+      <td style="color:#6c7a8e">Compile-Zeit-Konstante. Kein := für const.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#ffb347">iota</code></td>
+      <td style="color:#c3e88d;font-size:11px">const (
+  A = iota  // 0
+  B         // 1
+  C         // 2
+)</td>
+      <td style="color:#6c7a8e">Auto-Inkrement in const-Blöcken. Startet bei 0 pro Block.</td>
+    </tr>
+    <tr>
+      <td style="width:150px"><code style="color:#ffb347">Zero Values</code></td>
+      <td style="color:#c3e88d;font-size:11px">var s string  // ""  var n int  // 0  var b bool  // false  var p *T  // nil</td>
+      <td style="color:#6c7a8e">Jeder Typ hat einen Null-Wert. Keine uninitialisierten Variablen!</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / else / switch
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / else / switch">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / else / switch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// if – keine Klammern, {} Pflicht</span>
+<span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">10</span> {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"groß"</span>)
+} <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">5</span> {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"mittel"</span>)
+} <span style="color:#c792ea">else</span> {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"klein"</span>)
+}
+
+<span style="color:#546e7a">// if mit Init-Statement (sehr idiomatisch in Go!)</span>
+<span style="color:#c792ea">if</span> err <span style="color:#89ddff">:=</span> doSomething(); err != <span style="color:#c792ea">nil</span> {
+    log.<span style="color:#ffcb6b">Fatal</span>(err)
+}
+
+<span style="color:#c792ea">if</span> val, ok <span style="color:#89ddff">:=</span> myMap[<span style="color:#c3e88d">"key"</span>]; ok {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Gefunden:"</span>, val)
+}
+
+<span style="color:#546e7a">// switch – kein break nötig! (kein fall-through by default)</span>
+<span style="color:#c792ea">switch</span> betriebssystem {
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"linux"</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Linux"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"darwin"</span>, <span style="color:#c3e88d">"freebsd"</span>:   <span style="color:#546e7a">// mehrere Werte möglich</span>
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Unix-artig"</span>)
+<span style="color:#c792ea">default</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Unbekannt"</span>)
+}
+
+<span style="color:#546e7a">// switch ohne Ausdruck = switch true (wie if-else-Chain)</span>
+<span style="color:#c792ea">switch</span> {
+<span style="color:#c792ea">case</span> x &lt; <span style="color:#f78c6c">0</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Negativ"</span>)
+<span style="color:#c792ea">case</span> x == <span style="color:#f78c6c">0</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Null"</span>)
+<span style="color:#c792ea">default</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Positiv"</span>)
+}
+
+<span style="color:#546e7a">// switch auf Typ (Type Switch)</span>
+<span style="color:#c792ea">switch</span> v <span style="color:#89ddff">:=</span> i.(<span style="color:#c792ea">type</span>) {
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">int</span>:
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"int: %d\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">string</span>:
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"string: %q\n"</span>, v)
+<span style="color:#c792ea">case</span> []<span style="color:#ffcb6b">int</span>:
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"slice: %v\n"</span>, v)
+<span style="color:#c792ea">default</span>:
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"unbekannt: %T\n"</span>, v)
+}
+
+<span style="color:#546e7a">// fallthrough – explizit wenn gewünscht</span>
+<span style="color:#c792ea">switch</span> x {
+<span style="color:#c792ea">case</span> <span style="color:#f78c6c">1</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"eins"</span>)
+    <span style="color:#c792ea">fallthrough</span>
+<span style="color:#c792ea">case</span> <span style="color:#f78c6c">2</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"auch bei eins!"</span>)
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>for – der einzige Loop
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for – der einzige loop">
+  <div style="color:#00acd7;font-weight:700;font-size:12px;margin-bottom:8px">
+    for – der einzige Loop
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Klassisches for (wie C)</span>
+<span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++ {
+    fmt.<span style="color:#ffcb6b">Println</span>(i)
+}
+
+<span style="color:#546e7a">// while-Ersatz</span>
+<span style="color:#c792ea">for</span> n &lt; <span style="color:#f78c6c">100</span> {
+    n *= <span style="color:#f78c6c">2</span>
+}
+
+<span style="color:#546e7a">// Endlosschleife</span>
+<span style="color:#c792ea">for</span> {
+    <span style="color:#c792ea">if</span> done { <span style="color:#c792ea">break</span> }
+    doWork()
+}
+
+<span style="color:#546e7a">// range – über Slice/Array</span>
+zahlen <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>}
+<span style="color:#c792ea">for</span> i, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> zahlen {
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"%d: %d\n"</span>, i, v)
+}
+
+<span style="color:#546e7a">// range – nur Index</span>
+<span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> zahlen {
+    fmt.<span style="color:#ffcb6b">Println</span>(i)
+}
+
+<span style="color:#546e7a">// range – nur Wert (Index verwerfen mit _)</span>
+<span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> zahlen {
+    fmt.<span style="color:#ffcb6b">Println</span>(v)
+}
+
+<span style="color:#546e7a">// range – über Map (Reihenfolge unbestimmt!)</span>
+<span style="color:#c792ea">for</span> key, val <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> myMap {
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"%s = %v\n"</span>, key, val)
+}
+
+<span style="color:#546e7a">// range – über String (liefert rune, nicht byte!)</span>
+<span style="color:#c792ea">for</span> i, r <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> <span style="color:#c3e88d">"Héllo"</span> {
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"Index %d: %c (%d)\n"</span>, i, r, r)
+}
+
+<span style="color:#546e7a">// range – über Channel (blockiert bis Channel geschlossen)</span>
+<span style="color:#c792ea">for</span> v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> myChan {
+    fmt.<span style="color:#ffcb6b">Println</span>(v)
+}
+
+<span style="color:#546e7a">// break / continue mit Label</span>
+outer:
+<span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">5</span>; i++ {
+    <span style="color:#c792ea">for</span> j <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; j &lt; <span style="color:#f78c6c">5</span>; j++ {
+        <span style="color:#c792ea">if</span> i+j &gt; <span style="color:#f78c6c">6</span> {
+            <span style="color:#c792ea">break</span> outer
+        }
+    }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>defer / panic / recover
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="defer / panic / recover">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    defer / panic / recover
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// defer – Aufruf wird bis zum Funktionsende aufgeschoben</span>
+<span style="color:#546e7a">// LIFO-Reihenfolge (letztes defer = zuerst ausgeführt)</span>
+
+<span style="color:#c792ea">func</span> öffneDatei(name <span style="color:#ffcb6b">string</span>) <span style="color:#ffcb6b">error</span> {
+    f, err <span style="color:#89ddff">:=</span> os.<span style="color:#ffcb6b">Open</span>(name)
+    <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> {
+        <span style="color:#c792ea">return</span> err
+    }
+    <span style="color:#c792ea">defer</span> f.<span style="color:#ffcb6b">Close</span>()   <span style="color:#546e7a">// wird IMMER ausgeführt, auch bei panic</span>
+
+    <span style="color:#546e7a">// ... Datei verarbeiten</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>
+}
+
+<span style="color:#546e7a">// defer mit Schleife (Achtung: alle bis Funktionsende!)</span>
+<span style="color:#c792ea">for</span> _, f <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> dateien {
+    f <span style="color:#89ddff">:=</span> f  <span style="color:#546e7a">// wichtig: Variable capturen!</span>
+    <span style="color:#c792ea">defer</span> f.<span style="color:#ffcb6b">Close</span>()
+}
+
+<span style="color:#546e7a">// defer-Argumente werden SOFORT ausgewertet</span>
+x <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">10</span>
+<span style="color:#c792ea">defer</span> fmt.<span style="color:#ffcb6b">Println</span>(x)   <span style="color:#546e7a">// gibt 10 aus, nicht den späteren Wert</span>
+x = <span style="color:#f78c6c">20</span>
+
+<span style="color:#546e7a">// panic – wie throw, aber selten verwenden</span>
+<span style="color:#c792ea">func</span> divide(a, b <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> {
+    <span style="color:#c792ea">if</span> b == <span style="color:#f78c6c">0</span> {
+        <span style="color:#82aaff">panic</span>(<span style="color:#c3e88d">"Division durch Null!"</span>)
+    }
+    <span style="color:#c792ea">return</span> a / b
+}
+
+<span style="color:#546e7a">// recover – panic abfangen (nur in defer!)</span>
+<span style="color:#c792ea">func</span> safe(fn <span style="color:#c792ea">func</span>()) (err <span style="color:#ffcb6b">error</span>) {
+    <span style="color:#c792ea">defer</span> <span style="color:#c792ea">func</span>() {
+        <span style="color:#c792ea">if</span> r <span style="color:#89ddff">:=</span> <span style="color:#82aaff">recover</span>(); r != <span style="color:#c792ea">nil</span> {
+            err = fmt.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"panic: %v"</span>, r)
+        }
+    }()
+    fn()
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>
+}
+
+<span style="color:#546e7a">// Idiom: panic für "unmögliche" Zustände,</span>
+<span style="color:#546e7a">// error für normale Fehlerbedingungen</span>
+<span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(data) == <span style="color:#f78c6c">0</span> {
+    <span style="color:#82aaff">panic</span>(<span style="color:#c3e88d">"data darf nie leer sein – das ist ein Programmierfehler"</span>)
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Funktionen definieren
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen definieren">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen definieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Einfache Funktion</span>
+<span style="color:#c792ea">func</span> addiere(a, b <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> {
+    <span style="color:#c792ea">return</span> a + b
+}
+
+<span style="color:#546e7a">// Mehrere Parameter gleichen Typs – Typ einmal schreiben</span>
+<span style="color:#c792ea">func</span> addiere(a, b, c <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> {
+    <span style="color:#c792ea">return</span> a + b + c
+}
+
+<span style="color:#546e7a">// Mehrere Rückgabewerte (sehr idiomatisch in Go!)</span>
+<span style="color:#c792ea">func</span> divide(a, b <span style="color:#ffcb6b">float64</span>) (<span style="color:#ffcb6b">float64</span>, <span style="color:#ffcb6b">error</span>) {
+    <span style="color:#c792ea">if</span> b == <span style="color:#f78c6c">0</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>, fmt.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"division durch null"</span>)
+    }
+    <span style="color:#c792ea">return</span> a / b, <span style="color:#c792ea">nil</span>
+}
+
+ergebnis, err <span style="color:#89ddff">:=</span> divide(<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">3</span>)
+<span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> {
+    log.<span style="color:#ffcb6b">Fatal</span>(err)
+}
+
+<span style="color:#546e7a">// Benannte Rückgabewerte (named return values)</span>
+<span style="color:#c792ea">func</span> minMax(arr []<span style="color:#ffcb6b">int</span>) (<span style="color:#82aaff">min</span>, <span style="color:#82aaff">max</span> <span style="color:#ffcb6b">int</span>) {
+    <span style="color:#82aaff">min</span>, <span style="color:#82aaff">max</span> = arr[<span style="color:#f78c6c">0</span>], arr[<span style="color:#f78c6c">0</span>]
+    <span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> arr[<span style="color:#f78c6c">1</span>:] {
+        <span style="color:#c792ea">if</span> v &lt; <span style="color:#82aaff">min</span> { <span style="color:#82aaff">min</span> = v }
+        <span style="color:#c792ea">if</span> v &gt; <span style="color:#82aaff">max</span> { <span style="color:#82aaff">max</span> = v }
+    }
+    <span style="color:#c792ea">return</span>   <span style="color:#546e7a">// "nackte" Rückgabe – gibt min und max zurück</span>
+}
+
+<span style="color:#546e7a">// Variadic – beliebig viele Argumente</span>
+<span style="color:#c792ea">func</span> summe(zahlen <span style="color:#89ddff">...</span><span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> {
+    total <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">for</span> _, n <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> zahlen {
+        total += n
+    }
+    <span style="color:#c792ea">return</span> total
+}
+summe(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)              <span style="color:#546e7a">// direkt</span>
+summe(meinSlice<span style="color:#89ddff">...</span>)         <span style="color:#546e7a">// Slice entpacken</span>
+
+<span style="color:#546e7a">// Funktion als Typ</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Handler</span> <span style="color:#c792ea">func</span>(w http.<span style="color:#ffcb6b">ResponseWriter</span>, r *http.<span style="color:#ffcb6b">Request</span>)
+
+<span style="color:#546e7a">// Anonyme Funktion / Closure</span>
+doppeln <span style="color:#89ddff">:=</span> <span style="color:#c792ea">func</span>(n <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> n * <span style="color:#f78c6c">2</span> }
+fmt.<span style="color:#ffcb6b">Println</span>(doppeln(<span style="color:#f78c6c">5</span>))     <span style="color:#546e7a">// 10</span>
+
+<span style="color:#546e7a">// Sofort aufgerufen (IIFE)</span>
+ergebnis <span style="color:#89ddff">:=</span> <span style="color:#c792ea">func</span>(x <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> x * x }(<span style="color:#f78c6c">5</span>)   <span style="color:#546e7a">// 25</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>Methoden &amp; Interfaces
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="methoden &amp; interfaces">
+  <div style="color:#00acd7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Methoden &amp; Interfaces
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Methoden – Funktion mit Receiver</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Rechteck</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">Breite</span>, <span style="color:#ffcb6b">Höhe</span> <span style="color:#ffcb6b">float64</span>
+}
+
+<span style="color:#546e7a">// Value Receiver – kopiert den Wert</span>
+<span style="color:#c792ea">func</span> (r <span style="color:#ffcb6b">Rechteck</span>) <span style="color:#ffcb6b">Fläche</span>() <span style="color:#ffcb6b">float64</span> {
+    <span style="color:#c792ea">return</span> r.<span style="color:#ffcb6b">Breite</span> * r.<span style="color:#ffcb6b">Höhe</span>
+}
+
+<span style="color:#546e7a">// Pointer Receiver – ändert den Original-Wert</span>
+<span style="color:#c792ea">func</span> (r *<span style="color:#ffcb6b">Rechteck</span>) <span style="color:#ffcb6b">Skaliere</span>(faktor <span style="color:#ffcb6b">float64</span>) {
+    r.<span style="color:#ffcb6b">Breite</span> *= faktor
+    r.<span style="color:#ffcb6b">Höhe</span> *= faktor
+}
+
+r <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Rechteck</span>{<span style="color:#ffcb6b">Breite</span>: <span style="color:#f78c6c">10</span>, <span style="color:#ffcb6b">Höhe</span>: <span style="color:#f78c6c">5</span>}
+fmt.<span style="color:#ffcb6b">Println</span>(r.<span style="color:#ffcb6b">Fläche</span>())    <span style="color:#546e7a">// 50</span>
+r.<span style="color:#ffcb6b">Skaliere</span>(<span style="color:#f78c6c">2</span>)              <span style="color:#546e7a">// Go ruft automatisch (&amp;r).Skaliere(2) auf</span>
+fmt.<span style="color:#ffcb6b">Println</span>(r.<span style="color:#ffcb6b">Fläche</span>())    <span style="color:#546e7a">// 200</span>
+
+<span style="color:#546e7a">// Interface – implizit implementiert</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Form</span> <span style="color:#c792ea">interface</span> {
+    <span style="color:#ffcb6b">Fläche</span>() <span style="color:#ffcb6b">float64</span>
+    <span style="color:#ffcb6b">Umfang</span>() <span style="color:#ffcb6b">float64</span>
+}
+
+<span style="color:#546e7a">// Rechteck implementiert Form automatisch wenn beide Methoden existieren</span>
+<span style="color:#c792ea">func</span> printInfo(f <span style="color:#ffcb6b">Form</span>) {
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"Fläche: %.2f, Umfang: %.2f\n"</span>, f.<span style="color:#ffcb6b">Fläche</span>(), f.<span style="color:#ffcb6b">Umfang</span>())
+}
+
+<span style="color:#546e7a">// Interface-Check zur Laufzeit</span>
+<span style="color:#c792ea">if</span> form, ok <span style="color:#89ddff">:=</span> irgendwas.(<span style="color:#ffcb6b">Form</span>); ok {
+    printInfo(form)
+}
+
+<span style="color:#546e7a">// Leeres Interface – nimmt alles (wie any)</span>
+<span style="color:#c792ea">func</span> drucke(v <span style="color:#ffcb6b">any</span>) {
+    fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"%T: %v\n"</span>, v, v)
+}
+
+<span style="color:#546e7a">// Stringer Interface (wie toString)</span>
+<span style="color:#c792ea">func</span> (r <span style="color:#ffcb6b">Rechteck</span>) <span style="color:#ffcb6b">String</span>() <span style="color:#ffcb6b">string</span> {
+    <span style="color:#c792ea">return</span> fmt.<span style="color:#ffcb6b">Sprintf</span>(<span style="color:#c3e88d">"Rechteck(%gx%g)"</span>, r.<span style="color:#ffcb6b">Breite</span>, r.<span style="color:#ffcb6b">Höhe</span>)
+}
+fmt.<span style="color:#ffcb6b">Println</span>(r)   <span style="color:#546e7a">// Rechteck(20x10)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Closures &amp; Higher-Order
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="closures &amp; higher-order">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Closures &amp; Higher-Order
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Closures – Funktion schließt über Variablen</span>
+<span style="color:#c792ea">func</span> macheZähler() <span style="color:#c792ea">func</span>() <span style="color:#ffcb6b">int</span> {
+    n <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">func</span>() <span style="color:#ffcb6b">int</span> {
+        n++
+        <span style="color:#c792ea">return</span> n
+    }
+}
+
+zähl <span style="color:#89ddff">:=</span> macheZähler()
+fmt.<span style="color:#ffcb6b">Println</span>(zähl(), zähl(), zähl())   <span style="color:#546e7a">// 1 2 3</span>
+
+<span style="color:#546e7a">// Middleware-Pattern (sehr häufig in Go)</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">HandlerFunc</span> <span style="color:#c792ea">func</span>(<span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span>
+
+<span style="color:#c792ea">func</span> macheLogger(fn <span style="color:#ffcb6b">HandlerFunc</span>) <span style="color:#ffcb6b">HandlerFunc</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">func</span>(x <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> {
+        fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"Aufruf mit %d\n"</span>, x)
+        result <span style="color:#89ddff">:=</span> fn(x)
+        fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"Ergebnis: %d\n"</span>, result)
+        <span style="color:#c792ea">return</span> result
+    }
+}
+
+doppeln <span style="color:#89ddff">:=</span> <span style="color:#c792ea">func</span>(x <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> x * <span style="color:#f78c6c">2</span> }
+loggedDoppeln <span style="color:#89ddff">:=</span> macheLogger(doppeln)
+loggedDoppeln(<span style="color:#f78c6c">5</span>)
+
+<span style="color:#546e7a">// Function Values in Slices/Maps</span>
+operatoren <span style="color:#89ddff">:=</span> <span style="color:#c792ea">map</span>[<span style="color:#ffcb6b">string</span>]<span style="color:#c792ea">func</span>(<span style="color:#ffcb6b">int</span>, <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span>{
+    <span style="color:#c3e88d">"+"</span>: <span style="color:#c792ea">func</span>(a, b <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> a + b },
+    <span style="color:#c3e88d">"-"</span>: <span style="color:#c792ea">func</span>(a, b <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> a - b },
+    <span style="color:#c3e88d">"*"</span>: <span style="color:#c792ea">func</span>(a, b <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> a * b },
+}
+fmt.<span style="color:#ffcb6b">Println</span>(operatoren[<span style="color:#c3e88d">"*"</span>](<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">7</span>))   <span style="color:#546e7a">// 21</span>
+
+<span style="color:#546e7a">// Generische Funktion (Go 1.18+)</span>
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">Map</span>[<span style="color:#ffcb6b">T</span>, <span style="color:#ffcb6b">U</span> <span style="color:#ffcb6b">any</span>](slice []<span style="color:#ffcb6b">T</span>, fn <span style="color:#c792ea">func</span>(<span style="color:#ffcb6b">T</span>) <span style="color:#ffcb6b">U</span>) []<span style="color:#ffcb6b">U</span> {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">U</span>, <span style="color:#82aaff">len</span>(slice))
+    <span style="color:#c792ea">for</span> i, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> slice {
+        result[i] = fn(v)
+    }
+    <span style="color:#c792ea">return</span> result
+}
+
+zahlen <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>}
+quadrate <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Map</span>(zahlen, <span style="color:#c792ea">func</span>(n <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> n * n })
+fmt.<span style="color:#ffcb6b">Println</span>(quadrate)   <span style="color:#546e7a">// [1 4 9 16 25]</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Error Handling
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="error handling">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Error Handling
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Go hat kein try/catch – Fehler sind Rückgabewerte</span>
+<span style="color:#546e7a">// Das ist Absicht: Fehler werden explizit behandelt</span>
+
+<span style="color:#546e7a">// Einfacher Fehler</span>
+<span style="color:#c792ea">func</span> leseZahl(s <span style="color:#ffcb6b">string</span>) (<span style="color:#ffcb6b">int</span>, <span style="color:#ffcb6b">error</span>) {
+    n, err <span style="color:#89ddff">:=</span> strconv.<span style="color:#ffcb6b">Atoi</span>(s)
+    <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>, fmt.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"leseZahl: %w"</span>, err)   <span style="color:#546e7a">// %w = wrapping!</span>
+    }
+    <span style="color:#c792ea">return</span> n, <span style="color:#c792ea">nil</span>
+}
+
+<span style="color:#546e7a">// Eigene Fehler-Typen</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">ValidationError</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">Feld</span>    <span style="color:#ffcb6b">string</span>
+    <span style="color:#ffcb6b">Wert</span>    <span style="color:#ffcb6b">any</span>
+    <span style="color:#ffcb6b">Grund</span>   <span style="color:#ffcb6b">string</span>
+}
+
+<span style="color:#c792ea">func</span> (e *<span style="color:#ffcb6b">ValidationError</span>) <span style="color:#ffcb6b">Error</span>() <span style="color:#ffcb6b">string</span> {
+    <span style="color:#c792ea">return</span> fmt.<span style="color:#ffcb6b">Sprintf</span>(<span style="color:#c3e88d">"validation: %s=%v: %s"</span>, e.<span style="color:#ffcb6b">Feld</span>, e.<span style="color:#ffcb6b">Wert</span>, e.<span style="color:#ffcb6b">Grund</span>)
+}
+
+<span style="color:#546e7a">// Fehler entpacken (errors.Is / errors.As)</span>
+<span style="color:#c792ea">var</span> <span style="color:#ffcb6b">ErrNichtGefunden</span> = errors.<span style="color:#ffcb6b">New</span>(<span style="color:#c3e88d">"nicht gefunden"</span>)
+
+<span style="color:#c792ea">func</span> holeUser(id <span style="color:#ffcb6b">int</span>) (*<span style="color:#ffcb6b">User</span>, <span style="color:#ffcb6b">error</span>) {
+    <span style="color:#c792ea">if</span> id &lt;= <span style="color:#f78c6c">0</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>, fmt.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"holeUser(%d): %w"</span>, id, <span style="color:#ffcb6b">ErrNichtGefunden</span>)
+    }
+    <span style="color:#546e7a">// ...</span>
+}
+
+err <span style="color:#89ddff">:=</span> holeUser(-<span style="color:#f78c6c">1</span>)
+<span style="color:#c792ea">if</span> errors.<span style="color:#ffcb6b">Is</span>(err, <span style="color:#ffcb6b">ErrNichtGefunden</span>) {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"User existiert nicht"</span>)
+}
+
+<span style="color:#c792ea">var</span> valErr *<span style="color:#ffcb6b">ValidationError</span>
+<span style="color:#c792ea">if</span> errors.<span style="color:#ffcb6b">As</span>(err, &amp;valErr) {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Feld:"</span>, valErr.<span style="color:#ffcb6b">Feld</span>)
+}
+
+<span style="color:#546e7a">// errors.Join (Go 1.20+) – mehrere Fehler kombinieren</span>
+err1 <span style="color:#89ddff">:=</span> validate(name)
+err2 <span style="color:#89ddff">:=</span> validate(email)
+<span style="color:#c792ea">if</span> combined <span style="color:#89ddff">:=</span> errors.<span style="color:#ffcb6b">Join</span>(err1, err2); combined != <span style="color:#c792ea">nil</span> {
+    <span style="color:#c792ea">return</span> combined
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-structs" class="tp">
+
+<div class="ac open" id="ac-st0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Structs definieren &amp; nutzen
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="structs definieren &amp; nutzen">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Structs definieren &amp; nutzen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Struct-Definition</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Person</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">Name</span>    <span style="color:#ffcb6b">string</span>
+    <span style="color:#ffcb6b">Alter</span>   <span style="color:#ffcb6b">int</span>
+    <span style="color:#ffcb6b">Email</span>   <span style="color:#ffcb6b">string</span>
+    aktiv   <span style="color:#ffcb6b">bool</span>    <span style="color:#546e7a">// klein = unexported (privat im Package)</span>
+}
+
+<span style="color:#546e7a">// Initialisieren</span>
+p1 <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Person</span>{<span style="color:#ffcb6b">Name</span>: <span style="color:#c3e88d">"Alice"</span>, <span style="color:#ffcb6b">Alter</span>: <span style="color:#f78c6c">30</span>, <span style="color:#ffcb6b">Email</span>: <span style="color:#c3e88d">"alice@example.com"</span>}
+p2 <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Person</span>{<span style="color:#c3e88d">"Bob"</span>, <span style="color:#f78c6c">25</span>, <span style="color:#c3e88d">"bob@example.com"</span>, <span style="color:#c792ea">true</span>}   <span style="color:#546e7a">// Reihenfolge Pflicht</span>
+p3 <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Person</span>{<span style="color:#ffcb6b">Name</span>: <span style="color:#c3e88d">"Carol"</span>}   <span style="color:#546e7a">// Restliche Felder = Zero-Values</span>
+
+<span style="color:#546e7a">// Zugriff und Änderung</span>
+fmt.<span style="color:#ffcb6b">Println</span>(p1.<span style="color:#ffcb6b">Name</span>)
+p1.<span style="color:#ffcb6b">Alter</span> = <span style="color:#f78c6c">31</span>
+
+<span style="color:#546e7a">// Pointer auf Struct</span>
+p <span style="color:#89ddff">:=</span> &amp;<span style="color:#ffcb6b">Person</span>{<span style="color:#ffcb6b">Name</span>: <span style="color:#c3e88d">"Dave"</span>}
+p.<span style="color:#ffcb6b">Alter</span> = <span style="color:#f78c6c">28</span>   <span style="color:#546e7a">// Auto-Dereferenzierung: (*p).Alter = 28</span>
+
+<span style="color:#546e7a">// Struct einbetten (Embedding = Komposition statt Vererbung)</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Mitarbeiter</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">Person</span>          <span style="color:#546e7a">// Eingebettet – alle Felder und Methoden von Person!</span>
+    <span style="color:#ffcb6b">Firma</span>   <span style="color:#ffcb6b">string</span>
+    <span style="color:#ffcb6b">Gehalt</span>  <span style="color:#ffcb6b">float64</span>
+}
+
+m <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Mitarbeiter</span>{
+    <span style="color:#ffcb6b">Person</span>: <span style="color:#ffcb6b">Person</span>{<span style="color:#ffcb6b">Name</span>: <span style="color:#c3e88d">"Eve"</span>, <span style="color:#ffcb6b">Alter</span>: <span style="color:#f78c6c">35</span>},
+    <span style="color:#ffcb6b">Firma</span>:  <span style="color:#c3e88d">"ACME"</span>,
+    <span style="color:#ffcb6b">Gehalt</span>: <span style="color:#f78c6c">75000</span>,
+}
+fmt.<span style="color:#ffcb6b">Println</span>(m.<span style="color:#ffcb6b">Name</span>)      <span style="color:#546e7a">// direkt zugänglich durch Embedding</span>
+fmt.<span style="color:#ffcb6b">Println</span>(m.<span style="color:#ffcb6b">Person</span>.<span style="color:#ffcb6b">Name</span>)   <span style="color:#546e7a">// explizit möglich</span>
+
+<span style="color:#546e7a">// Anonyme Structs (für einmaligen Gebrauch)</span>
+config <span style="color:#89ddff">:=</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">Host</span> <span style="color:#ffcb6b">string</span>
+    <span style="color:#ffcb6b">Port</span> <span style="color:#ffcb6b">int</span>
+}{
+    <span style="color:#ffcb6b">Host</span>: <span style="color:#c3e88d">"localhost"</span>,
+    <span style="color:#ffcb6b">Port</span>: <span style="color:#f78c6c">8080</span>,
+}
+
+<span style="color:#546e7a">// Struct Tags (für JSON, DB, Validierung)</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">User</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">ID</span>    <span style="color:#ffcb6b">int</span>    <span style="color:#c3e88d">`json:"id"          db:"user_id"`</span>
+    <span style="color:#ffcb6b">Name</span>  <span style="color:#ffcb6b">string</span> <span style="color:#c3e88d">`json:"name"        validate:"required,min=2"`</span>
+    <span style="color:#ffcb6b">Email</span> <span style="color:#ffcb6b">string</span> <span style="color:#c3e88d">`json:"email,omitempty"`</span>
+    <span style="color:#ffcb6b">Pass</span>  <span style="color:#ffcb6b">string</span> <span style="color:#c3e88d">`json:"-"`</span>          <span style="color:#546e7a">// in JSON ignorieren</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st1"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>Interfaces &amp; Typen-System
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="interfaces &amp; typen-system">
+  <div style="color:#00acd7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Interfaces &amp; Typen-System
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Interface-Definition</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Writer</span> <span style="color:#c792ea">interface</span> {
+    <span style="color:#ffcb6b">Write</span>(p []<span style="color:#ffcb6b">byte</span>) (n <span style="color:#ffcb6b">int</span>, err <span style="color:#ffcb6b">error</span>)
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Stringer</span> <span style="color:#c792ea">interface</span> {
+    <span style="color:#ffcb6b">String</span>() <span style="color:#ffcb6b">string</span>
+}
+
+<span style="color:#546e7a">// Interfaces kombinieren</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">ReadWriter</span> <span style="color:#c792ea">interface</span> {
+    io.<span style="color:#ffcb6b">Reader</span>   <span style="color:#546e7a">// eingebettetes Interface</span>
+    io.<span style="color:#ffcb6b">Writer</span>
+}
+
+<span style="color:#546e7a">// Nil Interface vs Nil Pointer – häufige Fehlerquelle!</span>
+<span style="color:#c792ea">var</span> w io.<span style="color:#ffcb6b">Writer</span>         <span style="color:#546e7a">// nil Interface</span>
+<span style="color:#c792ea">var</span> f *os.<span style="color:#ffcb6b">File</span>          <span style="color:#546e7a">// nil Pointer</span>
+
+<span style="color:#546e7a">// GEFÄHRLICH: nil Pointer in Interface ist NICHT nil Interface!</span>
+w = f
+fmt.<span style="color:#ffcb6b">Println</span>(w == <span style="color:#c792ea">nil</span>)  <span style="color:#546e7a">// FALSE! Interface hat Typ-Info, Wert ist nil</span>
+
+<span style="color:#546e7a">// Richtig: explizit nil zurückgeben</span>
+<span style="color:#c792ea">func</span> holeWriter(ok <span style="color:#ffcb6b">bool</span>) io.<span style="color:#ffcb6b">Writer</span> {
+    <span style="color:#c792ea">if</span> !ok {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>   <span style="color:#546e7a">// nil Interface, nicht (*os.File)(nil)</span>
+    }
+    <span style="color:#c792ea">return</span> os.<span style="color:#ffcb6b">Stdout</span>
+}
+
+<span style="color:#546e7a">// Generics (Go 1.18+)</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Number</span> <span style="color:#c792ea">interface</span> {
+    <span style="color:#ffcb6b">int</span> | <span style="color:#ffcb6b">int8</span> | <span style="color:#ffcb6b">int16</span> | <span style="color:#ffcb6b">int32</span> | <span style="color:#ffcb6b">int64</span> |
+    <span style="color:#ffcb6b">uint</span> | <span style="color:#ffcb6b">uint8</span> | <span style="color:#ffcb6b">float32</span> | <span style="color:#ffcb6b">float64</span>
+}
+
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">Sum</span>[<span style="color:#ffcb6b">T</span> <span style="color:#ffcb6b">Number</span>](slice []<span style="color:#ffcb6b">T</span>) <span style="color:#ffcb6b">T</span> {
+    <span style="color:#c792ea">var</span> total <span style="color:#ffcb6b">T</span>
+    <span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> slice {
+        total += v
+    }
+    <span style="color:#c792ea">return</span> total
+}
+
+fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#ffcb6b">Sum</span>([]<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>}))         <span style="color:#546e7a">// 6</span>
+fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#ffcb6b">Sum</span>([]<span style="color:#ffcb6b">float64</span>{<span style="color:#f78c6c">1.1</span>, <span style="color:#f78c6c">2.2</span>}))   <span style="color:#546e7a">// 3.3</span>
+
+<span style="color:#546e7a">// Type Constraints</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Ordered</span> <span style="color:#c792ea">interface</span> {
+    ~<span style="color:#ffcb6b">int</span> | ~<span style="color:#ffcb6b">float64</span> | ~<span style="color:#ffcb6b">string</span>   <span style="color:#546e7a">// ~ = auch abgeleitete Typen</span>
+}
+
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">Max</span>[<span style="color:#ffcb6b">T</span> <span style="color:#ffcb6b">Ordered</span>](a, b <span style="color:#ffcb6b">T</span>) <span style="color:#ffcb6b">T</span> {
+    <span style="color:#c792ea">if</span> a &gt; b { <span style="color:#c792ea">return</span> a }
+    <span style="color:#c792ea">return</span> b
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-concurrency" class="tp">
+
+<div class="ac open" id="ac-co0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Goroutines – leichtgewichtige Threads
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="goroutines – leichtgewichtige threads">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Goroutines – leichtgewichtige Threads
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Goroutine starten – einfach "go" vor den Aufruf</span>
+<span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Läuft im Hintergrund"</span>)
+}()
+
+<span style="color:#c792ea">go</span> verarbeite(daten)
+
+<span style="color:#546e7a">// Achtung: main() beendet sofort alle Goroutines!</span>
+<span style="color:#c792ea">func</span> main() {
+    <span style="color:#c792ea">go</span> fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Vielleicht zu spät..."</span>)
+    time.<span style="color:#ffcb6b">Sleep</span>(time.<span style="color:#ffcb6b">Second</span>)   <span style="color:#546e7a">// schlecht!</span>
+    <span style="color:#546e7a">// Besser: sync.WaitGroup oder Channel nutzen</span>
+}
+
+<span style="color:#546e7a">// sync.WaitGroup – auf Goroutines warten</span>
+<span style="color:#c792ea">var</span> wg sync.<span style="color:#ffcb6b">WaitGroup</span>
+
+<span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">5</span>; i++ {
+    wg.<span style="color:#ffcb6b">Add</span>(<span style="color:#f78c6c">1</span>)
+    <span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>(id <span style="color:#ffcb6b">int</span>) {
+        <span style="color:#c792ea">defer</span> wg.<span style="color:#ffcb6b">Done</span>()
+        fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"Worker %d fertig\n"</span>, id)
+    }(i)
+}
+
+wg.<span style="color:#ffcb6b">Wait</span>()
+fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Alle fertig"</span>)
+
+<span style="color:#546e7a">// sync.Mutex – Zugriff schützen</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">SafeCounter</span> <span style="color:#c792ea">struct</span> {
+    mu sync.<span style="color:#ffcb6b">Mutex</span>
+    v  <span style="color:#c792ea">map</span>[<span style="color:#ffcb6b">string</span>]<span style="color:#ffcb6b">int</span>
+}
+
+<span style="color:#c792ea">func</span> (c *<span style="color:#ffcb6b">SafeCounter</span>) <span style="color:#ffcb6b">Inc</span>(key <span style="color:#ffcb6b">string</span>) {
+    c.mu.<span style="color:#ffcb6b">Lock</span>()
+    <span style="color:#c792ea">defer</span> c.mu.<span style="color:#ffcb6b">Unlock</span>()
+    c.v[key]++
+}
+
+<span style="color:#546e7a">// sync.Once – Initialisierung nur einmal</span>
+<span style="color:#c792ea">var</span> once sync.<span style="color:#ffcb6b">Once</span>
+<span style="color:#c792ea">var</span> instance *<span style="color:#ffcb6b">Database</span>
+
+<span style="color:#c792ea">func</span> getDB() *<span style="color:#ffcb6b">Database</span> {
+    once.<span style="color:#ffcb6b">Do</span>(<span style="color:#c792ea">func</span>() {
+        instance = newDatabase()
+    })
+    <span style="color:#c792ea">return</span> instance
+}
+
+<span style="color:#546e7a">// sync/atomic – atomare Operationen (ohne Mutex)</span>
+<span style="color:#c792ea">var</span> counter atomic.<span style="color:#ffcb6b">Int64</span>
+counter.<span style="color:#ffcb6b">Add</span>(<span style="color:#f78c6c">1</span>)
+fmt.<span style="color:#ffcb6b">Println</span>(counter.<span style="color:#ffcb6b">Load</span>())</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-co1"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>Channels – Kommunikation
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="channels – kommunikation">
+  <div style="color:#00acd7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Channels – Kommunikation
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Channel erstellen</span>
+ch <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>)         <span style="color:#546e7a">// unbuffered – blockiert bis Empfänger bereit</span>
+ch <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">10</span>)     <span style="color:#546e7a">// buffered – blockiert erst wenn voll</span>
+
+<span style="color:#546e7a">// Senden und Empfangen</span>
+ch <span style="color:#89ddff">&lt;-</span> <span style="color:#f78c6c">42</span>        <span style="color:#546e7a">// senden (blockiert wenn kein Empfänger)</span>
+v <span style="color:#89ddff">:=</span> <span style="color:#89ddff">&lt;-</span>ch       <span style="color:#546e7a">// empfangen (blockiert wenn kein Sender)</span>
+v, ok <span style="color:#89ddff">:=</span> <span style="color:#89ddff">&lt;-</span>ch   <span style="color:#546e7a">// ok = false wenn Channel geschlossen</span>
+
+<span style="color:#546e7a">// Channel schließen</span>
+<span style="color:#82aaff">close</span>(ch)   <span style="color:#546e7a">// Sender schließt! Nicht der Empfänger.</span>
+<span style="color:#546e7a">// Nach close: Empfangen gibt Zero-Value + ok=false</span>
+<span style="color:#546e7a">// Senden in geschlossenen Channel → panic!</span>
+
+<span style="color:#546e7a">// range über Channel</span>
+<span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+    <span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>} {
+        ch <span style="color:#89ddff">&lt;-</span> v
+    }
+    <span style="color:#82aaff">close</span>(ch)
+}()
+
+<span style="color:#c792ea">for</span> v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> ch {   <span style="color:#546e7a">// liest bis Channel geschlossen</span>
+    fmt.<span style="color:#ffcb6b">Println</span>(v)
+}
+
+<span style="color:#546e7a">// select – mehrere Channels gleichzeitig</span>
+<span style="color:#c792ea">select</span> {
+<span style="color:#c792ea">case</span> v <span style="color:#89ddff">:=</span> <span style="color:#89ddff">&lt;-</span>ch1:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"von ch1:"</span>, v)
+<span style="color:#c792ea">case</span> v <span style="color:#89ddff">:=</span> <span style="color:#89ddff">&lt;-</span>ch2:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"von ch2:"</span>, v)
+<span style="color:#c792ea">case</span> ch3 <span style="color:#89ddff">&lt;-</span> wert:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"an ch3 gesendet"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#89ddff">&lt;-</span>time.<span style="color:#ffcb6b">After</span>(time.<span style="color:#ffcb6b">Second</span>):
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Timeout!"</span>)
+<span style="color:#c792ea">default</span>:
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Nichts bereit (non-blocking)"</span>)
+}
+
+<span style="color:#546e7a">// Pipeline-Pattern</span>
+<span style="color:#c792ea">func</span> generator(nums <span style="color:#89ddff">...</span><span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span> {
+    out <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>)
+    <span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+        <span style="color:#c792ea">for</span> _, n <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> nums { out <span style="color:#89ddff">&lt;-</span> n }
+        <span style="color:#82aaff">close</span>(out)
+    }()
+    <span style="color:#c792ea">return</span> out
+}
+
+<span style="color:#c792ea">func</span> quadriere(in <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span> {
+    out <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>)
+    <span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+        <span style="color:#c792ea">for</span> n <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> in { out <span style="color:#89ddff">&lt;-</span> n * n }
+        <span style="color:#82aaff">close</span>(out)
+    }()
+    <span style="color:#c792ea">return</span> out
+}
+
+<span style="color:#546e7a">// Nutzung</span>
+<span style="color:#c792ea">for</span> v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> quadriere(generator(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>)) {
+    fmt.<span style="color:#ffcb6b">Println</span>(v)   <span style="color:#546e7a">// 1 4 9 16 25</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-co2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>context – Cancellation
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="context – cancellation">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    context – Cancellation
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// context für Timeouts, Cancellation und Werte</span>
+
+<span style="color:#546e7a">// Context mit Timeout</span>
+ctx, cancel <span style="color:#89ddff">:=</span> context.<span style="color:#ffcb6b">WithTimeout</span>(context.<span style="color:#ffcb6b">Background</span>(), <span style="color:#f78c6c">5</span>*time.<span style="color:#ffcb6b">Second</span>)
+<span style="color:#c792ea">defer</span> cancel()   <span style="color:#546e7a">// Ressourcen freigeben – immer defer!</span>
+
+<span style="color:#546e7a">// Context mit Deadline</span>
+deadline <span style="color:#89ddff">:=</span> time.<span style="color:#ffcb6b">Now</span>().<span style="color:#ffcb6b">Add</span>(<span style="color:#f78c6c">10</span> * time.<span style="color:#ffcb6b">Second</span>)
+ctx, cancel <span style="color:#89ddff">:=</span> context.<span style="color:#ffcb6b">WithDeadline</span>(context.<span style="color:#ffcb6b">Background</span>(), deadline)
+<span style="color:#c792ea">defer</span> cancel()
+
+<span style="color:#546e7a">// Manuell abbrechen</span>
+ctx, cancel <span style="color:#89ddff">:=</span> context.<span style="color:#ffcb6b">WithCancel</span>(context.<span style="color:#ffcb6b">Background</span>())
+<span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+    time.<span style="color:#ffcb6b">Sleep</span>(<span style="color:#f78c6c">2</span> * time.<span style="color:#ffcb6b">Second</span>)
+    cancel()   <span style="color:#546e7a">// signalisiert Abbruch</span>
+}()
+
+<span style="color:#546e7a">// Context nutzen</span>
+<span style="color:#c792ea">func</span> holeUser(ctx context.<span style="color:#ffcb6b">Context</span>, id <span style="color:#ffcb6b">int</span>) (*<span style="color:#ffcb6b">User</span>, <span style="color:#ffcb6b">error</span>) {
+    <span style="color:#546e7a">// HTTP-Request mit Context</span>
+    req, err <span style="color:#89ddff">:=</span> http.<span style="color:#ffcb6b">NewRequestWithContext</span>(ctx, <span style="color:#c3e88d">"GET"</span>,
+        fmt.<span style="color:#ffcb6b">Sprintf</span>(<span style="color:#c3e88d">"/api/users/%d"</span>, id), <span style="color:#c792ea">nil</span>)
+    <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>, err
+    }
+    resp, err <span style="color:#89ddff">:=</span> http.<span style="color:#ffcb6b">DefaultClient</span>.<span style="color:#ffcb6b">Do</span>(req)
+    <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> {
+        <span style="color:#546e7a">// ctx.Err() gibt context.Canceled oder context.DeadlineExceeded zurück</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>, fmt.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"holeUser: %w"</span>, err)
+    }
+    <span style="color:#c792ea">defer</span> resp.<span style="color:#ffcb6b">Body</span>.<span style="color:#ffcb6b">Close</span>()
+    <span style="color:#546e7a">// ...</span>
+}
+
+<span style="color:#546e7a">// Context-Abbruch prüfen</span>
+<span style="color:#c792ea">func</span> langeLaufendeOp(ctx context.<span style="color:#ffcb6b">Context</span>) <span style="color:#ffcb6b">error</span> {
+    <span style="color:#c792ea">for</span> {
+        <span style="color:#c792ea">select</span> {
+        <span style="color:#c792ea">case</span> <span style="color:#89ddff">&lt;-</span>ctx.<span style="color:#ffcb6b">Done</span>():
+            <span style="color:#c792ea">return</span> ctx.<span style="color:#ffcb6b">Err</span>()   <span style="color:#546e7a">// context.Canceled oder DeadlineExceeded</span>
+        <span style="color:#c792ea">default</span>:
+            <span style="color:#546e7a">// Arbeit fortsetzen</span>
+            schritt()
+        }
+    }
+}
+
+<span style="color:#546e7a">// Werte im Context (sparsam verwenden!)</span>
+<span style="color:#c792ea">type</span> ctxKey <span style="color:#ffcb6b">string</span>
+<span style="color:#c792ea">const</span> userKey ctxKey = <span style="color:#c3e88d">"user"</span>
+
+ctx = context.<span style="color:#ffcb6b">WithValue</span>(ctx, userKey, currentUser)
+user <span style="color:#89ddff">:=</span> ctx.<span style="color:#ffcb6b">Value</span>(userKey).(*<span style="color:#ffcb6b">User</span>)</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-packages" class="tp">
+
+<div class="ac open" id="ac-pk0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Package-System &amp; Imports
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="package-system &amp; imports">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Package-System &amp; Imports
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Jede Datei beginnt mit package-Deklaration</span>
+<span style="color:#c792ea">package</span> main   <span style="color:#546e7a">// ausführbares Programm</span>
+<span style="color:#c792ea">package</span> utils  <span style="color:#546e7a">// Bibliotheks-Package</span>
+
+<span style="color:#546e7a">// Imports</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"fmt"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"os"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"net/http"</span>
+
+<span style="color:#546e7a">// Gruppenimport (bevorzugt)</span>
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"context"</span>
+    <span style="color:#c3e88d">"fmt"</span>
+    <span style="color:#c3e88d">"net/http"</span>
+    <span style="color:#c3e88d">"os"</span>
+    <span style="color:#c3e88d">"time"</span>
+
+    <span style="color:#546e7a">// Externe Packages (nach einer Leerzeile)</span>
+    <span style="color:#c3e88d">"github.com/gin-gonic/gin"</span>
+
+    <span style="color:#546e7a">// Alias</span>
+    myfmt <span style="color:#c3e88d">"fmt"</span>
+    _ <span style="color:#c3e88d">"image/png"</span>      <span style="color:#546e7a">// Nur für Seiteneffekte (init())</span>
+    . <span style="color:#c3e88d">"math"</span>           <span style="color:#546e7a">// Direkt in Namespace (selten!)</span>
+)
+
+<span style="color:#546e7a">// Exported vs Unexported</span>
+<span style="color:#546e7a">// Groß: exportiert (öffentlich außerhalb des Packages)</span>
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">PublicFunc</span>() {}
+<span style="color:#c792ea">var</span> <span style="color:#ffcb6b">PublicVar</span> = <span style="color:#f78c6c">42</span>
+
+<span style="color:#546e7a">// Klein: unexported (privat im Package)</span>
+<span style="color:#c792ea">func</span> privateFunc() {}
+<span style="color:#c792ea">var</span> privateVar = <span style="color:#c3e88d">"geheim"</span>
+
+<span style="color:#546e7a">// init() – wird automatisch vor main() aufgerufen</span>
+<span style="color:#c792ea">func</span> init() {
+    <span style="color:#546e7a">// Package-Initialisierung</span>
+    <span style="color:#546e7a">// Keine Argumente, kein Rückgabewert</span>
+    <span style="color:#546e7a">// Mehrere init() in einer Datei möglich!</span>
+    log.<span style="color:#ffcb6b">SetPrefix</span>(<span style="color:#c3e88d">"[myapp] "</span>)
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pk1"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>Go Modules (go.mod)
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="go modules (go.mod)">
+  <div style="color:#00acd7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Go Modules (go.mod)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Modul initialisieren</span>
+<span style="color:#546e7a">// go mod init github.com/user/projekt</span>
+
+<span style="color:#546e7a">// go.mod Datei</span>
+module github.com/user/projekt
+
+<span style="color:#c792ea">go</span> <span style="color:#f78c6c">1.21</span>
+
+require (
+    github.com/gin-gonic/gin v1<span style="color:#f78c6c">.9.1</span>
+    github.com/stretchr/testify v1<span style="color:#f78c6c">.8.4</span>
+)
+
+<span style="color:#546e7a">// Häufige go-Befehle</span>
+<span style="color:#546e7a">// go mod tidy         Abhängigkeiten aufräumen</span>
+<span style="color:#546e7a">// go get package@v1   Paket hinzufügen/aktualisieren</span>
+<span style="color:#546e7a">// go get -u           Alle Pakete updaten</span>
+<span style="color:#546e7a">// go mod vendor       Abhängigkeiten lokal speichern</span>
+<span style="color:#546e7a">// go mod verify       Integrität prüfen</span>
+<span style="color:#546e7a">// go list -m all      Alle Abhängigkeiten anzeigen</span>
+
+<span style="color:#546e7a">// Wichtige Standard-Packages</span>
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"bufio"</span>         <span style="color:#546e7a">// gepuffertes I/O</span>
+    <span style="color:#c3e88d">"bytes"</span>         <span style="color:#546e7a">// Byte-Slice Operationen</span>
+    <span style="color:#c3e88d">"context"</span>       <span style="color:#546e7a">// Context für Cancellation/Timeout</span>
+    <span style="color:#c3e88d">"encoding/json"</span> <span style="color:#546e7a">// JSON</span>
+    <span style="color:#c3e88d">"errors"</span>        <span style="color:#546e7a">// Fehler erstellen und prüfen</span>
+    <span style="color:#c3e88d">"fmt"</span>           <span style="color:#546e7a">// Formatiertes I/O</span>
+    <span style="color:#c3e88d">"io"</span>            <span style="color:#546e7a">// I/O Interfaces</span>
+    <span style="color:#c3e88d">"log"</span>           <span style="color:#546e7a">// Logging</span>
+    <span style="color:#c3e88d">"math"</span>          <span style="color:#546e7a">// Mathematik</span>
+    <span style="color:#c3e88d">"net/http"</span>      <span style="color:#546e7a">// HTTP Client &amp; Server</span>
+    <span style="color:#c3e88d">"os"</span>            <span style="color:#546e7a">// OS-Funktionen</span>
+    <span style="color:#c3e88d">"path/filepath"</span> <span style="color:#546e7a">// Dateipfade</span>
+    <span style="color:#c3e88d">"regexp"</span>        <span style="color:#546e7a">// Reguläre Ausdrücke</span>
+    <span style="color:#c3e88d">"sort"</span>          <span style="color:#546e7a">// Sortieren</span>
+    <span style="color:#c3e88d">"strconv"</span>       <span style="color:#546e7a">// String-Konvertierung</span>
+    <span style="color:#c3e88d">"strings"</span>       <span style="color:#546e7a">// String-Operationen</span>
+    <span style="color:#c3e88d">"sync"</span>          <span style="color:#546e7a">// Synchronisierung</span>
+    <span style="color:#c3e88d">"testing"</span>       <span style="color:#546e7a">// Unit Tests</span>
+    <span style="color:#c3e88d">"time"</span>          <span style="color:#546e7a">// Zeit und Datum</span>
+    <span style="color:#c3e88d">"unicode/utf8"</span>  <span style="color:#546e7a">// UTF-8 Verarbeitung</span>
+)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pk2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Testing
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="testing">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Testing
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Testdatei: xxx_test.go im selben Package</span>
+<span style="color:#c792ea">package</span> mypackage
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"testing"</span>
+
+<span style="color:#546e7a">// Normale Tests</span>
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">TestAddiere</span>(t *testing.<span style="color:#ffcb6b">T</span>) {
+    ergebnis <span style="color:#89ddff">:=</span> addiere(<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)
+    <span style="color:#c792ea">if</span> ergebnis != <span style="color:#f78c6c">5</span> {
+        t.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"addiere(2,3) = %d, erwartet 5"</span>, ergebnis)
+    }
+}
+
+<span style="color:#546e7a">// Table-Driven Tests (idiomatisch in Go!)</span>
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">TestDivide</span>(t *testing.<span style="color:#ffcb6b">T</span>) {
+    tests <span style="color:#89ddff">:=</span> []<span style="color:#c792ea">struct</span> {
+        name    <span style="color:#ffcb6b">string</span>
+        a, b    <span style="color:#ffcb6b">float64</span>
+        want    <span style="color:#ffcb6b">float64</span>
+        wantErr <span style="color:#ffcb6b">bool</span>
+    }{
+        {<span style="color:#c3e88d">"positiv"</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">5.0</span>, <span style="color:#c792ea">false</span>},
+        {<span style="color:#c3e88d">"negativ"</span>, -<span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">3</span>, -<span style="color:#f78c6c">2.0</span>, <span style="color:#c792ea">false</span>},
+        {<span style="color:#c3e88d">"durch null"</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">true</span>},
+    }
+
+    <span style="color:#c792ea">for</span> _, tt <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> tests {
+        t.<span style="color:#ffcb6b">Run</span>(tt.name, <span style="color:#c792ea">func</span>(t *testing.<span style="color:#ffcb6b">T</span>) {
+            got, err <span style="color:#89ddff">:=</span> divide(tt.a, tt.b)
+            <span style="color:#c792ea">if</span> (err != <span style="color:#c792ea">nil</span>) != tt.wantErr {
+                t.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"Fehler unerwartet: %v"</span>, err)
+                <span style="color:#c792ea">return</span>
+            }
+            <span style="color:#c792ea">if</span> got != tt.want {
+                t.<span style="color:#ffcb6b">Errorf</span>(<span style="color:#c3e88d">"divide(%v,%v) = %v, want %v"</span>,
+                    tt.a, tt.b, got, tt.want)
+            }
+        })
+    }
+}
+
+<span style="color:#546e7a">// Benchmark</span>
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">BenchmarkAddiere</span>(b *testing.<span style="color:#ffcb6b">B</span>) {
+    <span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; i &lt; b.<span style="color:#ffcb6b">N</span>; i++ {
+        addiere(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>)
+    }
+}
+
+<span style="color:#546e7a">// Tests ausführen:</span>
+<span style="color:#546e7a">// go test ./...</span>
+<span style="color:#546e7a">// go test -v ./...              verbose</span>
+<span style="color:#546e7a">// go test -run TestName ./...   nur bestimmte Tests</span>
+<span style="color:#546e7a">// go test -bench=. ./...        Benchmarks</span>
+<span style="color:#546e7a">// go test -cover ./...          Coverage</span>
+<span style="color:#546e7a">// go test -race ./...           Race-Condition-Detector</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>strings Package
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="strings.contains(s,sub)" data-d="enthält substring?">
+      <td style="width:200px"><code style="color:#00acd7">strings.Contains(s,sub)</code></td>
+      <td style="color:#6c7a8e">Enthält Substring?</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Contains("hello","ell") → true</td>
+    </tr>
+    <tr class="cr" data-m="strings.hasprefix(s,p)" data-d="beginnt mit?">
+      <td style="width:200px"><code style="color:#00acd7">strings.HasPrefix(s,p)</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px">strings.HasPrefix("hello","he") → true</td>
+    </tr>
+    <tr class="cr" data-m="strings.hassuffix(s,s)" data-d="endet mit?">
+      <td style="width:200px"><code style="color:#00acd7">strings.HasSuffix(s,s)</code></td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px">strings.HasSuffix("hello","lo") → true</td>
+    </tr>
+    <tr class="cr" data-m="strings.count(s,sub)" data-d="anzahl vorkommen">
+      <td style="width:200px"><code style="color:#00acd7">strings.Count(s,sub)</code></td>
+      <td style="color:#6c7a8e">Anzahl Vorkommen</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Count("aaa","a") → 3</td>
+    </tr>
+    <tr class="cr" data-m="strings.index(s,sub)" data-d="position des ersten treffers">
+      <td style="width:200px"><code style="color:#00acd7">strings.Index(s,sub)</code></td>
+      <td style="color:#6c7a8e">Position des ersten Treffers</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Index("hello","ll") → 2</td>
+    </tr>
+    <tr class="cr" data-m="strings.replace(s,o,n,cnt)" data-d="ersetzen (cnt=-1 = alle)">
+      <td style="width:200px"><code style="color:#00acd7">strings.Replace(s,o,n,cnt)</code></td>
+      <td style="color:#6c7a8e">Ersetzen (cnt=-1 = alle)</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Replace("aaa","a","b",2) → "bba"</td>
+    </tr>
+    <tr class="cr" data-m="strings.toupper(s)" data-d="großbuchstaben">
+      <td style="width:200px"><code style="color:#00acd7">strings.ToUpper(s)</code></td>
+      <td style="color:#6c7a8e">Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">strings.ToUpper("hello") → "HELLO"</td>
+    </tr>
+    <tr class="cr" data-m="strings.tolower(s)" data-d="kleinbuchstaben">
+      <td style="width:200px"><code style="color:#00acd7">strings.ToLower(s)</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">strings.ToLower("HELLO") → "hello"</td>
+    </tr>
+    <tr class="cr" data-m="strings.trimspace(s)" data-d="whitespace vorne/hinten">
+      <td style="width:200px"><code style="color:#00acd7">strings.TrimSpace(s)</code></td>
+      <td style="color:#6c7a8e">Whitespace vorne/hinten</td>
+      <td style="color:#c3e88d;font-size:11px">strings.TrimSpace("  hi  ") → "hi"</td>
+    </tr>
+    <tr class="cr" data-m="strings.trim(s,cutset)" data-d="zeichen vorne/hinten entfernen">
+      <td style="width:200px"><code style="color:#00acd7">strings.Trim(s,cutset)</code></td>
+      <td style="color:#6c7a8e">Zeichen vorne/hinten entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Trim("!!hi!","!") → "hi"</td>
+    </tr>
+    <tr class="cr" data-m="strings.split(s,sep)" data-d="aufteilen → []string">
+      <td style="width:200px"><code style="color:#00acd7">strings.Split(s,sep)</code></td>
+      <td style="color:#6c7a8e">Aufteilen → []string</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Split("a,b","," ) → ["a","b"]</td>
+    </tr>
+    <tr class="cr" data-m="strings.join(slice,sep)" data-d="verbinden → string">
+      <td style="width:200px"><code style="color:#00acd7">strings.Join(slice,sep)</code></td>
+      <td style="color:#6c7a8e">Verbinden → string</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Join(["a","b"],"-") → "a-b"</td>
+    </tr>
+    <tr class="cr" data-m="strings.fields(s)" data-d="split auf whitespace">
+      <td style="width:200px"><code style="color:#00acd7">strings.Fields(s)</code></td>
+      <td style="color:#6c7a8e">Split auf Whitespace</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Fields("a  b  c") → ["a","b","c"]</td>
+    </tr>
+    <tr class="cr" data-m="strings.repeat(s,n)" data-d="n-mal wiederholen">
+      <td style="width:200px"><code style="color:#00acd7">strings.Repeat(s,n)</code></td>
+      <td style="color:#6c7a8e">n-mal wiederholen</td>
+      <td style="color:#c3e88d;font-size:11px">strings.Repeat("ab",3) → "ababab"</td>
+    </tr>
+    <tr class="cr" data-m="strings.builder" data-d="effizienter string-aufbau">
+      <td style="width:200px"><code style="color:#00acd7">strings.Builder</code></td>
+      <td style="color:#6c7a8e">Effizienter String-Aufbau</td>
+      <td style="color:#c3e88d;font-size:11px">var b strings.Builder; b.WriteString("hi")</td>
+    </tr>
+    <tr class="cr" data-m="strings.newreader(s)" data-d="string als io.reader">
+      <td style="width:200px"><code style="color:#00acd7">strings.NewReader(s)</code></td>
+      <td style="color:#6c7a8e">String als io.Reader</td>
+      <td style="color:#c3e88d;font-size:11px">r := strings.NewReader("hello")</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>strconv Package
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="strconv.atoi(s)" data-d="string → int">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.Atoi(s)</code></td>
+      <td style="color:#6c7a8e">String → int</td>
+      <td style="color:#c3e88d;font-size:11px">n, err := strconv.Atoi("42")</td>
+    </tr>
+    <tr class="cr" data-m="strconv.itoa(n)" data-d="int → string">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.Itoa(n)</code></td>
+      <td style="color:#6c7a8e">int → String</td>
+      <td style="color:#c3e88d;font-size:11px">strconv.Itoa(42) → "42"</td>
+    </tr>
+    <tr class="cr" data-m="strconv.parsefloat(s,bits)" data-d="string → float64">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.ParseFloat(s,bits)</code></td>
+      <td style="color:#6c7a8e">String → float64</td>
+      <td style="color:#c3e88d;font-size:11px">f, err := strconv.ParseFloat("3.14",64)</td>
+    </tr>
+    <tr class="cr" data-m="strconv.formatfloat(f,f,p,bits)" data-d="float64 → string">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.FormatFloat(f,f,p,bits)</code></td>
+      <td style="color:#6c7a8e">float64 → String</td>
+      <td style="color:#c3e88d;font-size:11px">strconv.FormatFloat(3.14,"f",2,64) → "3.14"</td>
+    </tr>
+    <tr class="cr" data-m="strconv.parsebool(s)" data-d="string → bool">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.ParseBool(s)</code></td>
+      <td style="color:#6c7a8e">String → bool</td>
+      <td style="color:#c3e88d;font-size:11px">"true","1","yes" → true</td>
+    </tr>
+    <tr class="cr" data-m="strconv.formatbool(b)" data-d="bool → string">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.FormatBool(b)</code></td>
+      <td style="color:#6c7a8e">bool → String</td>
+      <td style="color:#c3e88d;font-size:11px">strconv.FormatBool(true) → "true"</td>
+    </tr>
+    <tr class="cr" data-m="strconv.parseint(s,base,bits)" data-d="string → int64">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.ParseInt(s,base,bits)</code></td>
+      <td style="color:#6c7a8e">String → int64</td>
+      <td style="color:#c3e88d;font-size:11px">strconv.ParseInt("FF",16,64) → 255</td>
+    </tr>
+    <tr class="cr" data-m="strconv.formatint(n,base)" data-d="int64 → string in basis">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.FormatInt(n,base)</code></td>
+      <td style="color:#6c7a8e">int64 → String in Basis</td>
+      <td style="color:#c3e88d;font-size:11px">strconv.FormatInt(255,16) → "ff"</td>
+    </tr>
+    <tr class="cr" data-m="strconv.quote(s)" data-d="string quoten">
+      <td style="width:200px"><code style="color:#4ec9b0">strconv.Quote(s)</code></td>
+      <td style="color:#6c7a8e">String quoten</td>
+      <td style="color:#c3e88d;font-size:11px">strconv.Quote("hi\n") → "\"hi\\n\""</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>slices &amp; maps (Go 1.21+)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="slices.contains(s,v)" data-d="enthält wert?">
+      <td style="width:200px"><code style="color:#c792ea">slices.Contains(s,v)</code></td>
+      <td style="color:#6c7a8e">Enthält Wert?</td>
+      <td style="color:#c3e88d;font-size:11px">slices.Contains([]int{1,2,3},2) → true</td>
+    </tr>
+    <tr class="cr" data-m="slices.index(s,v)" data-d="index des ersten treffers">
+      <td style="width:200px"><code style="color:#c792ea">slices.Index(s,v)</code></td>
+      <td style="color:#6c7a8e">Index des ersten Treffers</td>
+      <td style="color:#c3e88d;font-size:11px">slices.Index([]int{1,2,3},2) → 1</td>
+    </tr>
+    <tr class="cr" data-m="slices.sort(s)" data-d="in-place sortieren">
+      <td style="width:200px"><code style="color:#c792ea">slices.Sort(s)</code></td>
+      <td style="color:#6c7a8e">In-place sortieren</td>
+      <td style="color:#c3e88d;font-size:11px">slices.Sort([]int{3,1,2})</td>
+    </tr>
+    <tr class="cr" data-m="slices.sortfunc(s,fn)" data-d="mit vergleichsfunktion">
+      <td style="width:200px"><code style="color:#c792ea">slices.SortFunc(s,fn)</code></td>
+      <td style="color:#6c7a8e">Mit Vergleichsfunktion</td>
+      <td style="color:#c3e88d;font-size:11px">slices.SortFunc(s,cmp.Compare)</td>
+    </tr>
+    <tr class="cr" data-m="slices.reverse(s)" data-d="in-place umkehren">
+      <td style="width:200px"><code style="color:#c792ea">slices.Reverse(s)</code></td>
+      <td style="color:#6c7a8e">In-place umkehren</td>
+      <td style="color:#c3e88d;font-size:11px">slices.Reverse([]int{1,2,3})</td>
+    </tr>
+    <tr class="cr" data-m="slices.compact(s)" data-d="aufeinanderfolgende duplikate">
+      <td style="width:200px"><code style="color:#c792ea">slices.Compact(s)</code></td>
+      <td style="color:#6c7a8e">Aufeinanderfolgende Duplikate</td>
+      <td style="color:#c3e88d;font-size:11px">slices.Compact([]int{1,1,2}) → [1,2]</td>
+    </tr>
+    <tr class="cr" data-m="slices.clone(s)" data-d="flache kopie">
+      <td style="width:200px"><code style="color:#c792ea">slices.Clone(s)</code></td>
+      <td style="color:#6c7a8e">Flache Kopie</td>
+      <td style="color:#c3e88d;font-size:11px">kopie := slices.Clone(original)</td>
+    </tr>
+    <tr class="cr" data-m="slices.concat(s...)" data-d="slices verbinden (go 1.22+)">
+      <td style="width:200px"><code style="color:#c792ea">slices.Concat(s...)</code></td>
+      <td style="color:#6c7a8e">Slices verbinden (Go 1.22+)</td>
+      <td style="color:#c3e88d;font-size:11px">slices.Concat(a, b, c)</td>
+    </tr>
+    <tr class="cr" data-m="maps.keys(m)" data-d="alle keys als slice">
+      <td style="width:200px"><code style="color:#c792ea">maps.Keys(m)</code></td>
+      <td style="color:#6c7a8e">Alle Keys als Slice</td>
+      <td style="color:#c3e88d;font-size:11px">maps.Keys(map[string]int{...})</td>
+    </tr>
+    <tr class="cr" data-m="maps.values(m)" data-d="alle values als slice">
+      <td style="width:200px"><code style="color:#c792ea">maps.Values(m)</code></td>
+      <td style="color:#6c7a8e">Alle Values als Slice</td>
+      <td style="color:#c3e88d;font-size:11px">maps.Values(map[string]int{...})</td>
+    </tr>
+    <tr class="cr" data-m="maps.clone(m)" data-d="flache kopie einer map">
+      <td style="width:200px"><code style="color:#c792ea">maps.Clone(m)</code></td>
+      <td style="color:#6c7a8e">Flache Kopie einer Map</td>
+      <td style="color:#c3e88d;font-size:11px">kopie := maps.Clone(original)</td>
+    </tr>
+    <tr class="cr" data-m="maps.delete(m,key)" data-d="key löschen">
+      <td style="width:200px"><code style="color:#c792ea">maps.Delete(m,key)</code></td>
+      <td style="color:#6c7a8e">Key löschen</td>
+      <td style="color:#c3e88d;font-size:11px">maps.Delete(m, "key")</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>encoding/json
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-3" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="json.marshal(v)" data-d="go → json bytes">
+      <td style="width:200px"><code style="color:#ffb347">json.Marshal(v)</code></td>
+      <td style="color:#6c7a8e">Go → JSON Bytes</td>
+      <td style="color:#c3e88d;font-size:11px">data, err := json.Marshal(user)</td>
+    </tr>
+    <tr class="cr" data-m="json.unmarshal(data,&amp;v)" data-d="json bytes → go">
+      <td style="width:200px"><code style="color:#ffb347">json.Unmarshal(data,&amp;v)</code></td>
+      <td style="color:#6c7a8e">JSON Bytes → Go</td>
+      <td style="color:#c3e88d;font-size:11px">err := json.Unmarshal(data,&amp;user)</td>
+    </tr>
+    <tr class="cr" data-m="json.newencoder(w)" data-d="streaming encoder">
+      <td style="width:200px"><code style="color:#ffb347">json.NewEncoder(w)</code></td>
+      <td style="color:#6c7a8e">Streaming Encoder</td>
+      <td style="color:#c3e88d;font-size:11px">enc.Encode(user)</td>
+    </tr>
+    <tr class="cr" data-m="json.newdecoder(r)" data-d="streaming decoder">
+      <td style="width:200px"><code style="color:#ffb347">json.NewDecoder(r)</code></td>
+      <td style="color:#6c7a8e">Streaming Decoder</td>
+      <td style="color:#c3e88d;font-size:11px">dec.Decode(&amp;user)</td>
+    </tr>
+    <tr class="cr" data-m="json.marshalindent(v,"","  ")" data-d="formatiertes json">
+      <td style="width:200px"><code style="color:#ffb347">json.MarshalIndent(v,"","  ")</code></td>
+      <td style="color:#6c7a8e">Formatiertes JSON</td>
+      <td style="color:#c3e88d;font-size:11px">json.MarshalIndent(v,"","  ")</td>
+    </tr>
+    <tr class="cr" data-m="struct tag json:"name"" data-d="feldname im json">
+      <td style="width:200px"><code style="color:#ffb347">struct tag json:"name"</code></td>
+      <td style="color:#6c7a8e">Feldname im JSON</td>
+      <td style="color:#c3e88d;font-size:11px">Name string `json:"name"`</td>
+    </tr>
+    <tr class="cr" data-m="json:"name,omitempty"" data-d="feld weglassen wenn zero-value">
+      <td style="width:200px"><code style="color:#ffb347">json:"name,omitempty"</code></td>
+      <td style="color:#6c7a8e">Feld weglassen wenn Zero-Value</td>
+      <td style="color:#c3e88d;font-size:11px">Email string `json:"email,omitempty"`</td>
+    </tr>
+    <tr class="cr" data-m="json:"-"" data-d="feld immer ignorieren">
+      <td style="width:200px"><code style="color:#ffb347">json:"-"</code></td>
+      <td style="color:#6c7a8e">Feld immer ignorieren</td>
+      <td style="color:#c3e88d;font-size:11px">Pass string `json:"-"`</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #00acd7;color:#00acd7;background:rgba(0,172,215,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">HTTP Server</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Goroutines &amp; Channels</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generics &amp; Interfaces</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">CLI Tool</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"context"</span>
+    <span style="color:#c3e88d">"encoding/json"</span>
+    <span style="color:#c3e88d">"fmt"</span>
+    <span style="color:#c3e88d">"log"</span>
+    <span style="color:#c3e88d">"net/http"</span>
+    <span style="color:#c3e88d">"time"</span>
+)
+
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">User</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#ffcb6b">ID</span>   <span style="color:#ffcb6b">int</span>    <span style="color:#c3e88d">`json:"id"`</span>
+    <span style="color:#ffcb6b">Name</span> <span style="color:#ffcb6b">string</span> <span style="color:#c3e88d">`json:"name"`</span>
+}
+
+<span style="color:#546e7a">// Middleware</span>
+<span style="color:#c792ea">func</span> logging(next http.<span style="color:#ffcb6b">Handler</span>) http.<span style="color:#ffcb6b">Handler</span> {
+    <span style="color:#c792ea">return</span> http.<span style="color:#ffcb6b">HandlerFunc</span>(<span style="color:#c792ea">func</span>(w http.<span style="color:#ffcb6b">ResponseWriter</span>, r *http.<span style="color:#ffcb6b">Request</span>) {
+        start <span style="color:#89ddff">:=</span> time.<span style="color:#ffcb6b">Now</span>()
+        next.<span style="color:#ffcb6b">ServeHTTP</span>(w, r)
+        log.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"%s %s %v"</span>, r.<span style="color:#ffcb6b">Method</span>, r.<span style="color:#ffcb6b">URL</span>.<span style="color:#ffcb6b">Path</span>, time.<span style="color:#ffcb6b">Since</span>(start))
+    })
+}
+
+<span style="color:#546e7a">// Handler</span>
+<span style="color:#c792ea">func</span> usersHandler(w http.<span style="color:#ffcb6b">ResponseWriter</span>, r *http.<span style="color:#ffcb6b">Request</span>) {
+    users <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">User</span>{
+        {<span style="color:#f78c6c">1</span>, <span style="color:#c3e88d">"Alice"</span>},
+        {<span style="color:#f78c6c">2</span>, <span style="color:#c3e88d">"Bob"</span>},
+    }
+    w.<span style="color:#ffcb6b">Header</span>().<span style="color:#ffcb6b">Set</span>(<span style="color:#c3e88d">"Content-Type"</span>, <span style="color:#c3e88d">"application/json"</span>)
+    json.<span style="color:#ffcb6b">NewEncoder</span>(w).<span style="color:#ffcb6b">Encode</span>(users)
+}
+
+<span style="color:#c792ea">func</span> main() {
+    mux <span style="color:#89ddff">:=</span> http.<span style="color:#ffcb6b">NewServeMux</span>()
+    mux.<span style="color:#ffcb6b">HandleFunc</span>(<span style="color:#c3e88d">"GET /api/users"</span>, usersHandler)
+    mux.<span style="color:#ffcb6b">HandleFunc</span>(<span style="color:#c3e88d">"GET /health"</span>, <span style="color:#c792ea">func</span>(w http.<span style="color:#ffcb6b">ResponseWriter</span>, r *http.<span style="color:#ffcb6b">Request</span>) {
+        fmt.<span style="color:#ffcb6b">Fprintln</span>(w, <span style="color:#c3e88d">"OK"</span>)
+    })
+
+    server <span style="color:#89ddff">:=</span> &amp;http.<span style="color:#ffcb6b">Server</span>{
+        <span style="color:#ffcb6b">Addr</span>:         <span style="color:#c3e88d">":8080"</span>,
+        <span style="color:#ffcb6b">Handler</span>:      logging(mux),
+        <span style="color:#ffcb6b">ReadTimeout</span>:  <span style="color:#f78c6c">10</span> * time.<span style="color:#ffcb6b">Second</span>,
+        <span style="color:#ffcb6b">WriteTimeout</span>: <span style="color:#f78c6c">10</span> * time.<span style="color:#ffcb6b">Second</span>,
+    }
+
+    log.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Server läuft auf :8080"</span>)
+    <span style="color:#c792ea">if</span> err <span style="color:#89ddff">:=</span> server.<span style="color:#ffcb6b">ListenAndServe</span>(); err != <span style="color:#c792ea">nil</span> {
+        log.<span style="color:#ffcb6b">Fatal</span>(err)
+    }
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"fmt"</span>
+    <span style="color:#c3e88d">"sync"</span>
+)
+
+<span style="color:#546e7a">// Fan-Out / Fan-In Pattern</span>
+<span style="color:#c792ea">func</span> producer(nums <span style="color:#89ddff">...</span><span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span> {
+    out <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>)
+    <span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+        <span style="color:#c792ea">defer</span> <span style="color:#82aaff">close</span>(out)
+        <span style="color:#c792ea">for</span> _, n <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> nums {
+            out <span style="color:#89ddff">&lt;-</span> n
+        }
+    }()
+    <span style="color:#c792ea">return</span> out
+}
+
+<span style="color:#c792ea">func</span> worker(id <span style="color:#ffcb6b">int</span>, in <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>, out <span style="color:#c792ea">chan</span><span style="color:#89ddff">&lt;-</span> <span style="color:#ffcb6b">int</span>, wg *sync.<span style="color:#ffcb6b">WaitGroup</span>) {
+    <span style="color:#c792ea">defer</span> wg.<span style="color:#ffcb6b">Done</span>()
+    <span style="color:#c792ea">for</span> n <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> in {
+        <span style="color:#546e7a">// Schwere Berechnung</span>
+        out <span style="color:#89ddff">&lt;-</span> n * n
+        fmt.<span style="color:#ffcb6b">Printf</span>(<span style="color:#c3e88d">"Worker %d: %d² = %d\n"</span>, id, n, n*n)
+    }
+}
+
+<span style="color:#c792ea">func</span> merge(cs <span style="color:#89ddff">...</span><span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span> {
+    <span style="color:#c792ea">var</span> wg sync.<span style="color:#ffcb6b">WaitGroup</span>
+    merged <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>)
+
+    output <span style="color:#89ddff">:=</span> <span style="color:#c792ea">func</span>(c <span style="color:#89ddff">&lt;-</span><span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>) {
+        <span style="color:#c792ea">defer</span> wg.<span style="color:#ffcb6b">Done</span>()
+        <span style="color:#c792ea">for</span> v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> c {
+            merged <span style="color:#89ddff">&lt;-</span> v
+        }
+    }
+
+    wg.<span style="color:#ffcb6b">Add</span>(<span style="color:#82aaff">len</span>(cs))
+    <span style="color:#c792ea">for</span> _, c <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> cs {
+        <span style="color:#c792ea">go</span> output(c)
+    }
+
+    <span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+        wg.<span style="color:#ffcb6b">Wait</span>()
+        <span style="color:#82aaff">close</span>(merged)
+    }()
+
+    <span style="color:#c792ea">return</span> merged
+}
+
+<span style="color:#c792ea">func</span> main() {
+    jobs <span style="color:#89ddff">:=</span> producer(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>)
+
+    <span style="color:#546e7a">// 3 Worker parallel</span>
+    results1 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">10</span>)
+    results2 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">10</span>)
+    results3 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">chan</span> <span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">10</span>)
+
+    <span style="color:#c792ea">var</span> wg sync.<span style="color:#ffcb6b">WaitGroup</span>
+    wg.<span style="color:#ffcb6b">Add</span>(<span style="color:#f78c6c">3</span>)
+    <span style="color:#c792ea">go</span> worker(<span style="color:#f78c6c">1</span>, jobs, results1, &amp;wg)
+    <span style="color:#c792ea">go</span> worker(<span style="color:#f78c6c">2</span>, jobs, results2, &amp;wg)
+    <span style="color:#c792ea">go</span> worker(<span style="color:#f78c6c">3</span>, jobs, results3, &amp;wg)
+
+    <span style="color:#c792ea">go</span> <span style="color:#c792ea">func</span>() {
+        wg.<span style="color:#ffcb6b">Wait</span>()
+        <span style="color:#82aaff">close</span>(results1); <span style="color:#82aaff">close</span>(results2); <span style="color:#82aaff">close</span>(results3)
+    }()
+
+    sum <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">for</span> v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> merge(results1, results2, results3) {
+        sum += v
+    }
+    fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#c3e88d">"Summe der Quadrate:"</span>, sum)   <span style="color:#546e7a">// 385</span>
+}</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"cmp"</span>
+    <span style="color:#c3e88d">"fmt"</span>
+    <span style="color:#c3e88d">"slices"</span>
+)
+
+<span style="color:#546e7a">// Generische Datenstruktur</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Stack</span>[<span style="color:#ffcb6b">T</span> <span style="color:#ffcb6b">any</span>] <span style="color:#c792ea">struct</span> {
+    items []<span style="color:#ffcb6b">T</span>
+}
+
+<span style="color:#c792ea">func</span> (s *<span style="color:#ffcb6b">Stack</span>[<span style="color:#ffcb6b">T</span>]) <span style="color:#ffcb6b">Push</span>(item <span style="color:#ffcb6b">T</span>) {
+    s.items = <span style="color:#82aaff">append</span>(s.items, item)
+}
+
+<span style="color:#c792ea">func</span> (s *<span style="color:#ffcb6b">Stack</span>[<span style="color:#ffcb6b">T</span>]) <span style="color:#ffcb6b">Pop</span>() (<span style="color:#ffcb6b">T</span>, <span style="color:#ffcb6b">bool</span>) {
+    <span style="color:#c792ea">var</span> zero <span style="color:#ffcb6b">T</span>
+    <span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(s.items) == <span style="color:#f78c6c">0</span> {
+        <span style="color:#c792ea">return</span> zero, <span style="color:#c792ea">false</span>
+    }
+    top <span style="color:#89ddff">:=</span> s.items[<span style="color:#82aaff">len</span>(s.items)-<span style="color:#f78c6c">1</span>]
+    s.items = s.items[:<span style="color:#82aaff">len</span>(s.items)-<span style="color:#f78c6c">1</span>]
+    <span style="color:#c792ea">return</span> top, <span style="color:#c792ea">true</span>
+}
+
+<span style="color:#c792ea">func</span> (s *<span style="color:#ffcb6b">Stack</span>[<span style="color:#ffcb6b">T</span>]) <span style="color:#ffcb6b">Len</span>() <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> <span style="color:#82aaff">len</span>(s.items) }
+
+<span style="color:#546e7a">// Generische Funktionen</span>
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">Filter</span>[<span style="color:#ffcb6b">T</span> <span style="color:#ffcb6b">any</span>](slice []<span style="color:#ffcb6b">T</span>, pred <span style="color:#c792ea">func</span>(<span style="color:#ffcb6b">T</span>) <span style="color:#ffcb6b">bool</span>) []<span style="color:#ffcb6b">T</span> {
+    <span style="color:#c792ea">var</span> result []<span style="color:#ffcb6b">T</span>
+    <span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> slice {
+        <span style="color:#c792ea">if</span> pred(v) { result = <span style="color:#82aaff">append</span>(result, v) }
+    }
+    <span style="color:#c792ea">return</span> result
+}
+
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">Reduce</span>[<span style="color:#ffcb6b">T</span>, <span style="color:#ffcb6b">U</span> <span style="color:#ffcb6b">any</span>](slice []<span style="color:#ffcb6b">T</span>, init <span style="color:#ffcb6b">U</span>, fn <span style="color:#c792ea">func</span>(<span style="color:#ffcb6b">U</span>, <span style="color:#ffcb6b">T</span>) <span style="color:#ffcb6b">U</span>) <span style="color:#ffcb6b">U</span> {
+    result <span style="color:#89ddff">:=</span> init
+    <span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> slice {
+        result = fn(result, v)
+    }
+    <span style="color:#c792ea">return</span> result
+}
+
+<span style="color:#c792ea">func</span> <span style="color:#ffcb6b">GroupBy</span>[<span style="color:#ffcb6b">T</span> <span style="color:#ffcb6b">any</span>, <span style="color:#ffcb6b">K</span> <span style="color:#ffcb6b">comparable</span>](slice []<span style="color:#ffcb6b">T</span>, key <span style="color:#c792ea">func</span>(<span style="color:#ffcb6b">T</span>) <span style="color:#ffcb6b">K</span>) <span style="color:#c792ea">map</span>[<span style="color:#ffcb6b">K</span>][]<span style="color:#ffcb6b">T</span> {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>(<span style="color:#c792ea">map</span>[<span style="color:#ffcb6b">K</span>][]<span style="color:#ffcb6b">T</span>)
+    <span style="color:#c792ea">for</span> _, v <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> slice {
+        k <span style="color:#89ddff">:=</span> key(v)
+        result[k] = <span style="color:#82aaff">append</span>(result[k], v)
+    }
+    <span style="color:#c792ea">return</span> result
+}
+
+<span style="color:#c792ea">func</span> main() {
+    <span style="color:#546e7a">// Stack</span>
+    s <span style="color:#89ddff">:=</span> &amp;<span style="color:#ffcb6b">Stack</span>[<span style="color:#ffcb6b">int</span>]{}
+    <span style="color:#c792ea">for</span> _, n <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>} {
+        s.<span style="color:#ffcb6b">Push</span>(n)
+    }
+    <span style="color:#c792ea">for</span> s.<span style="color:#ffcb6b">Len</span>() &gt; <span style="color:#f78c6c">0</span> {
+        v, _ <span style="color:#89ddff">:=</span> s.<span style="color:#ffcb6b">Pop</span>()
+        fmt.<span style="color:#ffcb6b">Print</span>(v, <span style="color:#c3e88d">" "</span>)   <span style="color:#546e7a">// 5 4 3 2 1</span>
+    }
+    fmt.<span style="color:#ffcb6b">Println</span>()
+
+    <span style="color:#546e7a">// Funktionale Pipeline</span>
+    zahlen <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>}
+
+    summeGeraderQuadrate <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Reduce</span>(
+        <span style="color:#ffcb6b">Filter</span>(zahlen, <span style="color:#c792ea">func</span>(n <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">bool</span> { <span style="color:#c792ea">return</span> n%<span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> }),
+        <span style="color:#f78c6c">0</span>,
+        <span style="color:#c792ea">func</span>(acc, n <span style="color:#ffcb6b">int</span>) <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> acc + n*n },
+    )
+    fmt.<span style="color:#ffcb6b">Println</span>(summeGeraderQuadrate)   <span style="color:#546e7a">// 220</span>
+
+    <span style="color:#546e7a">// Sortieren mit generischen slices</span>
+    worte <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">string</span>{<span style="color:#c3e88d">"Banane"</span>, <span style="color:#c3e88d">"Apfel"</span>, <span style="color:#c3e88d">"Kirsche"</span>}
+    slices.<span style="color:#ffcb6b">SortFunc</span>(worte, cmp.<span style="color:#ffcb6b">Compare</span>)
+    fmt.<span style="color:#ffcb6b">Println</span>(worte)   <span style="color:#546e7a">// [Apfel Banane Kirsche]</span>
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"bufio"</span>
+    <span style="color:#c3e88d">"flag"</span>
+    <span style="color:#c3e88d">"fmt"</span>
+    <span style="color:#c3e88d">"os"</span>
+    <span style="color:#c3e88d">"strings"</span>
+)
+
+<span style="color:#c792ea">func</span> main() {
+    <span style="color:#546e7a">// Flags definieren</span>
+    <span style="color:#c792ea">var</span> (
+        obereGrenze = flag.<span style="color:#ffcb6b">Bool</span>(<span style="color:#c3e88d">"upper"</span>, <span style="color:#c792ea">false</span>, <span style="color:#c3e88d">"Großbuchstaben"</span>)
+        untereGrenze = flag.<span style="color:#ffcb6b">Bool</span>(<span style="color:#c3e88d">"lower"</span>, <span style="color:#c792ea">false</span>, <span style="color:#c3e88d">"Kleinbuchstaben"</span>)
+        zählen       = flag.<span style="color:#ffcb6b">Bool</span>(<span style="color:#c3e88d">"count"</span>, <span style="color:#c792ea">false</span>, <span style="color:#c3e88d">"Zeilen zählen"</span>)
+        trennzeichen = flag.<span style="color:#ffcb6b">String</span>(<span style="color:#c3e88d">"sep"</span>, <span style="color:#c3e88d">"\n"</span>, <span style="color:#c3e88d">"Trennzeichen"</span>)
+    )
+    flag.<span style="color:#ffcb6b">Usage</span> = <span style="color:#c792ea">func</span>() {
+        fmt.<span style="color:#ffcb6b">Fprintf</span>(os.<span style="color:#ffcb6b">Stderr</span>, <span style="color:#c3e88d">"Verwendung: %s [Optionen] [Datei...]\n"</span>, os.<span style="color:#ffcb6b">Args</span>[<span style="color:#f78c6c">0</span>])
+        flag.<span style="color:#ffcb6b">PrintDefaults</span>()
+    }
+    flag.<span style="color:#ffcb6b">Parse</span>()
+
+    <span style="color:#546e7a">// Dateien oder stdin</span>
+    <span style="color:#c792ea">var</span> inputs []<span style="color:#ffcb6b">string</span>
+    <span style="color:#c792ea">if</span> flag.<span style="color:#ffcb6b">NArg</span>() &gt; <span style="color:#f78c6c">0</span> {
+        inputs = flag.<span style="color:#ffcb6b">Args</span>()
+    }
+
+    processReader <span style="color:#89ddff">:=</span> <span style="color:#c792ea">func</span>(scanner *bufio.<span style="color:#ffcb6b">Scanner</span>) {
+        <span style="color:#c792ea">var</span> zeilen []<span style="color:#ffcb6b">string</span>
+        <span style="color:#c792ea">for</span> scanner.<span style="color:#ffcb6b">Scan</span>() {
+            zeile <span style="color:#89ddff">:=</span> scanner.<span style="color:#ffcb6b">Text</span>()
+            <span style="color:#c792ea">if</span> *obereGrenze {
+                zeile = strings.<span style="color:#ffcb6b">ToUpper</span>(zeile)
+            } <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> *untereGrenze {
+                zeile = strings.<span style="color:#ffcb6b">ToLower</span>(zeile)
+            }
+            zeilen = <span style="color:#82aaff">append</span>(zeilen, zeile)
+        }
+        <span style="color:#c792ea">if</span> err <span style="color:#89ddff">:=</span> scanner.<span style="color:#ffcb6b">Err</span>(); err != <span style="color:#c792ea">nil</span> {
+            fmt.<span style="color:#ffcb6b">Fprintln</span>(os.<span style="color:#ffcb6b">Stderr</span>, <span style="color:#c3e88d">"Fehler:"</span>, err)
+            os.<span style="color:#ffcb6b">Exit</span>(<span style="color:#f78c6c">1</span>)
+        }
+        <span style="color:#c792ea">if</span> *zählen {
+            fmt.<span style="color:#ffcb6b">Println</span>(<span style="color:#82aaff">len</span>(zeilen))
+            <span style="color:#c792ea">return</span>
+        }
+        fmt.<span style="color:#ffcb6b">Print</span>(strings.<span style="color:#ffcb6b">Join</span>(zeilen, *trennzeichen))
+        <span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(zeilen) &gt; <span style="color:#f78c6c">0</span> {
+            fmt.<span style="color:#ffcb6b">Println</span>()
+        }
+    }
+
+    <span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(inputs) == <span style="color:#f78c6c">0</span> {
+        processReader(bufio.<span style="color:#ffcb6b">NewScanner</span>(os.<span style="color:#ffcb6b">Stdin</span>))
+        <span style="color:#c792ea">return</span>
+    }
+
+    <span style="color:#c792ea">for</span> _, pfad <span style="color:#89ddff">:=</span> <span style="color:#c792ea">range</span> inputs {
+        f, err <span style="color:#89ddff">:=</span> os.<span style="color:#ffcb6b">Open</span>(pfad)
+        <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> {
+            fmt.<span style="color:#ffcb6b">Fprintf</span>(os.<span style="color:#ffcb6b">Stderr</span>, <span style="color:#c3e88d">"%s: %v\n"</span>, pfad, err)
+            <span style="color:#c792ea">continue</span>
+        }
+        <span style="color:#c792ea">defer</span> f.<span style="color:#ffcb6b">Close</span>()
+        processReader(bufio.<span style="color:#ffcb6b">NewScanner</span>(f))
+    }
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#00acd711;border:1px solid #00acd744;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#00acd7">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S go</code><br><code style="color:#ffb347">go install golang.org/x/tools/gopls@latest</code> <code style="color:#ffb347">go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #00acd744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00acd70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00acd7">
+      <span style="display:inline-block;width:8px;height:8px;background:#00acd7;border-radius:50%;margin-right:2px"></span>⚙ Go installieren (Linux, distro-unabhängig)
+    </span>
+    <span class="aa" style="color:#00acd7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00acd7;font-weight:700">Offiziell</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">go.dev</span>
+  </div>
+  <code style="color:#ffb347">wget https://go.dev/dl/go1.21.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.21.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00acd7;font-weight:700">Arch/CachyOS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">go (pacman)</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S go</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00acd7;font-weight:700">Debian/Ubuntu</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">golang</span>
+  </div>
+  <code style="color:#ffb347">sudo apt install golang-go  # oft veraltet!
+# Besser: offizielles Paket von go.dev</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00acd7;font-weight:700">Fedora/RHEL</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">golang</span>
+  </div>
+  <code style="color:#ffb347">sudo dnf install golang</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00acd7;font-weight:700">mise</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">mise (AUR)</span>
+  </div>
+  <code style="color:#ffb347">mise install go@latest
+mise use go@latest</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00acd7;font-weight:700">g (Version Mgr)</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">go install</span>
+  </div>
+  <code style="color:#ffb347">go install github.com/stefanmaric/g@latest
+g install latest</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ go CLI – alle wichtigen Befehle
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go run main.go</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Direkt ausführen (ohne kompilieren)</span>
+  </div>
+  <code style="color:#ffb347">go run .  (alle .go im Verzeichnis)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go build</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Kompilieren</span>
+  </div>
+  <code style="color:#ffb347">go build -o meinprog ./cmd/server</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go test ./...</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Alle Tests ausführen</span>
+  </div>
+  <code style="color:#ffb347">go test -v -race -cover ./...</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go fmt ./...</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Code formatieren (automatisch!)</span>
+  </div>
+  <code style="color:#ffb347">Keine Diskussionen – ein Standard</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go vet ./...</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Statische Analyse</span>
+  </div>
+  <code style="color:#ffb347">Findet häufige Fehler</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go mod tidy</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">go.mod/go.sum aufräumen</span>
+  </div>
+  <code style="color:#ffb347">Nach Abhängigkeitsänderungen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go get pkg@v1.2</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Abhängigkeit hinzufügen/aktualisieren</span>
+  </div>
+  <code style="color:#ffb347">go get -u ./...  (alle updaten)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go doc pkg.Func</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Dokumentation anzeigen</span>
+  </div>
+  <code style="color:#ffb347">go doc fmt.Println</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go generate ./...</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">go:generate Direktiven ausführen</span>
+  </div>
+  <code style="color:#ffb347">Code-Generierung</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go install cmd</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Binary installieren</span>
+  </div>
+  <code style="color:#ffb347">go install github.com/user/tool@latest</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go env</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Go-Umgebungsvariablen</span>
+  </div>
+  <code style="color:#ffb347">go env GOPATH GOROOT GOOS GOARCH</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">go work</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Multi-Module Workspaces (1.18+)</span>
+  </div>
+  <code style="color:#ffb347">go work init &amp;&amp; go work use ./module</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Wichtige externe Tools
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">golangci-lint</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">golangci-lint</span>
+  </div>
+  <code style="color:#ffb347">go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+golangci-lint run</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">gopls</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">LSP</span>
+  </div>
+  <code style="color:#ffb347">go install golang.org/x/tools/gopls@latest  # LSP für alle Editoren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">dlv (Delve)</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Debugger</span>
+  </div>
+  <code style="color:#ffb347">go install github.com/go-delve/delve/cmd/dlv@latest
+dlv debug main.go</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">staticcheck</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Analyse</span>
+  </div>
+  <code style="color:#ffb347">go install honnef.co/go/tools/cmd/staticcheck@latest</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">air</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Live Reload</span>
+  </div>
+  <code style="color:#ffb347">go install github.com/cosmtrek/air@latest
+air  # startet bei .go-Änderungen neu</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">gofumpt</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Formatierer</span>
+  </div>
+  <code style="color:#ffb347">go install mvdan.cc/gofumpt@latest  # strenger als gofmt</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">mockery</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Mocks</span>
+  </div>
+  <code style="color:#ffb347">go install github.com/vektra/mockery/v2@latest</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Packages
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">gin / chi / echo</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Web Framework</span>
+  </div>
+  <code style="color:#ffb347">github.com/gin-gonic/gin
+github.com/go-chi/chi/v5</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">sqlx / pgx</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Datenbank</span>
+  </div>
+  <code style="color:#ffb347">github.com/jmoiron/sqlx
+github.com/jackc/pgx/v5</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">ent / gorm</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">ORM</span>
+  </div>
+  <code style="color:#ffb347">entgo.io/ent
+gorm.io/gorm</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">viper / envconfig</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Config</span>
+  </div>
+  <code style="color:#ffb347">github.com/spf13/viper
+github.com/kelseyhightower/envconfig</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">zap / slog</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Logging</span>
+  </div>
+  <code style="color:#ffb347">go.uber.org/zap  # oder stdlib log/slog (1.21+)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">testify</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Testing</span>
+  </div>
+  <code style="color:#ffb347">github.com/stretchr/testify/assert</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">cobra</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">CLI</span>
+  </div>
+  <code style="color:#ffb347">github.com/spf13/cobra</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">grpc</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gRPC</span>
+  </div>
+  <code style="color:#ffb347">google.golang.org/grpc</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>⚙ Umgebungsvariablen
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GOPATH</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">~/go (Standard)</span>
+  </div>
+  <code style="color:#ffb347">Workspace: bin/ pkg/ src/</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GOROOT</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">/usr/local/go</span>
+  </div>
+  <code style="color:#ffb347">Go-Installation</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GOBIN</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">$GOPATH/bin</span>
+  </div>
+  <code style="color:#ffb347">Wo go install ablegt</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GOOS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">linux darwin windows</span>
+  </div>
+  <code style="color:#ffb347">Ziel-Betriebssystem für Cross-Compile</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GOARCH</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">amd64 arm64 386</span>
+  </div>
+  <code style="color:#ffb347">Ziel-Architektur</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">CGO_ENABLED</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">1 oder 0</span>
+  </div>
+  <code style="color:#ffb347">0 = statisches Binary ohne C-Abhängigkeiten</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GOPROXY</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">proxy.golang.org</span>
+  </div>
+  <code style="color:#ffb347">Module-Proxy</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">GONOSUMCHECK</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Pattern</span>
+  </div>
+  <code style="color:#ffb347">Checksummen-Prüfung überspringen</code>
+</div>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-cf"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#00acd7';
+      btn.style.color       = '#00acd7';
+      btn.style.background  = 'rgba(0, 172, 215, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

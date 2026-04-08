@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML &amp; CSS Referenz</title>
+  <style>
+:root {
+  --bg:          #0a0c0f;
+  --border:      #1e2530;
+  --text:        #cdd6f4;
+  --dim:         #6c7a8e;
+  --html-color:  #e44d26;
+  --css-color:   #264de4;
+  --accent:      #e44d26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+/* HTML + CSS Badges im Titel */
+.badge-html {
+  background: #e44d26;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: .5px;
+}
+.badge-css {
+  background: #264de4;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: .5px;
+}
+
+/* ── Tabs ── */
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(228, 77, 38, .07);
+}
+
+/* ── Content ── */
+.con { max-width: 1200px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+/* ── Search ── */
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+/* ── Accordion ── */
+.ac       { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+/* ── Tables ── */
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Cards ── */
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+/* ── Live Demo ── */
+.live-demo {
+  border: 1px solid #1e2530;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: rgba(0, 0, 0, .4);
+}
+
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, .03);
+  border-bottom: 1px solid #1e2530;
+}
+
+.demo-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6c7a8e;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.demo-btn {
+  background: transparent;
+  border: 1px solid #1e2530;
+  border-radius: 4px;
+  color: #6c7a8e;
+  padding: 3px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: inherit;
+  transition: border-color .15s, color .15s;
+}
+.demo-btn:hover { border-color: #6c7a8e; color: #cdd6f4; }
+
+.demo-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.demo-editors {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #1e2530;
+}
+
+.editor-block {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.editor-block + .editor-block {
+  border-top: 1px solid #1e2530;
+}
+
+.editor-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  text-transform: uppercase;
+}
+
+.html-label { color: #e44d26; background: rgba(228,77,38,.08); }
+.css-label  { color: #264de4;  background: rgba(38,77,228,.08); }
+
+.demo-html,
+.demo-css {
+  flex: 1;
+  background: rgba(0, 0, 0, .6);
+  border: none;
+  color: #cdd6f4;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 12px;
+  resize: none;
+  outline: none;
+  min-height: 120px;
+}
+
+.demo-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.preview-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  text-transform: uppercase;
+  color: #666;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.demo-preview {
+  flex: 1;
+  border: none;
+  width: 100%;
+  min-height: 200px;
+  background: white;
+}
+
+/* ── Box Model Visualizer ── */
+.box-model-viz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.bm-layer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.bm-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+}
+
+/* ── Specificity Rechner ── */
+#spec-input {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid #1e2530;
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #cdd6f4;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+#spec-input:focus { border-color: #e44d26; }
+
+.spec-result {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.spec-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.spec-value {
+  font-size: 32px;
+  font-weight: 900;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.spec-label {
+  font-size: 10px;
+  color: #6c7a8e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.spec-breakdown {
+  flex: 1;
+  min-width: 200px;
+}
+
+.spec-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(30,37,48,.3);
+}
+
+.spec-item:last-child { border-bottom: none; }
+
+/* ── Flex/Grid Playground ── */
+.playground {
+  border: 1px solid #1e2530;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.pg-controls {
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, .02);
+  border-bottom: 1px solid #1e2530;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pg-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pg-control label {
+  font-size: 10px;
+  color: #6c7a8e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pg-control select {
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid #1e2530;
+  border-radius: 4px;
+  color: #cdd6f4;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.pg-preview {
+  padding: 20px;
+  min-height: 150px;
+  background: rgba(0, 0, 0, .3);
+}
+
+@media (max-width: 720px) {
+  .demo-body { grid-template-columns: 1fr; }
+  .demo-preview-wrap { min-height: 150px; }
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span class="badge-html">HTML</span>
+      <span style="color:#6c7a8e;font-size:14px;margin:0 4px">+</span>
+      <span class="badge-css">CSS</span>
+      <span style="color:#6c7a8e;margin-left:8px;font-size:14px">Referenz</span>
+    </div>
+    <div id="hdr-sub">Live-Vorschau · Flexbox/Grid Playground · Specificity Rechner — Arch Linux</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="html-struktur">HTML Struktur</button>
+    <button class="tb" data-tab="html-elemente">HTML Elemente</button>
+    <button class="tb" data-tab="css-selektoren">CSS Selektoren</button>
+    <button class="tb" data-tab="css-box">Box Model</button>
+    <button class="tb" data-tab="css-layout">Layout & Position</button>
+    <button class="tb" data-tab="flexbox">Flexbox</button>
+    <button class="tb" data-tab="grid">Grid</button>
+    <button class="tb" data-tab="modern-css">Modernes CSS</button>
+    <button class="tb" data-tab="animationen">Animationen</button>
+    <button class="tb" data-tab="responsive">Responsive</button>
+    <button class="tb" data-tab="werkzeuge">Tools</button>
+    
+  </div>
+</div>
+
+<!-- ═══════════ INHALT ═══════════ -->
+<div class="con">
+
+  <div id="tp-html-struktur" class="tp active">
+
+<div style="background:rgba(228,77,38,.08);border:1px solid rgba(228,77,38,.3);
+            border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;
+            line-height:1.7">
+  <strong style="color:#e44d26">HTML</strong> strukturiert den Inhalt.
+  <strong style="color:#264de4">CSS</strong> gestaltet ihn.
+  Diese Referenz zeigt beides — mit <strong style="color:#00ff88">Live-Vorschau</strong>
+  wo du den Code direkt bearbeiten kannst. ✦
+</div>
+
+<div class="ac open" id="ac-hs0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('hs0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>Minimales HTML5-Dokument
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="minimales html5-dokument">
+  <div style="color:#e44d26;font-weight:700;font-size:12px;margin-bottom:8px">
+    Minimales HTML5-Dokument
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#f07178">&lt;!DOCTYPE html&gt;</span>
+<span style="color:#f07178">&lt;</span><span style="color:#f07178">html</span> <span style="color:#ffcb6b">lang</span>=<span style="color:#c3e88d">"de"</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;</span><span style="color:#f07178">head</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">meta</span> <span style="color:#ffcb6b">charset</span>=<span style="color:#c3e88d">"UTF-8"</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">meta</span> <span style="color:#ffcb6b">name</span>=<span style="color:#c3e88d">"viewport"</span> <span style="color:#ffcb6b">content</span>=<span style="color:#c3e88d">"width=device-width, initial-scale=1.0"</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">title</span><span style="color:#f07178">&gt;</span>Meine Seite<span style="color:#f07178">&lt;/</span><span style="color:#f07178">title</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">link</span> <span style="color:#ffcb6b">rel</span>=<span style="color:#c3e88d">"stylesheet"</span> <span style="color:#ffcb6b">href</span>=<span style="color:#c3e88d">"style.css"</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;/</span><span style="color:#f07178">head</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;</span><span style="color:#f07178">body</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">h1</span><span style="color:#f07178">&gt;</span>Hallo Welt<span style="color:#f07178">&lt;/</span><span style="color:#f07178">h1</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">script</span> <span style="color:#ffcb6b">src</span>=<span style="color:#c3e88d">"app.js"</span><span style="color:#f07178">&gt;</span><span style="color:#f07178">&lt;/</span><span style="color:#f07178">script</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;/</span><span style="color:#f07178">body</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;/</span><span style="color:#f07178">html</span><span style="color:#f07178">&gt;</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-hs1"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('hs1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Semantische Sektionen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="semantische sektionen">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Semantische Sektionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#f07178">&lt;</span><span style="color:#f07178">header</span><span style="color:#f07178">&gt;</span>         <span style="color:#546e7a">&lt;!-- Kopfbereich / Logo / Navigation --&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">nav</span><span style="color:#f07178">&gt;</span>          <span style="color:#546e7a">&lt;!-- Hauptnavigation --&gt;</span>
+    <span style="color:#f07178">&lt;</span><span style="color:#f07178">ul</span><span style="color:#f07178">&gt;</span>
+      <span style="color:#f07178">&lt;</span><span style="color:#f07178">li</span><span style="color:#f07178">&gt;</span><span style="color:#f07178">&lt;</span><span style="color:#f07178">a</span> <span style="color:#ffcb6b">href</span>=<span style="color:#c3e88d">"/"</span><span style="color:#f07178">&gt;</span>Start<span style="color:#f07178">&lt;/</span><span style="color:#f07178">a</span><span style="color:#f07178">&gt;</span><span style="color:#f07178">&lt;/</span><span style="color:#f07178">li</span><span style="color:#f07178">&gt;</span>
+      <span style="color:#f07178">&lt;</span><span style="color:#f07178">li</span><span style="color:#f07178">&gt;</span><span style="color:#f07178">&lt;</span><span style="color:#f07178">a</span> <span style="color:#ffcb6b">href</span>=<span style="color:#c3e88d">"/blog"</span><span style="color:#f07178">&gt;</span>Blog<span style="color:#f07178">&lt;/</span><span style="color:#f07178">a</span><span style="color:#f07178">&gt;</span><span style="color:#f07178">&lt;/</span><span style="color:#f07178">li</span><span style="color:#f07178">&gt;</span>
+    <span style="color:#f07178">&lt;/</span><span style="color:#f07178">ul</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;/</span><span style="color:#f07178">nav</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;/</span><span style="color:#f07178">header</span><span style="color:#f07178">&gt;</span>
+
+<span style="color:#f07178">&lt;</span><span style="color:#f07178">main</span><span style="color:#f07178">&gt;</span>           <span style="color:#546e7a">&lt;!-- Haupt-Inhalt (nur einmal pro Seite!) --&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">article</span><span style="color:#f07178">&gt;</span>      <span style="color:#546e7a">&lt;!-- Eigenständiger Inhalt (Blog-Post, News) --&gt;</span>
+    <span style="color:#f07178">&lt;</span><span style="color:#f07178">h1</span><span style="color:#f07178">&gt;</span>Titel<span style="color:#f07178">&lt;/</span><span style="color:#f07178">h1</span><span style="color:#f07178">&gt;</span>
+    <span style="color:#f07178">&lt;</span><span style="color:#f07178">section</span><span style="color:#f07178">&gt;</span>    <span style="color:#546e7a">&lt;!-- Thematischer Abschnitt --&gt;</span>
+      <span style="color:#f07178">&lt;</span><span style="color:#f07178">p</span><span style="color:#f07178">&gt;</span>Text...<span style="color:#f07178">&lt;/</span><span style="color:#f07178">p</span><span style="color:#f07178">&gt;</span>
+    <span style="color:#f07178">&lt;/</span><span style="color:#f07178">section</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;/</span><span style="color:#f07178">article</span><span style="color:#f07178">&gt;</span>
+
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">aside</span><span style="color:#f07178">&gt;</span>        <span style="color:#546e7a">&lt;!-- Seitenleiste / ergänzende Infos --&gt;</span>
+    <span style="color:#f07178">&lt;</span><span style="color:#f07178">p</span><span style="color:#f07178">&gt;</span>Tipp des Tages<span style="color:#f07178">&lt;/</span><span style="color:#f07178">p</span><span style="color:#f07178">&gt;</span>
+  <span style="color:#f07178">&lt;/</span><span style="color:#f07178">aside</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;/</span><span style="color:#f07178">main</span><span style="color:#f07178">&gt;</span>
+
+<span style="color:#f07178">&lt;</span><span style="color:#f07178">footer</span><span style="color:#f07178">&gt;</span>         <span style="color:#546e7a">&lt;!-- Fußbereich --&gt;</span>
+  <span style="color:#f07178">&lt;</span><span style="color:#f07178">p</span><span style="color:#f07178">&gt;</span>&amp;copy; 2024<span style="color:#f07178">&lt;/</span><span style="color:#f07178">p</span><span style="color:#f07178">&gt;</span>
+<span style="color:#f07178">&lt;/</span><span style="color:#f07178">footer</span><span style="color:#f07178">&gt;</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-html-elemente" class="tp">
+
+<div class="ac open" id="ac-he0"
+     style="border:1px solid #f0717844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('he0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f071780e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f07178">
+      <span style="display:inline-block;width:8px;height:8px;background:#f07178;border-radius:50%;margin-right:2px"></span>Text &amp; Überschriften
+    </span>
+    <span class="aa" style="color:#f07178;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Element</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;h1&gt; – &lt;h6&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Überschriften – nur eine &lt;h1&gt; pro Seite!</td><td style="color:#6c7a8e">Hierarchisch: h1 &gt; h2 &gt; h3 …</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;p&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Absatz – Block-Element</td><td style="color:#6c7a8e">Kein &lt;p&gt; in &lt;p&gt; verschachteln</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;span&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Inline-Container ohne Bedeutung</td><td style="color:#6c7a8e">Für CSS-Styling einzelner Textteile</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;strong&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Wichtig – bold (semantisch)</td><td style="color:#6c7a8e">Statt &lt;b&gt; für semantische Bedeutung</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;em&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Betonung – italic (semantisch)</td><td style="color:#6c7a8e">Statt &lt;i&gt; für semantische Bedeutung</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;br&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Zeilenumbruch – void element</td><td style="color:#6c7a8e">Kein &lt;/br&gt;! Nur wo nötig</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;hr&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Thematische Trennung – void element</td><td style="color:#6c7a8e">Nicht nur für visuelle Linie verwenden</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;blockquote&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Zitat-Block – mit cite-Attribut</td><td style="color:#6c7a8e">cite="https://..." für Quelle</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;code&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Inline-Code</td><td style="color:#6c7a8e">Für Variablennamen, Befehle</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;pre&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Vorformatierter Text</td><td style="color:#6c7a8e">Whitespace bleibt erhalten</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;abbr&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Abkürzung – mit title-Attribut</td><td style="color:#6c7a8e">&lt;abbr title="HyperText"&gt;HTML&lt;/abbr&gt;</td></tr><tr><td style="color:#f07178;font-size:11px"><code style="color:#f07178">&lt;time&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Datum/Uhrzeit – mit datetime-Attribut</td><td style="color:#6c7a8e">&lt;time datetime="2024-01-15"&gt;15. Jan&lt;/time&gt;</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-he1"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('he1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Links &amp; Medien
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Element</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;a href=""&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Link – inline oder block (HTML5)</td><td style="color:#6c7a8e">target="_blank" rel="noopener noreferrer"</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;img&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Bild – void element, alt Pflicht!</td><td style="color:#6c7a8e">&lt;img src="..." alt="Beschreibung"&gt;</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;picture&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Responsive Bilder mit srcset</td><td style="color:#6c7a8e">&lt;source srcset="..." media="..."&gt;</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;video&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Video-Element</td><td style="color:#6c7a8e">controls autoplay muted loop</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;audio&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Audio-Element</td><td style="color:#6c7a8e">controls src="..." type="audio/mp3"</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;figure&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Medien-Container mit Beschriftung</td><td style="color:#6c7a8e">Mit &lt;figcaption&gt; für Bildunterschrift</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;svg&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Vektorgrafik inline</td><td style="color:#6c7a8e">viewBox="0 0 100 100"</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;canvas&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Zeichenfläche für JavaScript</td><td style="color:#6c7a8e">width height – via JS zeichnen</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">&lt;iframe&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Eingebetteter Inhalt</td><td style="color:#6c7a8e">sandbox="..." für Sicherheit</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-he2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('he2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Listen &amp; Tabellen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Element</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;ul&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Ungeordnete Liste (Bullets)</td><td style="color:#6c7a8e">&lt;ul&gt;&lt;li&gt;Item&lt;/li&gt;&lt;/ul&gt;</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;ol&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Geordnete Liste (Nummerierung)</td><td style="color:#6c7a8e">type="1|a|A|i|I"  start="5"</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;li&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Listen-Element</td><td style="color:#6c7a8e">Nur in ul/ol/menu</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;dl&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Beschreibungsliste</td><td style="color:#6c7a8e">&lt;dl&gt;&lt;dt&gt;Begriff&lt;/dt&gt;&lt;dd&gt;Erklärung&lt;/dd&gt;&lt;/dl&gt;</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;table&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Tabelle</td><td style="color:#6c7a8e">&lt;thead&gt;&lt;tbody&gt;&lt;tfoot&gt;</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;tr&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Tabellen-Zeile</td><td style="color:#6c7a8e">In thead/tbody/tfoot</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;th&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Tabellen-Kopfzelle – mit scope</td><td style="color:#6c7a8e">scope="col|row|colgroup|rowgroup"</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;td&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Tabellen-Datenzelle</td><td style="color:#6c7a8e">colspan="2" rowspan="3"</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">&lt;caption&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Tabellen-Titel</td><td style="color:#6c7a8e">Erstes Kind von &lt;table&gt;</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-he3"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('he3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Formulare
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Element</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;form&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Formular-Container</td><td style="color:#6c7a8e">action="..." method="get|post" novalidate</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;input&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Eingabefeld – viele Typen</td><td style="color:#6c7a8e">type: text email password number date range color...</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;label&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Beschriftung – for = id</td><td style="color:#6c7a8e">&lt;label for="name"&gt;Name:&lt;/label&gt;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;textarea&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Mehrzeiliges Textfeld</td><td style="color:#6c7a8e">rows="4" cols="50" resize: none via CSS</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;select&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Dropdown-Liste</td><td style="color:#6c7a8e">multiple size="3" für Mehrfachauswahl</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;option&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Dropdown-Eintrag</td><td style="color:#6c7a8e">value="" selected disabled</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;button&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Schaltfläche</td><td style="color:#6c7a8e">type="submit|reset|button"</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;fieldset&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Formular-Gruppe mit Rahmen</td><td style="color:#6c7a8e">&lt;legend&gt; als erste Kind-Element</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;datalist&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Autocomplete-Vorschläge</td><td style="color:#6c7a8e">list="id" am Input referenzieren</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">&lt;progress&gt;</code></td><td style="color:#cdd6f4;font-size:11px">Fortschrittsbalken</td><td style="color:#6c7a8e">value="70" max="100"</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ha0"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ha0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>Globale Attribute
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Attribut</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">id</code></td><td style="color:#cdd6f4;font-size:11px">Eindeutige ID – nur einmal pro Seite!</td><td style="color:#6c7a8e">id="header"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">class</code></td><td style="color:#cdd6f4;font-size:11px">CSS-Klasse(n) – mehrere durch Leerzeichen</td><td style="color:#6c7a8e">class="card active"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">style</code></td><td style="color:#cdd6f4;font-size:11px">Inline-CSS – vermeiden, nutze Klassen</td><td style="color:#6c7a8e">style="color:red"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">data-*</code></td><td style="color:#cdd6f4;font-size:11px">Eigene Daten-Attribute</td><td style="color:#6c7a8e">data-user-id="42"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">hidden</code></td><td style="color:#cdd6f4;font-size:11px">Versteckt (wie display:none)</td><td style="color:#6c7a8e">Boolean-Attribut</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">tabindex</code></td><td style="color:#cdd6f4;font-size:11px">Tab-Reihenfolge: 0=natürlich, -1=kein Focus</td><td style="color:#6c7a8e">tabindex="0"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">contenteditable</code></td><td style="color:#cdd6f4;font-size:11px">Inhalt bearbeitbar</td><td style="color:#6c7a8e">contenteditable="true"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">draggable</code></td><td style="color:#cdd6f4;font-size:11px">Drag &amp; Drop</td><td style="color:#6c7a8e">draggable="true"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">lang</code></td><td style="color:#cdd6f4;font-size:11px">Sprache des Elements</td><td style="color:#6c7a8e">lang="de"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">title</code></td><td style="color:#cdd6f4;font-size:11px">Tooltip-Text</td><td style="color:#6c7a8e">title="Mehr Infos"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">aria-label</code></td><td style="color:#cdd6f4;font-size:11px">Accessibility-Beschreibung</td><td style="color:#6c7a8e">aria-label="Menü öffnen"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">role</code></td><td style="color:#cdd6f4;font-size:11px">ARIA-Rolle für Screenreader</td><td style="color:#6c7a8e">role="navigation"</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-css-selektoren" class="tp">
+
+<div class="ac open" id="ac-cs0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cs0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>Basis-Selektoren
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Selektor</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">*</code></td><td style="color:#cdd6f4;font-size:11px">Universal – alle Elemente</td><td style="color:#6c7a8e">* { box-sizing: border-box; }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">element</code></td><td style="color:#cdd6f4;font-size:11px">Tag-Name</td><td style="color:#6c7a8e">p { color: red; }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">.klasse</code></td><td style="color:#cdd6f4;font-size:11px">Klassen-Selektor</td><td style="color:#6c7a8e">.card { padding: 1rem; }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">#id</code></td><td style="color:#cdd6f4;font-size:11px">ID-Selektor (nur einmal!)</td><td style="color:#6c7a8e">#header { background: black; }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">[attr]</code></td><td style="color:#cdd6f4;font-size:11px">Attribut vorhanden</td><td style="color:#6c7a8e">a[target] { ... }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">[attr="val"]</code></td><td style="color:#cdd6f4;font-size:11px">Attribut gleich Wert</td><td style="color:#6c7a8e">input[type="email"] { ... }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">[attr^="val"]</code></td><td style="color:#cdd6f4;font-size:11px">Attribut beginnt mit</td><td style="color:#6c7a8e">a[href^="https"] { ... }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">[attr$="val"]</code></td><td style="color:#cdd6f4;font-size:11px">Attribut endet mit</td><td style="color:#6c7a8e">img[src$=".svg"] { ... }</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">[attr*="val"]</code></td><td style="color:#cdd6f4;font-size:11px">Attribut enthält</td><td style="color:#6c7a8e">p[class*="warning"] { ... }</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-cs1"
+     style="border:1px solid #264de444;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cs1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#264de40e">
+    <span style="display:flex;align-items:center;gap:6px;color:#264de4">
+      <span style="display:inline-block;width:8px;height:8px;background:#264de4;border-radius:50%;margin-right:2px"></span>Kombinations-Selektoren
+    </span>
+    <span class="aa" style="color:#264de4;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Selektor</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">A B</code></td><td style="color:#cdd6f4;font-size:11px">Nachfahren (beliebige Tiefe)</td><td style="color:#6c7a8e">nav a { color: white; }</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">A &gt; B</code></td><td style="color:#cdd6f4;font-size:11px">Direkte Kinder</td><td style="color:#6c7a8e">ul &gt; li { list-style: none; }</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">A + B</code></td><td style="color:#cdd6f4;font-size:11px">Unmittelbares Geschwister</td><td style="color:#6c7a8e">h1 + p { font-size: 1.2em; }</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">A ~ B</code></td><td style="color:#cdd6f4;font-size:11px">Alle folgenden Geschwister</td><td style="color:#6c7a8e">h2 ~ p { margin-top: 0; }</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">A, B</code></td><td style="color:#cdd6f4;font-size:11px">Gruppen-Selektor</td><td style="color:#6c7a8e">h1, h2, h3 { font-weight: bold; }</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-cs2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cs2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Pseudo-Klassen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Selektor</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:hover</code></td><td style="color:#cdd6f4;font-size:11px">Maus darüber</td><td style="color:#6c7a8e">a:hover { color: blue; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:focus</code></td><td style="color:#cdd6f4;font-size:11px">Hat Fokus (Tab / Klick)</td><td style="color:#6c7a8e">input:focus { outline: 2px solid blue; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:active</code></td><td style="color:#cdd6f4;font-size:11px">Wird gerade geklickt</td><td style="color:#6c7a8e">button:active { transform: scale(.98); }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:visited</code></td><td style="color:#cdd6f4;font-size:11px">Link besucht</td><td style="color:#6c7a8e">a:visited { color: purple; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:not(sel)</code></td><td style="color:#cdd6f4;font-size:11px">Nicht dieser Selektor</td><td style="color:#6c7a8e">li:not(:last-child) { border-bottom: 1px solid; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:nth-child(n)</code></td><td style="color:#cdd6f4;font-size:11px">n-tes Kind (1-basiert)</td><td style="color:#6c7a8e">tr:nth-child(even) { background: #f0f0f0; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:first-child</code></td><td style="color:#cdd6f4;font-size:11px">Erstes Kind</td><td style="color:#6c7a8e">li:first-child { font-weight: bold; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:last-child</code></td><td style="color:#cdd6f4;font-size:11px">Letztes Kind</td><td style="color:#6c7a8e">li:last-child { border: none; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:empty</code></td><td style="color:#cdd6f4;font-size:11px">Kein Inhalt</td><td style="color:#6c7a8e">p:empty { display: none; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:checked</code></td><td style="color:#cdd6f4;font-size:11px">Checkbox / Radio aktiv</td><td style="color:#6c7a8e">input:checked + label { color: green; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:disabled</code></td><td style="color:#cdd6f4;font-size:11px">Deaktiviertes Element</td><td style="color:#6c7a8e">input:disabled { opacity: .5; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:focus-within</code></td><td style="color:#cdd6f4;font-size:11px">Kind hat Fokus</td><td style="color:#6c7a8e">form:focus-within { box-shadow: ...; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:is(a, b)</code></td><td style="color:#cdd6f4;font-size:11px">Kurzform für Gruppen</td><td style="color:#6c7a8e">:is(h1, h2, h3) { font-family: serif; }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:where(a, b)</code></td><td style="color:#cdd6f4;font-size:11px">Wie :is aber Spezifizität = 0</td><td style="color:#6c7a8e">:where(article, section) p { }</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">:has(sel)</code></td><td style="color:#cdd6f4;font-size:11px">Hat diesen Nachfahren (CSS4)</td><td style="color:#6c7a8e">form:has(:invalid) { border-color: red; }</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-cs3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cs3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Pseudo-Elemente
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Selektor</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::before</code></td><td style="color:#cdd6f4;font-size:11px">Vor dem Inhalt (content: Pflicht)</td><td style="color:#6c7a8e">a::before { content: "→ "; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::after</code></td><td style="color:#cdd6f4;font-size:11px">Nach dem Inhalt</td><td style="color:#6c7a8e">.required::after { content: "*"; color: red; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::placeholder</code></td><td style="color:#cdd6f4;font-size:11px">Platzhalter-Text</td><td style="color:#6c7a8e">input::placeholder { color: #aaa; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::selection</code></td><td style="color:#cdd6f4;font-size:11px">Markierter Text</td><td style="color:#6c7a8e">::selection { background: yellow; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::first-line</code></td><td style="color:#cdd6f4;font-size:11px">Erste Zeile eines Blocks</td><td style="color:#6c7a8e">p::first-line { font-variant: small-caps; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::first-letter</code></td><td style="color:#cdd6f4;font-size:11px">Erster Buchstabe</td><td style="color:#6c7a8e">p::first-letter { font-size: 2em; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::marker</code></td><td style="color:#cdd6f4;font-size:11px">Listen-Bullet / Nummer</td><td style="color:#6c7a8e">li::marker { color: red; }</td></tr><tr><td style="color:#ffb347;font-size:11px"><code style="color:#ffb347">::backdrop</code></td><td style="color:#cdd6f4;font-size:11px">Hinter einem &lt;dialog&gt;</td><td style="color:#6c7a8e">dialog::backdrop { background: rgba(0,0,0,.5); }</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-css-box" class="tp">
+<div class="live-demo" id="demo-box_model">
+
+  <div class="demo-header">
+    <span class="demo-label">📦 Box-Model – bearbeite den Code!</span>
+    <div style="display:flex;gap:8px">
+      <button class="demo-btn" onclick="resetDemo('box_model')">⟲ Reset</button>
+    </div>
+  </div>
+
+  <div class="demo-body">
+
+    <!-- Linke Seite: Editor -->
+    <div class="demo-editors">
+      <div class="editor-block">
+        <div class="editor-label html-label">HTML</div>
+        <textarea class="demo-html" id="html-box_model" spellcheck="false"
+                  oninput="updateDemo('box_model')">&lt;div class="box"&gt;&#10;  Ich bin eine Box&#10;&lt;/div&gt;</textarea>
+      </div>
+      <div class="editor-block">
+        <div class="editor-label css-label">CSS</div>
+        <textarea class="demo-css" id="css-box_model" spellcheck="false"
+                  oninput="updateDemo('box_model')">.box {&#10;  width: 200px;&#10;  padding: 20px;&#10;  border: 3px solid #4fc3f7;&#10;  margin: 30px auto;&#10;  border-radius: 8px;&#10;  background: rgba(79,195,247,.1);&#10;  color: #cdd6f4;&#10;  text-align: center;&#10;  font-family: monospace;&#10;  box-sizing: border-box;&#10;}</textarea>
+      </div>
+    </div>
+
+    <!-- Rechte Seite: Vorschau -->
+    <div class="demo-preview-wrap">
+      <div class="preview-label">Vorschau</div>
+      <iframe class="demo-preview" id="preview-box_model"
+              sandbox="allow-scripts"></iframe>
+    </div>
+
+  </div>
+</div>
+<div style="background:rgba(0,0,0,.4);border-radius:10px;padding:20px;margin-bottom:12px">
+  <div style="font-size:11px;color:#6c7a8e;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">
+    Box-Model Visualizer
+  </div>
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:0">
+
+    <!-- Margin -->
+    <div style="background:rgba(255,152,0,.15);border:2px dashed rgba(255,152,0,.4);
+                border-radius:6px;padding:16px;width:100%;text-align:center;position:relative">
+      <span style="position:absolute;top:4px;left:8px;font-size:10px;color:#ff9800;font-weight:700">MARGIN</span>
+
+      <!-- Border -->
+      <div style="background:rgba(244,102,35,.2);border:2px solid rgba(244,102,35,.5);
+                  border-radius:4px;padding:14px;position:relative">
+        <span style="position:absolute;top:4px;left:8px;font-size:10px;color:#f46623;font-weight:700">BORDER</span>
+
+        <!-- Padding -->
+        <div style="background:rgba(79,195,247,.15);border:2px dashed rgba(79,195,247,.4);
+                    border-radius:3px;padding:12px;position:relative">
+          <span style="position:absolute;top:4px;left:8px;font-size:10px;color:#4fc3f7;font-weight:700">PADDING</span>
+
+          <!-- Content -->
+          <div style="background:rgba(0,255,136,.2);border:1px solid rgba(0,255,136,.4);
+                      border-radius:2px;padding:16px 24px;text-align:center">
+            <span style="font-size:12px;color:#00ff88;font-weight:700">CONTENT</span><br>
+            <span style="font-size:10px;color:#6c7a8e">width × height</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;font-size:11px">
+    <div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:4px;padding:6px;text-align:center;color:#00ff88">content-box<br><span style="color:#6c7a8e;font-size:10px">Standard</span></div>
+    <div style="background:rgba(79,195,247,.1);border:1px solid rgba(79,195,247,.3);border-radius:4px;padding:6px;text-align:center;color:#4fc3f7">padding</div>
+    <div style="background:rgba(244,102,35,.1);border:1px solid rgba(244,102,35,.3);border-radius:4px;padding:6px;text-align:center;color:#f46623">border</div>
+    <div style="background:rgba(255,152,0,.1);border:1px solid rgba(255,152,0,.3);border-radius:4px;padding:6px;text-align:center;color:#ff9800">margin</div>
+  </div>
+  <div style="margin-top:10px;padding:8px 12px;background:rgba(0,255,136,.08);border-radius:6px;font-size:11px;color:#6c7a8e">
+    <strong style="color:#00ff88">border-box</strong> → width/height schließt padding und border EIN  (empfohlen: <code>* {{ box-sizing: border-box }}</code>)
+  </div>
+</div>
+<div class="ac open" id="ac-bm-props"
+     style="border:1px solid #ff980044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('bm-props')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ff98000e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ff9800">
+      <span style="display:inline-block;width:8px;height:8px;background:#ff9800;border-radius:50%;margin-right:2px"></span>Box-Model Properties
+    </span>
+    <span class="aa" style="color:#ff9800;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Property</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">width / height</code></td><td style="color:#cdd6f4;font-size:11px">Breite / Höhe – ohne padding/border bei content-box</td><td style="color:#6c7a8e">width: 300px; height: auto;</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">max-width / min-width</code></td><td style="color:#cdd6f4;font-size:11px">Maximum / Minimum Breite</td><td style="color:#6c7a8e">max-width: 100%; min-width: 200px;</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">padding</code></td><td style="color:#cdd6f4;font-size:11px">Innenabstand (oben rechts unten links)</td><td style="color:#6c7a8e">padding: 1rem 2rem; oder einzeln</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">border</code></td><td style="color:#cdd6f4;font-size:11px">Rahmen: width style color</td><td style="color:#6c7a8e">border: 2px solid #ccc;</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">border-radius</code></td><td style="color:#cdd6f4;font-size:11px">Runde Ecken</td><td style="color:#6c7a8e">border-radius: 8px; oder 50% für Kreis</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">margin</code></td><td style="color:#cdd6f4;font-size:11px">Außenabstand – auto für Zentrierung</td><td style="color:#6c7a8e">margin: 0 auto; (horizontal zentrieren)</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">outline</code></td><td style="color:#cdd6f4;font-size:11px">Außerhalb des borders (kein Layout-Einfluss)</td><td style="color:#6c7a8e">outline: 2px solid blue;</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">box-sizing</code></td><td style="color:#cdd6f4;font-size:11px">content-box (Standard) oder border-box</td><td style="color:#6c7a8e">* { box-sizing: border-box; } – immer setzen!</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">overflow</code></td><td style="color:#cdd6f4;font-size:11px">Inhalt der rausgeht: visible/hidden/scroll/auto</td><td style="color:#6c7a8e">overflow: hidden; overflow-x: auto;</td></tr><tr><td style="color:#ff9800;font-size:11px"><code style="color:#ff9800">box-shadow</code></td><td style="color:#cdd6f4;font-size:11px">Schatten: x y blur spread color</td><td style="color:#6c7a8e">box-shadow: 0 4px 12px rgba(0,0,0,.15);</td></tr></tbody></table>
+  </div>
+</div></div>
+  <div id="tp-css-layout" class="tp">
+
+<div class="ac open" id="ac-cl0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>Display &amp; Positioning
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Property / Wert</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">display: block</code></td><td style="color:#cdd6f4;font-size:11px">Nimmt volle Breite, erzwingt Zeilenumbruch</td><td style="color:#6c7a8e">Standard für div, p, h1…</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">display: inline</code></td><td style="color:#cdd6f4;font-size:11px">Fließt im Text, kein width/height</td><td style="color:#6c7a8e">Standard für span, a, strong…</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">display: inline-block</code></td><td style="color:#cdd6f4;font-size:11px">Wie inline aber width/height möglich</td><td style="color:#6c7a8e">Buttons, Icons</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">display: none</code></td><td style="color:#cdd6f4;font-size:11px">Versteckt + kein Layout-Platz</td><td style="color:#6c7a8e">Gegensatz zu visibility: hidden</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">display: contents</code></td><td style="color:#cdd6f4;font-size:11px">Box verschwindet, Kinder bleiben</td><td style="color:#6c7a8e">Nützlich für flex/grid</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">position: static</code></td><td style="color:#cdd6f4;font-size:11px">Standard – im Dokumentfluss</td><td style="color:#6c7a8e">top/left hat keinen Effekt</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">position: relative</code></td><td style="color:#cdd6f4;font-size:11px">Relativ zur Normalposition</td><td style="color:#6c7a8e">Eltern-Kontext für absolute Kinder</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">position: absolute</code></td><td style="color:#cdd6f4;font-size:11px">Aus dem Fluss – relativ zum nächsten non-static Elternteil</td><td style="color:#6c7a8e">top/left/right/bottom</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">position: fixed</code></td><td style="color:#cdd6f4;font-size:11px">Relativ zum Viewport – scrollt nicht</td><td style="color:#6c7a8e">Sticky Header, Modal</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">position: sticky</code></td><td style="color:#cdd6f4;font-size:11px">Relativ bis Schwellwert, dann fixed</td><td style="color:#6c7a8e">top: 0; für sticky Header</td></tr><tr><td style="color:#e44d26;font-size:11px"><code style="color:#e44d26">z-index</code></td><td style="color:#cdd6f4;font-size:11px">Stapel-Reihenfolge bei position != static</td><td style="color:#6c7a8e">Höher = weiter vorne</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty0"
+     style="border:1px solid #264de444;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#264de40e">
+    <span style="display:flex;align-items:center;gap:6px;color:#264de4">
+      <span style="display:inline-block;width:8px;height:8px;background:#264de4;border-radius:50%;margin-right:2px"></span>Schrift &amp; Text
+    </span>
+    <span class="aa" style="color:#264de4;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Property</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">font-family</code></td><td style="color:#cdd6f4;font-size:11px">Schriftart – Fallback-Kette</td><td style="color:#6c7a8e">font-family: "Inter", system-ui, sans-serif;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">font-size</code></td><td style="color:#cdd6f4;font-size:11px">Schriftgröße – rem bevorzugen</td><td style="color:#6c7a8e">font-size: 1rem; (= 16px Standard)</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">font-weight</code></td><td style="color:#cdd6f4;font-size:11px">100–900 oder normal/bold</td><td style="color:#6c7a8e">font-weight: 600;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">font-style</code></td><td style="color:#cdd6f4;font-size:11px">normal / italic / oblique</td><td style="color:#6c7a8e">font-style: italic;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">line-height</code></td><td style="color:#cdd6f4;font-size:11px">Zeilenabstand – einheitenlos bevorzugen</td><td style="color:#6c7a8e">line-height: 1.5;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">letter-spacing</code></td><td style="color:#cdd6f4;font-size:11px">Buchstabenabstand</td><td style="color:#6c7a8e">letter-spacing: .05em;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">text-align</code></td><td style="color:#cdd6f4;font-size:11px">left / center / right / justify</td><td style="color:#6c7a8e">text-align: center;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">text-decoration</code></td><td style="color:#cdd6f4;font-size:11px">Unterstreichung etc.</td><td style="color:#6c7a8e">text-decoration: none; underline;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">text-transform</code></td><td style="color:#cdd6f4;font-size:11px">uppercase / lowercase / capitalize</td><td style="color:#6c7a8e">text-transform: uppercase;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">white-space</code></td><td style="color:#cdd6f4;font-size:11px">nowrap / pre / pre-wrap</td><td style="color:#6c7a8e">white-space: nowrap;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">word-break</code></td><td style="color:#cdd6f4;font-size:11px">break-word / break-all</td><td style="color:#6c7a8e">word-break: break-word;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">text-overflow</code></td><td style="color:#cdd6f4;font-size:11px">ellipsis wenn overflow:hidden</td><td style="color:#6c7a8e">text-overflow: ellipsis;</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">color</code></td><td style="color:#cdd6f4;font-size:11px">Textfarbe</td><td style="color:#6c7a8e">color: #333; rgb() hsl() oklch()</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-flexbox" class="tp">
+<div class="live-demo" id="demo-flexbox">
+
+  <div class="demo-header">
+    <span class="demo-label">🔧 Flexbox – bearbeite den Code!</span>
+    <div style="display:flex;gap:8px">
+      <button class="demo-btn" onclick="resetDemo('flexbox')">⟲ Reset</button>
+    </div>
+  </div>
+
+  <div class="demo-body">
+
+    <!-- Linke Seite: Editor -->
+    <div class="demo-editors">
+      <div class="editor-block">
+        <div class="editor-label html-label">HTML</div>
+        <textarea class="demo-html" id="html-flexbox" spellcheck="false"
+                  oninput="updateDemo('flexbox')">&lt;div class="container"&gt;&#10;  &lt;div class="item"&gt;1&lt;/div&gt;&#10;  &lt;div class="item"&gt;2&lt;/div&gt;&#10;  &lt;div class="item"&gt;3&lt;/div&gt;&#10;  &lt;div class="item"&gt;4&lt;/div&gt;&#10;&lt;/div&gt;</textarea>
+      </div>
+      <div class="editor-block">
+        <div class="editor-label css-label">CSS</div>
+        <textarea class="demo-css" id="css-flexbox" spellcheck="false"
+                  oninput="updateDemo('flexbox')">.container {&#10;  display: flex;&#10;  flex-direction: row;&#10;  justify-content: space-between;&#10;  align-items: center;&#10;  gap: 10px;&#10;  padding: 20px;&#10;  background: rgba(255,255,255,.05);&#10;  border-radius: 8px;&#10;  min-height: 120px;&#10;}&#10;&#10;.item {&#10;  background: #4fc3f7;&#10;  color: #0a0c0f;&#10;  padding: 15px 20px;&#10;  border-radius: 6px;&#10;  font-weight: bold;&#10;  font-family: monospace;&#10;}</textarea>
+      </div>
+    </div>
+
+    <!-- Rechte Seite: Vorschau -->
+    <div class="demo-preview-wrap">
+      <div class="preview-label">Vorschau</div>
+      <iframe class="demo-preview" id="preview-flexbox"
+              sandbox="allow-scripts"></iframe>
+    </div>
+
+  </div>
+</div>
+<div class="playground">
+  <div style="padding:10px 14px;background:rgba(255,255,255,.02);border-bottom:1px solid #1e2530;font-size:11px;color:#6c7a8e;font-weight:700;letter-spacing:1px;text-transform:uppercase">
+    ⚡ Flexbox Playground – ändere die Werte und sieh den Effekt sofort
+  </div>
+  <div class="pg-controls">
+    <div class="pg-control">
+      <label>flex-direction</label>
+      <select id="flex-direction" onchange="updateFlex()">
+        <option>row</option><option>row-reverse</option>
+        <option>column</option><option>column-reverse</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>justify-content</label>
+      <select id="justify-content" onchange="updateFlex()">
+        <option>flex-start</option><option>flex-end</option><option>center</option>
+        <option>space-between</option><option>space-around</option><option>space-evenly</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>align-items</label>
+      <select id="align-items" onchange="updateFlex()">
+        <option>stretch</option><option>flex-start</option><option>flex-end</option>
+        <option>center</option><option>baseline</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>flex-wrap</label>
+      <select id="flex-wrap" onchange="updateFlex()">
+        <option>nowrap</option><option>wrap</option><option>wrap-reverse</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>gap</label>
+      <select id="flex-gap" onchange="updateFlex()">
+        <option value="0">0</option><option value="4px">4px</option>
+        <option value="8px" selected>8px</option><option value="16px">16px</option>
+        <option value="24px">24px</option>
+      </select>
+    </div>
+  </div>
+  <div class="pg-preview" id="flex-preview"
+       style="display:flex;gap:8px;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;min-height:150px">
+    <div style="background:#4fc3f7;color:#0a0c0f;padding:12px 16px;border-radius:6px;font-weight:bold;font-family:monospace;font-size:13px">1</div>
+    <div style="background:#4fc3f7;color:#0a0c0f;padding:12px 16px;border-radius:6px;font-weight:bold;font-family:monospace;font-size:13px">2</div>
+    <div style="background:#4fc3f7;color:#0a0c0f;padding:20px 16px;border-radius:6px;font-weight:bold;font-family:monospace;font-size:13px">3</div>
+    <div style="background:#4fc3f7;color:#0a0c0f;padding:12px 16px;border-radius:6px;font-weight:bold;font-family:monospace;font-size:13px">4</div>
+    <div style="background:#4fc3f7;color:#0a0c0f;padding:8px 16px;border-radius:6px;font-weight:bold;font-family:monospace;font-size:13px">5</div>
+  </div>
+  <pre id="flex-code" style="background:rgba(0,0,0,.5);border-top:1px solid #1e2530;padding:12px 16px;font-size:11px;color:#c3e88d;margin:0;line-height:1.6;overflow-x:auto;white-space:pre"></pre>
+</div>
+<div class="ac" id="ac-fx-container"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fx-container')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Container Properties
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Property</th><th>Werte</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">display</code></td><td style="color:#cdd6f4;font-size:11px">flex / inline-flex</td><td style="color:#6c7a8e">Aktiviert Flexbox</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">flex-direction</code></td><td style="color:#cdd6f4;font-size:11px">row / row-reverse / column / column-reverse</td><td style="color:#6c7a8e">Haupt-Achse</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">justify-content</code></td><td style="color:#cdd6f4;font-size:11px">flex-start / flex-end / center / space-between / space-around / space-evenly</td><td style="color:#6c7a8e">Entlang der Haupt-Achse</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">align-items</code></td><td style="color:#cdd6f4;font-size:11px">stretch / flex-start / flex-end / center / baseline</td><td style="color:#6c7a8e">Quer zur Haupt-Achse</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">align-content</code></td><td style="color:#cdd6f4;font-size:11px">Wie justify-content für mehrere Zeilen</td><td style="color:#6c7a8e">Nur bei flex-wrap</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">flex-wrap</code></td><td style="color:#cdd6f4;font-size:11px">nowrap / wrap / wrap-reverse</td><td style="color:#6c7a8e">Umbruch erlauben</td></tr><tr><td style="color:#4fc3f7;font-size:11px"><code style="color:#4fc3f7">gap</code></td><td style="color:#cdd6f4;font-size:11px">row-gap column-gap – Abstand zwischen Items</td><td style="color:#6c7a8e">gap: 1rem 2rem;</td></tr></tbody></table>
+  </div>
+</div>
+<div class="ac" id="ac-fx-item"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fx-item')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Item Properties
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Property</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">flex-grow</code></td><td style="color:#cdd6f4;font-size:11px">0 = nicht wachsen, 1 = wachsen</td><td style="color:#6c7a8e">flex-grow: 1; (nimmt freien Platz)</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">flex-shrink</code></td><td style="color:#cdd6f4;font-size:11px">1 = schrumpfen erlaubt (Standard)</td><td style="color:#6c7a8e">flex-shrink: 0; (fixe Größe behalten)</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">flex-basis</code></td><td style="color:#cdd6f4;font-size:11px">Grundgröße vor grow/shrink</td><td style="color:#6c7a8e">flex-basis: 200px; oder auto</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">flex</code></td><td style="color:#cdd6f4;font-size:11px">Kurzform: grow shrink basis</td><td style="color:#6c7a8e">flex: 1; = flex: 1 1 0%;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">align-self</code></td><td style="color:#cdd6f4;font-size:11px">Überschreibt align-items für dieses Item</td><td style="color:#6c7a8e">align-self: flex-end;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">order</code></td><td style="color:#cdd6f4;font-size:11px">Reihenfolge (Standard 0)</td><td style="color:#6c7a8e">order: -1; = ganz vorne</td></tr></tbody></table>
+  </div>
+</div></div>
+  <div id="tp-grid" class="tp">
+<div class="live-demo" id="demo-grid">
+
+  <div class="demo-header">
+    <span class="demo-label">🗂 CSS Grid – bearbeite den Code!</span>
+    <div style="display:flex;gap:8px">
+      <button class="demo-btn" onclick="resetDemo('grid')">⟲ Reset</button>
+    </div>
+  </div>
+
+  <div class="demo-body">
+
+    <!-- Linke Seite: Editor -->
+    <div class="demo-editors">
+      <div class="editor-block">
+        <div class="editor-label html-label">HTML</div>
+        <textarea class="demo-html" id="html-grid" spellcheck="false"
+                  oninput="updateDemo('grid')">&lt;div class="grid"&gt;&#10;  &lt;div class="item header"&gt;Header&lt;/div&gt;&#10;  &lt;div class="item sidebar"&gt;Sidebar&lt;/div&gt;&#10;  &lt;div class="item main"&gt;Main Content&lt;/div&gt;&#10;  &lt;div class="item footer"&gt;Footer&lt;/div&gt;&#10;&lt;/div&gt;</textarea>
+      </div>
+      <div class="editor-block">
+        <div class="editor-label css-label">CSS</div>
+        <textarea class="demo-css" id="css-grid" spellcheck="false"
+                  oninput="updateDemo('grid')">.grid {&#10;  display: grid;&#10;  grid-template-columns: 200px 1fr;&#10;  grid-template-rows: auto 1fr auto;&#10;  grid-template-areas:&#10;    "header  header"&#10;    "sidebar main"&#10;    "footer  footer";&#10;  gap: 10px;&#10;  min-height: 200px;&#10;  padding: 10px;&#10;}&#10;&#10;.item {&#10;  background: rgba(79,195,247,.15);&#10;  border: 1px solid #4fc3f744;&#10;  border-radius: 6px;&#10;  padding: 10px;&#10;  color: #4fc3f7;&#10;  font-family: monospace;&#10;  font-size: 12px;&#10;  display: flex;&#10;  align-items: center;&#10;  justify-content: center;&#10;}&#10;&#10;.header  { grid-area: header;  background: rgba(244,102,35,.15); border-color: #f4662344; color: #f46623; }&#10;.sidebar { grid-area: sidebar; }&#10;.main    { grid-area: main;    }&#10;.footer  { grid-area: footer;  background: rgba(168,85,247,.15); border-color: #a855f744; color: #a855f7; }</textarea>
+      </div>
+    </div>
+
+    <!-- Rechte Seite: Vorschau -->
+    <div class="demo-preview-wrap">
+      <div class="preview-label">Vorschau</div>
+      <iframe class="demo-preview" id="preview-grid"
+              sandbox="allow-scripts"></iframe>
+    </div>
+
+  </div>
+</div>
+<div class="playground">
+  <div style="padding:10px 14px;background:rgba(255,255,255,.02);border-bottom:1px solid #1e2530;font-size:11px;color:#6c7a8e;font-weight:700;letter-spacing:1px;text-transform:uppercase">
+    ⚡ Grid Playground
+  </div>
+  <div class="pg-controls">
+    <div class="pg-control">
+      <label>grid-template-columns</label>
+      <select id="grid-cols" onchange="updateGrid()">
+        <option value="repeat(3, 1fr)">repeat(3, 1fr)</option>
+        <option value="repeat(4, 1fr)">repeat(4, 1fr)</option>
+        <option value="200px 1fr">200px 1fr</option>
+        <option value="1fr 2fr 1fr">1fr 2fr 1fr</option>
+        <option value="repeat(auto-fit, minmax(150px, 1fr))">auto-fit minmax</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>grid-template-rows</label>
+      <select id="grid-rows" onchange="updateGrid()">
+        <option value="auto">auto</option>
+        <option value="repeat(2, 80px)">repeat(2, 80px)</option>
+        <option value="100px auto">100px auto</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>gap</label>
+      <select id="grid-gap" onchange="updateGrid()">
+        <option value="4px">4px</option>
+        <option value="8px" selected>8px</option>
+        <option value="16px">16px</option>
+        <option value="24px">24px</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>justify-items</label>
+      <select id="grid-ji" onchange="updateGrid()">
+        <option>stretch</option><option>start</option>
+        <option>center</option><option>end</option>
+      </select>
+    </div>
+    <div class="pg-control">
+      <label>align-items</label>
+      <select id="grid-ai" onchange="updateGrid()">
+        <option>stretch</option><option>start</option>
+        <option>center</option><option>end</option>
+      </select>
+    </div>
+  </div>
+  <div class="pg-preview" id="grid-preview"
+       style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;min-height:150px">
+    <div style="background:rgba(79,195,247,.2);border:1px solid #4fc3f744;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#4fc3f7;display:flex;align-items:center;justify-content:center">1</div>
+    <div style="background:rgba(79,195,247,.2);border:1px solid #4fc3f744;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#4fc3f7;display:flex;align-items:center;justify-content:center">2</div>
+    <div style="background:rgba(79,195,247,.2);border:1px solid #4fc3f744;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#4fc3f7;display:flex;align-items:center;justify-content:center">3</div>
+    <div style="background:rgba(79,195,247,.2);border:1px solid #4fc3f744;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#4fc3f7;display:flex;align-items:center;justify-content:center">4</div>
+    <div style="background:rgba(79,195,247,.2);border:1px solid #4fc3f744;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#4fc3f7;display:flex;align-items:center;justify-content:center">5</div>
+    <div style="background:rgba(79,195,247,.2);border:1px solid #4fc3f744;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#4fc3f7;display:flex;align-items:center;justify-content:center">6</div>
+  </div>
+  <pre id="grid-code" style="background:rgba(0,0,0,.5);border-top:1px solid #1e2530;padding:12px 16px;font-size:11px;color:#c3e88d;margin:0;line-height:1.6;overflow-x:auto;white-space:pre"></pre>
+</div>
+<div class="ac" id="ac-gr-container"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr-container')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>Container Properties
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Property</th><th>Werte</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">display</code></td><td style="color:#cdd6f4;font-size:11px">grid / inline-grid</td><td style="color:#6c7a8e">Aktiviert Grid</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">grid-template-columns</code></td><td style="color:#cdd6f4;font-size:11px">Spalten: px % fr auto repeat()</td><td style="color:#6c7a8e">repeat(3, 1fr) oder 200px 1fr 1fr</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">grid-template-rows</code></td><td style="color:#cdd6f4;font-size:11px">Zeilen: px % fr auto</td><td style="color:#6c7a8e">Implizit durch Inhalt</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">gap</code></td><td style="color:#cdd6f4;font-size:11px">Abstände zwischen Zellen</td><td style="color:#6c7a8e">gap: 1rem; oder row-gap / column-gap</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">grid-template-areas</code></td><td style="color:#cdd6f4;font-size:11px">Benannte Bereiche</td><td style="color:#6c7a8e">"header header"
+"sidebar main"</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">justify-items</code></td><td style="color:#cdd6f4;font-size:11px">Horizontal in Zelle: start center end stretch</td><td style="color:#6c7a8e">Standard: stretch</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">align-items</code></td><td style="color:#cdd6f4;font-size:11px">Vertikal in Zelle: start center end stretch</td><td style="color:#6c7a8e">Standard: stretch</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">justify-content</code></td><td style="color:#cdd6f4;font-size:11px">Gesamtes Grid horizontal</td><td style="color:#6c7a8e">space-between, center...</td></tr><tr><td style="color:#00ff88;font-size:11px"><code style="color:#00ff88">align-content</code></td><td style="color:#cdd6f4;font-size:11px">Gesamtes Grid vertikal</td><td style="color:#6c7a8e">Wenn Grid kleiner als Container</td></tr></tbody></table>
+  </div>
+</div>
+<div class="ac" id="ac-gr-item"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr-item')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Item Properties
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Property</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">grid-column</code></td><td style="color:#cdd6f4;font-size:11px">Welche Spalten: start / end</td><td style="color:#6c7a8e">grid-column: 1 / 3; oder span 2</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">grid-row</code></td><td style="color:#cdd6f4;font-size:11px">Welche Zeilen: start / end</td><td style="color:#6c7a8e">grid-row: 1 / span 2;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">grid-area</code></td><td style="color:#cdd6f4;font-size:11px">Benannter Bereich</td><td style="color:#6c7a8e">grid-area: header;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">justify-self</code></td><td style="color:#cdd6f4;font-size:11px">Horizontal in Zelle</td><td style="color:#6c7a8e">justify-self: center;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">align-self</code></td><td style="color:#cdd6f4;font-size:11px">Vertikal in Zelle</td><td style="color:#6c7a8e">align-self: end;</td></tr><tr><td style="color:#c792ea;font-size:11px"><code style="color:#c792ea">place-self</code></td><td style="color:#cdd6f4;font-size:11px">Kurzform: align justify</td><td style="color:#6c7a8e">place-self: center;</td></tr></tbody></table>
+  </div>
+</div></div>
+  <div id="tp-modern-css" class="tp">
+
+<div class="ac open" id="ac-mc0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mc0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>Custom Properties (CSS Variables)
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="custom properties (css variables)">
+  <div style="color:#e44d26;font-weight:700;font-size:12px;margin-bottom:8px">
+    Custom Properties (CSS Variables)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* Definition – meist im :root */</span><span style="color:#f7df1e">
+</span><span style="color:#c792ea">:root</span>{
+  <span style="color:#c792ea">--farbe-primär</span>:<span style="color:#c3e88d">    #3b82f6</span>;
+  <span style="color:#c792ea">--farbe-text</span>:<span style="color:#c3e88d">      #1e293b</span>;
+  <span style="color:#c792ea">--abstand-base</span>:<span style="color:#c3e88d">    1rem</span>;
+  <span style="color:#c792ea">--radius-card</span>:<span style="color:#c3e88d">     12px</span>;
+  <span style="color:#c792ea">--schatten</span>:<span style="color:#c3e88d">        0 4px 24px rgba(0, 0, 0, .08)</span>;
+}
+
+<span style="color:#546e7a">/* Verwendung */</span><span style="color:#f7df1e">
+.button </span>{
+  <span style="color:#82aaff">background</span>:<span style="color:#c3e88d">    var(--farbe-primär)</span>;
+  <span style="color:#82aaff">border-radius</span>:<span style="color:#c3e88d"> var(--radius-card)</span>;
+  <span style="color:#82aaff">padding</span>:<span style="color:#c3e88d">       var(--abstand-base) calc(var(--abstand-base) * 2)</span>;
+}
+
+<span style="color:#546e7a">/* Fallback-Wert */</span><span style="color:#f7df1e">
+color</span><span style="color:#c792ea">:</span>var(--farbe-text, #333);
+
+<span style="color:#546e7a">/* Überschreiben im Dark Mode */</span><span style="color:#f7df1e">
+@media (prefers-color-scheme</span><span style="color:#c792ea">:</span>dark) {
+:<span style="color:#c3e88d">root {
+    --farbe-text:   #f1f5f9</span>;
+    <span style="color:#c792ea">--farbe-primär</span>:<span style="color:#c3e88d"> #60a5fa</span>;
+}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Lokale Überschreibung */</span><span style="color:#f7df1e">
+.card-warning </span>{
+  <span style="color:#c792ea">--farbe-primär</span>:<span style="color:#c3e88d"> #f59e0b</span>;   <span style="color:#82aaff">/* nur innerhalb dieser Komponente */</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mc1"
+     style="border:1px solid #264de444;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mc1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#264de40e">
+    <span style="display:flex;align-items:center;gap:6px;color:#264de4">
+      <span style="display:inline-block;width:8px;height:8px;background:#264de4;border-radius:50%;margin-right:2px"></span>calc() / clamp() / min() / max()
+    </span>
+    <span class="aa" style="color:#264de4;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="calc() / clamp() / min() / max()">
+  <div style="color:#264de4;font-weight:700;font-size:12px;margin-bottom:8px">
+    calc() / clamp() / min() / max()
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* calc() – gemischte Einheiten */</span><span style="color:#f7df1e">
+width</span><span style="color:#c792ea">:</span>  calc(100% - 2rem);
+padding<span style="color:#c792ea">:</span>calc(var(--base) * 1.5);
+
+<span style="color:#546e7a">/* clamp(min, ideal, max) – responsive Werte */</span><span style="color:#f7df1e">
+font-size</span><span style="color:#c792ea">:</span>clamp(1rem, 2.5vw, 1.5rem);
+width<span style="color:#c792ea">:</span>    clamp(300px, 50%, 700px);
+padding<span style="color:#c792ea">:</span>  clamp(1rem, 5vw, 3rem);
+
+<span style="color:#546e7a">/* min() und max() */</span><span style="color:#f7df1e">
+width</span><span style="color:#c792ea">:</span>  min(100%, 600px);     <span style="color:#546e7a">/* nie breiter als 600px */</span><span style="color:#f7df1e">
+padding</span><span style="color:#c792ea">:</span>max(1rem, 2vw);       <span style="color:#546e7a">/* mindestens 1rem</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mc2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mc2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Container Queries (CSS4)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="container queries (css4)">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Container Queries (CSS4)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#f7df1e">.card-container </span>{
+  <span style="color:#82aaff">container-type</span>:<span style="color:#c3e88d"> inline-size</span>;
+  <span style="color:#82aaff">container-name</span>:<span style="color:#c3e88d"> card</span>;
+}
+
+<span style="color:#546e7a">/* Reagiert auf die Größe des CONTAINERS, nicht des Viewports! */</span><span style="color:#f7df1e">
+@container card (min-width</span><span style="color:#c792ea">:</span>400px) {
+  <span style="color:#82aaff">.card { flex-direction</span>:<span style="color:#c3e88d"> row</span>;}<span style="color:#f7df1e">
+  .card-title </span>{ <span style="color:#82aaff">font-size</span>:<span style="color:#c3e88d"> 1.5rem</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Gegenüber Media Queries: */</span>
+<span style="color:#546e7a">/* Media Query  → reagiert auf Browser-Breite    */</span>
+<span style="color:#546e7a">/* Container Q. → reagiert auf Elternteil-Breite */</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mc3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mc3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>@layer – Cascade Layers
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="@layer – cascade layers">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    @layer – Cascade Layers
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* Schichten definieren (Reihenfolge = Priorität) */</span><span style="color:#f7df1e">
+@layer reset, base, components, utilities;
+
+@layer reset </span>{
+  <span style="color:#82aaff">*, *</span>:<span style="color:#c3e88d">:before, *::after { box-sizing: border-box</span>; <span style="color:#82aaff">margin</span>:<span style="color:#c3e88d"> 0</span>;}<span style="color:#f7df1e">
+}
+
+@layer base </span>{
+  <span style="color:#82aaff">body { font-family</span>:<span style="color:#c3e88d"> system-ui</span>; <span style="color:#82aaff">line-height</span>:<span style="color:#c3e88d"> 1.5</span>;}<span style="color:#f7df1e">
+}
+
+@layer components </span>{
+  <span style="color:#82aaff">.button { padding</span>:<span style="color:#c3e88d"> .5rem 1rem</span>; <span style="color:#82aaff">border-radius</span>:<span style="color:#c3e88d"> 6px</span>;}<span style="color:#f7df1e">
+}
+
+@layer utilities </span>{
+  <span style="color:#82aaff">.mt-4 { margin-top</span>:<span style="color:#c3e88d"> 1rem</span>;}<span style="color:#f7df1e">
+  .hidden </span>{ <span style="color:#82aaff">display</span>:<span style="color:#c3e88d"> none</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Höhere Schicht gewinnt – kein !important nötig */</span>
+<span style="color:#546e7a">/* Styles außerhalb von @layer gewinnen immer      */</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mc4"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mc4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>Nesting (CSS native, 2023+)
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="nesting (css native, 2023+)">
+  <div style="color:#00ff88;font-weight:700;font-size:12px;margin-bottom:8px">
+    Nesting (CSS native, 2023+)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* CSS hat jetzt natives Nesting – kein Sass nötig! */</span><span style="color:#f7df1e">
+
+.card </span>{
+  <span style="color:#82aaff">padding</span>:<span style="color:#c3e88d"> 1.5rem</span>;
+  <span style="color:#82aaff">border-radius</span>:<span style="color:#c3e88d"> 12px</span>;
+
+  <span style="color:#82aaff">/* Direkte Kind-Elemente */</span>
+  <span style="color:#82aaff">&amp; h2 {</span>
+    <span style="color:#82aaff">font-size</span>:<span style="color:#c3e88d"> 1.25rem</span>;
+    <span style="color:#82aaff">margin-bottom</span>:<span style="color:#c3e88d"> .5rem</span>;
+}
+
+  <span style="color:#546e7a">/* Pseudo-Klassen */</span><span style="color:#f7df1e">
+  &amp;</span><span style="color:#c792ea">:hover</span>{
+    <span style="color:#82aaff">box-shadow</span>:<span style="color:#c3e88d"> 0 8px 24px rgba(0, 0, 0, .15)</span>;
+}
+
+  <span style="color:#546e7a">/* Modifier-Klassen */</span><span style="color:#f7df1e">
+  &amp;.featured </span>{
+    <span style="color:#82aaff">border</span>:<span style="color:#c3e88d"> 2px solid var(--farbe-primär)</span>;
+}
+
+  <span style="color:#546e7a">/* Media Query drin */</span><span style="color:#f7df1e">
+  @media (max-width</span><span style="color:#c792ea">:</span>600px) {
+    <span style="color:#82aaff">padding</span>:<span style="color:#c3e88d"> 1rem</span>;
+}<span style="color:#f7df1e">
+}</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-animationen" class="tp">
+
+<div class="live-demo" id="demo-animation">
+
+  <div class="demo-header">
+    <span class="demo-label">🎬 Animation – hover über den Ball!</span>
+    <div style="display:flex;gap:8px">
+      <button class="demo-btn" onclick="resetDemo('animation')">⟲ Reset</button>
+    </div>
+  </div>
+
+  <div class="demo-body">
+
+    <!-- Linke Seite: Editor -->
+    <div class="demo-editors">
+      <div class="editor-block">
+        <div class="editor-label html-label">HTML</div>
+        <textarea class="demo-html" id="html-animation" spellcheck="false"
+                  oninput="updateDemo('animation')">&lt;div class="demo"&gt;&#10;  &lt;div class="ball"&gt;&lt;/div&gt;&#10;  &lt;p&gt;Hover für Animation&lt;/p&gt;&#10;&lt;/div&gt;</textarea>
+      </div>
+      <div class="editor-block">
+        <div class="editor-label css-label">CSS</div>
+        <textarea class="demo-css" id="css-animation" spellcheck="false"
+                  oninput="updateDemo('animation')">.demo {&#10;  display: flex;&#10;  flex-direction: column;&#10;  align-items: center;&#10;  gap: 20px;&#10;  padding: 30px;&#10;}&#10;&#10;.ball {&#10;  width: 60px;&#10;  height: 60px;&#10;  border-radius: 50%;&#10;  background: linear-gradient(135deg, #f46623, #f7df1e);&#10;  transition: transform 400ms cubic-bezier(.34, 1.56, .64, 1),&#10;              box-shadow 400ms ease;&#10;  cursor: pointer;&#10;}&#10;&#10;.ball:hover {&#10;  transform: scale(1.4) rotate(180deg);&#10;  box-shadow: 0 10px 40px rgba(244, 102, 35, .5);&#10;}&#10;&#10;p {&#10;  color: #6c7a8e;&#10;  font-family: monospace;&#10;  font-size: 12px;&#10;}</textarea>
+      </div>
+    </div>
+
+    <!-- Rechte Seite: Vorschau -->
+    <div class="demo-preview-wrap">
+      <div class="preview-label">Vorschau</div>
+      <iframe class="demo-preview" id="preview-animation"
+              sandbox="allow-scripts"></iframe>
+    </div>
+
+  </div>
+</div>
+
+<div class="ac open" id="ac-an0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('an0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>Transitions
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="transitions">
+  <div style="color:#e44d26;font-weight:700;font-size:12px;margin-bottom:8px">
+    Transitions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* Einfache Übergänge */</span><span style="color:#f7df1e">
+.button </span>{
+  <span style="color:#82aaff">background</span>:<span style="color:#c3e88d"> #3b82f6</span>;
+  <span style="color:#82aaff">transform</span>:<span style="color:#c3e88d">  scale(1)</span>;
+  <span style="color:#82aaff">transition</span>:<span style="color:#c3e88d"> background 200ms ease,
+              transform  150ms ease</span>;
+}<span style="color:#f7df1e">
+
+.button</span><span style="color:#c792ea">:hover</span>{
+  <span style="color:#82aaff">background</span>:<span style="color:#c3e88d"> #1d4ed8</span>;
+  <span style="color:#82aaff">transform</span>:<span style="color:#c3e88d">  scale(1.05)</span>;
+}
+
+<span style="color:#546e7a">/* transition Kurzform: property duration timing-function delay */</span><span style="color:#f7df1e">
+transition</span><span style="color:#c792ea">:</span>all 300ms ease-in-out;
+transition<span style="color:#c792ea">:</span>color 200ms ease, opacity 300ms ease 100ms;
+
+<span style="color:#546e7a">/* Timing Functions */</span><span style="color:#f7df1e">
+ease          </span><span style="color:#546e7a">/* langsam → schnell → langsam (Standard) */</span><span style="color:#f7df1e">
+ease-in       </span><span style="color:#546e7a">/* langsam → schnell                      */</span><span style="color:#f7df1e">
+ease-out      </span><span style="color:#546e7a">/* schnell → langsam                      */</span><span style="color:#f7df1e">
+linear        </span><span style="color:#546e7a">/* konstant                               */</span><span style="color:#f7df1e">
+cubic-bezier(0.34, 1.56, 0.64, 1)  </span><span style="color:#546e7a">/* Federwirkung    */</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-an1"
+     style="border:1px solid #264de444;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('an1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#264de40e">
+    <span style="display:flex;align-items:center;gap:6px;color:#264de4">
+      <span style="display:inline-block;width:8px;height:8px;background:#264de4;border-radius:50%;margin-right:2px"></span>@keyframes &amp; animation
+    </span>
+    <span class="aa" style="color:#264de4;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="@keyframes &amp; animation">
+  <div style="color:#264de4;font-weight:700;font-size:12px;margin-bottom:8px">
+    @keyframes &amp; animation
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* Keyframes definieren */</span><span style="color:#f7df1e">
+@keyframes einblenden </span>{
+  <span style="color:#82aaff">from { opacity</span>:<span style="color:#c3e88d"> 0</span>; <span style="color:#82aaff">transform</span>:<span style="color:#c3e88d"> translateY(-10px)</span>;}<span style="color:#f7df1e">
+  to   </span>{ <span style="color:#82aaff">opacity</span>:<span style="color:#c3e88d"> 1</span>; <span style="color:#82aaff">transform</span>:<span style="color:#c3e88d"> translateY(0)</span>;}<span style="color:#f7df1e">
+}
+
+@keyframes pulsieren </span>{
+  <span style="color:#82aaff">0%, 100% { transform</span>:<span style="color:#c3e88d"> scale(1)</span>;}<span style="color:#f7df1e">
+  50%       </span>{ <span style="color:#82aaff">transform</span>:<span style="color:#c3e88d"> scale(1.05)</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Animation anwenden */</span><span style="color:#f7df1e">
+.modal </span>{
+  <span style="color:#82aaff">animation</span>:<span style="color:#c3e88d"> einblenden 300ms ease-out</span>;
+}<span style="color:#f7df1e">
+
+.badge </span>{
+  <span style="color:#82aaff">animation</span>:<span style="color:#c3e88d"> pulsieren 2s ease-in-out infinite</span>;
+}
+
+<span style="color:#546e7a">/* animation Kurzform: name duration timing iteration delay direction */</span><span style="color:#f7df1e">
+animation</span><span style="color:#c792ea">:</span>einblenden 300ms ease-out 1 forwards;
+animation-play-state<span style="color:#c792ea">:</span>paused;   <span style="color:#546e7a">/* via JS pausierbar */</span>
+
+<span style="color:#546e7a">/* Performance-Hinweis: Nur transform und opacity animieren!
+   Sie laufen auf der GPU und erzeugen kein Layout-Reflow. */</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-responsive" class="tp">
+
+<div class="ac open" id="ac-rq0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('rq0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>Media Queries
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="media queries">
+  <div style="color:#e44d26;font-weight:700;font-size:12px;margin-bottom:8px">
+    Media Queries
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">/* Mobile First – kleinstes zuerst, dann erweitern */</span>
+
+<span style="color:#546e7a">/* Basis-Styles (mobile) */</span><span style="color:#f7df1e">
+.container </span>{ <span style="color:#82aaff">padding</span>:<span style="color:#c3e88d"> 1rem</span>;}<span style="color:#f7df1e">
+.grid </span>{ <span style="color:#82aaff">grid-template-columns</span>:<span style="color:#c3e88d"> 1fr</span>;}
+
+<span style="color:#546e7a">/* Tablet */</span><span style="color:#f7df1e">
+@media (min-width</span><span style="color:#c792ea">:</span>640px) {
+  <span style="color:#82aaff">.container { padding</span>:<span style="color:#c3e88d"> 2rem</span>;}<span style="color:#f7df1e">
+  .grid </span>{ <span style="color:#82aaff">grid-template-columns</span>:<span style="color:#c3e88d"> 1fr 1fr</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Desktop */</span><span style="color:#f7df1e">
+@media (min-width</span><span style="color:#c792ea">:</span>1024px) {
+  <span style="color:#82aaff">.container { max-width</span>:<span style="color:#c3e88d"> 1200px</span>; <span style="color:#82aaff">margin</span>:<span style="color:#c3e88d"> 0 auto</span>;}<span style="color:#f7df1e">
+  .grid </span>{ <span style="color:#82aaff">grid-template-columns</span>:<span style="color:#c3e88d"> repeat(3, 1fr)</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Feature Queries */</span><span style="color:#f7df1e">
+@media (hover</span><span style="color:#c792ea">:</span>hover) {
+  <span style="color:#82aaff">.button</span>:<span style="color:#c3e88d">hover { background: var(--farbe-hover)</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Dunkel-Modus */</span><span style="color:#f7df1e">
+@media (prefers-color-scheme</span><span style="color:#c792ea">:</span>dark) { <span style="color:#82aaff">...</span>}
+
+<span style="color:#546e7a">/* Reduzierte Bewegung */</span><span style="color:#f7df1e">
+@media (prefers-reduced-motion</span><span style="color:#c792ea">:</span>reduce) {
+  <span style="color:#82aaff">* { animation</span>:<span style="color:#c3e88d"> none !important</span>; <span style="color:#82aaff">transition</span>:<span style="color:#c3e88d"> none !important</span>;}<span style="color:#f7df1e">
+}
+
+</span><span style="color:#546e7a">/* Drucken */</span><span style="color:#f7df1e">
+@media print </span>{
+  <span style="color:#82aaff">nav, footer { display</span>:<span style="color:#c3e88d"> none</span>;}<span style="color:#f7df1e">
+}</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-rq1"
+     style="border:1px solid #264de444;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('rq1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#264de40e">
+    <span style="display:flex;align-items:center;gap:6px;color:#264de4">
+      <span style="display:inline-block;width:8px;height:8px;background:#264de4;border-radius:50%;margin-right:2px"></span>Responsive Einheiten
+    </span>
+    <span class="aa" style="color:#264de4;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Einheit</th><th>Beschreibung</th><th>Tipp</th></tr></thead><tbody><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">px</code></td><td style="color:#cdd6f4;font-size:11px">Absolut – 96px = 1 Zoll (logisch)</td><td style="color:#6c7a8e">Gut für border, shadow</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">rem</code></td><td style="color:#cdd6f4;font-size:11px">Root em – relativ zu html font-size</td><td style="color:#6c7a8e">1rem = 16px Standard. Bevorzugen!</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">em</code></td><td style="color:#cdd6f4;font-size:11px">Relativ zum Elternteil</td><td style="color:#6c7a8e">Gefährlich: stapelt sich</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">%</code></td><td style="color:#cdd6f4;font-size:11px">Relativ zum Elternteil</td><td style="color:#6c7a8e">width: 100%; margin: 0 auto</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">vw / vh</code></td><td style="color:#cdd6f4;font-size:11px">Viewport Breite / Höhe</td><td style="color:#6c7a8e">100vw = volle Breite</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">dvh</code></td><td style="color:#cdd6f4;font-size:11px">Dynamic Viewport Height (Mobile)</td><td style="color:#6c7a8e">Besser als vh auf Mobile</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">svh</code></td><td style="color:#cdd6f4;font-size:11px">Small Viewport Height</td><td style="color:#6c7a8e">Ohne mobile Browser-Leiste</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">fr</code></td><td style="color:#cdd6f4;font-size:11px">Fraction – nur in Grid/Flex</td><td style="color:#6c7a8e">1fr = gleicher Anteil</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">ch</code></td><td style="color:#cdd6f4;font-size:11px">Breite des "0"-Zeichens</td><td style="color:#6c7a8e">max-width: 65ch; für Lesbarkeit</td></tr><tr><td style="color:#264de4;font-size:11px"><code style="color:#264de4">clamp()</code></td><td style="color:#cdd6f4;font-size:11px">Fluid: min / ideal / max</td><td style="color:#6c7a8e">clamp(1rem, 2.5vw, 2rem)</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-werkzeuge" class="tp">
+<div style="background:rgba(0,0,0,.4);border-radius:10px;padding:16px;margin-bottom:16px">
+  <div style="font-size:11px;color:#6c7a8e;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:700">
+    🔢 CSS Specificity Rechner
+  </div>
+  <input type="text" id="spec-input" value="nav > ul li.aktiv a:hover"
+         placeholder="Selektor eingeben: .card h2, #header a:hover, …">
+  <div id="spec-result"></div>
+  <div style="margin-top:10px;font-size:11px;color:#6c7a8e;line-height:1.7">
+    <strong style="color:#cdd6f4">Spezifizität-Reihenfolge</strong> (höher = gewinnt):
+    <span style="color:#f7df1e">IDs</span> &gt;
+    <span style="color:#4fc3f7">Klassen, Attribute, Pseudo-Klassen</span> &gt;
+    <span style="color:#c3e88d">Elemente, Pseudo-Elemente</span> &gt;
+    <span style="color:#6c7a8e">* (Universal)</span>
+  </div>
+</div>
+<div class="live-demo" id="demo-card">
+
+  <div class="demo-header">
+    <span class="demo-label">🃏 Karten-Beispiel – alles was wir gelernt haben!</span>
+    <div style="display:flex;gap:8px">
+      <button class="demo-btn" onclick="resetDemo('card')">⟲ Reset</button>
+    </div>
+  </div>
+
+  <div class="demo-body">
+
+    <!-- Linke Seite: Editor -->
+    <div class="demo-editors">
+      <div class="editor-block">
+        <div class="editor-label html-label">HTML</div>
+        <textarea class="demo-html" id="html-card" spellcheck="false"
+                  oninput="updateDemo('card')">&lt;div class="card"&gt;&#10;  &lt;div class="card-icon"&gt;✦&lt;/div&gt;&#10;  &lt;h3&gt;Karte&lt;/h3&gt;&#10;  &lt;p&gt;CSS macht Spaß wenn man es erst versteht.&lt;/p&gt;&#10;  &lt;button class="btn"&gt;Mehr lesen&lt;/button&gt;&#10;&lt;/div&gt;</textarea>
+      </div>
+      <div class="editor-block">
+        <div class="editor-label css-label">CSS</div>
+        <textarea class="demo-css" id="css-card" spellcheck="false"
+                  oninput="updateDemo('card')">.card {&#10;  background: #0d1117;&#10;  border: 1px solid #1e2530;&#10;  border-radius: 16px;&#10;  padding: 24px;&#10;  max-width: 280px;&#10;  margin: 20px auto;&#10;  transition: transform 200ms ease, box-shadow 200ms ease;&#10;  cursor: default;&#10;}&#10;&#10;.card:hover {&#10;  transform: translateY(-4px);&#10;  box-shadow: 0 12px 32px rgba(0, 0, 0, .4);&#10;}&#10;&#10;.card-icon {&#10;  font-size: 28px;&#10;  margin-bottom: 12px;&#10;}&#10;&#10;h3 {&#10;  color: #f7df1e;&#10;  margin-bottom: 8px;&#10;  font-family: monospace;&#10;}&#10;&#10;p {&#10;  color: #6c7a8e;&#10;  font-size: 13px;&#10;  line-height: 1.6;&#10;  margin-bottom: 16px;&#10;  font-family: monospace;&#10;}&#10;&#10;.btn {&#10;  background: #f7df1e;&#10;  color: #0a0c0f;&#10;  border: none;&#10;  padding: 8px 16px;&#10;  border-radius: 6px;&#10;  cursor: pointer;&#10;  font-family: monospace;&#10;  font-weight: bold;&#10;  transition: background 150ms ease;&#10;}&#10;&#10;.btn:hover { background: #fde047; }</textarea>
+      </div>
+    </div>
+
+    <!-- Rechte Seite: Vorschau -->
+    <div class="demo-preview-wrap">
+      <div class="preview-label">Vorschau</div>
+      <iframe class="demo-preview" id="preview-card"
+              sandbox="allow-scripts"></iframe>
+    </div>
+
+  </div>
+</div><div style="background:#e44d2611;border:1px solid #e44d2644;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#e44d26">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S nodejs npm</code><br><code style="color:#ffb347">npm install -g live-server prettier stylelint</code></div>
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e44d2644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e44d260e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e44d26">
+      <span style="display:inline-block;width:8px;height:8px;background:#e44d26;border-radius:50%;margin-right:2px"></span>⚙ Browser-Support &amp; Validation
+    </span>
+    <span class="aa" style="color:#e44d26;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e44d26;font-weight:700">Can I Use</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">caniuse.com</span>
+  </div>
+  <code style="color:#ffb347">Browser-Kompatibilität prüfen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e44d26;font-weight:700">W3C Validator</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">validator.w3.org</span>
+  </div>
+  <code style="color:#ffb347">HTML validieren – Fehler finden</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e44d26;font-weight:700">CSS Validator</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">jigsaw.w3.org/css-validator</span>
+  </div>
+  <code style="color:#ffb347">CSS validieren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e44d26;font-weight:700">Autoprefixer</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">autoprefixer.github.io</span>
+  </div>
+  <code style="color:#ffb347">Vendor-Prefixe automatisch hinzufügen</code>
+</div>
+  </div>
+</div>
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #264de444;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#264de40e">
+    <span style="display:flex;align-items:center;gap:6px;color:#264de4">
+      <span style="display:inline-block;width:8px;height:8px;background:#264de4;border-radius:50%;margin-right:2px"></span>⚙ Arch / CachyOS Tools
+    </span>
+    <span class="aa" style="color:#264de4;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#264de4;font-weight:700">Live Server</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm</span>
+  </div>
+  <code style="color:#ffb347">npm install -g live-server
+live-server  # Browser reload bei Änderung</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#264de4;font-weight:700">Prettier</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm</span>
+  </div>
+  <code style="color:#ffb347">npm install -g prettier
+prettier --write *.html *.css</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#264de4;font-weight:700">Stylelint</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm</span>
+  </div>
+  <code style="color:#ffb347">npm install -g stylelint
+stylelint "**/*.css"</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#264de4;font-weight:700">PostCSS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm</span>
+  </div>
+  <code style="color:#ffb347">npm install postcss autoprefixer
+npx postcss style.css -o output.css</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#264de4;font-weight:700">Sass</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">sass (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S sass
+sass style.scss style.css --watch</code>
+</div>
+  </div>
+</div>
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ CSS Frameworks
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">Tailwind CSS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm</span>
+  </div>
+  <code style="color:#ffb347">npm install tailwindcss
+npx tailwindcss init</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">Bootstrap</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm/CDN</span>
+  </div>
+  <code style="color:#ffb347">npm install bootstrap
+oder: CDN-Link im &lt;head&gt;</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">PicoCSS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm/CDN</span>
+  </div>
+  <code style="color:#ffb347">Klassenlos – nur semantisches HTML nötig</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">Open Props</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">npm/CDN</span>
+  </div>
+  <code style="color:#ffb347">CSS-Variablen-System: open-props.style</code>
+</div>
+  </div>
+</div>
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ DevTools Tastenkürzel (Chrome/Firefox)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">F12 / Ctrl+Shift+I</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">DevTools öffnen</span>
+  </div>
+  <code style="color:#ffb347">Element-Inspector</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Ctrl+Shift+C</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Element auswählen</span>
+  </div>
+  <code style="color:#ffb347">Hover zeigt CSS direkt</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Ctrl+Shift+M</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Responsive Ansicht</span>
+  </div>
+  <code style="color:#ffb347">Verschiedene Gerätegrößen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Strg+L in Konsole</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Konsole leeren</span>
+  </div>
+  <code style="color:#ffb347"></code>
+</div>
+  </div>
+</div></div>
+
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// ── Akkordeon ──────────────────────────────────────────────────
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+// ── Tab-Navigation ─────────────────────────────────────────────
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Live Demo Engine ───────────────────────────────────────────
+// String concatenation used intentionally:
+// Template literals containing closing tags inside a <script>
+// block can confuse some HTML parsers.
+function buildPreviewDoc(html, css) {
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<style>body{margin:0;padding:12px;font-family:system-ui,sans-serif;'
+    + 'background:white;color:#333;min-height:60px;}' + css + '<\/style>'
+    + '<\/head><body>' + html + '<\/body><\/html>';
+}
+
+function updateDemo(id) {
+  var htmlCode = document.getElementById('html-' + id).value;
+  var cssCode  = document.getElementById('css-'  + id).value;
+  var frame    = document.getElementById('preview-' + id);
+  if (frame) frame.srcdoc = buildPreviewDoc(htmlCode, cssCode);
+}
+
+function resetDemo(id) {
+  updateDemo(id);
+}
+
+// Alle Demos beim Laden initialisieren
+document.querySelectorAll('[id^="preview-"]').forEach(function(frame) {
+  var id = frame.id.replace('preview-', '');
+  updateDemo(id);
+});
+
+// ── CSS Specificity Rechner ────────────────────────────────────
+function berechneSpezifizitaet(selektor) {
+  var ids      = 0;
+  var klassen  = 0;
+  var elemente = 0;
+  var breakdown = [];
+
+  var s = selektor
+    .replace(/:not\((.*?)\)/g, '$1')
+    .replace(/:is\((.*?)\)/g, '$1')
+    .replace(/:has\((.*?)\)/g, '$1')
+    .replace(/::?where\(.*?\)/g, '');
+
+  var idMatches = s.match(/#[a-zA-Z_-][\w-]*/g) || [];
+  ids = idMatches.length;
+  idMatches.forEach(function(m) { breakdown.push({ text: m, type: 'id', wert: '1,0,0' }); });
+  s = s.replace(/#[a-zA-Z_-][\w-]*/g, '');
+
+  var pseudoElMatches = s.match(/::[\w-]+/g) || [];
+  elemente += pseudoElMatches.length;
+  pseudoElMatches.forEach(function(m) { breakdown.push({ text: m, type: 'element', wert: '0,0,1' }); });
+  s = s.replace(/::[\w-]+/g, '');
+
+  var klasseMatches = s.match(/\.[a-zA-Z_-][\w-]*|\[[^\]]*\]|:[a-zA-Z_-][\w-]*/g) || [];
+  klassen += klasseMatches.length;
+  klasseMatches.forEach(function(m) { breakdown.push({ text: m, type: 'klasse', wert: '0,1,0' }); });
+  s = s.replace(/\.[a-zA-Z_-][\w-]*|\[[^\]]*\]|:[a-zA-Z_-][\w-]*/g, '');
+
+  var elemMatches = s.match(/[a-zA-Z][\w-]*/g) || [];
+  elemente += elemMatches.length;
+  elemMatches.forEach(function(m) { breakdown.push({ text: m, type: 'element', wert: '0,0,1' }); });
+
+  return { ids: ids, klassen: klassen, elemente: elemente, breakdown: breakdown };
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function aktualisiereSpezifizitaet() {
+  var input  = document.getElementById('spec-input');
+  var result = document.getElementById('spec-result');
+  if (!input || !result) return;
+
+  var sel = input.value.trim();
+  if (!sel) {
+    result.innerHTML = '<span style="color:#6c7a8e;font-size:12px">Selektor eingeben…</span>';
+    return;
+  }
+
+  var r     = berechneSpezifizitaet(sel);
+  var total = r.ids * 100 + r.klassen * 10 + r.elemente;
+  var farben = { id: '#f7df1e', klasse: '#4fc3f7', element: '#c3e88d' };
+  var labels = { id: 'ID', klasse: 'Klasse/Attr', element: 'Element' };
+
+  var bdHtml = r.breakdown.map(function(b) {
+    return '<div class="spec-item">'
+      + '<span style="color:' + farben[b.type] + ';font-weight:700;min-width:140px;font-size:11px">' + esc(b.text) + '<\/span>'
+      + '<span style="color:' + farben[b.type] + ';font-size:10px">' + labels[b.type] + '<\/span>'
+      + '<span style="color:#6c7a8e;font-size:10px;margin-left:auto">' + b.wert + '<\/span>'
+      + '<\/div>';
+  }).join('');
+
+  result.innerHTML = '<div class="spec-result">'
+    + '<div class="spec-box">'
+    + '<div class="spec-value" style="background:rgba(247,223,30,.1);color:#f7df1e">' + r.ids + '<\/div>'
+    + '<div class="spec-label">IDs<\/div><\/div>'
+    + '<div class="spec-box">'
+    + '<div class="spec-value" style="background:rgba(79,195,247,.1);color:#4fc3f7">' + r.klassen + '<\/div>'
+    + '<div class="spec-label">Klassen<\/div><\/div>'
+    + '<div class="spec-box">'
+    + '<div class="spec-value" style="background:rgba(195,232,141,.1);color:#c3e88d">' + r.elemente + '<\/div>'
+    + '<div class="spec-label">Elemente<\/div><\/div>'
+    + '<div class="spec-breakdown">'
+    + '<div style="font-size:11px;color:#6c7a8e;margin-bottom:6px">Wert: <strong style="color:#cdd6f4">('
+    + r.ids + ', ' + r.klassen + ', ' + r.elemente + ')<\/strong> = <strong style="color:#f7df1e">' + total + '<\/strong><\/div>'
+    + (bdHtml || '<div style="color:#6c7a8e;font-size:11px">Kein Selektor erkannt<\/div>')
+    + '<\/div><\/div>';
+}
+
+var specInput = document.getElementById('spec-input');
+if (specInput) {
+  specInput.addEventListener('input', aktualisiereSpezifizitaet);
+  aktualisiereSpezifizitaet();
+}
+
+// ── Flexbox Playground ─────────────────────────────────────────
+function updateFlex() {
+  var container = document.getElementById('flex-preview');
+  if (!container) return;
+
+  var dir  = document.getElementById('flex-direction')  ? document.getElementById('flex-direction').value  : 'row';
+  var jc   = document.getElementById('justify-content') ? document.getElementById('justify-content').value : 'flex-start';
+  var ai   = document.getElementById('align-items')     ? document.getElementById('align-items').value     : 'stretch';
+  var wrap = document.getElementById('flex-wrap')       ? document.getElementById('flex-wrap').value       : 'nowrap';
+  var gap  = document.getElementById('flex-gap')        ? document.getElementById('flex-gap').value        : '8px';
+
+  container.style.display        = 'flex';
+  container.style.flexDirection  = dir;
+  container.style.justifyContent = jc;
+  container.style.alignItems     = ai;
+  container.style.flexWrap       = wrap;
+  container.style.gap            = gap;
+
+var code = document.getElementById('flex-code');
+if (code) {
+  code.textContent = `.container {
+  display: flex;
+  flex-direction: ${dir};
+  justify-content: ${jc};
+  align-items: ${ai};
+  flex-wrap: ${wrap};
+  gap: ${gap};
+}`;
+}
+}
+// ── Grid Playground ────────────────────────────────────────────
+function updateGrid() {
+  var container = document.getElementById('grid-preview');
+  if (!container) return;
+
+  var cols = document.getElementById('grid-cols') ? document.getElementById('grid-cols').value : 'repeat(3, 1fr)';
+  var rows = document.getElementById('grid-rows') ? document.getElementById('grid-rows').value : 'auto';
+  var gap  = document.getElementById('grid-gap')  ? document.getElementById('grid-gap').value  : '8px';
+  var ji   = document.getElementById('grid-ji')   ? document.getElementById('grid-ji').value   : 'stretch';
+  var ai   = document.getElementById('grid-ai')   ? document.getElementById('grid-ai').value   : 'stretch';
+
+  container.style.display              = 'grid';
+  container.style.gridTemplateColumns  = cols;
+  container.style.gridTemplateRows     = rows;
+  container.style.gap                  = gap;
+  container.style.justifyItems         = ji;
+  container.style.alignItems           = ai;
+
+var code = document.getElementById('grid-code');
+  code.textContent = `.container {
+  display: grid;
+  grid-template-columns: ${cols};
+  gap: ${gap};
+  justify-items: ${ji};
+  align-items: ${ai};
+}`;
+}
+
+// Initial state für Playgrounds setzen
+window.addEventListener('load', function() {
+  updateFlex();
+  updateGrid();
+});
+</script>
+
+</body>
+</html>

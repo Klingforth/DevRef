@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COBOL Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #4ec9b0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+/* ── Tabs ── */
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(78, 201, 176, .07);
+}
+
+/* ── Content ── */
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+/* ── Search ── */
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+/* ── Accordion ── */
+.ac   { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+/* ── Tables ── */
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Cards ── */
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+/* ── COBOL-spezifisch: Spalten-Legende ── */
+.cobol-columns {
+  display: grid;
+  grid-template-columns: 48px 8px 36px 1fr 8px;
+  gap: 0;
+  font-size: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.col-num   { background: rgba(78,201,176,.1);  color: #4ec9b0;   text-align: center; padding: 3px 4px; }
+.col-ind   { background: rgba(197,134,192,.1); color: #c586c0; text-align: center; padding: 3px 4px; }
+.col-a     { background: rgba(86,156,214,.1);  color: #569cd6;   text-align: center; padding: 3px 4px; }
+.col-b     { background: rgba(220,220,170,.1); color: #dcdcaa; text-align: center; padding: 3px 4px; }
+.col-id    { background: rgba(74,84,104,.1);   color: var(--dim); text-align: center; padding: 3px 4px; }
+
+@media (max-width: 720px) {
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#4ec9b0">&#x2593;</span>
+      <span style="color:#4ec9b0">COBOL</span> Syntax
+    </div>
+    <div id="hdr-sub">GnuCOBOL · Free-Format · Arch Linux / CachyOS</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="struktur">Programmstruktur</button>
+    <button class="tb" data-tab="datentypen">Datentypen & PIC</button>
+    <button class="tb" data-tab="procedure">PROCEDURE DIVISION</button>
+    <button class="tb" data-tab="dateien">Dateiverarbeitung</button>
+    <button class="tb" data-tab="funktionen">Fkt. & Intrinsic</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<!-- ═══════════ INHALT ═══════════ -->
+<div class="con">
+
+  <div id="tp-struktur" class="tp active">
+
+<div style="background:rgba(78,201,176,.08);border:1px solid rgba(78,201,176,.3);
+            border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:12px;
+            line-height:1.8">
+  <strong style="color:#4ec9b0">COBOL</strong> –
+  Common Business-Oriented Language (1959, Grace Hopper).
+  Läuft auf ~95% aller Geldautomaten und verarbeitet täglich
+  <strong style="color:#cdd6f4">$3 Billionen</strong> Transaktionen.
+  Weltweit gibt es schätzungsweise <strong style="color:#cdd6f4">220 Milliarden</strong>
+  Zeilen aktiven COBOL-Codes.<br>
+  <span style="color:#6c7a8e">
+  Diese Referenz verwendet <strong style="color:#dcdcaa">Free-Format</strong>
+  (GnuCOBOL mit <code style="color:#ffb347">cobc -free</code>) –
+  keine festen Spaltenregeln, normale Einrückung.
+  </span>
+</div>
+
+<div style="background:rgba(0,0,0,.4);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+  <div style="font-size:10px;color:#6c7a8e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">
+    Fixed-Format Spaltenstruktur (classic COBOL)
+  </div>
+  <pre style="font-size:11px;line-height:1.6;background:transparent;border:none;padding:0;color:#cdd6f4;white-space:pre">│<span style="color:#4ec9b0">123456</span>│<span style="color:#c586c0">7</span>│<span style="color:#569cd6">8 9 A B</span>│<span style="color:#dcdcaa">C – Spalte 72  (Area B: eigentlicher Code)</span>│<span style="color:#546e7a">73–80</span>│
+│<span style="color:#4ec9b0">Zeilen</span>│<span style="color:#c586c0">*</span>│<span style="color:#569cd6">Area A</span>  │<span style="color:#dcdcaa">Area B                               </span>│<span style="color:#546e7a">Ident</span>│
+│<span style="color:#4ec9b0">nummer</span>│<span style="color:#c586c0">=</span>│<span style="color:#569cd6">DIV.    </span>│<span style="color:#dcdcaa">Statements, Datendefinitionen, ...   </span>│<span style="color:#546e7a">      </span>│
+│      │<span style="color:#c586c0">Kom</span>│<span style="color:#569cd6">SECTION </span>│                                     │      │
+│      │<span style="color:#c586c0">men</span>│<span style="color:#569cd6">01/77   </span>│                                     │      │
+│      │<span style="color:#c586c0">tar</span>│<span style="color:#569cd6">Pgr-Name</span>│                                     │      │</pre>
+  <div style="margin-top:8px;font-size:11px;color:#6c7a8e">
+    <span style="color:#4ec9b0">■</span> Zeilennummer (opt.) &nbsp;
+    <span style="color:#c586c0">■</span> Indikator (* = Kommentar) &nbsp;
+    <span style="color:#569cd6">■</span> Area A (DIVISION, 01, 77) &nbsp;
+    <span style="color:#dcdcaa">■</span> Area B (Code) &nbsp;
+    <span style="color:#546e7a">■</span> Identifikation (ignoriert)
+  </div>
+</div>
+
+<div class="ac open" id="ac-st0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('st0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;margin-right:4px"></span>Die 4 Divisions – Pflichtstruktur
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="die 4 divisions – pflichtstruktur">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Die 4 Divisions – Pflichtstruktur
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; Minimales COBOL-Programm (Free Format, GnuCOBOL)</span>
+       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>. <span style="color:#dcdcaa">HALLO-WELT</span>.
+           <span style="color:#569cd6">AUTHOR</span>.     <span style="color:#dcdcaa">Max</span> <span style="color:#dcdcaa">Mustermann</span>.
+           <span style="color:#569cd6">DATE-WRITTEN</span>. <span style="color:#b5cea8">2024</span>-01-15.
+
+       <span style="color:#569cd6">ENVIRONMENT</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#546e7a">*&gt; Keine Dateien → leer lassen</span>
+
+       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-NAME</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(20)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"Welt"</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>     <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(3)</span>  <span style="color:#569cd6">VALUE</span> <span style="color:#569cd6">ZERO</span>.
+
+       <span style="color:#569cd6">PROCEDURE</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Hallo, "</span> <span style="color:#dcdcaa">WS-NAME</span> <span style="color:#ce9178">"!"</span>
+           <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>.</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st1"
+     style="border:1px solid #c586c044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('st1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c586c00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c586c0">
+      <span style="display:inline-block;width:8px;height:8px;background:#c586c0;border-radius:2px;margin-right:4px"></span>IDENTIFICATION DIVISION
+    </span>
+    <span class="aa" style="color:#c586c0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="identification division">
+  <div style="color:#c586c0;font-weight:700;font-size:12px;margin-bottom:8px">
+    IDENTIFICATION DIVISION
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>.    <span style="color:#dcdcaa">MEIN-PROGRAMM</span>.
+           <span style="color:#546e7a">*&gt; PROGRAM-ID ist die einzige Pflicht-Angabe!</span>
+
+           <span style="color:#569cd6">AUTHOR</span>.        <span style="color:#dcdcaa">Max</span> <span style="color:#dcdcaa">Mustermann</span>.
+           <span style="color:#dcdcaa">INSTALLATION</span>.  <span style="color:#dcdcaa">Firma</span> <span style="color:#dcdcaa">GmbH</span>.
+           <span style="color:#569cd6">DATE-WRITTEN</span>.  <span style="color:#b5cea8">2024</span>-01-15.
+           <span style="color:#569cd6">DATE-COMPILED</span>. <span style="color:#b5cea8">2024</span>-01-16.
+           <span style="color:#dcdcaa">SECURITY</span>.      <span style="color:#dcdcaa">VERTRAULICH</span>.
+
+       <span style="color:#546e7a">*&gt; Bei COBOL-Modulen (aufgerufen via CALL):</span>
+       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>.    <span style="color:#dcdcaa">RECHNER</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">INITIAL</span> <span style="color:#569cd6">PROGRAM</span>.
+           <span style="color:#546e7a">*&gt; INITIAL = Zustand wird bei jedem CALL zurückgesetzt</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st2"
+     style="border:1px solid #569cd644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('st2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#569cd60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#569cd6">
+      <span style="display:inline-block;width:8px;height:8px;background:#569cd6;border-radius:2px;margin-right:4px"></span>ENVIRONMENT DIVISION
+    </span>
+    <span class="aa" style="color:#569cd6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="environment division">
+  <div style="color:#569cd6;font-weight:700;font-size:12px;margin-bottom:8px">
+    ENVIRONMENT DIVISION
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">ENVIRONMENT</span> <span style="color:#c586c0">DIVISION</span>.
+
+           <span style="color:#569cd6">CONFIGURATION</span> <span style="color:#c586c0">SECTION</span>.
+               <span style="color:#dcdcaa">SOURCE-COMPUTER</span>.  <span style="color:#dcdcaa">LINUX</span>.
+               <span style="color:#dcdcaa">OBJECT-COMPUTER</span>.  <span style="color:#dcdcaa">LINUX</span>.
+               <span style="color:#dcdcaa">SPECIAL-NAMES</span>.
+                   <span style="color:#dcdcaa">DECIMAL-POINT</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">COMMA</span>.  <span style="color:#546e7a">*&gt; 1,99 statt 1.99</span>
+                   <span style="color:#dcdcaa">CRT</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-CRT-STATUS</span>.
+
+           <span style="color:#569cd6">INPUT-OUTPUT</span> <span style="color:#c586c0">SECTION</span>.
+               <span style="color:#569cd6">FILE-CONTROL</span>.
+                   <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+                       <span style="color:#569cd6">ASSIGN</span> <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"kunden.dat"</span>
+                       <span style="color:#569cd6">ORGANIZATION</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">SEQUENTIAL</span>
+                       <span style="color:#569cd6">ACCESS</span> <span style="color:#569cd6">MODE</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">SEQUENTIAL</span>
+                       <span style="color:#569cd6">FILE</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-DATEI-STATUS</span>.
+
+                   <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">INDEX-DATEI</span>
+                       <span style="color:#569cd6">ASSIGN</span> <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"index.dat"</span>
+                       <span style="color:#569cd6">ORGANIZATION</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">INDEXED</span>
+                       <span style="color:#569cd6">ACCESS</span> <span style="color:#569cd6">MODE</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">DYNAMIC</span>
+                       <span style="color:#569cd6">RECORD</span> <span style="color:#569cd6">KEY</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">IDX-KUNDENNR</span>
+                       <span style="color:#dcdcaa">ALTERNATE</span> <span style="color:#569cd6">RECORD</span> <span style="color:#569cd6">KEY</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">IDX-NAME</span>
+                           <span style="color:#569cd6">WITH</span> <span style="color:#dcdcaa">DUPLICATES</span>
+                       <span style="color:#569cd6">FILE</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-DATEI-STATUS</span>.</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('st3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;margin-right:4px"></span>DATA DIVISION – Sections
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="data division – sections">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    DATA DIVISION – Sections
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+
+       <span style="color:#546e7a">*&gt; ── FILE SECTION ──────────────────────────────────────</span>
+       <span style="color:#546e7a">*&gt;    Datenstrukturen für Dateien (FD = File Descriptor)</span>
+       <span style="color:#569cd6">FILE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#569cd6">FD</span>  <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+               <span style="color:#dcdcaa">LABEL</span> <span style="color:#dcdcaa">RECORDS</span> <span style="color:#dcdcaa">ARE</span> <span style="color:#dcdcaa">STANDARD</span>
+               <span style="color:#dcdcaa">BLOCK</span> <span style="color:#dcdcaa">CONTAINS</span> <span style="color:#b5cea8">0</span> <span style="color:#dcdcaa">RECORDS</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">KUNDEN-SATZ</span>.
+               <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-NUMMER</span>      <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(6)</span>.
+               <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-NAME</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(30)</span>.
+               <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-PLZ</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(5)</span>.
+
+       <span style="color:#546e7a">*&gt; ── WORKING-STORAGE SECTION ──────────────────────────</span>
+       <span style="color:#546e7a">*&gt;    Globale Variablen – leben für die gesamte Laufzeit</span>
+       <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-DATEI-STATUS</span>    <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">XX.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-EOF-FLAG</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X</span>     <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"N"</span>.
+
+       <span style="color:#546e7a">*&gt; ── LOCAL-STORAGE SECTION ────────────────────────────</span>
+       <span style="color:#546e7a">*&gt;    Werden bei jedem CALL neu initialisiert (COBOL 2002+)</span>
+       <span style="color:#569cd6">LOCAL-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">LS-TEMP</span>            <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(8)</span>.
+
+       <span style="color:#546e7a">*&gt; ── LINKAGE SECTION ──────────────────────────────────</span>
+       <span style="color:#546e7a">*&gt;    Parameter die via CALL USING übergeben werden</span>
+       <span style="color:#569cd6">LINKAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">LK-EINGABE</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(100)</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">LK-ERGEBNIS</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(10)</span>.</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-datentypen" class="tp">
+
+<div class="ac open" id="ac-dt0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dt0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;margin-right:4px"></span>PIC-Klauseln – Datentypen definieren
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>PIC-Zeichen</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:200px"><code style="color:#4ec9b0">X</code></td><td style="color:#cdd6f4">Alphanumerisch (1 Zeichen)</td><td style="color:#6c7a8e">PIC X(10)  – 10 Zeichen String</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">A</code></td><td style="color:#cdd6f4">Alphabetisch (nur A-Z, Leerzeichen)</td><td style="color:#6c7a8e">PIC A(20)  – nur Buchstaben</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">9</code></td><td style="color:#cdd6f4">Numerisch (1 Ziffer, 0-9)</td><td style="color:#6c7a8e">PIC 9(5)   – 5-stellige Ganzzahl</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">V</code></td><td style="color:#cdd6f4">Impliziter Dezimalpunkt</td><td style="color:#6c7a8e">PIC 9(5)V99 – 99999.99</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">S</code></td><td style="color:#cdd6f4">Vorzeichen (signed)</td><td style="color:#6c7a8e">PIC S9(5)  – -99999 bis +99999</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">Z</code></td><td style="color:#cdd6f4">Führende Nullen unterdrücken</td><td style="color:#6c7a8e">PIC Z(5)   – "  123" statt "00123"</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">+  -  CR  DB</code></td><td style="color:#cdd6f4">Vorzeichen in Ausgabe</td><td style="color:#6c7a8e">PIC +9(5)  – Vorzeichen immer anzeigen</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">.</code></td><td style="color:#cdd6f4">Dezimalpunkt in Ausgabe</td><td style="color:#6c7a8e">PIC 9(5).99 – Punkt in Ausgabe</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">B</code></td><td style="color:#cdd6f4">Leerzeichen einfügen</td><td style="color:#6c7a8e">PIC 9(3)B9(3) – "123 456"</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">0</code></td><td style="color:#cdd6f4">Null einfügen</td><td style="color:#6c7a8e">PIC 9(3)09(3) – "1230456"</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">/  ,</code></td><td style="color:#cdd6f4">Schrägstrich / Komma einfügen</td><td style="color:#6c7a8e">PIC 99/99/9999 – Datum</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">*</code></td><td style="color:#cdd6f4">Führende Nullen mit * füllen</td><td style="color:#6c7a8e">PIC **(*)99 – "***123"</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">$</code></td><td style="color:#cdd6f4">Währungssymbol (floating)</td><td style="color:#6c7a8e">PIC $$,$$$.99 – "$1.234,56"</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-dt1"
+     style="border:1px solid #569cd644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dt1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#569cd60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#569cd6">
+      <span style="display:inline-block;width:8px;height:8px;background:#569cd6;border-radius:2px;margin-right:4px"></span>Level-Nummern &amp; Datenstrukturen
+    </span>
+    <span class="aa" style="color:#569cd6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="level-nummern &amp; datenstrukturen">
+  <div style="color:#569cd6;font-weight:700;font-size:12px;margin-bottom:8px">
+    Level-Nummern &amp; Datenstrukturen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; Level 01: Gruppenfelder (Datensätze)</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">KUNDEN-SATZ</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-NUMMER</span>      <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(6)</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-NAME</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">KD-VORNAME</span> <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(15)</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">KD-NACHNAME</span> <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(15)</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-ADRESSE</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">KD-STRASSE</span> <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(30)</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">KD-PLZ</span>     <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(5)</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">KD-ORT</span>     <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(20)</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">KD-KONTO</span>       <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">S9(10)V99.</span>
+
+       <span style="color:#546e7a">*&gt; Level 77: Einzelne unabhängige Felder (veraltet → 01 bevorzugen)</span>
+       <span style="color:#9cdcfe">77</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(4)</span>.
+
+       <span style="color:#546e7a">*&gt; Level 66: RENAMES – Alias für Felder</span>
+       <span style="color:#9cdcfe">66</span> <span style="color:#dcdcaa">KD-VOLLNAME</span>        <span style="color:#dcdcaa">RENAMES</span> <span style="color:#dcdcaa">KD-VORNAME</span> <span style="color:#569cd6">THRU</span> <span style="color:#dcdcaa">KD-NACHNAME</span>.
+
+       <span style="color:#546e7a">*&gt; Level 88: Condition-Names (boolesche Bedingungen!)</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-STATUS</span>          <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X.</span>
+           <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">STATUS-OK</span>      <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"Y"</span>.
+           <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">STATUS-FEHLER</span>  <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"N"</span> <span style="color:#ce9178">"E"</span>.
+           <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">STATUS-LEER</span>    <span style="color:#569cd6">VALUE</span> <span style="color:#569cd6">SPACE</span>.
+
+       <span style="color:#546e7a">*&gt; Verwendung von Level-88:</span>
+           <span style="color:#569cd6">IF</span> <span style="color:#dcdcaa">STATUS-OK</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Alles in Ordnung"</span>
+           <span style="color:#569cd6">END-IF</span>
+           <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">STATUS-OK</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>  <span style="color:#546e7a">*&gt; WS-STATUS = "Y"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-dt2"
+     style="border:1px solid #c586c044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dt2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c586c00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c586c0">
+      <span style="display:inline-block;width:8px;height:8px;background:#c586c0;border-radius:2px;margin-right:4px"></span>REDEFINES, OCCURS, COMP
+    </span>
+    <span class="aa" style="color:#c586c0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="redefines, occurs, comp">
+  <div style="color:#c586c0;font-weight:700;font-size:12px;margin-bottom:8px">
+    REDEFINES, OCCURS, COMP
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; REDEFINES: Gleicher Speicher, andere Interpretation</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-DATUM-NUM</span>       <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(8)</span>.          <span style="color:#546e7a">*&gt; 20240115</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-DATUM-TEILE</span>     <span style="color:#569cd6">REDEFINES</span> <span style="color:#dcdcaa">WS-DATUM-NUM</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">WS-JAHR</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(4)</span>.          <span style="color:#546e7a">*&gt; 2024</span>
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">WS-MONAT</span>       <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(2)</span>.          <span style="color:#546e7a">*&gt; 01</span>
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">WS-TAG</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(2)</span>.          <span style="color:#546e7a">*&gt; 15</span>
+
+       <span style="color:#546e7a">*&gt; OCCURS: Array/Tabelle</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">MONATSNAMEN</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">MONAT-NAME</span>     <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(10)</span> <span style="color:#569cd6">OCCURS</span> <span style="color:#9cdcfe">12</span> <span style="color:#569cd6">TIMES</span>.
+
+       <span style="color:#546e7a">*&gt; OCCURS mit varianter Länge (ODO – OCCURS DEPENDING ON)</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-MAX-EINTRAEGE</span>   <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(3)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#b5cea8">100.</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">DATEN-TABELLE</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">DATEN-EINTRAG</span>  <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(50)</span>
+               <span style="color:#569cd6">OCCURS</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">TO</span> <span style="color:#b5cea8">100</span> <span style="color:#569cd6">TIMES</span>
+               <span style="color:#569cd6">DEPENDING</span> <span style="color:#569cd6">ON</span> <span style="color:#dcdcaa">WS-MAX-EINTRAEGE</span>.
+
+       <span style="color:#546e7a">*&gt; OCCURS mit Index und Sortierung</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">PRODUKTE</span>.
+           <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">PRODUKT-SATZ</span>   <span style="color:#569cd6">OCCURS</span> <span style="color:#b5cea8">500</span> <span style="color:#569cd6">TIMES</span>
+               <span style="color:#569cd6">ASCENDING</span> <span style="color:#569cd6">KEY</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">PROD-ID</span>
+               <span style="color:#569cd6">INDEXED</span> <span style="color:#569cd6">BY</span> <span style="color:#dcdcaa">PROD-INDEX</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">PROD-ID</span>    <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(6)</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">PROD-NAME</span>  <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(30)</span>.
+               <span style="color:#9cdcfe">10</span> <span style="color:#dcdcaa">PROD-PREIS</span> <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(5)V99.</span>
+
+       <span style="color:#546e7a">*&gt; COMP (COMPUTATIONAL) – interne binäre Speicherung</span>
+       <span style="color:#546e7a">*&gt;   COMP     / BINARY:    Binär (schnellste Arithmetik)</span>
+       <span style="color:#546e7a">*&gt;   COMP-1:               Single-Float (32-bit)</span>
+       <span style="color:#546e7a">*&gt;   COMP-2:               Double-Float (64-bit)</span>
+       <span style="color:#546e7a">*&gt;   COMP-3 / PACKED-DECIMAL: BCD (platzsparend, typisch für Mainframe)</span>
+       <span style="color:#546e7a">*&gt;   COMP-5:               Native Binary (keine Truncation)</span>
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-BINAER</span>          <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">S9(9)</span>  <span style="color:#569cd6">COMP</span>.
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-FLOAT</span>           <span style="color:#dcdcaa">COMP-2</span>.
+       <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-BCD</span>             <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">S9(9)V99 COMP-3</span>.</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-dt3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('dt3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;margin-right:4px"></span>Figurative Konstanten &amp; VALUE
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>PIC-Zeichen</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:200px"><code style="color:#ffb347">ZERO / ZEROS / ZEROES</code></td><td style="color:#cdd6f4">Numerisch: 0, Alphanumerisch: Leerzeichen</td><td style="color:#6c7a8e">VALUE ZERO</td></tr><tr><td style="width:200px"><code style="color:#ffb347">SPACE / SPACES</code></td><td style="color:#cdd6f4">Leerzeichen</td><td style="color:#6c7a8e">VALUE SPACES</td></tr><tr><td style="width:200px"><code style="color:#ffb347">HIGH-VALUE / HIGH-VALUES</code></td><td style="color:#cdd6f4">Höchstes Byte (X"FF")</td><td style="color:#6c7a8e">Für Vergleiche</td></tr><tr><td style="width:200px"><code style="color:#ffb347">LOW-VALUE / LOW-VALUES</code></td><td style="color:#cdd6f4">Niedrigstes Byte (X"00")</td><td style="color:#6c7a8e">Für Vergleiche</td></tr><tr><td style="width:200px"><code style="color:#ffb347">QUOTE / QUOTES</code></td><td style="color:#cdd6f4">Anführungszeichen "</td><td style="color:#6c7a8e">VALUE QUOTE</td></tr><tr><td style="width:200px"><code style="color:#ffb347">ALL "x"</code></td><td style="color:#cdd6f4">Feld mit "x" füllen</td><td style="color:#6c7a8e">VALUE ALL "*"</td></tr><tr><td style="width:200px"><code style="color:#ffb347">NULL / NULLS</code></td><td style="color:#cdd6f4">Null-Pointer (COBOL 2002+)</td><td style="color:#6c7a8e">Für Pointer</td></tr><tr><td style="width:200px"><code style="color:#ffb347">TRUE / FALSE</code></td><td style="color:#cdd6f4">Für Level-88 Condition-Names</td><td style="color:#6c7a8e">SET FLAG TO TRUE</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-procedure" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-pr0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;margin-right:4px"></span>MOVE – Daten zuweisen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="move – daten zuweisen">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    MOVE – Daten zuweisen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; Einfaches MOVE</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#ce9178">"Hallo"</span>          <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-TEXT</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#b5cea8">42</span>               <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-ZAHL</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#569cd6">SPACES</span>           <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-TEXT</span>
+
+       <span style="color:#546e7a">*&gt; MOVE mit Typumwandlung (automatisch)</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">WS-ZAHL-NUM</span>      <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-ZAHL-STR</span>  <span style="color:#546e7a">*&gt; 42 → "42"</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">WS-DATUM-NUM</span>     <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-DATUM-ANZ</span> <span style="color:#546e7a">*&gt; 20240115 → "20240115"</span>
+
+       <span style="color:#546e7a">*&gt; MOVE CORRESPONDING (CORR) – gleiche Feldnamen kopieren</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#569cd6">CORRESPONDING</span> <span style="color:#dcdcaa">QUELLE-SATZ</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">ZIEL-SATZ</span>
+
+       <span style="color:#546e7a">*&gt; Mehrfach-MOVE</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#ce9178">"N"</span>              <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-FLAG-A</span> <span style="color:#dcdcaa">WS-FLAG-B</span> <span style="color:#dcdcaa">WS-FLAG-C</span>
+
+       <span style="color:#546e7a">*&gt; MOVE mit Level-88 setzen</span>
+       <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">STATUS-OK</span>         <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>       <span style="color:#546e7a">*&gt; setzt WS-STATUS = "Y"</span>
+       <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">STATUS-FEHLER</span>     <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>       <span style="color:#546e7a">*&gt; setzt WS-STATUS = "N"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr1"
+     style="border:1px solid #569cd644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#569cd60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#569cd6">
+      <span style="display:inline-block;width:8px;height:8px;background:#569cd6;border-radius:2px;margin-right:4px"></span>Arithmetik
+    </span>
+    <span class="aa" style="color:#569cd6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arithmetik">
+  <div style="color:#569cd6;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arithmetik
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; ADD</span>
+       <span style="color:#569cd6">ADD</span> <span style="color:#b5cea8">1</span>                 <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>
+       <span style="color:#569cd6">ADD</span> <span style="color:#dcdcaa">WS-A</span> <span style="color:#dcdcaa">WS-B</span>         <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-SUMME</span>
+       <span style="color:#569cd6">ADD</span> <span style="color:#dcdcaa">WS-A</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-B</span> <span style="color:#569cd6">GIVING</span> <span style="color:#dcdcaa">WS-SUMME</span>  <span style="color:#546e7a">*&gt; WS-B bleibt unverändert</span>
+
+       <span style="color:#546e7a">*&gt; SUBTRACT</span>
+       <span style="color:#569cd6">SUBTRACT</span> <span style="color:#b5cea8">1</span>            <span style="color:#569cd6">FROM</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>
+       <span style="color:#569cd6">SUBTRACT</span> <span style="color:#dcdcaa">WS-KOSTEN</span>    <span style="color:#569cd6">FROM</span> <span style="color:#dcdcaa">WS-BUDGET</span> <span style="color:#569cd6">GIVING</span> <span style="color:#dcdcaa">WS-REST</span>
+
+       <span style="color:#546e7a">*&gt; MULTIPLY</span>
+       <span style="color:#569cd6">MULTIPLY</span> <span style="color:#b5cea8">2</span>            <span style="color:#569cd6">BY</span> <span style="color:#dcdcaa">WS-BETRAG</span>
+       <span style="color:#569cd6">MULTIPLY</span> <span style="color:#dcdcaa">WS-PREIS</span>     <span style="color:#569cd6">BY</span> <span style="color:#dcdcaa">WS-MENGE</span> <span style="color:#569cd6">GIVING</span> <span style="color:#dcdcaa">WS-GESAMT</span>
+
+       <span style="color:#546e7a">*&gt; DIVIDE</span>
+       <span style="color:#569cd6">DIVIDE</span> <span style="color:#b5cea8">2</span>              <span style="color:#569cd6">INTO</span> <span style="color:#dcdcaa">WS-HÄLFTE</span>
+       <span style="color:#569cd6">DIVIDE</span> <span style="color:#dcdcaa">WS-GESAMT</span> <span style="color:#569cd6">BY</span> <span style="color:#dcdcaa">WS-MENGE</span> <span style="color:#569cd6">GIVING</span> <span style="color:#dcdcaa">WS-STÜCKPREIS</span>
+           <span style="color:#569cd6">REMAINDER</span> <span style="color:#dcdcaa">WS-REST</span>
+
+       <span style="color:#546e7a">*&gt; COMPUTE – mathematische Ausdrücke wie in anderen Sprachen</span>
+       <span style="color:#569cd6">COMPUTE</span> <span style="color:#dcdcaa">WS-ERGEBNIS</span>   = (<span style="color:#dcdcaa">WS-A</span> + <span style="color:#dcdcaa">WS-B</span>) * <span style="color:#dcdcaa">WS-C</span> / <span style="color:#b5cea8">100</span>
+       <span style="color:#569cd6">COMPUTE</span> <span style="color:#dcdcaa">WS-MWS</span>        = <span style="color:#dcdcaa">WS-NETTO</span> * <span style="color:#b5cea8">0.19</span> <span style="color:#569cd6">ROUNDED</span>
+       <span style="color:#569cd6">COMPUTE</span> <span style="color:#dcdcaa">WS-HYPOTENUSE</span> = <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">SQRT</span>(<span style="color:#dcdcaa">WS-A</span> ** <span style="color:#b5cea8">2</span> + <span style="color:#dcdcaa">WS-B</span> ** <span style="color:#b5cea8">2</span>)
+
+       <span style="color:#546e7a">*&gt; ON SIZE ERROR – Overflow abfangen</span>
+       <span style="color:#569cd6">COMPUTE</span> <span style="color:#dcdcaa">WS-ERGEBNIS</span>   = <span style="color:#dcdcaa">WS-A</span> * <span style="color:#dcdcaa">WS-B</span>
+           <span style="color:#569cd6">ON</span> <span style="color:#569cd6">SIZE</span> <span style="color:#569cd6">ERROR</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Überlauf!"</span>
+       <span style="color:#dcdcaa">END-COMPUTE</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr2"
+     style="border:1px solid #c586c044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c586c00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c586c0">
+      <span style="display:inline-block;width:8px;height:8px;background:#c586c0;border-radius:2px;margin-right:4px"></span>IF / EVALUATE – Bedingungen
+    </span>
+    <span class="aa" style="color:#c586c0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / evaluate – bedingungen">
+  <div style="color:#c586c0;font-weight:700;font-size:12px;margin-bottom:8px">
+    IF / EVALUATE – Bedingungen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; IF ... ELSE ... END-IF</span>
+       <span style="color:#569cd6">IF</span> <span style="color:#dcdcaa">WS-ALTER</span> &gt;= <span style="color:#9cdcfe">18</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Volljährig"</span>
+       <span style="color:#569cd6">ELSE</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Minderjährig"</span>
+       <span style="color:#569cd6">END-IF</span>
+
+       <span style="color:#546e7a">*&gt; Mehrere Bedingungen</span>
+       <span style="color:#569cd6">IF</span> <span style="color:#dcdcaa">WS-PLZ</span> &gt;= <span style="color:#b5cea8">10000</span> <span style="color:#569cd6">AND</span> <span style="color:#dcdcaa">WS-PLZ</span> &lt;= <span style="color:#b5cea8">19999</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Berlin"</span>
+       <span style="color:#569cd6">ELSE</span> <span style="color:#569cd6">IF</span> <span style="color:#dcdcaa">WS-PLZ</span> &gt;= <span style="color:#b5cea8">20000</span> <span style="color:#569cd6">AND</span> <span style="color:#dcdcaa">WS-PLZ</span> &lt;= <span style="color:#b5cea8">29999</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Hamburg"</span>
+       <span style="color:#569cd6">ELSE</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Andere Stadt"</span>
+       <span style="color:#569cd6">END-IF</span>
+
+       <span style="color:#546e7a">*&gt; Level-88 Condition-Names</span>
+       <span style="color:#569cd6">IF</span> <span style="color:#dcdcaa">STATUS-OK</span>
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">VERARBEITE-SATZ</span>
+       <span style="color:#569cd6">END-IF</span>
+
+       <span style="color:#546e7a">*&gt; EVALUATE – wie switch/case, aber viel mächtiger</span>
+       <span style="color:#569cd6">EVALUATE</span> <span style="color:#dcdcaa">WS-AKTION</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#ce9178">"A"</span>      <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">HINZUFÜGEN</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#ce9178">"U"</span>      <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">AKTUALISIEREN</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#ce9178">"D"</span>      <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">LÖSCHEN</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#569cd6">OTHER</span>    <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Ungültige Aktion: "</span> <span style="color:#dcdcaa">WS-AKTION</span>
+       <span style="color:#569cd6">END-EVALUATE</span>
+
+       <span style="color:#546e7a">*&gt; EVALUATE TRUE – mehrere Bedingungen testen</span>
+       <span style="color:#569cd6">EVALUATE</span> <span style="color:#569cd6">TRUE</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">WS-BETRAG</span> &lt; <span style="color:#b5cea8">0</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Negativ"</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">WS-BETRAG</span> = <span style="color:#b5cea8">0</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Null"</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">WS-BETRAG</span> &lt;= <span style="color:#b5cea8">1000</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Klein"</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#569cd6">OTHER</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Groß"</span>
+       <span style="color:#569cd6">END-EVALUATE</span>
+
+       <span style="color:#546e7a">*&gt; EVALUATE mit ALSO (mehrere Variablen gleichzeitig)</span>
+       <span style="color:#569cd6">EVALUATE</span> <span style="color:#dcdcaa">WS-TYP</span> <span style="color:#569cd6">ALSO</span> <span style="color:#dcdcaa">WS-STATUS</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#ce9178">"A"</span> <span style="color:#569cd6">ALSO</span> <span style="color:#ce9178">"Y"</span>   <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">AKTIV-A</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#ce9178">"B"</span> <span style="color:#569cd6">ALSO</span> <span style="color:#ce9178">"Y"</span>   <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">AKTIV-B</span>
+           <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">ANY</span>  <span style="color:#569cd6">ALSO</span> <span style="color:#ce9178">"N"</span>  <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">INAKTIV</span>
+       <span style="color:#569cd6">END-EVALUATE</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pr3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;margin-right:4px"></span>PERFORM – Schleifen &amp; Unterprogramme
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="perform – schleifen &amp; unterprogramme">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    PERFORM – Schleifen &amp; Unterprogramme
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; PERFORM: Paragraph aufrufen</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">INITIALISIERUNG</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">VERARBEITE-SATZ</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">ABSCHLUSS</span>
+
+       <span style="color:#546e7a">*&gt; PERFORM THRU: Mehrere Paragraphen</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">INIT-START</span> <span style="color:#569cd6">THRU</span> <span style="color:#dcdcaa">INIT-ENDE</span>
+
+       <span style="color:#546e7a">*&gt; PERFORM N TIMES</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#9cdcfe">10</span> <span style="color:#569cd6">TIMES</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Iteration"</span>
+       <span style="color:#dcdcaa">END-PERFORM</span>
+
+       <span style="color:#546e7a">*&gt; PERFORM UNTIL (Schleife)</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">WS-EOF-FLAG</span> = <span style="color:#ce9178">"Y"</span>
+           <span style="color:#569cd6">READ</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+               <span style="color:#569cd6">AT</span> <span style="color:#569cd6">END</span> <span style="color:#569cd6">MOVE</span> <span style="color:#ce9178">"Y"</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-EOF-FLAG</span>
+           <span style="color:#dcdcaa">END-READ</span>
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">VERARBEITE-KUNDE</span>
+       <span style="color:#dcdcaa">END-PERFORM</span>
+
+       <span style="color:#546e7a">*&gt; PERFORM VARYING (for-Schleife)</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">VARYING</span> <span style="color:#dcdcaa">WS-INDEX</span> <span style="color:#569cd6">FROM</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">BY</span> <span style="color:#b5cea8">1</span>
+               <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">WS-INDEX</span> &gt; <span style="color:#9cdcfe">12</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Monat "</span> <span style="color:#dcdcaa">WS-INDEX</span> <span style="color:#ce9178">": "</span> <span style="color:#dcdcaa">MONAT-NAME</span>(<span style="color:#dcdcaa">WS-INDEX</span>)
+       <span style="color:#dcdcaa">END-PERFORM</span>
+
+       <span style="color:#546e7a">*&gt; PERFORM VARYING mit mehreren Variablen (verschachtelt)</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">VARYING</span> <span style="color:#dcdcaa">ZEILE</span> <span style="color:#569cd6">FROM</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">BY</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">ZEILE</span> &gt; <span style="color:#9cdcfe">10</span>
+           <span style="color:#569cd6">AFTER</span> <span style="color:#dcdcaa">SPALTE</span> <span style="color:#569cd6">FROM</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">BY</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">SPALTE</span> &gt; <span style="color:#9cdcfe">10</span>
+               <span style="color:#569cd6">COMPUTE</span> <span style="color:#dcdcaa">MATRIX</span>(<span style="color:#dcdcaa">ZEILE</span>, <span style="color:#dcdcaa">SPALTE</span>) = <span style="color:#dcdcaa">ZEILE</span> * <span style="color:#dcdcaa">SPALTE</span>
+           <span style="color:#dcdcaa">END-PERFORM</span>
+       <span style="color:#dcdcaa">END-PERFORM</span>
+
+       <span style="color:#546e7a">*&gt; Inline PERFORM (ohne Paragraph-Name)</span>
+       <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">WITH</span> <span style="color:#dcdcaa">TEST</span> <span style="color:#569cd6">AFTER</span>
+           <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">WS-EINGABE</span> = <span style="color:#ce9178">"ENDE"</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Eingabe: "</span>
+           <span style="color:#569cd6">ACCEPT</span> <span style="color:#dcdcaa">WS-EINGABE</span>
+       <span style="color:#dcdcaa">END-PERFORM</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr4"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pr4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:2px;margin-right:4px"></span>CALL – Module aufrufen
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="call – module aufrufen">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    CALL – Module aufrufen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; Einfacher CALL</span>
+       <span style="color:#569cd6">CALL</span> <span style="color:#ce9178">"RECHENMODUL"</span>
+
+       <span style="color:#546e7a">*&gt; CALL mit Parametern (BY REFERENCE = Standard)</span>
+       <span style="color:#569cd6">CALL</span> <span style="color:#ce9178">"BERECHNE-MWS"</span>
+           <span style="color:#569cd6">USING</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">REFERENCE</span> <span style="color:#dcdcaa">WS-NETTO</span>
+                 <span style="color:#569cd6">BY</span> <span style="color:#569cd6">REFERENCE</span> <span style="color:#dcdcaa">WS-MWS-BETRAG</span>
+                 <span style="color:#569cd6">BY</span> <span style="color:#569cd6">CONTENT</span>   <span style="color:#dcdcaa">WS-STEUERSATZ</span>  <span style="color:#546e7a">*&gt; nur lesen, nicht ändern</span>
+                 <span style="color:#569cd6">BY</span> <span style="color:#569cd6">VALUE</span>     <span style="color:#b5cea8">42</span>              <span style="color:#546e7a">*&gt; Literal</span>
+
+       <span style="color:#546e7a">*&gt; CALL mit Rückgabewert (COBOL 2002+)</span>
+       <span style="color:#569cd6">CALL</span> <span style="color:#ce9178">"BERECHNE"</span>
+           <span style="color:#569cd6">USING</span> <span style="color:#dcdcaa">WS-EINGABE</span>
+           <span style="color:#569cd6">RETURNING</span> <span style="color:#dcdcaa">WS-ERGEBNIS</span>
+
+       <span style="color:#546e7a">*&gt; Fehlerbehandlung beim CALL</span>
+       <span style="color:#569cd6">CALL</span> <span style="color:#ce9178">"EXTERNES-MODUL"</span>
+           <span style="color:#569cd6">USING</span> <span style="color:#dcdcaa">WS-DATEN</span>
+           <span style="color:#569cd6">ON</span> <span style="color:#dcdcaa">EXCEPTION</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Modul nicht gefunden!"</span>
+       <span style="color:#569cd6">END-CALL</span>
+
+       <span style="color:#546e7a">*&gt; Dynamischer CALL (Modulname in Variable)</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#ce9178">"MODUL-V2"</span>       <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-MODUL-NAME</span>
+       <span style="color:#569cd6">CALL</span> <span style="color:#dcdcaa">WS-MODUL-NAME</span>
+           <span style="color:#569cd6">USING</span> <span style="color:#dcdcaa">WS-DATEN</span>
+
+       <span style="color:#546e7a">*&gt; GOBACK (aus aufgerufenem Modul zurückkehren)</span>
+       <span style="color:#546e7a">*&gt; vs STOP RUN (beendet das gesamte Programm!)</span>
+       <span style="color:#569cd6">GOBACK</span>.</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr5"
+     style="border:1px solid #9cdcfe44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pr5')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#9cdcfe0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9cdcfe">
+      <span style="display:inline-block;width:8px;height:8px;background:#9cdcfe;border-radius:2px;margin-right:4px"></span>STRING / UNSTRING – Textverarbeitung
+    </span>
+    <span class="aa" style="color:#9cdcfe;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="string / unstring – textverarbeitung">
+  <div style="color:#9cdcfe;font-weight:700;font-size:12px;margin-bottom:8px">
+    STRING / UNSTRING – Textverarbeitung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; STRING: Felder zusammensetzen</span>
+       <span style="color:#569cd6">STRING</span> <span style="color:#dcdcaa">WS-VORNAME</span>    <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SPACE</span>
+              <span style="color:#ce9178">" "</span>           <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SIZE</span>
+              <span style="color:#dcdcaa">WS-NACHNAME</span>   <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SPACE</span>
+           <span style="color:#569cd6">INTO</span> <span style="color:#dcdcaa">WS-VOLLNAME</span>
+           <span style="color:#569cd6">WITH</span> <span style="color:#dcdcaa">POINTER</span> <span style="color:#dcdcaa">WS-POS</span>
+           <span style="color:#569cd6">ON</span> <span style="color:#569cd6">OVERFLOW</span> <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Zu lang!"</span>
+       <span style="color:#dcdcaa">END-STRING</span>
+
+       <span style="color:#546e7a">*&gt; UNSTRING: Feld aufteilen</span>
+       <span style="color:#569cd6">UNSTRING</span> <span style="color:#dcdcaa">WS-CSV-ZEILE</span>
+           <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#ce9178">";"</span> <span style="color:#569cd6">OR</span> <span style="color:#ce9178">","</span>
+           <span style="color:#569cd6">INTO</span> <span style="color:#dcdcaa">WS-FELD-1</span>
+                <span style="color:#dcdcaa">WS-FELD-2</span>
+                <span style="color:#dcdcaa">WS-FELD-3</span>
+           <span style="color:#569cd6">TALLYING</span> <span style="color:#dcdcaa">IN</span> <span style="color:#dcdcaa">WS-ANZAHL-FELDER</span>
+           <span style="color:#569cd6">ON</span> <span style="color:#569cd6">OVERFLOW</span> <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Zu viele Felder!"</span>
+       <span style="color:#dcdcaa">END-UNSTRING</span>
+
+       <span style="color:#546e7a">*&gt; INSPECT: Zeichen zählen und ersetzen</span>
+       <span style="color:#569cd6">INSPECT</span> <span style="color:#dcdcaa">WS-TEXT</span>
+           <span style="color:#569cd6">TALLYING</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>
+               <span style="color:#dcdcaa">FOR</span> <span style="color:#569cd6">ALL</span> <span style="color:#ce9178">"A"</span>
+       <span style="color:#569cd6">INSPECT</span> <span style="color:#dcdcaa">WS-TEXT</span>
+           <span style="color:#569cd6">REPLACING</span> <span style="color:#569cd6">ALL</span> <span style="color:#ce9178">";"</span> <span style="color:#569cd6">BY</span> <span style="color:#ce9178">","</span>
+       <span style="color:#569cd6">INSPECT</span> <span style="color:#dcdcaa">WS-TEXT</span>
+           <span style="color:#dcdcaa">CONVERTING</span> <span style="color:#ce9178">"abcdefghijklmnopqrstuvwxyz"</span>
+                    <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>
+
+       <span style="color:#546e7a">*&gt; Intrinsische Funktionen (COBOL 2002+)</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">UPPER-CASE</span>(<span style="color:#dcdcaa">WS-TEXT</span>)  <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-GROSS</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">LOWER-CASE</span>(<span style="color:#dcdcaa">WS-TEXT</span>)  <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-KLEIN</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">LENGTH</span>(<span style="color:#dcdcaa">WS-TEXT</span>)      <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-LAENGE</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">TRIM</span>(<span style="color:#dcdcaa">WS-TEXT</span>)        <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-GETRIMMT</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">CURRENT-DATE</span>         <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-AKTUELL-DATUM</span>
+       <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">NUMVAL</span>(<span style="color:#ce9178">"3.14"</span>)       <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-ZAHL</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-dateien" class="tp">
+
+<div class="ac open" id="ac-df0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('df0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;margin-right:4px"></span>Sequentielle Dateien
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="sequentielle dateien">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Sequentielle Dateien
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; ── Datei deklarieren ────────────────────────────────</span>
+       <span style="color:#569cd6">ENVIRONMENT</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">FILE-CONTROL</span>.
+               <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">EINGABE-DATEI</span>
+                   <span style="color:#569cd6">ASSIGN</span> <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"eingabe.dat"</span>
+                   <span style="color:#569cd6">ORGANIZATION</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">SEQUENTIAL</span>
+                   <span style="color:#569cd6">FILE</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-STATUS</span>.
+
+       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">FILE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#569cd6">FD</span> <span style="color:#dcdcaa">EINGABE-DATEI</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">EINGABE-SATZ</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(100)</span>.
+
+           <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-STATUS</span>            <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">XX.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-EOF</span>               <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X VALUE</span> <span style="color:#ce9178">"N"</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">DATEI-ENDE</span>       <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"Y"</span>.
+
+       <span style="color:#546e7a">*&gt; ── Verarbeitungsschleife ─────────────────────────────</span>
+       <span style="color:#569cd6">PROCEDURE</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">OPEN</span> <span style="color:#569cd6">INPUT</span> <span style="color:#dcdcaa">EINGABE-DATEI</span>
+
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">DATEI-ENDE</span>
+               <span style="color:#569cd6">READ</span> <span style="color:#dcdcaa">EINGABE-DATEI</span>
+                   <span style="color:#569cd6">AT</span> <span style="color:#569cd6">END</span>
+                       <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">DATEI-ENDE</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>
+                   <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">AT</span> <span style="color:#569cd6">END</span>
+                       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">VERARBEITE-SATZ</span>
+               <span style="color:#dcdcaa">END-READ</span>
+           <span style="color:#dcdcaa">END-PERFORM</span>
+
+           <span style="color:#569cd6">CLOSE</span> <span style="color:#dcdcaa">EINGABE-DATEI</span>
+           <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>.
+
+       <span style="color:#dcdcaa">VERARBEITE-SATZ</span>.
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#dcdcaa">EINGABE-SATZ</span>.
+
+       <span style="color:#546e7a">*&gt; ── Ausgabedatei schreiben ────────────────────────────</span>
+           <span style="color:#569cd6">OPEN</span> <span style="color:#569cd6">OUTPUT</span> <span style="color:#dcdcaa">AUSGABE-DATEI</span>
+           <span style="color:#569cd6">WRITE</span> <span style="color:#dcdcaa">AUSGABE-SATZ</span> <span style="color:#569cd6">FROM</span> <span style="color:#dcdcaa">WS-DATEN</span>
+           <span style="color:#569cd6">WRITE</span> <span style="color:#dcdcaa">AUSGABE-SATZ</span> <span style="color:#569cd6">AFTER</span> <span style="color:#569cd6">ADVANCING</span> <span style="color:#b5cea8">2</span> <span style="color:#dcdcaa">LINES</span>
+           <span style="color:#569cd6">CLOSE</span> <span style="color:#dcdcaa">AUSGABE-DATEI</span>.</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-df1"
+     style="border:1px solid #569cd644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('df1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#569cd60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#569cd6">
+      <span style="display:inline-block;width:8px;height:8px;background:#569cd6;border-radius:2px;margin-right:4px"></span>INDEXED (ISAM) Dateien
+    </span>
+    <span class="aa" style="color:#569cd6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="indexed (isam) dateien">
+  <div style="color:#569cd6;font-weight:700;font-size:12px;margin-bottom:8px">
+    INDEXED (ISAM) Dateien
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#546e7a">*&gt; ── Indexed Datei (wie eine Datenbanktabelle) ─────────</span>
+       <span style="color:#569cd6">FILE-CONTROL</span>.
+           <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+               <span style="color:#569cd6">ASSIGN</span> <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"kunden.idx"</span>
+               <span style="color:#569cd6">ORGANIZATION</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">INDEXED</span>
+               <span style="color:#569cd6">ACCESS</span> <span style="color:#569cd6">MODE</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">DYNAMIC</span>
+               <span style="color:#569cd6">RECORD</span> <span style="color:#569cd6">KEY</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">KD-NUMMER</span>
+               <span style="color:#dcdcaa">ALTERNATE</span> <span style="color:#569cd6">RECORD</span> <span style="color:#569cd6">KEY</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">KD-NAME</span>
+                   <span style="color:#569cd6">WITH</span> <span style="color:#dcdcaa">DUPLICATES</span>
+               <span style="color:#569cd6">FILE</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-STATUS</span>.
+
+       <span style="color:#546e7a">*&gt; ── Direktzugriff ────────────────────────────────────</span>
+           <span style="color:#569cd6">OPEN</span> <span style="color:#569cd6">I-O</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+
+           <span style="color:#546e7a">*&gt; Lesen nach Schlüssel</span>
+           <span style="color:#569cd6">MOVE</span> <span style="color:#b5cea8">123456</span>         <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">KD-NUMMER</span>
+           <span style="color:#569cd6">READ</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+               <span style="color:#569cd6">KEY</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">KD-NUMMER</span>
+               <span style="color:#569cd6">INVALID</span> <span style="color:#569cd6">KEY</span>
+                   <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Kunde nicht gefunden"</span>
+               <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">INVALID</span> <span style="color:#569cd6">KEY</span>
+                   <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Gefunden: "</span> <span style="color:#dcdcaa">KD-NAME</span>
+           <span style="color:#dcdcaa">END-READ</span>
+
+           <span style="color:#546e7a">*&gt; Schreiben (neuer Satz)</span>
+           <span style="color:#569cd6">MOVE</span> <span style="color:#b5cea8">123457</span>         <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">KD-NUMMER</span>
+           <span style="color:#569cd6">MOVE</span> <span style="color:#ce9178">"Schmidt"</span>      <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">KD-NAME</span>
+           <span style="color:#569cd6">WRITE</span> <span style="color:#dcdcaa">KUNDEN-SATZ</span>
+               <span style="color:#569cd6">INVALID</span> <span style="color:#569cd6">KEY</span> <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Schlüssel existiert bereits"</span>
+           <span style="color:#dcdcaa">END-WRITE</span>
+
+           <span style="color:#546e7a">*&gt; Aktualisieren</span>
+           <span style="color:#569cd6">REWRITE</span> <span style="color:#dcdcaa">KUNDEN-SATZ</span>
+               <span style="color:#569cd6">INVALID</span> <span style="color:#569cd6">KEY</span> <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Satz nicht gefunden"</span>
+           <span style="color:#dcdcaa">END-REWRITE</span>
+
+           <span style="color:#546e7a">*&gt; Löschen</span>
+           <span style="color:#569cd6">DELETE</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span> <span style="color:#569cd6">RECORD</span>
+               <span style="color:#569cd6">INVALID</span> <span style="color:#569cd6">KEY</span> <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Satz nicht gefunden"</span>
+           <span style="color:#dcdcaa">END-DELETE</span>
+
+           <span style="color:#546e7a">*&gt; Sequentiell lesen ab Position</span>
+           <span style="color:#569cd6">MOVE</span> <span style="color:#ce9178">"M"</span>            <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">KD-NAME</span>
+           <span style="color:#569cd6">START</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>
+               <span style="color:#569cd6">KEY</span> &gt;= <span style="color:#dcdcaa">KD-NAME</span>
+               <span style="color:#569cd6">INVALID</span> <span style="color:#569cd6">KEY</span> <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Kein Satz ab M"</span>
+           <span style="color:#dcdcaa">END-START</span>
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">WS-STATUS</span> <span style="color:#569cd6">NOT</span> = <span style="color:#ce9178">"00"</span>
+               <span style="color:#569cd6">READ</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span> <span style="color:#569cd6">NEXT</span> <span style="color:#569cd6">RECORD</span>
+                   <span style="color:#569cd6">AT</span> <span style="color:#569cd6">END</span> <span style="color:#569cd6">EXIT</span> <span style="color:#569cd6">PERFORM</span>
+               <span style="color:#dcdcaa">END-READ</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#dcdcaa">KD-NAME</span>
+           <span style="color:#dcdcaa">END-PERFORM</span>
+
+           <span style="color:#569cd6">CLOSE</span> <span style="color:#dcdcaa">KUNDEN-DATEI</span>.</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-df2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('df2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;margin-right:4px"></span>Dateistatus-Codes
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Status</th><th>Bedeutung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:200px"><code style="color:#ffb347">00</code></td><td style="color:#cdd6f4">Erfolgreich</td><td style="color:#6c7a8e">Alles OK</td></tr><tr><td style="width:200px"><code style="color:#ffb347">02</code></td><td style="color:#cdd6f4">Doppelter Alternativschlüssel</td><td style="color:#6c7a8e">Nur bei INDEXED mit DUPLICATES</td></tr><tr><td style="width:200px"><code style="color:#ffb347">04</code></td><td style="color:#cdd6f4">Satzlänge stimmt nicht</td><td style="color:#6c7a8e">Lesen: kürzerer Satz als erwartet</td></tr><tr><td style="width:200px"><code style="color:#ffb347">05</code></td><td style="color:#cdd6f4">Datei existiert nicht (OPEN mit OPTIONAL)</td><td style="color:#6c7a8e">Kein Fehler bei OPTIONAL</td></tr><tr><td style="width:200px"><code style="color:#ffb347">10</code></td><td style="color:#cdd6f4">AT END – Ende der Datei</td><td style="color:#6c7a8e">Nächster READ nach letztem Satz</td></tr><tr><td style="width:200px"><code style="color:#ffb347">21</code></td><td style="color:#cdd6f4">Schlüsselreihenfolge falsch</td><td style="color:#6c7a8e">SEQUENTIAL WRITE: Schlüssel zu klein</td></tr><tr><td style="width:200px"><code style="color:#ffb347">22</code></td><td style="color:#cdd6f4">Doppelter Primärschlüssel</td><td style="color:#6c7a8e">WRITE: Schlüssel existiert bereits</td></tr><tr><td style="width:200px"><code style="color:#ffb347">23</code></td><td style="color:#cdd6f4">Satz nicht gefunden</td><td style="color:#6c7a8e">READ/DELETE: Schlüssel nicht vorhanden</td></tr><tr><td style="width:200px"><code style="color:#ffb347">24</code></td><td style="color:#cdd6f4">Kein Platz mehr (Boundary Violation)</td><td style="color:#6c7a8e">WRITE: Datei voll</td></tr><tr><td style="width:200px"><code style="color:#ffb347">30</code></td><td style="color:#cdd6f4">Permanenter I/O-Fehler</td><td style="color:#6c7a8e">Hardware-/Systemproblem</td></tr><tr><td style="width:200px"><code style="color:#ffb347">34</code></td><td style="color:#cdd6f4">Grenzüberschreitung</td><td style="color:#6c7a8e">Datei zu groß</td></tr><tr><td style="width:200px"><code style="color:#ffb347">35</code></td><td style="color:#cdd6f4">Datei existiert nicht</td><td style="color:#6c7a8e">OPEN ohne OPTIONAL</td></tr><tr><td style="width:200px"><code style="color:#ffb347">37</code></td><td style="color:#cdd6f4">Falscher Öffnungsmodus</td><td style="color:#6c7a8e">Datei unterstützt diesen Modus nicht</td></tr><tr><td style="width:200px"><code style="color:#ffb347">39</code></td><td style="color:#cdd6f4">Konflikt bei Dateiattributen</td><td style="color:#6c7a8e">FD passt nicht zur physischen Datei</td></tr><tr><td style="width:200px"><code style="color:#ffb347">41</code></td><td style="color:#cdd6f4">Datei bereits geöffnet</td><td style="color:#6c7a8e">Zweites OPEN ohne CLOSE</td></tr><tr><td style="width:200px"><code style="color:#ffb347">42</code></td><td style="color:#cdd6f4">Datei nicht geöffnet</td><td style="color:#6c7a8e">CLOSE einer nicht geöffneten Datei</td></tr><tr><td style="width:200px"><code style="color:#ffb347">43</code></td><td style="color:#cdd6f4">Kein READ vor REWRITE/DELETE</td><td style="color:#6c7a8e">REWRITE/DELETE erfordert vorherigen READ</td></tr><tr><td style="width:200px"><code style="color:#ffb347">44</code></td><td style="color:#cdd6f4">Satzlänge bei REWRITE geändert</td><td style="color:#6c7a8e">Nicht erlaubt bei SEQUENTIAL</td></tr><tr><td style="width:200px"><code style="color:#ffb347">46</code></td><td style="color:#cdd6f4">Kein aktueller Satz</td><td style="color:#6c7a8e">READ NEXT ohne vorheriges START/READ</td></tr><tr><td style="width:200px"><code style="color:#ffb347">47</code></td><td style="color:#cdd6f4">Datei nicht für INPUT geöffnet</td><td style="color:#6c7a8e">READ auf OUTPUT-Datei</td></tr><tr><td style="width:200px"><code style="color:#ffb347">48</code></td><td style="color:#cdd6f4">Datei nicht für OUTPUT geöffnet</td><td style="color:#6c7a8e">WRITE auf INPUT-Datei</td></tr><tr><td style="width:200px"><code style="color:#ffb347">49</code></td><td style="color:#cdd6f4">Datei nicht für I-O geöffnet</td><td style="color:#6c7a8e">DELETE/REWRITE ohne I-O</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-funktionen" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;margin-right:4px"></span>Mathematik
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION ABS(n)</code></td><td style="color:#cdd6f4">Absolutwert</td><td style="color:#6c7a8e">FUNCTION ABS(-5) → 5</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION MAX(a,b,...)</code></td><td style="color:#cdd6f4">Maximum mehrerer Werte</td><td style="color:#6c7a8e">FUNCTION MAX(3,7,2) → 7</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION MIN(a,b,...)</code></td><td style="color:#cdd6f4">Minimum mehrerer Werte</td><td style="color:#6c7a8e">FUNCTION MIN(3,7,2) → 2</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION MOD(n,m)</code></td><td style="color:#cdd6f4">Modulo</td><td style="color:#6c7a8e">FUNCTION MOD(10,3) → 1</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION REM(n,m)</code></td><td style="color:#cdd6f4">Rest (vorzeichenbehaftet)</td><td style="color:#6c7a8e">FUNCTION REM(-7,3) → -1</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION SQRT(n)</code></td><td style="color:#cdd6f4">Quadratwurzel</td><td style="color:#6c7a8e">FUNCTION SQRT(16) → 4</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION INTEGER(n)</code></td><td style="color:#cdd6f4">Abrunden zur Ganzzahl</td><td style="color:#6c7a8e">FUNCTION INTEGER(3.7) → 3</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION INTEGER-PART(n)</code></td><td style="color:#cdd6f4">Ganzzahlanteil</td><td style="color:#6c7a8e">Wie TRUNC</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION FRACTION-PART(n)</code></td><td style="color:#cdd6f4">Nachkommaanteil</td><td style="color:#6c7a8e">FUNCTION FRACTION-PART(3.7) → 0.7</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION RANDOM(n)</code></td><td style="color:#cdd6f4">Zufallszahl 0–1 (n=Seed)</td><td style="color:#6c7a8e">FUNCTION RANDOM → 0.xxxx</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION EXP(n)</code></td><td style="color:#cdd6f4">e hoch n</td><td style="color:#6c7a8e">FUNCTION EXP(1) → 2.71828</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION LOG(n)</code></td><td style="color:#cdd6f4">Natürlicher Logarithmus</td><td style="color:#6c7a8e">FUNCTION LOG(2.71828) → 1</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION LOG10(n)</code></td><td style="color:#cdd6f4">Logarithmus zur Basis 10</td><td style="color:#6c7a8e">FUNCTION LOG10(100) → 2</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION SIN/COS/TAN(n)</code></td><td style="color:#cdd6f4">Trigonometrie (Radiant)</td><td style="color:#6c7a8e">FUNCTION SIN(3.14159) → 0</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION ASIN/ACOS/ATAN(n)</code></td><td style="color:#cdd6f4">Inverse Trigonometrie</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION ANNUITY(r,n)</code></td><td style="color:#cdd6f4">Annuität (Rentenbarwert)</td><td style="color:#6c7a8e">Finanzfunktion</td></tr><tr><td style="width:200px"><code style="color:#4ec9b0">FUNCTION PRESENT-VALUE(r,t)</code></td><td style="color:#cdd6f4">Barwert</td><td style="color:#6c7a8e">Finanzfunktion</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #569cd644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#569cd60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#569cd6">
+      <span style="display:inline-block;width:8px;height:8px;background:#569cd6;border-radius:2px;margin-right:4px"></span>Strings &amp; Datum
+    </span>
+    <span class="aa" style="color:#569cd6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION LENGTH(s)</code></td><td style="color:#cdd6f4">Länge in Zeichen</td><td style="color:#6c7a8e">FUNCTION LENGTH("Hallo") → 5</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION BYTE-LENGTH(s)</code></td><td style="color:#cdd6f4">Länge in Bytes</td><td style="color:#6c7a8e">Unicode-relevant</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION UPPER-CASE(s)</code></td><td style="color:#cdd6f4">In Großbuchstaben</td><td style="color:#6c7a8e">FUNCTION UPPER-CASE("hallo") → "HALLO"</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION LOWER-CASE(s)</code></td><td style="color:#cdd6f4">In Kleinbuchstaben</td><td style="color:#6c7a8e">FUNCTION LOWER-CASE("HALLO") → "hallo"</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION TRIM(s)</code></td><td style="color:#cdd6f4">Führende/nachfolgende Spaces</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION TRIM(s LEADING)</code></td><td style="color:#cdd6f4">Führende Spaces entfernen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION REVERSE(s)</code></td><td style="color:#cdd6f4">String umkehren</td><td style="color:#6c7a8e">FUNCTION REVERSE("abc") → "cba"</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION CONCATENATE(a,b,...)</code></td><td style="color:#cdd6f4">Strings verbinden</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION SUBSTITUTE(s,old,new)</code></td><td style="color:#cdd6f4">Ersetzen (COBOL 2014+)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION CHAR(n)</code></td><td style="color:#cdd6f4">ASCII-Zeichen zu Code</td><td style="color:#6c7a8e">FUNCTION CHAR(65) → "A"</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION ORD(c)</code></td><td style="color:#cdd6f4">Code zu ASCII-Zeichen</td><td style="color:#6c7a8e">FUNCTION ORD("A") → 65</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION NUMVAL(s)</code></td><td style="color:#cdd6f4">String zu Zahl</td><td style="color:#6c7a8e">FUNCTION NUMVAL("3.14") → 3.14</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION NUMVAL-C(s)</code></td><td style="color:#cdd6f4">String mit Währung zu Zahl</td><td style="color:#6c7a8e">FUNCTION NUMVAL-C("$1,234.56")</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION CURRENT-DATE</code></td><td style="color:#cdd6f4">Aktuelles Datum+Zeit (21 Zch.)</td><td style="color:#6c7a8e">YYYYMMDDHHMMSSCC+/-HHMM</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION WHEN-COMPILED</code></td><td style="color:#cdd6f4">Compilierungsdatum+Zeit</td><td style="color:#6c7a8e">21 Zeichen wie CURRENT-DATE</td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION DATE-OF-INTEGER(n)</code></td><td style="color:#cdd6f4">Julianisch → YYYYMMDD</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION INTEGER-OF-DATE(d)</code></td><td style="color:#cdd6f4">YYYYMMDD → Julianisch</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:200px"><code style="color:#569cd6">FUNCTION DAY-OF-INTEGER(n)</code></td><td style="color:#cdd6f4">Julianisch → YYYYDDD</td><td style="color:#6c7a8e"></td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button id="exb0" onclick="switchEx(0)" style="border:1px solid #4ec9b0;color:#4ec9b0;background:rgba(78,201,176,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Hallo Welt &amp; Input</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Fibonacci</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Dateien lesen &amp; schreiben</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">EVALUATE &amp; Level-88</button>
+  
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>. <span style="color:#dcdcaa">HALLO</span>.
+
+       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-NAME</span>            <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(30)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#569cd6">SPACES</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-ANTWORT</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(1)</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">WIEDERHOLEN</span>    <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"J"</span> <span style="color:#ce9178">"j"</span>.
+
+       <span style="color:#569cd6">PROCEDURE</span> <span style="color:#c586c0">DIVISION</span>.
+
+       <span style="color:#dcdcaa">HAUPT-LOGIK</span>.
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"──────────────────────────────"</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">" COBOL Begrüßungsprogramm"</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"──────────────────────────────"</span>
+
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">WITH</span> <span style="color:#dcdcaa">TEST</span> <span style="color:#569cd6">AFTER</span>
+               <span style="color:#569cd6">UNTIL</span> <span style="color:#569cd6">NOT</span> <span style="color:#dcdcaa">WIEDERHOLEN</span>
+
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Ihr Name: "</span> <span style="color:#569cd6">WITH</span> <span style="color:#569cd6">NO</span> <span style="color:#569cd6">ADVANCING</span>
+               <span style="color:#569cd6">ACCEPT</span> <span style="color:#dcdcaa">WS-NAME</span>
+
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Hallo, "</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">TRIM</span>(<span style="color:#dcdcaa">WS-NAME</span>) <span style="color:#ce9178">"!"</span>
+
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Noch einmal? (J/N): "</span> <span style="color:#569cd6">WITH</span> <span style="color:#569cd6">NO</span> <span style="color:#569cd6">ADVANCING</span>
+               <span style="color:#569cd6">ACCEPT</span> <span style="color:#dcdcaa">WS-ANTWORT</span>
+
+           <span style="color:#dcdcaa">END-PERFORM</span>
+
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Auf Wiedersehen!"</span>
+           <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>.</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>. <span style="color:#dcdcaa">FIBONACCI</span>.
+
+       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-A</span>               <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(18)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#b5cea8">0.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-B</span>               <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(18)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#b5cea8">1.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-C</span>               <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(18)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#b5cea8">0.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-INDEX</span>           <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(3)</span>  <span style="color:#569cd6">VALUE</span> <span style="color:#b5cea8">0.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-ANZAHL</span>          <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(3)</span>  <span style="color:#569cd6">VALUE</span> <span style="color:#b5cea8">20.</span>
+
+       <span style="color:#569cd6">PROCEDURE</span> <span style="color:#c586c0">DIVISION</span>.
+
+       <span style="color:#dcdcaa">BERECHNE-FIBONACCI</span>.
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Fibonacci-Folge (erste "</span> <span style="color:#dcdcaa">WS-ANZAHL</span> <span style="color:#ce9178">" Zahlen):"</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#dcdcaa">WS-A</span>
+
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">VARYING</span> <span style="color:#dcdcaa">WS-INDEX</span> <span style="color:#569cd6">FROM</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">BY</span> <span style="color:#b5cea8">1</span>
+                   <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">WS-INDEX</span> &gt;= <span style="color:#dcdcaa">WS-ANZAHL</span>
+
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#dcdcaa">WS-B</span>
+               <span style="color:#569cd6">COMPUTE</span> <span style="color:#dcdcaa">WS-C</span> = <span style="color:#dcdcaa">WS-A</span> + <span style="color:#dcdcaa">WS-B</span>
+               <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">WS-B</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-A</span>
+               <span style="color:#569cd6">MOVE</span> <span style="color:#dcdcaa">WS-C</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-B</span>
+
+           <span style="color:#dcdcaa">END-PERFORM</span>
+
+           <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>.</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>. <span style="color:#dcdcaa">DATEI-DEMO</span>.
+
+       <span style="color:#569cd6">ENVIRONMENT</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">FILE-CONTROL</span>.
+               <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">EINGABE</span> <span style="color:#569cd6">ASSIGN</span> <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"personen.dat"</span>
+                   <span style="color:#569cd6">ORGANIZATION</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">SEQUENTIAL</span>
+                   <span style="color:#569cd6">FILE</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-STATUS</span>.
+               <span style="color:#569cd6">SELECT</span> <span style="color:#dcdcaa">AUSGABE</span> <span style="color:#569cd6">ASSIGN</span> <span style="color:#569cd6">TO</span> <span style="color:#ce9178">"ergebnis.dat"</span>
+                   <span style="color:#569cd6">ORGANIZATION</span> <span style="color:#dcdcaa">IS</span> <span style="color:#569cd6">SEQUENTIAL</span>
+                   <span style="color:#569cd6">FILE</span> <span style="color:#dcdcaa">STATUS</span> <span style="color:#dcdcaa">IS</span> <span style="color:#dcdcaa">WS-STATUS-A</span>.
+
+       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">FILE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#569cd6">FD</span> <span style="color:#dcdcaa">EINGABE</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">EIN-SATZ</span>.
+               <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">EIN-NAME</span>       <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(30)</span>.
+               <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">EIN-ALTER</span>      <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(3)</span>.
+               <span style="color:#9cdcfe">05</span> <span style="color:#dcdcaa">EIN-PLZ</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(5)</span>.
+
+           <span style="color:#569cd6">FD</span> <span style="color:#dcdcaa">AUSGABE</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">AUS-SATZ</span>           <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(80)</span>.
+
+           <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-STATUS</span>          <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">XX.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-STATUS-A</span>        <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">XX.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-EOF</span>             <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X VALUE</span> <span style="color:#ce9178">"N"</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">DATEI-ENDE</span>     <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"Y"</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>         <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">9(5)</span> <span style="color:#569cd6">VALUE</span> <span style="color:#569cd6">ZERO</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-AUSGABE-ZEILE</span>   <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(80)</span>.
+
+       <span style="color:#569cd6">PROCEDURE</span> <span style="color:#c586c0">DIVISION</span>.
+
+       <span style="color:#dcdcaa">HAUPT</span>.
+           <span style="color:#569cd6">OPEN</span> <span style="color:#569cd6">INPUT</span> <span style="color:#dcdcaa">EINGABE</span>
+           <span style="color:#569cd6">OPEN</span> <span style="color:#569cd6">OUTPUT</span> <span style="color:#dcdcaa">AUSGABE</span>
+
+           <span style="color:#569cd6">IF</span> <span style="color:#dcdcaa">WS-STATUS</span> <span style="color:#569cd6">NOT</span> = <span style="color:#ce9178">"00"</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Fehler beim Öffnen: "</span> <span style="color:#dcdcaa">WS-STATUS</span>
+               <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>
+           <span style="color:#569cd6">END-IF</span>
+
+           <span style="color:#569cd6">WRITE</span> <span style="color:#dcdcaa">AUS-SATZ</span>
+               <span style="color:#569cd6">FROM</span> <span style="color:#ce9178">"Name                           Alt  PLZ"</span>
+           <span style="color:#569cd6">WRITE</span> <span style="color:#dcdcaa">AUS-SATZ</span>
+               <span style="color:#569cd6">FROM</span> <span style="color:#ce9178">"─────────────────────────────────────────"</span>
+
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">DATEI-ENDE</span>
+               <span style="color:#569cd6">READ</span> <span style="color:#dcdcaa">EINGABE</span>
+                   <span style="color:#569cd6">AT</span> <span style="color:#569cd6">END</span> <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">DATEI-ENDE</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>
+                   <span style="color:#569cd6">NOT</span> <span style="color:#569cd6">AT</span> <span style="color:#569cd6">END</span> <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">VERARBEITE</span>
+               <span style="color:#dcdcaa">END-READ</span>
+           <span style="color:#dcdcaa">END-PERFORM</span>
+
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Verarbeitete Sätze: "</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>
+
+           <span style="color:#569cd6">CLOSE</span> <span style="color:#dcdcaa">EINGABE</span> <span style="color:#dcdcaa">AUSGABE</span>
+           <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>.
+
+       <span style="color:#dcdcaa">VERARBEITE</span>.
+           <span style="color:#569cd6">ADD</span> <span style="color:#b5cea8">1</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-ZAEHLER</span>
+           <span style="color:#569cd6">STRING</span> <span style="color:#dcdcaa">FUNCTION</span> <span style="color:#dcdcaa">TRIM</span>(<span style="color:#dcdcaa">EIN-NAME</span>)
+                      <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SIZE</span>
+                  <span style="color:#ce9178">" (PLZ: "</span> <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SIZE</span>
+                  <span style="color:#dcdcaa">EIN-PLZ</span> <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SIZE</span>
+                  <span style="color:#ce9178">")"</span>  <span style="color:#569cd6">DELIMITED</span> <span style="color:#569cd6">BY</span> <span style="color:#569cd6">SIZE</span>
+               <span style="color:#569cd6">INTO</span> <span style="color:#dcdcaa">WS-AUSGABE-ZEILE</span>
+           <span style="color:#569cd6">WRITE</span> <span style="color:#dcdcaa">AUS-SATZ</span> <span style="color:#569cd6">FROM</span> <span style="color:#dcdcaa">WS-AUSGABE-ZEILE</span>.</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">       <span style="color:#569cd6">IDENTIFICATION</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">PROGRAM-ID</span>. <span style="color:#dcdcaa">BESTELLSYSTEM</span>.
+
+       <span style="color:#569cd6">DATA</span> <span style="color:#c586c0">DIVISION</span>.
+           <span style="color:#569cd6">WORKING-STORAGE</span> <span style="color:#c586c0">SECTION</span>.
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-BEFEHL</span>          <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X(1)</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">BEFEHL-NEU</span>     <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"N"</span> <span style="color:#ce9178">"n"</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">BEFEHL-ANZEIG</span>  <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"A"</span> <span style="color:#ce9178">"a"</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">BEFEHL-LÖSCH</span>   <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"L"</span> <span style="color:#ce9178">"l"</span>.
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">BEFEHL-ENDE</span>    <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"E"</span> <span style="color:#ce9178">"e"</span>.
+
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-BETRAG</span>          <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">S9(7)V99.</span>
+           <span style="color:#9cdcfe">01</span> <span style="color:#dcdcaa">WS-KATEGORIE</span>       <span style="color:#4ec9b0">PIC</span> <span style="color:#4ec9b0">X.</span>
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">KLEIN</span>          <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"K"</span>.  <span style="color:#546e7a">*&gt; &lt; 100</span>
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">MITTEL</span>         <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"M"</span>.  <span style="color:#546e7a">*&gt; 100-999</span>
+               <span style="color:#9cdcfe">88</span> <span style="color:#dcdcaa">GROSS</span>          <span style="color:#569cd6">VALUE</span> <span style="color:#ce9178">"G"</span>.  <span style="color:#546e7a">*&gt; &gt;= 1000</span>
+
+       <span style="color:#569cd6">PROCEDURE</span> <span style="color:#c586c0">DIVISION</span>.
+
+       <span style="color:#dcdcaa">HAUPT</span>.
+           <span style="color:#569cd6">PERFORM</span> <span style="color:#569cd6">UNTIL</span> <span style="color:#dcdcaa">BEFEHL-ENDE</span>
+               <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Befehl (N/A/L/E): "</span> <span style="color:#569cd6">WITH</span> <span style="color:#569cd6">NO</span> <span style="color:#569cd6">ADVANCING</span>
+               <span style="color:#569cd6">ACCEPT</span> <span style="color:#dcdcaa">WS-BEFEHL</span>
+
+               <span style="color:#569cd6">EVALUATE</span> <span style="color:#569cd6">TRUE</span>
+                   <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">BEFEHL-NEU</span>
+                       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">NEU-ERFASSEN</span>
+                   <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">BEFEHL-ANZEIG</span>
+                       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">ANZEIGEN</span>
+                   <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">BEFEHL-LÖSCH</span>
+                       <span style="color:#569cd6">PERFORM</span> <span style="color:#dcdcaa">LÖSCHEN</span>
+                   <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">BEFEHL-ENDE</span>
+                       <span style="color:#569cd6">CONTINUE</span>
+                   <span style="color:#569cd6">WHEN</span> <span style="color:#569cd6">OTHER</span>
+                       <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Ungültiger Befehl"</span>
+               <span style="color:#569cd6">END-EVALUATE</span>
+           <span style="color:#dcdcaa">END-PERFORM</span>
+
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Programm beendet."</span>
+           <span style="color:#569cd6">STOP</span> <span style="color:#569cd6">RUN</span>.
+
+       <span style="color:#dcdcaa">NEU-ERFASSEN</span>.
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Betrag: "</span> <span style="color:#569cd6">WITH</span> <span style="color:#569cd6">NO</span> <span style="color:#569cd6">ADVANCING</span>
+           <span style="color:#569cd6">ACCEPT</span> <span style="color:#dcdcaa">WS-BETRAG</span>
+
+           <span style="color:#569cd6">EVALUATE</span> <span style="color:#569cd6">TRUE</span>
+               <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">WS-BETRAG</span> &lt; <span style="color:#b5cea8">100</span>
+                   <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">KLEIN</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>
+                   <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Kleinkauf"</span>
+               <span style="color:#569cd6">WHEN</span> <span style="color:#dcdcaa">WS-BETRAG</span> &lt; <span style="color:#b5cea8">1000</span>
+                   <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">MITTEL</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>
+                   <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Mittelkauf"</span>
+               <span style="color:#569cd6">WHEN</span> <span style="color:#569cd6">OTHER</span>
+                   <span style="color:#569cd6">SET</span> <span style="color:#dcdcaa">GROSS</span> <span style="color:#569cd6">TO</span> <span style="color:#569cd6">TRUE</span>
+                   <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Grosskauf – Genehmigung nötig"</span>
+           <span style="color:#569cd6">END-EVALUATE</span>.
+
+       <span style="color:#dcdcaa">ANZEIGEN</span>.
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Aktueller Betrag: "</span> <span style="color:#dcdcaa">WS-BETRAG</span>.
+
+       <span style="color:#dcdcaa">LÖSCHEN</span>.
+           <span style="color:#569cd6">MOVE</span> <span style="color:#569cd6">ZERO</span> <span style="color:#569cd6">TO</span> <span style="color:#dcdcaa">WS-BETRAG</span>
+           <span style="color:#569cd6">DISPLAY</span> <span style="color:#ce9178">"Betrag gelöscht."</span>.</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#4ec9b011;border:1px solid #4ec9b044;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#4ec9b0">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S gnucobol</code><br><code style="color:#ffb347">cobc -x -free hallo.cbl -o hallo &amp;&amp; ./hallo</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;margin-right:4px"></span>⚙ GnuCOBOL installieren (Arch)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">GnuCOBOL</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gnucobol</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S gnucobol
+cobc --version</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">Kompilieren</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gnucobol</span>
+  </div>
+  <code style="color:#ffb347">cobc -x -free hallo.cbl -o hallo
+./hallo</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">Fixed Format</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gnucobol</span>
+  </div>
+  <code style="color:#ffb347">cobc -x hallo.cbl -o hallo  (ohne -free)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">Als Modul</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gnucobol</span>
+  </div>
+  <code style="color:#ffb347">cobc -m modul.cbl -o modul.so</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">Debug-Infos</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gnucobol</span>
+  </div>
+  <code style="color:#ffb347">cobc -x -g -debug hallo.cbl -o hallo</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">AUR Version</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">gnucobol (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S gnucobol</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #569cd644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#569cd60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#569cd6">
+      <span style="display:inline-block;width:8px;height:8px;background:#569cd6;border-radius:2px;margin-right:4px"></span>⚙ Compile-Flags
+    </span>
+    <span class="aa" style="color:#569cd6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-x</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Ausführbares Programm erzeugen</span>
+  </div>
+  <code style="color:#ffb347">cobc -x prog.cbl</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-m</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Shared Library (Modul)</span>
+  </div>
+  <code style="color:#ffb347">cobc -m modul.cbl</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-free</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Free-Format COBOL (empfohlen)</span>
+  </div>
+  <code style="color:#ffb347">Keine Spaltenregeln</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-fixed</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Fixed-Format (Spalten 7-72)</span>
+  </div>
+  <code style="color:#ffb347">IBM-kompatibel</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-std=cobol85</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">COBOL-85 Standard</span>
+  </div>
+  <code style="color:#ffb347">Strenger Standard-Modus</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-std=cobol2014</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">COBOL 2014 Standard</span>
+  </div>
+  <code style="color:#ffb347">Aktueller Standard</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-std=ibm</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">IBM-COBOL kompatibel</span>
+  </div>
+  <code style="color:#ffb347">Mainframe-Portierung</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-g</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Debug-Symbole</span>
+  </div>
+  <code style="color:#ffb347">Für GDB</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-debug</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Runtime-Checks (Bounds, NULL)</span>
+  </div>
+  <code style="color:#ffb347">Für Entwicklung</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-O2</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Optimierungen</span>
+  </div>
+  <code style="color:#ffb347">Für Produktion</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-Wall</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Alle Warnungen</span>
+  </div>
+  <code style="color:#ffb347">Empfohlen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-I pfad</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Include-Pfad für COPY</span>
+  </div>
+  <code style="color:#ffb347">Header-Dateien</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#569cd6;font-weight:700">-L pfad</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Library-Pfad</span>
+  </div>
+  <code style="color:#ffb347">Für externe Module</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c586c044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c586c00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c586c0">
+      <span style="display:inline-block;width:8px;height:8px;background:#c586c0;border-radius:2px;margin-right:4px"></span>⚙ Editoren &amp; LSP
+    </span>
+    <span class="aa" style="color:#c586c0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c586c0;font-weight:700">VS Code</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">vscode-cobol Ext.</span>
+  </div>
+  <code style="color:#ffb347">Erweiterung: bitlang.cobol
+Syntax-Highlighting + IntelliSense</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c586c0;font-weight:700">vim/neovim</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">cobol.vim</span>
+  </div>
+  <code style="color:#ffb347">:set filetype=cobol
+yay -S vim-cobol</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c586c0;font-weight:700">Emacs</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">cobol-mode</span>
+  </div>
+  <code style="color:#ffb347">M-x cobol-mode</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c586c0;font-weight:700">OpenCOBOLIDE</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S opencobolide  # GUI-IDE für GnuCOBOL</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;margin-right:4px"></span>⚙ Mainframe &amp; Cloud COBOL
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">IBM z/OS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Mainframe</span>
+  </div>
+  <code style="color:#ffb347">Enterprise COBOL – 95% aller Bankensysteme</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Micro Focus COBOL</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Visual COBOL</span>
+  </div>
+  <code style="color:#ffb347">Kommerziell – läuft auf Linux/Windows</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">AWS Blu Age</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Cloud</span>
+  </div>
+  <code style="color:#ffb347">COBOL → Java Transpiler (AWS-Migration)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">IBM CICS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Middleware</span>
+  </div>
+  <code style="color:#ffb347">Transaction Processing für Mainframe</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">JCL</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Job Control</span>
+  </div>
+  <code style="color:#ffb347">COBOL auf Mainframe läuft unter JCL-Jobs</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:2px;margin-right:4px"></span>⚙ Historisches &amp; Trivia
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">1959</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">COBOL entwickelt</span>
+  </div>
+  <code style="color:#ffb347">Grace Hopper &amp; CODASYL-Komitee</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">1968</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">ANSI-COBOL Standard</span>
+  </div>
+  <code style="color:#ffb347">Erster offizieller Standard</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">1985</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">COBOL-85</span>
+  </div>
+  <code style="color:#ffb347">Strukturierte Programmierung: PERFORM...END</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">2002</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">COBOL 2002</span>
+  </div>
+  <code style="color:#ffb347">OOP, Unicode, Datentypen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">2014</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">COBOL 2014</span>
+  </div>
+  <code style="color:#ffb347">Aktueller Standard (ISO 1989:2014)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">$3 Bio.</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Tägliche Transaktionen</span>
+  </div>
+  <code style="color:#ffb347">Mehr als Visa + Mastercard zusammen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">220 Bio.</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Zeilen COBOL weltweit</span>
+  </div>
+  <code style="color:#ffb347">Mehr als alles andere zusammen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4caf50;font-weight:700">95%</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Geldautomaten</span>
+  </div>
+  <code style="color:#ffb347">Laufen auf COBOL-Backend-Systemen</code>
+</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// Akkordeon auf- / zuklappen
+function tA(id) {
+  const el   = document.getElementById('ac-' + id);
+  const body = el.querySelector('.ab');
+  const open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+// Tab-Navigation
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Suche im Syntax-Tab
+const ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-pr"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+// Beispiel-Tabs
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach((panel, j) => {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach((btn, j) => {
+    if (j === index) {
+      btn.style.borderColor = '#4ec9b0';
+      btn.style.color       = '#4ec9b0';
+      btn.style.background  = 'rgba(78, 201, 176, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

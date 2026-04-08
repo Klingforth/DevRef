@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruby Syntax Referenz</title>
+<style>
+:root{--bg:#0a0c0f;--surface:#0d1117;--border:#1e2530;--text:#cdd6f4;--dim:#6c7a8e;--accent:#e05252}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;line-height:1.5}
+#hdr{background:linear-gradient(135deg,#0f1217,#0a0c0f);border-bottom:1px solid var(--border);padding:14px 24px 0;position:sticky;top:0;z-index:100}
+#hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+#hdr-title{font-size:20px;font-weight:900}
+#hdr-sub{color:var(--dim);font-size:11px}
+#tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tb{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);padding:9px 13px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap}
+.tb.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(224,82,82,.07)}
+.con{max-width:1120px;margin:0 auto;padding:20px 22px 60px}
+.tp{display:none}.tp.active{display:block}
+.sb{width:100%;background:rgba(0,0,0,.6);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:12px;outline:none}
+.sb:focus{border-color:var(--accent)}
+.ac{border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.06);margin-bottom:10px}
+.ah{width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px}
+.ah:hover{filter:brightness(1.2)}
+.aa{font-size:10px;transition:transform .2s}
+.ab{display:none;padding:4px 12px 14px}
+.ac.open .ab{display:block}
+.ac.open .aa{transform:rotate(180deg)}
+table{width:100%;border-collapse:collapse}
+th{color:var(--dim);font-size:10px;text-align:left;padding:6px 8px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);font-family:inherit}
+td{padding:7px 8px;border-bottom:1px solid rgba(30,37,48,.4);font-size:12px;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+code{font-family:'Courier New',monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px}
+pre.cb{font-family:'Courier New',monospace;font-size:12px;color:var(--text);background:rgba(0,0,0,.7);border:1px solid var(--border);border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre}
+pre.cb .kw{color:#c792ea}pre.cb .st{color:#c3e88d}pre.cb .nu{color:#f78c6c}
+pre.cb .cm{color:#546e7a;font-style:italic}pre.cb .cl{color:#ffcb6b}
+pre.cb .sy{color:#f07178}pre.cb .op{color:#89ddff}
+.cd{background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g2 .cd{margin:0}
+.er{display:flex;gap:12px;padding:7px 4px;border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start}
+.er:last-child{border-bottom:none}
+.ek{min-width:220px;flex-shrink:0}
+.tc{background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:8px}
+.dot{display:inline-block;width:8px;height:8px;background:var(--accent);border-radius:2px;transform:rotate(45deg);margin-right:6px}
+@media(max-width:720px){.g2{grid-template-columns:1fr}.con{padding:14px 12px 40px}.ek{min-width:150px}}
+</style></head><body>
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">◆ <span style="color:#e05252">Ruby</span> Syntax</div>
+    <div id="hdr-sub">Interaktive Referenz — Arch Linux / CachyOS</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="operators">Operatoren</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="methods">Methoden</button>
+    <button class="tb" data-tab="classes">Klassen &amp; Module</button>
+    <button class="tb" data-tab="blocks">Blöcke &amp; Lambdas</button>
+    <button class="tb" data-tab="collections">Collections</button>
+    <button class="tb" data-tab="strings_regex">Strings &amp; Regex</button>
+    <button class="tb" data-tab="exceptions">Exceptions</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+  </div>
+</div>
+<div class="con">
+<div id="tp-types" class="tp active">
+<div class="ac open" id="ac-types0" style="border-color:#ff980044">
+<button class="ah" onclick="toggleAcc('types0')" style="background:#ff98000e">
+<span style="display:flex;align-items:center;gap:6px;color:#ff9800"><span class="dot" style="background:#ff9800;border-radius:2px;transform:rotate(45deg)"></span>Zahlen (Numeric)</span>
+<span class="aa" style="color:#ff9800">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#ff9800">Integer</code></td><td style="color:#c3e88d;font-size:11px">42  |  -7  |  1_000_000  |  0xFF  |  0b1010</td><td style="color:var(--dim)">Ganze Zahl, beliebige Größe (Bignum automatisch)</td></tr><tr><td style="width:130px"><code style="color:#ff9800">Float</code></td><td style="color:#c3e88d;font-size:11px">3.14  |  1.5e10  |  -0.001</td><td style="color:var(--dim)">64-Bit IEEE 754 double</td></tr><tr><td style="width:130px"><code style="color:#ff9800">Rational</code></td><td style="color:#c3e88d;font-size:11px">Rational(1,3)  |  1/3r</td><td style="color:var(--dim)">Exakter Bruch – 1/3r Literal ab Ruby 2.1</td></tr><tr><td style="width:130px"><code style="color:#ff9800">Complex</code></td><td style="color:#c3e88d;font-size:11px">Complex(2,3)  |  2+3i</td><td style="color:var(--dim)">Komplexe Zahl – 2+3i Literal ab Ruby 2.1</td></tr><tr><td style="width:130px"><code style="color:#ff9800">Konvert.</code></td><td style="color:#c3e88d;font-size:11px">.to_i  .to_f  .to_r  .to_c</td><td style="color:var(--dim)">Integer(), Float(), .ceil, .floor, .round, .abs</td></tr></tbody></table></div></div>
+<div class="ac " id="ac-types1" style="border-color:#c3e88d44">
+<button class="ah" onclick="toggleAcc('types1')" style="background:#c3e88d0e">
+<span style="display:flex;align-items:center;gap:6px;color:#c3e88d"><span class="dot" style="background:#c3e88d;border-radius:2px;transform:rotate(45deg)"></span>String</span>
+<span class="aa" style="color:#c3e88d">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#c3e88d">Einfach</code></td><td style="color:#c3e88d;font-size:11px">Einfacher String: kein Escape außer Backslash</td><td style="color:var(--dim)">Literal – keine Interpolation</td></tr><tr><td style="width:130px"><code style="color:#c3e88d">Doppelt</code></td><td style="color:#c3e88d;font-size:11px">"Hallo #{name}!"  – Interpolation</td><td style="color:var(--dim)">Alle Escape-Sequenzen</td></tr><tr><td style="width:130px"><code style="color:#c3e88d">Heredoc</code></td><td style="color:#c3e88d;font-size:11px">&lt;&lt;~RUBY
+  text
+RUBY</td><td style="color:var(--dim)">squiggly heredoc – Einrückung entfernen</td></tr><tr><td style="width:130px"><code style="color:#c3e88d">Methoden</code></td><td style="color:#c3e88d;font-size:11px">.length .upcase .strip .chomp .split .gsub</td><td style="color:var(--dim)">.include? .start_with? .chars .bytes</td></tr><tr><td style="width:130px"><code style="color:#c3e88d">Frozen</code></td><td style="color:#c3e88d;font-size:11px"># frozen_string_literal: true</td><td style="color:var(--dim)">Ruby 3: Magic Comment für immutable Strings</td></tr></tbody></table></div></div>
+<div class="ac " id="ac-types2" style="border-color:#f0717844">
+<button class="ah" onclick="toggleAcc('types2')" style="background:#f071780e">
+<span style="display:flex;align-items:center;gap:6px;color:#f07178"><span class="dot" style="background:#f07178;border-radius:2px;transform:rotate(45deg)"></span>Symbol</span>
+<span class="aa" style="color:#f07178">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#f07178">Literal</code></td><td style="color:#c3e88d;font-size:11px">:name  |  :"mit leerzeichen"</td><td style="color:var(--dim)">Immutabler, gecachter Bezeichner</td></tr><tr><td style="width:130px"><code style="color:#f07178">Konvert.</code></td><td style="color:#c3e88d;font-size:11px">:name.to_s  →  "name"
+"name".to_sym</td><td style="color:var(--dim)">to_sym / id2name</td></tr><tr><td style="width:130px"><code style="color:#f07178">%i[]</code></td><td style="color:#c3e88d;font-size:11px">%i[eins zwei drei]  →  [:eins,:zwei,:drei]</td><td style="color:var(--dim)">Kurzschreibweise für Symbol-Array</td></tr></tbody></table></div></div>
+<div class="ac " id="ac-types3" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('types3')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Boolean &amp; Nil</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#4fc3f7">true/false</code></td><td style="color:#c3e88d;font-size:11px">x = true  |  y = false</td><td style="color:var(--dim)">TrueClass / FalseClass – nur ein Objekt je</td></tr><tr><td style="width:130px"><code style="color:#4fc3f7">nil</code></td><td style="color:#c3e88d;font-size:11px">x = nil  |  x.nil?  →  true</td><td style="color:var(--dim)">NilClass – falsy in Bedingungen</td></tr><tr><td style="width:130px"><code style="color:#4fc3f7">Truthy</code></td><td style="color:#c3e88d;font-size:11px">false und nil → falsy; alles andere → truthy!</td><td style="color:var(--dim)">Auch 0, "" und [] sind TRUTHY (anders als Python!)</td></tr></tbody></table></div></div>
+<div class="ac " id="ac-types4" style="border-color:#c792ea44">
+<button class="ah" onclick="toggleAcc('types4')" style="background:#c792ea0e">
+<span style="display:flex;align-items:center;gap:6px;color:#c792ea"><span class="dot" style="background:#c792ea;border-radius:2px;transform:rotate(45deg)"></span>Array</span>
+<span class="aa" style="color:#c792ea">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#c792ea">Literal</code></td><td style="color:#c3e88d;font-size:11px">[1, "a", :sym, nil]</td><td style="color:var(--dim)">Heterogen, dynamisch, Index ab 0</td></tr><tr><td style="width:130px"><code style="color:#c792ea">%w/%i</code></td><td style="color:#c3e88d;font-size:11px">%w[eins zwei drei]  |  %i[a b c]</td><td style="color:var(--dim)">String-Array / Symbol-Array</td></tr><tr><td style="width:130px"><code style="color:#c792ea">Range→Array</code></td><td style="color:#c3e88d;font-size:11px">(1..5).to_a  →  [1,2,3,4,5]</td><td style="color:var(--dim)">Range kann in Array umgewandelt werden</td></tr></tbody></table></div></div>
+<div class="ac " id="ac-types5" style="border-color:#26c6da44">
+<button class="ah" onclick="toggleAcc('types5')" style="background:#26c6da0e">
+<span style="display:flex;align-items:center;gap:6px;color:#26c6da"><span class="dot" style="background:#26c6da;border-radius:2px;transform:rotate(45deg)"></span>Hash</span>
+<span class="aa" style="color:#26c6da">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#26c6da">Alt</code></td><td style="color:#c3e88d;font-size:11px">{:key =&gt; "val", :n =&gt; 42}</td><td style="color:var(--dim)">Rocket-Syntax – beliebige Key-Typen</td></tr><tr><td style="width:130px"><code style="color:#26c6da">Neu</code></td><td style="color:#c3e88d;font-size:11px">{key: "val", n: 42}</td><td style="color:var(--dim)">Symbol-Shorthand</td></tr><tr><td style="width:130px"><code style="color:#26c6da">Ruby 3.1</code></td><td style="color:#c3e88d;font-size:11px">x=1; y=2; {x:, y:}  →  {x:1,y:2}</td><td style="color:var(--dim)">Value-Omission – Variable als Key+Value</td></tr><tr><td style="width:130px"><code style="color:#26c6da">Zugriff</code></td><td style="color:#c3e88d;font-size:11px">h[:key]  |  h.fetch(:key, default)</td><td style="color:var(--dim)">h.key? h.merge h.select h.reject</td></tr></tbody></table></div></div>
+<div class="ac " id="ac-types6" style="border-color:#ffb34744">
+<button class="ah" onclick="toggleAcc('types6')" style="background:#ffb3470e">
+<span style="display:flex;align-items:center;gap:6px;color:#ffb347"><span class="dot" style="background:#ffb347;border-radius:2px;transform:rotate(45deg)"></span>Variablen</span>
+<span class="aa" style="color:#ffb347">▼</span></button>
+<div class="ab"><table><thead><tr><th>Name</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:130px"><code style="color:#ffb347">Lokal</code></td><td style="color:#c3e88d;font-size:11px">name = "Alice"</td><td style="color:var(--dim)">Kleinbuchstabe/_ – Scope: Block/Methode</td></tr><tr><td style="width:130px"><code style="color:#ffb347">Instanz</code></td><td style="color:#c3e88d;font-size:11px">@name = "Bob"</td><td style="color:var(--dim)">Scope: Objekt-Instanz – nil wenn nicht gesetzt</td></tr><tr><td style="width:130px"><code style="color:#ffb347">Klasse</code></td><td style="color:#c3e88d;font-size:11px">@@count = 0</td><td style="color:var(--dim)">Scope: Klasse + Unterklassen</td></tr><tr><td style="width:130px"><code style="color:#ffb347">Global</code></td><td style="color:#c3e88d;font-size:11px">$PROGRAM_NAME  |  $stdin</td><td style="color:var(--dim)">Scope: überall – sparsam verwenden</td></tr><tr><td style="width:130px"><code style="color:#ffb347">Konstante</code></td><td style="color:#c3e88d;font-size:11px">MAX = 100  |  PI = Math::PI</td><td style="color:var(--dim)">Großbuchstabe am Anfang – OUTER::INNER</td></tr><tr><td style="width:130px"><code style="color:#ffb347">Spezial</code></td><td style="color:#c3e88d;font-size:11px">self  |  __method__  |  __dir__</td><td style="color:var(--dim)">self = aktuelles Objekt</td></tr></tbody></table></div></div>
+</div>
+<div id="tp-operators" class="tp ">
+<div class="ac open" id="ac-operators0" style="border-color:#ff980044">
+<button class="ah" onclick="toggleAcc('operators0')" style="background:#ff98000e">
+<span style="display:flex;align-items:center;gap:6px;color:#ff9800"><span class="dot" style="background:#ff9800;border-radius:2px;transform:rotate(45deg)"></span>Arithmetik</span>
+<span class="aa" style="color:#ff9800">▼</span></button>
+<div class="ab"><div><div class="er"><div class="ek"><code style="color:#ff9800">+  -  *  /</code></div><div style="color:var(--dim);font-size:12px">Add/Sub/Mul/Div – Ganzzahldivision bei Integers!</div></div><div class="er"><div class="ek"><code style="color:#ff9800">**</code></div><div style="color:var(--dim);font-size:12px">Potenz: 2**10 → 1024</div></div><div class="er"><div class="ek"><code style="color:#ff9800">%</code></div><div style="color:var(--dim);font-size:12px">Modulo: 10 % 3 → 1</div></div><div class="er"><div class="ek"><code style="color:#ff9800">divmod(n)</code></div><div style="color:var(--dim);font-size:12px">[Quotient,Rest]: 10.divmod(3) → [3,1]</div></div><div class="er"><div class="ek"><code style="color:#ff9800">.fdiv(n)</code></div><div style="color:var(--dim);font-size:12px">Float-Division: 7.fdiv(2) → 3.5</div></div></div></div></div>
+<div class="ac " id="ac-operators1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('operators1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Vergleich</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div><div class="er"><div class="ek"><code style="color:#4fc3f7">==  !=</code></div><div style="color:var(--dim);font-size:12px">Gleichheit / Ungleichheit (Wert)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">equal?</code></div><div style="color:var(--dim);font-size:12px">Objekt-Identität (gleiche object_id)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">eql?</code></div><div style="color:var(--dim);font-size:12px">Wert + Typ: 1.eql?(1.0) → false</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">&lt;=&gt;</code></div><div style="color:var(--dim);font-size:12px">Spaceship: -1/0/1 – für sort</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">===</code></div><div style="color:var(--dim);font-size:12px">Case-Gleichheit – in when; Range===val; Regex===str</div></div></div></div></div>
+<div class="ac " id="ac-operators2" style="border-color:#c792ea44">
+<button class="ah" onclick="toggleAcc('operators2')" style="background:#c792ea0e">
+<span style="display:flex;align-items:center;gap:6px;color:#c792ea"><span class="dot" style="background:#c792ea;border-radius:2px;transform:rotate(45deg)"></span>Logik</span>
+<span class="aa" style="color:#c792ea">▼</span></button>
+<div class="ab"><div><div class="er"><div class="ek"><code style="color:#c792ea">&amp;&amp;  ||  !</code></div><div style="color:var(--dim);font-size:12px">Boolesch (hohe Präzedenz)</div></div><div class="er"><div class="ek"><code style="color:#c792ea">and  or  not</code></div><div style="color:var(--dim);font-size:12px">Wie &amp;&amp;/||/! aber sehr niedrige Präzedenz</div></div><div class="er"><div class="ek"><code style="color:#c792ea">||=</code></div><div style="color:var(--dim);font-size:12px">Conditional: a ||= b  →  a = a || b</div></div><div class="er"><div class="ek"><code style="color:#c792ea">&amp;.</code></div><div style="color:var(--dim);font-size:12px">Safe Navigation (2.3+): obj&amp;.method – nil wenn obj nil</div></div></div></div></div>
+<div class="ac " id="ac-operators3" style="border-color:#ffb34744">
+<button class="ah" onclick="toggleAcc('operators3')" style="background:#ffb3470e">
+<span style="display:flex;align-items:center;gap:6px;color:#ffb347"><span class="dot" style="background:#ffb347;border-radius:2px;transform:rotate(45deg)"></span>Zuweisung</span>
+<span class="aa" style="color:#ffb347">▼</span></button>
+<div class="ab"><div><div class="er"><div class="ek"><code style="color:#ffb347">a, b = 1, 2</code></div><div style="color:var(--dim);font-size:12px">Parallele / Destructuring Zuweisung</div></div><div class="er"><div class="ek"><code style="color:#ffb347">a, *b = [1,2,3]</code></div><div style="color:var(--dim);font-size:12px">Splat: a=1, b=[2,3]</div></div><div class="er"><div class="ek"><code style="color:#ffb347">a, b = b, a</code></div><div style="color:var(--dim);font-size:12px">Tauschen ohne Temp-Variable</div></div><div class="er"><div class="ek"><code style="color:#ffb347">+=  -=  *=  /=  **=</code></div><div style="color:var(--dim);font-size:12px">Kombinierte Zuweisung</div></div></div></div></div>
+</div>
+<div id="tp-control" class="tp ">
+<div class="ac open" id="ac-control0" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('control0')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>if / unless / case</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">if/elsif/else</div><pre class="cb"><span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">10</span>
+  <span style="color:#c792ea">puts</span> "groß"
+<span style="color:#c792ea">elsif</span> x &gt; <span style="color:#f78c6c">5</span>
+  <span style="color:#c792ea">puts</span> "mittel"
+<span style="color:#c792ea">else</span>
+  <span style="color:#c792ea">puts</span> "klein"
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">puts</span> "ok" <span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">0</span>        <span style="color:#546e7a;font-style:italic"># modifier</span>
+result = x &gt; <span style="color:#f78c6c">0</span> ? "pos" : "neg"  <span style="color:#546e7a;font-style:italic"># ternary</span>
+
+<span style="color:#c792ea">unless</span> fertig
+  weiterarbeiten
+<span style="color:#c792ea">end</span></pre></div><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">case/when</div><pre class="cb"><span style="color:#c792ea">case</span> farbe
+<span style="color:#c792ea">when</span> "rot"  <span style="color:#c792ea">then</span> <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Stop</span>"
+<span style="color:#c792ea">when</span> "grün" <span style="color:#c792ea">then</span> <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Go</span>"
+<span style="color:#c792ea">when</span> /gelb/ <span style="color:#c792ea">then</span> <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Achtung</span>"  <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Regex</span></span>
+<span style="color:#c792ea">when</span> <span style="color:#f78c6c">1</span>..<span style="color:#f78c6c">5</span>   <span style="color:#c792ea">then</span> <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Zahl</span>"     <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Range</span></span>
+<span style="color:#c792ea">else</span>             <span style="color:#c792ea">puts</span> "?"
+<span style="color:#c792ea">end</span></pre></div><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Pattern Matching (3.0+)</div><pre class="cb"><span style="color:#c792ea">case</span> daten
+<span style="color:#c792ea">in</span> { name: <span style="color:#ffcb6b">String</span> =&gt; name, age: (<span style="color:#f78c6c">18</span>..) }
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Vollj</span>ährig: <span style="color:#546e7a;font-style:italic">#{name}"</span>
+<span style="color:#c792ea">in</span> [<span style="color:#ffcb6b">Integer</span> =&gt; x, *rest]
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Liste</span> beginnt mit <span style="color:#546e7a;font-style:italic">#{x}"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a;font-style:italic"># one-line (<span style="color:#f78c6c">3.0</span>+)</span>
+{name: "<span style="color:#ffcb6b">Bob</span>"} =&gt; { name: }   <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Zuweisung</span></span>
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>] <span style="color:#c792ea">in</span> [<span style="color:#ffcb6b">Integer</span>, *]      <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">true</span>/<span style="color:#c792ea">false</span></span></pre></div></div></div>
+<div class="ac " id="ac-control1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('control1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Schleifen</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">while / until / loop</div><pre class="cb"><span style="color:#c792ea">while</span> i &lt; <span style="color:#f78c6c">10</span>
+  i += <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">begin</span>         <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">do</span>..<span style="color:#c792ea">while</span> <span style="color:#ffcb6b">Equivalent</span></span>
+  i += <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">while</span> i &lt; <span style="color:#f78c6c">10</span>
+
+<span style="color:#c792ea">loop</span> <span style="color:#c792ea">do</span>
+  eingabe = gets.chomp
+  <span style="color:#c792ea">break</span> <span style="color:#c792ea">if</span> eingabe == "exit"
+  <span style="color:#c792ea">next</span>  <span style="color:#c792ea">if</span> eingabe.empty?
+  <span style="color:#c792ea">puts</span> eingabe.upcase
+<span style="color:#c792ea">end</span></pre></div><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">times / upto / each</div><pre class="cb"><span style="color:#f78c6c">5</span>.times { |i| <span style="color:#c792ea">puts</span> i }          <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">0</span>,<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span></span>
+<span style="color:#f78c6c">1</span>.upto(<span style="color:#f78c6c">5</span>) { |i| <span style="color:#c792ea">puts</span> i }       <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">1</span>..<span style="color:#f78c6c">5</span></span>
+<span style="color:#f78c6c">5</span>.downto(<span style="color:#f78c6c">1</span>) { |i| <span style="color:#c792ea">puts</span> i }     <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">5</span>..<span style="color:#f78c6c">1</span></span>
+<span style="color:#f78c6c">1</span>.step(<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">2</span>) { |i| <span style="color:#c792ea">p</span> i }      <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">5</span>,<span style="color:#f78c6c">7</span>,<span style="color:#f78c6c">9</span></span>
+
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>].each { |n| <span style="color:#c792ea">puts</span> n }
+{ a: <span style="color:#f78c6c">1</span>, b: <span style="color:#f78c6c">2</span> }.each <span style="color:#c792ea">do</span> |k, v|
+  <span style="color:#c792ea">puts</span> "<span style="color:#546e7a;font-style:italic">#{k}: #{v}"</span>
+<span style="color:#c792ea">end</span></pre></div></div></div>
+</div>
+<div id="tp-methods" class="tp ">
+<div class="ac open" id="ac-methods0" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('methods0')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>def – Grundformen</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Basis + Keyword</div><pre class="cb"><span style="color:#c792ea">def</span> verbinde(host, port: <span style="color:#f78c6c">80</span>, ssl: <span style="color:#c792ea">false</span>)
+  "<span style="color:#546e7a;font-style:italic">#{ssl ? 'https' : 'http'}://#{host}:#{port}"</span>
+<span style="color:#c792ea">end</span>
+
+verbinde("example.com")
+verbinde("example.com", port: <span style="color:#f78c6c">443</span>, ssl: <span style="color:#c792ea">true</span>)
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Pflicht</span>-<span style="color:#ffcb6b">Keyword</span> (kein <span style="color:#ffcb6b">Default</span>)</span>
+<span style="color:#c792ea">def</span> greet(name:)
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Hi</span> <span style="color:#546e7a;font-style:italic">#{name}"</span>
+<span style="color:#c792ea">end</span></pre></div><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Splat &amp; Block</div><pre class="cb"><span style="color:#c792ea">def</span> sum(*zahlen)        <span style="color:#546e7a;font-style:italic"># *args → <span style="color:#ffcb6b">Array</span></span>
+  zahlen.sum
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">def</span> info(**opts)        <span style="color:#546e7a;font-style:italic"># **kwargs → <span style="color:#ffcb6b">Hash</span></span>
+  opts.each { |k,v| <span style="color:#c792ea">puts</span> "<span style="color:#546e7a;font-style:italic">#{k}=#{v}" }</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">def</span> mit_log
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Start</span>"
+  result = <span style="color:#c792ea">yield</span>         <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Block</span> aufrufen</span>
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Ende</span>: <span style="color:#546e7a;font-style:italic">#{result}"</span>
+<span style="color:#c792ea">end</span>
+
+mit_log { <span style="color:#f78c6c">42</span> }
+
+<span style="color:#546e7a;font-style:italic"># block_given?</span>
+<span style="color:#c792ea">def</span> optional
+  block_given? ? <span style="color:#c792ea">yield</span> : "kein <span style="color:#ffcb6b">Block</span>"
+<span style="color:#c792ea">end</span></pre></div><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Endless Method (3.0)</div><pre class="cb"><span style="color:#c792ea">def</span> quadrat(x) = x * x
+<span style="color:#c792ea">def</span> greet(name) = "<span style="color:#ffcb6b">Hallo</span> <span style="color:#546e7a;font-style:italic">#{name}"</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Numbered</span> block params (<span style="color:#f78c6c">2.7</span>+)</span>
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>].map { _1 * <span style="color:#f78c6c">2</span> }        <span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">6</span>]</span>
+[[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>],[<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>]].map { _1 + _2 } <span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">7</span>]</span></pre></div></div></div>
+<div class="ac " id="ac-methods1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('methods1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Sichtbarkeit</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">public/private/protected</div><pre class="cb"><span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Konto</span>
+  <span style="color:#c792ea">def</span> einzahlen(betrag)   <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">public</span></span>
+    @stand += betrag
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#c792ea">private</span>
+
+  <span style="color:#c792ea">def</span> validiere(betrag)   <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">private</span></span>
+    betrag &gt; <span style="color:#f78c6c">0</span>
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#c792ea">protected</span>
+
+  <span style="color:#c792ea">def</span> stand_vergleich(a)
+    @stand &lt;=&gt; a.stand
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">private</span> <span style="color:#c792ea">def</span> intern; <span style="color:#c792ea">end</span>  <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Ruby</span> <span style="color:#f78c6c">2.7</span>+</span></pre></div></div></div>
+</div>
+<div id="tp-classes" class="tp ">
+<div class="ac open" id="ac-classes0" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('classes0')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>class / attr_*</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Klasse + Vererbung</div><pre class="cb"><span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Tier</span>
+  <span style="color:#c792ea">attr_reader</span> <span style="color:#f07178">:name</span>
+  <span style="color:#c792ea">attr_writer</span> <span style="color:#f07178">:alter</span>
+  <span style="color:#c792ea">attr_accessor</span> <span style="color:#f07178">:gewicht</span>
+
+  <span style="color:#c792ea">def</span> initialize(name, alter)
+    @name, @alter = name, alter
+    @@anzahl = (@@anzahl || <span style="color:#f78c6c">0</span>) + <span style="color:#f78c6c">1</span>
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#c792ea">def</span> <span style="color:#c792ea">self</span>.anzahl = @@anzahl    <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Klassenmethode</span></span>
+  <span style="color:#c792ea">def</span> to_s = "<span style="color:#546e7a;font-style:italic">#{@name}(#{@alter})"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Hund</span> &lt; <span style="color:#ffcb6b">Tier</span>               <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Vererbung</span></span>
+  <span style="color:#c792ea">def</span> initialize(name, alter, rasse)
+    <span style="color:#c792ea">super</span>(name, alter)
+    @rasse = rasse
+  <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">def</span> bellen = "<span style="color:#ffcb6b">Wuff</span>!"
+<span style="color:#c792ea">end</span>
+
+rex = <span style="color:#ffcb6b">Hund</span>.new("<span style="color:#ffcb6b">Rex</span>", <span style="color:#f78c6c">3</span>, "<span style="color:#ffcb6b">Lab</span>")
+<span style="color:#ffcb6b">Tier</span>.anzahl     <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">1</span></span></pre></div></div></div>
+<div class="ac " id="ac-classes1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('classes1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Module &amp; Mixins</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">include / extend / prepend</div><pre class="cb"><span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Greetable</span>
+  <span style="color:#c792ea">def</span> greet = "<span style="color:#ffcb6b">Hallo</span>, ich bin <span style="color:#546e7a;font-style:italic">#{name}"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">ClassMethods</span>
+  <span style="color:#c792ea">def</span> find(id) = "suche <span style="color:#546e7a;font-style:italic">#{id}"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Person</span>
+  <span style="color:#c792ea">include</span> <span style="color:#ffcb6b">Greetable</span>       <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Instanz</span>-<span style="color:#ffcb6b">Methoden</span></span>
+  <span style="color:#c792ea">extend</span>  <span style="color:#ffcb6b">ClassMethods</span>    <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Klassen</span>-<span style="color:#ffcb6b">Methoden</span></span>
+
+  <span style="color:#c792ea">attr_reader</span> <span style="color:#f07178">:name</span>
+  <span style="color:#c792ea">def</span> initialize(n) = @name = n
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">MRO</span> / <span style="color:#ffcb6b">Ancestors</span></span>
+<span style="color:#ffcb6b">Person</span>.ancestors
+<span style="color:#546e7a;font-style:italic"># [<span style="color:#ffcb6b">Person</span>, <span style="color:#ffcb6b">Greetable</span>, <span style="color:#ffcb6b">Object</span>, <span style="color:#ffcb6b">Kernel</span>, <span style="color:#ffcb6b">BasicObject</span>]</span></pre></div><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">Comparable &amp; Enumerable</div><pre class="cb"><span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Temp</span>
+  <span style="color:#c792ea">include</span> <span style="color:#ffcb6b">Comparable</span>
+  <span style="color:#c792ea">attr_reader</span> <span style="color:#f07178">:grad</span>
+  <span style="color:#c792ea">def</span> initialize(g) = @grad = g
+  <span style="color:#c792ea">def</span> &lt;=&gt;(a) = @grad &lt;=&gt; a.grad
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Playlist</span>
+  <span style="color:#c792ea">include</span> <span style="color:#ffcb6b">Enumerable</span>
+  <span style="color:#c792ea">def</span> initialize = @songs = []
+  <span style="color:#c792ea">def</span> each(&amp;b) = @songs.each(&amp;b)
+  <span style="color:#c792ea">def</span> &lt;&lt;(s) = @songs &lt;&lt; s; <span style="color:#c792ea">self</span>
+<span style="color:#c792ea">end</span></pre></div></div></div>
+<div class="ac " id="ac-classes2" style="border-color:#c792ea44">
+<button class="ah" onclick="toggleAcc('classes2')" style="background:#c792ea0e">
+<span style="display:flex;align-items:center;gap:6px;color:#c792ea"><span class="dot" style="background:#c792ea;border-radius:2px;transform:rotate(45deg)"></span>Struct &amp; Data</span>
+<span class="aa" style="color:#c792ea">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">Struct / Data.define (3.2)</div><pre class="cb"><span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Struct</span> – mutabler <span style="color:#ffcb6b">Value</span>-<span style="color:#ffcb6b">Typ</span></span>
+<span style="color:#ffcb6b">Point</span> = <span style="color:#ffcb6b">Struct</span>.new(<span style="color:#f07178">:x</span>, <span style="color:#f07178">:y</span>) <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">def</span> distanz = <span style="color:#ffcb6b">Math</span>.sqrt(x**<span style="color:#f78c6c">2</span> + y**<span style="color:#f78c6c">2</span>)
+<span style="color:#c792ea">end</span>
+<span style="color:#c792ea">p</span> = <span style="color:#ffcb6b">Point</span>.new(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)
+<span style="color:#c792ea">p</span>.distanz    <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">5.0</span></span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Data</span>.define – immutabler <span style="color:#ffcb6b">Value</span>-<span style="color:#ffcb6b">Typ</span> (<span style="color:#ffcb6b">Ruby</span> <span style="color:#f78c6c">3.2</span>)</span>
+<span style="color:#ffcb6b">Punkt</span> = <span style="color:#ffcb6b">Data</span>.define(<span style="color:#f07178">:x</span>, <span style="color:#f07178">:y</span>)
+p2 = <span style="color:#ffcb6b">Punkt</span>.new(x: <span style="color:#f78c6c">1</span>, y: <span style="color:#f78c6c">2</span>)
+p2.with(x: <span style="color:#f78c6c">5</span>)   <span style="color:#546e7a;font-style:italic"># neues <span style="color:#ffcb6b">Objekt</span>, y bleibt <span style="color:#f78c6c">2</span></span></pre></div></div></div>
+</div>
+<div id="tp-blocks" class="tp ">
+<div class="ac open" id="ac-blocks0" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('blocks0')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>Blöcke – { } vs do..end</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">yield / block_given?</div><pre class="cb"><span style="color:#c792ea">def</span> wiederhole(n)
+  n.times { <span style="color:#c792ea">yield</span> }
+<span style="color:#c792ea">end</span>
+wiederhole(<span style="color:#f78c6c">3</span>) { <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Ruby</span>!" }
+
+<span style="color:#c792ea">def</span> messe
+  start = <span style="color:#ffcb6b">Time</span>.now
+  result = <span style="color:#c792ea">yield</span>
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Zeit</span>: <span style="color:#546e7a;font-style:italic">#{<span style="color:#ffcb6b">Time</span>.now - start}s"</span>
+  result
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">def</span> optional
+  block_given? ? <span style="color:#c792ea">yield</span> : "kein <span style="color:#ffcb6b">Block</span>"
+<span style="color:#c792ea">end</span></pre></div></div></div>
+<div class="ac " id="ac-blocks1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('blocks1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Proc &amp; Lambda</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">Unterschiede</div><pre class="cb"><span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Proc</span> – lockere <span style="color:#ffcb6b">Regeln</span></span>
+p1 = <span style="color:#ffcb6b">Proc</span>.new { |x,y| x.to_i + y.to_i }
+p1.call(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)    <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">7</span></span>
+p1.call(<span style="color:#f78c6c">3</span>)       <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">OK</span> – fehlende <span style="color:#ffcb6b">Args</span> = <span style="color:#c792ea">nil</span></span>
+p1.(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)        <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Alternativer</span> <span style="color:#ffcb6b">Aufruf</span></span>
+p1[<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>]         <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Alternativer</span> <span style="color:#ffcb6b">Aufruf</span></span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Lambda</span> – strikte <span style="color:#ffcb6b">Regeln</span></span>
+l = <span style="color:#c792ea">lambda</span> { |x,y| x + y }
+l2 = -&gt;(x,y) { x + y }   <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Pfeil</span>-<span style="color:#ffcb6b">Syntax</span></span>
+l2.call(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)   <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">7</span></span>
+l2.<span style="color:#c792ea">lambda</span>?      <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">true</span></span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Curry</span> / <span style="color:#ffcb6b">Partial</span> <span style="color:#ffcb6b">Application</span></span>
+add = -&gt;(a,b) { a + b }
+add5 = add.curry.(<span style="color:#f78c6c">5</span>)
+add5.(<span style="color:#f78c6c">3</span>)   <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">8</span></span></pre></div><div class="cd"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">&amp; – Block ↔ Proc</div><pre class="cb"><span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Symbol</span> als <span style="color:#ffcb6b">Block</span> (häufigstes <span style="color:#ffcb6b">Pattern</span>!)</span>
+["a","b","c"].map(&amp;<span style="color:#f07178">:upcase</span>)    <span style="color:#546e7a;font-style:italic"># ["A","B","C"]</span>
+[<span style="color:#f78c6c">1</span>,-<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>].select(&amp;<span style="color:#f07178">:positive</span>?)  <span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">3</span>]</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Proc</span> als <span style="color:#ffcb6b">Block</span></span>
+doppler = -&gt;(x) { x * <span style="color:#f78c6c">2</span> }
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>].map(&amp;doppler)          <span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">6</span>]</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Methode</span> als <span style="color:#ffcb6b">Block</span></span>
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>].map(&amp;method(:<span style="color:#c792ea">puts</span>))</pre></div></div></div>
+<div class="ac " id="ac-blocks2" style="border-color:#c792ea44">
+<button class="ah" onclick="toggleAcc('blocks2')" style="background:#c792ea0e">
+<span style="display:flex;align-items:center;gap:6px;color:#c792ea"><span class="dot" style="background:#c792ea;border-radius:2px;transform:rotate(45deg)"></span>Lazy Enumerator</span>
+<span class="aa" style="color:#c792ea">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">Unendliche Sequenzen</div><pre class="cb">natuerliche = (<span style="color:#f78c6c">1</span>..).lazy
+erste_5_quadrate = natuerliche
+  .map { |n| n**<span style="color:#f78c6c">2</span> }
+  .first(<span style="color:#f78c6c">5</span>)
+<span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">16</span>, <span style="color:#f78c6c">25</span>]</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Fibonacci</span> lazy</span>
+fib = <span style="color:#ffcb6b">Enumerator</span>.new <span style="color:#c792ea">do</span> |y|
+  a, b = <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>
+  <span style="color:#c792ea">loop</span> { y &lt;&lt; a; a, b = b, a+b }
+<span style="color:#c792ea">end</span>
+fib.lazy.select(&amp;<span style="color:#f07178">:odd</span>?).first(<span style="color:#f78c6c">5</span>)  <span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">5</span>,<span style="color:#f78c6c">13</span>]</span></pre></div></div></div>
+</div>
+<div id="tp-collections" class="tp ">
+<div class="ac open" id="ac-collections0" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('collections0')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>Array – Methoden</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div><div class="er"><div class="ek"><code style="color:#e05252">push / pop / shift</code></div><div style="color:var(--dim);font-size:12px">arr &lt;&lt; x  |  arr.push(x)  |  arr.pop  |  arr.shift  |  arr.unshift(0)</div></div><div class="er"><div class="ek"><code style="color:#e05252">map / collect</code></div><div style="color:var(--dim);font-size:12px">[1,2,3].map { |n| n*2 }  →  [2,4,6]</div></div><div class="er"><div class="ek"><code style="color:#e05252">select / reject</code></div><div style="color:var(--dim);font-size:12px">[1,2,3,4].select(&amp;:even?)  →  [2,4]</div></div><div class="er"><div class="ek"><code style="color:#e05252">reduce / inject</code></div><div style="color:var(--dim);font-size:12px">[1,2,3].reduce(:+)  →  6</div></div><div class="er"><div class="ek"><code style="color:#e05252">flat_map</code></div><div style="color:var(--dim);font-size:12px">[[1,2],[3,4]].flat_map {|a| a}  →  [1,2,3,4]</div></div><div class="er"><div class="ek"><code style="color:#e05252">filter_map (2.7)</code></div><div style="color:var(--dim);font-size:12px">[1,2,3].filter_map { |n| n*2 if n.odd? }  →  [2,6]</div></div><div class="er"><div class="ek"><code style="color:#e05252">tally (2.7)</code></div><div style="color:var(--dim);font-size:12px">["a","b","a"].tally  →  {"a"=&gt;2,"b"=&gt;1}</div></div><div class="er"><div class="ek"><code style="color:#e05252">zip</code></div><div style="color:var(--dim);font-size:12px">[1,2].zip([3,4])  →  [[1,3],[2,4]]</div></div><div class="er"><div class="ek"><code style="color:#e05252">flatten</code></div><div style="color:var(--dim);font-size:12px">[1,[2,[3]]].flatten  →  [1,2,3]</div></div><div class="er"><div class="ek"><code style="color:#e05252">uniq</code></div><div style="color:var(--dim);font-size:12px">[1,1,2,3].uniq  →  [1,2,3]</div></div><div class="er"><div class="ek"><code style="color:#e05252">compact</code></div><div style="color:var(--dim);font-size:12px">[1,nil,2].compact  →  [1,2]</div></div><div class="er"><div class="ek"><code style="color:#e05252">sort / sort_by</code></div><div style="color:var(--dim);font-size:12px">arr.sort  |  arr.sort_by { |x| x.name }</div></div><div class="er"><div class="ek"><code style="color:#e05252">any? / all? / none?</code></div><div style="color:var(--dim);font-size:12px">[1,2,3].any?(&amp;:even?)  →  true</div></div><div class="er"><div class="ek"><code style="color:#e05252">each_slice</code></div><div style="color:var(--dim);font-size:12px">(1..6).each_slice(2).to_a  →  [[1,2],[3,4],[5,6]]</div></div><div class="er"><div class="ek"><code style="color:#e05252">combination</code></div><div style="color:var(--dim);font-size:12px">[1,2,3].combination(2).to_a  →  [[1,2],[1,3],[2,3]]</div></div></div></div></div>
+<div class="ac " id="ac-collections1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('collections1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>Hash – Methoden</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div><div class="er"><div class="ek"><code style="color:#4fc3f7">fetch</code></div><div style="color:var(--dim);font-size:12px">h.fetch(:key, "default")</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">merge / merge!</code></div><div style="color:var(--dim);font-size:12px">h1.merge(h2) { |k,v1,v2| v1+v2 }</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">transform_values</code></div><div style="color:var(--dim);font-size:12px">{a:1,b:2}.transform_values { |v| v*2 }</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">transform_keys</code></div><div style="color:var(--dim);font-size:12px">{a:1}.transform_keys(&amp;:to_s)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">select / reject</code></div><div style="color:var(--dim);font-size:12px">{a:1,b:2}.select { |k,v| v&gt;1 }</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">any? / all?</code></div><div style="color:var(--dim);font-size:12px">{a:1,b:2}.any? { |k,v| v&gt;1 }</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">slice</code></div><div style="color:var(--dim);font-size:12px">{a:1,b:2,c:3}.slice(:a,:c)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">except (3.0)</code></div><div style="color:var(--dim);font-size:12px">{a:1,b:2,c:3}.except(:b)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">group_by</code></div><div style="color:var(--dim);font-size:12px">[1,2,3,4].group_by(&amp;:even?)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">min_by / max_by</code></div><div style="color:var(--dim);font-size:12px">{a:3,b:1}.min_by { |k,v| v }</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">dig</code></div><div style="color:var(--dim);font-size:12px">h.dig(:user, :addr, :city)</div></div><div class="er"><div class="ek"><code style="color:#4fc3f7">to_a</code></div><div style="color:var(--dim);font-size:12px">{a:1}.to_a  →  [[:a,1]]</div></div></div></div></div>
+</div>
+<div id="tp-strings_regex" class="tp ">
+<div class="ac open" id="ac-strings_regex0" style="border-color:#c3e88d44">
+<button class="ah" onclick="toggleAcc('strings_regex0')" style="background:#c3e88d0e">
+<span style="display:flex;align-items:center;gap:6px;color:#c3e88d"><span class="dot" style="background:#c3e88d;border-radius:2px;transform:rotate(45deg)"></span>String Methoden</span>
+<span class="aa" style="color:#c3e88d">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#c3e88d;font-weight:700;font-size:12px;margin-bottom:8px">Grundlegende</div><pre class="cb">s = "  <span style="color:#ffcb6b">Hallo</span> <span style="color:#ffcb6b">Welt</span>  "
+s.strip           <span style="color:#546e7a;font-style:italic"># "<span style="color:#ffcb6b">Hallo</span> <span style="color:#ffcb6b">Welt</span>"</span>
+s.chomp           <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Zeilenende</span> entfernen</span>
+s.upcase          <span style="color:#546e7a;font-style:italic"># "  <span style="color:#ffcb6b">HALLO</span> <span style="color:#ffcb6b">WELT</span>  "</span>
+s.downcase
+s.reverse
+s.length          <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">14</span></span>
+s.chars           <span style="color:#546e7a;font-style:italic"># ["", "H", "a", ...]</span>
+s.split(" ")      <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Array</span> der Wörter</span>
+s.<span style="color:#c792ea">include</span>?("<span style="color:#ffcb6b">Welt</span>")  <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">true</span></span>
+s.start_with?("  H")
+s.count("l")      <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">3</span></span>
+s.gsub("l","L")   <span style="color:#546e7a;font-style:italic"># "<span style="color:#ffcb6b">HaLLo</span> <span style="color:#ffcb6b">WeLt</span>"</span>
+s.sub("l","L")    <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Nur</span> erstes l</span>
+s.tr("aeiou","*") <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Zeichen</span> ersetzen</span></pre></div><div class="cd"><div style="color:#c3e88d;font-weight:700;font-size:12px;margin-bottom:8px">Formatierung</div><pre class="cb">"%s hat %d <span style="color:#ffcb6b">Punkte</span>" % ["<span style="color:#ffcb6b">Alice</span>", <span style="color:#f78c6c">42</span>]
+sprintf("%.<span style="color:#f78c6c">2</span>f", <span style="color:#f78c6c">3.14159</span>)   <span style="color:#546e7a;font-style:italic"># "<span style="color:#f78c6c">3.14</span>"</span>
+format("%<span style="color:#f78c6c">05</span>d", <span style="color:#f78c6c">42</span>)          <span style="color:#546e7a;font-style:italic"># "<span style="color:#f78c6c">00042</span>"</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">String</span>*N</span>
+"abc" * <span style="color:#f78c6c">3</span>        <span style="color:#546e7a;font-style:italic"># "abcabcabc"</span>
+"=" * <span style="color:#f78c6c">40</span>         <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">40</span> <span style="color:#ffcb6b">Gleichheitszeichen</span></span></pre></div></div></div>
+<div class="ac " id="ac-strings_regex1" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('strings_regex1')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>Reguläre Ausdrücke</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Grundsyntax</div><pre class="cb">/muster/           <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">case</span>-sensitive</span>
+/muster/i          <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">case</span>-insensitive</span>
+/muster/m          <span style="color:#546e7a;font-style:italic"># . matcht auch \n</span>
+/muster/x          <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Whitespace</span> erlaubt</span>
+
+"<span style="color:#ffcb6b">Hallo</span>" =~ /<span style="color:#ffcb6b">Hall</span>/  <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">0</span> (<span style="color:#ffcb6b">Position</span>) oder <span style="color:#c792ea">nil</span></span>
+"<span style="color:#ffcb6b">Hallo</span>".match?(/<span style="color:#ffcb6b">Ha</span>/)   <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">true</span></span>
+
+m = "<span style="color:#ffcb6b">Ruby</span> <span style="color:#f78c6c">3</span>".match(/(\w+) (\d+)/)
+m[<span style="color:#f78c6c">0</span>]    <span style="color:#546e7a;font-style:italic"># "<span style="color:#ffcb6b">Ruby</span> <span style="color:#f78c6c">3</span>"</span>
+m[<span style="color:#f78c6c">1</span>]    <span style="color:#546e7a;font-style:italic"># "<span style="color:#ffcb6b">Ruby</span>"</span>
+m[<span style="color:#f78c6c">2</span>]    <span style="color:#546e7a;font-style:italic"># "<span style="color:#f78c6c">3</span>"</span></pre></div><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Zeichenklassen</div><pre class="cb">.          <span style="color:#546e7a;font-style:italic"># beliebig (außer \n)</span>
+\d  \D     <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Ziffer</span> / keine <span style="color:#ffcb6b">Ziffer</span></span>
+\w  \W     <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Wortzeichen</span> / nicht</span>
+\s  \S     <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Whitespace</span> / nicht</span>
+[abc]      <span style="color:#546e7a;font-style:italic"># a, b oder c</span>
+[^abc]     <span style="color:#546e7a;font-style:italic"># nicht a, b, c</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Quantoren</span> (greedy)</span>
+*   +   ?   {n}  {n,m}
+*?  +?  ??           <span style="color:#546e7a;font-style:italic"># non-greedy</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Anker</span>: ^ $ \A \Z \b</span>
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Lookahead</span>: (?=<span style="color:#c792ea">p</span>) (?!<span style="color:#c792ea">p</span>) (?&lt;=<span style="color:#c792ea">p</span>) (?&lt;!<span style="color:#c792ea">p</span>)</span>
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Named</span> <span style="color:#ffcb6b">Capture</span>: (?&lt;name&gt;.)  → m[<span style="color:#f07178">:name</span>]</span></pre></div></div></div>
+</div>
+<div id="tp-exceptions" class="tp ">
+<div class="ac open" id="ac-exceptions0" style="border-color:#ff537044">
+<button class="ah" onclick="toggleAcc('exceptions0')" style="background:#ff53700e">
+<span style="display:flex;align-items:center;gap:6px;color:#ff5370"><span class="dot" style="background:#ff5370;border-radius:2px;transform:rotate(45deg)"></span>Exception-Hierarchie</span>
+<span class="aa" style="color:#ff5370">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#ff5370;font-weight:700;font-size:12px;margin-bottom:8px">Wichtige Klassen</div><pre class="cb"><span style="color:#ffcb6b">Exception</span>
+├── <span style="color:#ffcb6b">ScriptError</span> → <span style="color:#ffcb6b">LoadError</span>, <span style="color:#ffcb6b">SyntaxError</span>
+├── <span style="color:#ffcb6b">SignalException</span> → <span style="color:#ffcb6b">Interrupt</span>
+├── <span style="color:#ffcb6b">SystemExit</span>
+└── <span style="color:#ffcb6b">StandardError</span>           <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">rescue</span> fängt hier ab</span>
+    ├── <span style="color:#ffcb6b">ArgumentError</span>
+    ├── <span style="color:#ffcb6b">IOError</span> → <span style="color:#ffcb6b">EOFError</span>
+    ├── <span style="color:#ffcb6b">IndexError</span> → <span style="color:#ffcb6b">KeyError</span>
+    ├── <span style="color:#ffcb6b">NameError</span> → <span style="color:#ffcb6b">NoMethodError</span>
+    ├── <span style="color:#ffcb6b">RangeError</span>
+    ├── <span style="color:#ffcb6b">RuntimeError</span>         <span style="color:#546e7a;font-style:italic"># <span style="color:#c792ea">raise</span> "msg" erzeugt dies</span>
+    ├── <span style="color:#ffcb6b">TypeError</span>
+    └── <span style="color:#ffcb6b">SystemCallError</span> (<span style="color:#ffcb6b">Errno</span>::*)</pre></div></div></div>
+<div class="ac " id="ac-exceptions1" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('exceptions1')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>begin / rescue / ensure</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Vollständige Behandlung</div><pre class="cb"><span style="color:#c792ea">begin</span>
+  ergebnis = <span style="color:#f78c6c">10</span> / <span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">rescue</span> <span style="color:#ffcb6b">ZeroDivisionError</span> =&gt; e
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Division</span>: <span style="color:#546e7a;font-style:italic">#{e.message}"</span>
+<span style="color:#c792ea">rescue</span> <span style="color:#ffcb6b">TypeError</span>, <span style="color:#ffcb6b">ArgumentError</span> =&gt; e
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Typ</span>: <span style="color:#546e7a;font-style:italic">#{e.<span style="color:#c792ea">class</span>}"</span>
+<span style="color:#c792ea">rescue</span> =&gt; e                  <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">StandardError</span></span>
+  <span style="color:#c792ea">raise</span>                       <span style="color:#546e7a;font-style:italic"># re-<span style="color:#c792ea">raise</span></span>
+<span style="color:#c792ea">else</span>
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">OK</span>: <span style="color:#546e7a;font-style:italic">#{ergebnis}"     # kein <span style="color:#c792ea">rescue</span></span>
+<span style="color:#c792ea">ensure</span>
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Immer</span>!"               <span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Aufr</span>äumen</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a;font-style:italic"># <span style="color:#ffcb6b">Kurzform</span> <span style="color:#c792ea">in</span> <span style="color:#ffcb6b">Methode</span></span>
+<span style="color:#c792ea">def</span> lese(f)
+  <span style="color:#ffcb6b">File</span>.read(f)
+<span style="color:#c792ea">rescue</span> <span style="color:#ffcb6b">Errno</span>::<span style="color:#ffcb6b">ENOENT</span>
+  <span style="color:#c792ea">nil</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a;font-style:italic"># retry</span>
+versuche = <span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">begin</span>
+  verbinde
+<span style="color:#c792ea">rescue</span> <span style="color:#ffcb6b">ConnectionError</span>
+  retry <span style="color:#c792ea">if</span> (versuche += <span style="color:#f78c6c">1</span>) &lt; <span style="color:#f78c6c">3</span>
+  <span style="color:#c792ea">raise</span>
+<span style="color:#c792ea">end</span></pre></div><div class="cd"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Eigene Exceptions</div><pre class="cb"><span style="color:#c792ea">class</span> <span style="color:#ffcb6b">AppError</span> &lt; <span style="color:#ffcb6b">StandardError</span>; <span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">ValidationError</span> &lt; <span style="color:#ffcb6b">AppError</span>
+  <span style="color:#c792ea">attr_reader</span> <span style="color:#f07178">:feld</span>
+  <span style="color:#c792ea">def</span> initialize(feld, msg)
+    @feld = feld
+    <span style="color:#c792ea">super</span>("<span style="color:#546e7a;font-style:italic">#{feld}: #{msg}")</span>
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">raise</span> <span style="color:#ffcb6b">ValidationError</span>.new("email", "<span style="color:#ffcb6b">Ung</span>ültig")</pre></div></div></div>
+</div>
+<div id="tp-examples" class="tp">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+<button class="tb active" style="border:1px solid #e05252;color:#e05252;border-radius:6px;padding:6px 12px" id="exb0" onclick="switchEx(0)">FizzBuzz</button>
+<button class="tb " style="border:1px solid #1e2530;color:#6c7a8e;border-radius:6px;padding:6px 12px" id="exb1" onclick="switchEx(1)">Fibonacci lazy</button>
+<button class="tb " style="border:1px solid #1e2530;color:#6c7a8e;border-radius:6px;padding:6px 12px" id="exb2" onclick="switchEx(2)">Klassen &amp; Mixins</button>
+<button class="tb " style="border:1px solid #1e2530;color:#6c7a8e;border-radius:6px;padding:6px 12px" id="exb3" onclick="switchEx(3)">Pattern Matching</button>
+</div>
+<div id="exp0" style=""><pre class="cb">(<span style="color:#f78c6c">1</span>..<span style="color:#f78c6c">100</span>).each <span style="color:#c792ea">do</span> |n|
+  <span style="color:#c792ea">puts</span> <span style="color:#c792ea">case</span> n
+       <span style="color:#c792ea">when</span> -&gt;(x) { (x%<span style="color:#f78c6c">15</span>).zero? } <span style="color:#c792ea">then</span> "<span style="color:#ffcb6b">FizzBuzz</span>"
+       <span style="color:#c792ea">when</span> -&gt;(x) { (x%<span style="color:#f78c6c">3</span>).zero? }  <span style="color:#c792ea">then</span> "<span style="color:#ffcb6b">Fizz</span>"
+       <span style="color:#c792ea">when</span> -&gt;(x) { (x%<span style="color:#f78c6c">5</span>).zero? }  <span style="color:#c792ea">then</span> "<span style="color:#ffcb6b">Buzz</span>"
+       <span style="color:#c792ea">else</span> n
+       <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span></pre></div>
+<div id="exp1" style="display:none"><pre class="cb">fib = <span style="color:#ffcb6b">Enumerator</span>.new <span style="color:#c792ea">do</span> |y|
+  a, b = <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>
+  <span style="color:#c792ea">loop</span> { y &lt;&lt; a; a, b = b, a+b }
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">p</span> fib.take(<span style="color:#f78c6c">10</span>)
+<span style="color:#546e7a;font-style:italic"># [<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">13</span>, <span style="color:#f78c6c">21</span>, <span style="color:#f78c6c">34</span>]</span>
+
+<span style="color:#c792ea">p</span> fib.find { |n| n &gt; <span style="color:#f78c6c">1000</span> }  <span style="color:#546e7a;font-style:italic"># <span style="color:#f78c6c">1597</span></span>
+<span style="color:#c792ea">p</span> fib.lazy.select(&amp;<span style="color:#f07178">:even</span>?).first(<span style="color:#f78c6c">5</span>)</pre></div>
+<div id="exp2" style="display:none"><pre class="cb"><span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Serializable</span>
+  <span style="color:#c792ea">def</span> to_h
+    instance_variables.each_with_object({}) <span style="color:#c792ea">do</span> |v, h|
+      h[v.to_s.delete("@").to_sym] = instance_variable_get(v)
+    <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">User</span>
+  <span style="color:#c792ea">include</span> <span style="color:#ffcb6b">Serializable</span>
+  <span style="color:#c792ea">attr_accessor</span> <span style="color:#f07178">:name</span>, <span style="color:#f07178">:email</span>
+
+  <span style="color:#c792ea">def</span> initialize(name:, email:)
+    @name, @email = name, email
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#c792ea">def</span> to_s = "<span style="color:#546e7a;font-style:italic">#{@name} &lt;#{@email}&gt;"</span>
+<span style="color:#c792ea">end</span>
+
+alice = <span style="color:#ffcb6b">User</span>.new(name: "<span style="color:#ffcb6b">Alice</span>", email: "a@b.com")
+<span style="color:#c792ea">p</span> alice.to_h   <span style="color:#546e7a;font-style:italic"># {name: "<span style="color:#ffcb6b">Alice</span>", email: "a@b.com"}</span></pre></div>
+<div id="exp3" style="display:none"><pre class="cb">response = { status: <span style="color:#f78c6c">200</span>, body: { users: [
+  { name: "<span style="color:#ffcb6b">Bob</span>", role: <span style="color:#f07178">:user</span> },
+  { name: "<span style="color:#ffcb6b">Alice</span>", role: <span style="color:#f07178">:admin</span> },
+]}}
+
+<span style="color:#c792ea">case</span> response
+<span style="color:#c792ea">in</span> { status: <span style="color:#f78c6c">200</span>, body: { users: [*, { name: <span style="color:#ffcb6b">String</span> =&gt; name, role: <span style="color:#f07178">:admin</span> }, *] } }
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Admin</span>: <span style="color:#546e7a;font-style:italic">#{name}"</span>
+<span style="color:#c792ea">in</span> { status: <span style="color:#f78c6c">400</span>..<span style="color:#f78c6c">499</span>, body: { error: <span style="color:#ffcb6b">String</span> =&gt; msg } }
+  <span style="color:#c792ea">puts</span> "<span style="color:#ffcb6b">Fehler</span>: <span style="color:#546e7a;font-style:italic">#{msg}"</span>
+<span style="color:#c792ea">end</span>
+<span style="color:#546e7a;font-style:italic"># "<span style="color:#ffcb6b">Admin</span>: <span style="color:#ffcb6b">Alice</span>"</span></pre></div>
+</div>
+<div id="tp-tools" class="tp">
+<div class="ib" style="background:#e0525211;border:1px solid #e0525244"><strong style="color:#e05252">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S ruby ruby-bundler</code></div>
+<div class="ac open" id="ac-tl0" style="border-color:#e0525244">
+<button class="ah" onclick="toggleAcc('tl0')" style="background:#e052520e">
+<span style="display:flex;align-items:center;gap:6px;color:#e05252"><span class="dot" style="background:#e05252;border-radius:2px;transform:rotate(45deg)"></span>⚙ Assembler &amp; Version</span>
+<span class="aa" style="color:#e05252">▼</span></button>
+<div class="ab"><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#e05252;font-weight:700">System Ruby</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">ruby</span></div><code style="color:#ffb347">sudo pacman -S ruby ruby-bundler ruby-rake</code></div><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#e05252;font-weight:700">rbenv</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">rbenv (AUR)</span></div><code style="color:#ffb347">yay -S rbenv ruby-build
+rbenv install 3.3.0
+rbenv global 3.3.0</code></div><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#e05252;font-weight:700">mise</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">mise (AUR)</span></div><code style="color:#ffb347">yay -S mise
+mise install ruby@3.3.0</code></div></div></div>
+<div class="ac " id="ac-tl1" style="border-color:#4fc3f744">
+<button class="ah" onclick="toggleAcc('tl1')" style="background:#4fc3f70e">
+<span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span class="dot" style="background:#4fc3f7;border-radius:2px;transform:rotate(45deg)"></span>⚙ Pakete &amp; Gems</span>
+<span class="aa" style="color:#4fc3f7">▼</span></button>
+<div class="ab"><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#4fc3f7;font-weight:700">gem</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">ruby</span></div><code style="color:#ffb347">gem install rails
+gem list
+gem update</code></div><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#4fc3f7;font-weight:700">bundler</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">ruby-bundler</span></div><code style="color:#ffb347">bundle init
+bundle install
+bundle exec ruby app.rb</code></div></div></div>
+<div class="ac " id="ac-tl2" style="border-color:#ff980044">
+<button class="ah" onclick="toggleAcc('tl2')" style="background:#ff98000e">
+<span style="display:flex;align-items:center;gap:6px;color:#ff9800"><span class="dot" style="background:#ff9800;border-radius:2px;transform:rotate(45deg)"></span>⚙ Testing &amp; Linting</span>
+<span class="aa" style="color:#ff9800">▼</span></button>
+<div class="ab"><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#ff9800;font-weight:700">RSpec</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">gem install rspec</span></div><code style="color:#ffb347">rspec --init
+rspec spec/</code></div><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#ff9800;font-weight:700">RuboCop</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">gem install rubocop</span></div><code style="color:#ffb347">rubocop
+rubocop -a
+rubocop --fix-layout</code></div><div class="tc"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span style="color:#ff9800;font-weight:700">pry</span><span style="background:#4a556822;color:#6c7a8e;border:1px solid #44506a44;padding:1px 7px;border-radius:4px;font-size:11px">gem install pry</span></div><code style="color:#ffb347">binding.pry  # im Code
+pry -r ./lib/foo</code></div></div></div>
+</div>
+</div>
+<script>
+function toggleAcc(id){document.getElementById('ac-'+id).classList.toggle('open')}
+// tab switching
+document.querySelectorAll('.tb[data-tab]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tb[data-tab]').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tp').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('tp-'+b.dataset.tab).classList.add('active');
+  });
+});
+// examples
+function switchEx(i){
+  document.querySelectorAll('[id^="exp"]').forEach((p,j)=>p.style.display=j===i?'':'none');
+  document.querySelectorAll('[id^="exb"]').forEach((b,j)=>{
+    b.classList.toggle('active',j===i);
+    b.style.borderColor=j===i?'#e05252':'#1e2530';
+    b.style.color=j===i?'#e05252':'#6c7a8e';
+  });
+}
+</script></body></html>

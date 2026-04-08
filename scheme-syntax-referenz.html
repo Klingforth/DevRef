@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scheme Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #9b59b6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(155,89,182,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(155,89,182,.04); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(155,89,182,.08); padding: 1px 5px; border-radius: 3px; color: #9b59b6; }
+.cd { background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#9b59b6">&#x03BB;</span>
+      <span style="color:#9b59b6">Scheme</span> Syntax
+    </div>
+    <div id="hdr-sub">R7RS · Tail Calls · call/cc · Hygienic Macros · Streams · SICP · Racket · Guile</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="kontrollfluss">Kontrollfluss</button>
+    <button class="tb" data-tab="makros">Makros & Continuations</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#9b59b60e;border:1px solid #9b59b644;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#9b59b6">Scheme – Minimalismus mit maximaler Mächtigkeit.</strong>
+  SICP-Sprache. Garantierte Tail-Call-Optimierung. Hygienic Macros. Continuations.<br>
+  <span style="color:#cdd6f4">
+    Nur <code style="color:#c3e88d">#f</code> ist falsy (nicht 0 oder '()!) &nbsp;·&nbsp;
+    <code style="color:#c3e88d">define</code> für alles &nbsp;·&nbsp;
+    <code style="color:#c3e88d">lambda</code> = Funktion &nbsp;·&nbsp;
+    <code style="color:#c3e88d">1/3</code> ist exakt rational &nbsp;·&nbsp;
+    Prefix-Notation: <code style="color:#c3e88d">(+ 1 2)</code>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #9b59b644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#9b59b60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b59b6">
+      <span style="display:inline-block;width:8px;height:8px;background:#9b59b6;border-radius:50%;margin-right:2px"></span>Scheme – Minimale Eleganz
+    </span>
+    <span class="aa" style="color:#9b59b6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="scheme – minimale eleganz">
+  <div style="color:#9b59b6;font-weight:700;font-size:12px;margin-bottom:8px">
+    Scheme – Minimale Eleganz
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Scheme ist der minimalistischste Lisp-Dialekt</span>
+<span style="color:#546e7a">; Wenige primitive Konzepte, maximale Ausdrucksstärke</span>
+<span style="color:#546e7a">; SICP nutzt Scheme (Structure and Interpretation of Computer Programs)</span>
+
+<span style="color:#546e7a">; Alles ist ein Ausdruck – gibt immer einen Wert zurück</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; =&gt; 3</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#f78c6c">3</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; 9   (verschachtelt, prefix-Notation)</span>
+<span style="color:#c3e88d">"Hallo"</span>          <span style="color:#546e7a">; =&gt; "Hallo"</span>
+<span style="color:#f78c6c">#t</span>               <span style="color:#546e7a">; =&gt; #t  (true)</span>
+
+<span style="color:#546e7a">; define – Variablen und Funktionen definieren</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">42</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">pi</span> <span style="color:#f78c6c">3.14159265358979</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; lambda – anonyme Funktion</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>              <span style="color:#546e7a">; Quadrat-Funktion (nicht benannt)</span>
+<span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; Sofort aufrufen: 25</span>
+
+<span style="color:#546e7a">; Funktion definieren – kurze Schreibweise</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">quadrat</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">quadrat</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>      <span style="color:#546e7a">; =&gt; 25</span>
+
+<span style="color:#546e7a">; Vollständige Schreibweise (äquivalent):</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">quadrat</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Unterschiede zu Common Lisp:</span>
+<span style="color:#546e7a">; - Kein DEFUN, nur DEFINE</span>
+<span style="color:#546e7a">; - Nur EIN Namensraum (keine function/variable Trennung)</span>
+<span style="color:#546e7a">; - #t / #f statt T / NIL</span>
+<span style="color:#546e7a">; - '() ist NICHT falsy! (nur #f ist falsy)</span>
+<span style="color:#546e7a">; - Tail-Call-Optimierung GARANTIERT</span>
+<span style="color:#546e7a">; - Hygienic Macros (kein Variablen-Capture möglich)</span>
+<span style="color:#546e7a">; - Fortsetzungen (call/cc) eingebaut</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen &amp; Literale
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="datentypen &amp; literale">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Datentypen &amp; Literale
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; ── ZAHLEN ────────────────────────────────────────────────────────</span>
+<span style="color:#f78c6c">42</span>            <span style="color:#546e7a">; Integer (exact)</span>
+<span style="color:#f78c6c">-7</span>            <span style="color:#546e7a">; Negatives Integer</span>
+<span style="color:#f78c6c">3.14</span>          <span style="color:#546e7a">; Inexact real (floating point)</span>
+<span style="color:#f78c6c">1/3</span>           <span style="color:#546e7a">; Rational! Exakt: 1/3 (nicht 0.333...)</span>
+<span style="color:#f78c6c">1+2i</span>          <span style="color:#546e7a">; Komplexe Zahl</span>
+<span style="color:#f78c6c">#b1010</span>        <span style="color:#546e7a">; Binär: 10</span>
+<span style="color:#f78c6c">#o17</span>          <span style="color:#546e7a">; Oktal: 15</span>
+<span style="color:#f78c6c">#xff</span>          <span style="color:#546e7a">; Hex: 255</span>
+<span style="color:#f78c6c">#d42</span>          <span style="color:#546e7a">; Dezimal: 42 (explizit)</span>
+<span style="color:#f78c6c">1.5e10</span>        <span style="color:#546e7a">; Wissenschaftliche Notation</span>
+<span style="color:#4ec9b0">+inf.0</span>        <span style="color:#546e7a">; Positiv Unendlich</span>
+<span style="color:#4ec9b0">-inf.0</span>        <span style="color:#546e7a">; Negativ Unendlich</span>
+<span style="color:#4ec9b0">+nan.0</span>        <span style="color:#546e7a">; Not a Number</span>
+
+<span style="color:#546e7a">; exact? inexact? exact-&gt;inexact inexact-&gt;exact</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">exact?</span> <span style="color:#f78c6c">1/3</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; =&gt; #t</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">inexact?</span> <span style="color:#f78c6c">3.14</span><span style="color:#9b59b6">)</span>       <span style="color:#546e7a">; =&gt; #t</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">exact-&gt;inexact</span> <span style="color:#f78c6c">1/3</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; 0.3333...</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">inexact-&gt;exact</span> <span style="color:#f78c6c">0.5</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; 1/2</span>
+
+<span style="color:#546e7a">; ── BOOLEANS ──────────────────────────────────────────────────────</span>
+<span style="color:#f78c6c">#t</span>            <span style="color:#546e7a">; True (auch #true in R7RS)</span>
+<span style="color:#f78c6c">#f</span>            <span style="color:#546e7a">; False (auch #false in R7RS)</span>
+<span style="color:#546e7a">; NUR #f ist falsy! Alles andere (inkl. 0, '(), "") ist truthy!</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#f78c6c">0</span>   <span style="color:#c3e88d">"ja"</span> <span style="color:#c3e88d">"nein"</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; "ja"   (0 ist truthy!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#c3e88d">"ja"</span> <span style="color:#c3e88d">"nein"</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; "ja"   ('() ist truthy!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#f78c6c">#f</span>  <span style="color:#c3e88d">"ja"</span> <span style="color:#c3e88d">"nein"</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; "nein" (nur #f ist falsy)</span>
+
+<span style="color:#546e7a">; ── ZEICHEN ────────────────────────────────────────────────────────</span>
+#<span style="color:#4ec9b0"></span>           <span style="color:#546e7a">; Buchstabe 'a'</span>
+<span style="color:#ffcb6b">#\A</span>           <span style="color:#546e7a">; Großes A</span>
+<span style="color:#ffcb6b">#\space</span>       <span style="color:#546e7a">; Leerzeichen</span>
+#
+<span style="color:#4ec9b0">ewline</span>     <span style="color:#546e7a">; Newline</span>
+#	<span style="color:#4ec9b0">ab</span>         <span style="color:#546e7a">; Tab</span>
+#<span style="color:#4ec9b0"> </span>           <span style="color:#546e7a">; Null-Zeichen</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">char-&gt;integer</span> #<span style="color:#4ec9b0"></span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 97</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">integer-&gt;char</span> <span style="color:#f78c6c">65</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; #\A</span>
+
+<span style="color:#546e7a">; ── STRINGS ────────────────────────────────────────────────────────</span>
+<span style="color:#c3e88d">"Hallo, Welt!"</span>
+<span style="color:#c3e88d">"Mit "</span><span style="color:#4ec9b0">Escape</span><span style="color:#c3e88d">" und \n Newline"</span>
+<span style="color:#546e7a">; R7RS: Mehrzeilige Strings</span>
+<span style="color:#c3e88d">"Zeile 1</span>
+<span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">2</span><span style="color:#c3e88d">"</span>
+
+<span style="color:#546e7a">; ── SYMBOLE ────────────────────────────────────────────────────────</span>
+<span style="color:#89ddff">'</span><span style="color:#4ec9b0">hallo</span>          <span style="color:#546e7a">; Symbol (Bezeichner als Wert)</span>
+<span style="color:#89ddff">'</span><span style="color:#4ec9b0">mein-symbol</span>    <span style="color:#546e7a">; Bindestrich erlaubt</span>
+<span style="color:#89ddff">'</span><span style="color:#4ec9b0">?x</span>             <span style="color:#546e7a">; Fragezeichen erlaubt</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">symbol-&gt;string</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">hallo</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; "hallo"</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">string-&gt;symbol</span> <span style="color:#c3e88d">"hallo"</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; hallo</span>
+
+<span style="color:#546e7a">; ── SPEZIAL ────────────────────────────────────────────────────────</span>
+<span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>             <span style="color:#546e7a">; Leere Liste (NIL in CL) – NICHT falsy!</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">void</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; Kein Wert (in manchen Implementierungen)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Listen – das Fundament
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="listen – das fundament">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Listen – das Fundament
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Listen in Scheme = verkettete Cons-Zellen</span>
+<span style="color:#546e7a">; (cons 1 (cons 2 (cons 3 '()))) = (1 2 3)</span>
+
+<span style="color:#546e7a">; Erstellen</span>
+<span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>              <span style="color:#546e7a">; Quotierte Liste</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; Funktion</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#f78c6c">1</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>       <span style="color:#546e7a">; =&gt; (1 2 3)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span>            <span style="color:#546e7a">; =&gt; (1 . 2)  dotted pair</span>
+
+<span style="color:#546e7a">; Zugriff</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; =&gt; 1     (head)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">cdr</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; =&gt; (2 3) (tail)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">cadr</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>       <span style="color:#546e7a">; =&gt; 2     = (car (cdr ...))</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">caddr</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>      <span style="color:#546e7a">; =&gt; 3</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">list-ref</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span> <span style="color:#4ec9b0">c</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; b     (0-basiert)</span>
+
+<span style="color:#546e7a">; Prädikate</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>           <span style="color:#546e7a">; =&gt; #t (leere Liste?)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">pair?</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; =&gt; #t (Cons-Zelle?)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">list?</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>      <span style="color:#546e7a">; =&gt; #t</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">list?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; #f (dotted pair ist keine proper list)</span>
+
+<span style="color:#546e7a">; Manipulation</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">length</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>     <span style="color:#546e7a">; =&gt; 3</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">append</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#546e7a">; =&gt; (1 2 3 4)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">reverse</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; (3 2 1)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">list-tail</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span> <span style="color:#4ec9b0">c</span> <span style="color:#4ec9b0">d</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; (c d)</span>
+
+<span style="color:#546e7a">; Suchen</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">member</span> <span style="color:#f78c6c">3</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; (3 4)  (Tail ab Treffer, #f wenn nicht)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">memq</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">b</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span> <span style="color:#4ec9b0">c</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; (b c)  (nutzt eq?)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">assoc</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">b</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">b</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">c</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; (b 2)</span>
+
+<span style="color:#546e7a">; Höhere Ordnung</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">map</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; (1 4 9 16 25)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">for-each</span> <span style="color:#82aaff">display</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; Gibt 123 aus, returns (void)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">filter</span> <span style="color:#82aaff">odd?</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; (1 3 5)  [SRFI-1]</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">fold-right</span> <span style="color:#82aaff">+</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; 15 [SRFI-1]</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-kontrollfluss" class="tp">
+
+<div class="ac open" id="ac-kf0"
+     style="border:1px solid #9b59b644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#9b59b60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b59b6">
+      <span style="display:inline-block;width:8px;height:8px;background:#9b59b6;border-radius:50%;margin-right:2px"></span>if, cond, case, when, unless
+    </span>
+    <span class="aa" style="color:#9b59b6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if, cond, case, when, unless">
+  <div style="color:#9b59b6;font-weight:700;font-size:12px;margin-bottom:8px">
+    if, cond, case, when, unless
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; ── IF ────────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; (if Bedingung Dann [Sonst])</span>
+<span style="color:#546e7a">; Sonst ist optional (gibt (void) wenn weggelassen und Bedingung #f)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">&gt;</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span> <span style="color:#c3e88d">"größer"</span> <span style="color:#c3e88d">"kleiner"</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; "größer"</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#f78c6c">#f</span> <span style="color:#c3e88d">"ja"</span><span style="color:#9b59b6">)</span>                      <span style="color:#546e7a">; =&gt; (void) oder unspezifiziert</span>
+
+<span style="color:#546e7a">; if ist ein AUSDRUCK (gibt Wert zurück)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">max2</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">&gt;</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── COND ──────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Mehrere Bedingungen (wie if-elif-else)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">kategorie</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">cond</span>
+      <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">&lt;</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>  <span style="color:#c3e88d">"negativ"</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>  <span style="color:#c3e88d">"null"</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">&lt;</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span> <span style="color:#c3e88d">"klein"</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">&lt;</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">100</span><span style="color:#9b59b6">)</span> <span style="color:#c3e88d">"mittel"</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span>     <span style="color:#c3e88d">"groß"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; cond mit =&gt; (Pfeil): gibt Wert der Bedingung an Funktion weiter</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">cond</span>
+  <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">assoc</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">b</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">b</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">=&gt;</span> <span style="color:#82aaff">cdr</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; (2)  cdr von (b 2)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span> <span style="color:#f78c6c">#f</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── CASE ──────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Vergleicht mit eqv? (für Zahlen, Zeichen, Symbole)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">case</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">7</span><span style="color:#9b59b6">)</span> <span style="color:#c3e88d">"Primzahl"</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">6</span> <span style="color:#f78c6c">8</span> <span style="color:#f78c6c">9</span><span style="color:#9b59b6">)</span> <span style="color:#c3e88d">"Zusammengesetzt"</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span> <span style="color:#c3e88d">"?"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; "Zusammengesetzt"</span>
+
+<span style="color:#546e7a">; ── WHEN / UNLESS (R7RS) ─────────────────────────────────────────</span>
+<span style="color:#546e7a">; when – mehrere Formen, kein else</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">when</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">&gt;</span> <span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">"Positiv!"</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">newline</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>     <span style="color:#546e7a">; =&gt; 2x wenn x &gt; 0, (void) sonst</span>
+
+<span style="color:#546e7a">; unless – Gegenteil von when</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">unless</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#4ec9b0">liste</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">liste</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── AND / OR ──────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Kurzschlussauswertung, gibt letzten Wert zurück!</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">and</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>     <span style="color:#546e7a">; =&gt; 3    (letzter Wert wenn alle truthy)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">and</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">#f</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; #f   (stoppt bei #f)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">and</span><span style="color:#9b59b6">)</span>           <span style="color:#546e7a">; =&gt; #t   (leeres and ist #t)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span> <span style="color:#f78c6c">#f</span> <span style="color:#f78c6c">#f</span> <span style="color:#c3e88d">"ja"</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; =&gt; "ja" (erster truthy Wert)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span> <span style="color:#f78c6c">#f</span> <span style="color:#f78c6c">#f</span> <span style="color:#f78c6c">#f</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; #f</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span><span style="color:#9b59b6">)</span>            <span style="color:#546e7a">; =&gt; #f   (leeres or ist #f)</span>
+
+<span style="color:#546e7a">; Idiom: (or X Standard-Wert)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">wert</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">suche</span> <span style="color:#4ec9b0">schlüssel</span><span style="color:#9b59b6">)</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">nicht-gefunden</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Schleifen: do &amp; named-let
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="schleifen: do &amp; named-let">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Schleifen: do &amp; named-let
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Scheme hat kein while/for – man nutzt Rekursion oder do!</span>
+
+<span style="color:#546e7a">; ── NAMED LET – beliebteste Schleife ────────────────────────────</span>
+<span style="color:#546e7a">; (let schleife ((var init) ...) body)</span>
+<span style="color:#546e7a">; In body kann (schleife neue-werte...) rekursiv aufgerufen werden</span>
+
+<span style="color:#546e7a">; Schleife von 0 bis 4</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">when</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">&lt;</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">i</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">" "</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; Gibt aus: 0 1 2 3 4</span>
+
+<span style="color:#546e7a">; Summe berechnen (tail-recursive!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">summe-bis</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">i</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">acc</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>
+        <span style="color:#4ec9b0">acc</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">acc</span> <span style="color:#4ec9b0">i</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">summe-bis</span> <span style="color:#f78c6c">100</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; 5050</span>
+
+<span style="color:#546e7a">; Fibonacci (tail-recursive mit named let)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fib</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">b</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">a</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">b</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fib</span> <span style="color:#f78c6c">30</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 832040</span>
+
+<span style="color:#546e7a">; ── DO ────────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; (do ((var init schritt) ...) (abbruch ergebnis...) body...)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">do</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">0</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>      <span style="color:#546e7a">; i: start bei 0, Schritt +1</span>
+     <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">s</span> <span style="color:#f78c6c">0</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">s</span> <span style="color:#4ec9b0">i</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>     <span style="color:#546e7a">; s: start bei 0, Schritt +s+i</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>         <span style="color:#546e7a">; Abbruch wenn i=10, gibt s zurück</span>
+  <span style="color:#546e7a">; Body (optional, wird jede Iteration ausgeführt)</span>
+  <span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; 45  (Summe 0+1+2+...+9)</span>
+
+<span style="color:#546e7a">; Do mit Ausgabe</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">do</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">1</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">&gt;</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">i</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">" "</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; Gibt aus: 1 2 3 4 5</span>
+
+<span style="color:#546e7a">; ── REKURSION (der Scheme-Weg!) ───────────────────────────────────</span>
+<span style="color:#546e7a">; Scheme GARANTIERT Tail-Call-Optimierung!</span>
+<span style="color:#546e7a">; Tail-rekursive Funktionen brauchen keinen Stack!</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">zähle-runter</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">"Start!"</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span>
+        <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">" "</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">zähle-runter</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; Tail call!</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">zähle-runter</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; "5 4 3 2 1 Start!" – kein Stack-Overflow!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>let, let*, letrec &amp; Scope
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="let, let*, letrec &amp; scope">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    let, let*, letrec &amp; Scope
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; ── LET – parallele Bindung ──────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">y</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">y</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; 3</span>
+<span style="color:#546e7a">; x und y existieren nur im let-Body</span>
+<span style="color:#546e7a">; ALLE Initialwerte werden VOR den Bindungen ausgewertet!</span>
+
+<span style="color:#546e7a">; let kann äußere Variablen nicht sehen während initialisiert wird:</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">y</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; y = 10 (äußeres x!), NICHT das neue x=1</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">y</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; 11</span>
+
+<span style="color:#546e7a">; ── LET* – sequenzielle Bindung ──────────────────────────────────</span>
+<span style="color:#546e7a">; Jede Bindung sieht die vorherigen</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">let*</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">y</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; y kann x nutzen!</span>
+       <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">z</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">y</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#4ec9b0">z</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 3</span>
+
+<span style="color:#546e7a">; ── LETREC – für gegenseitig rekursive Funktionen ────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">letrec</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">gerade?</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+                    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">#t</span>
+                        <span style="color:#9b59b6">(</span><span style="color:#82aaff">ungerade?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#82aaff">ungerade?</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+                      <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">#f</span>
+                          <span style="color:#9b59b6">(</span><span style="color:#82aaff">gerade?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">gerade?</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; #t</span>
+
+<span style="color:#546e7a">; ── INTERNAL DEFINE ──────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Defines am Anfang eines Bodys = lokale Bindungen</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">meine-funktion</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">helper</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; lokal!</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">ergebnis</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">helper</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#4ec9b0">ergebnis</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; helper ist außen nicht sichtbar</span>
+
+<span style="color:#546e7a">; ── CLOSURES ─────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Funktionen merken ihren Erstellungs-Scope!</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-zähler</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">n</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+      <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">zähle</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-zähler</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">zähle</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 1</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">zähle</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 2</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">zähle</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 3</span>
+
+<span style="color:#546e7a">; Mehrere Closures teilen denselben State</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-konto</span> <span style="color:#4ec9b0">anfangsbetrag</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">saldo</span> <span style="color:#4ec9b0">anfangsbetrag</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">betrag</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">saldo</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">saldo</span> <span style="color:#4ec9b0">betrag</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; einzahlen</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">betrag</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">saldo</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">saldo</span> <span style="color:#4ec9b0">betrag</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; abheben</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">saldo</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>                              <span style="color:#546e7a">; kontostand</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">konto</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-konto</span> <span style="color:#f78c6c">100</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">konto</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">50</span><span style="color:#9b59b6">)</span>         <span style="color:#546e7a">; einzahlen 50</span>
+<span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">cadr</span> <span style="color:#4ec9b0">konto</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">30</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; abheben 30</span>
+<span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">caddr</span> <span style="color:#4ec9b0">konto</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; =&gt; 120</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-makros" class="tp">
+
+<div class="ac open" id="ac-mk0"
+     style="border:1px solid #9b59b644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mk0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#9b59b60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b59b6">
+      <span style="display:inline-block;width:8px;height:8px;background:#9b59b6;border-radius:50%;margin-right:2px"></span>Hygienic Macros – syntax-rules
+    </span>
+    <span class="aa" style="color:#9b59b6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="hygienic macros – syntax-rules">
+  <div style="color:#9b59b6;font-weight:700;font-size:12px;margin-bottom:8px">
+    Hygienic Macros – syntax-rules
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Scheme Macros sind HYGIENISCH</span>
+<span style="color:#546e7a">; Keine Variablen-Capture möglich (automatisch gensym!)</span>
+<span style="color:#546e7a">; define-syntax + syntax-rules ist der Standard-Weg (R5RS+)</span>
+
+<span style="color:#546e7a">; ── EINFACHE MACROS ──────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Eigenes when (bereits in R7RS, hier als Demonstration)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">mein-when</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mein-when</span> <span style="color:#4ec9b0">bedingung</span> <span style="color:#4ec9b0">ausdruck</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#4ec9b0">bedingung</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">ausdruck</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#82aaff">void</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mein-when</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">&gt;</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">"Größer!"</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">newline</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── SWAP! ────────────────────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">swap!</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">swap!</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">temp</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">b</span> <span style="color:#4ec9b0">temp</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">x</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">y</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">swap!</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">y</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">y</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; (2 1)</span>
+<span style="color:#546e7a">; Kein Problem: 'temp' im Macro captured NICHT externe 'temp'!</span>
+
+<span style="color:#546e7a">; ── MUSTER-MATCHING IN syntax-rules ──────────────────────────────</span>
+<span style="color:#546e7a">; Verschiedene Formen werden durch Muster erkannt</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">mein-or</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mein-or</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">#f</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mein-or</span> <span style="color:#4ec9b0">e</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">e</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mein-or</span> <span style="color:#4ec9b0">e1</span> <span style="color:#4ec9b0">e2</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">t</span> <span style="color:#4ec9b0">e1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#4ec9b0">t</span> <span style="color:#4ec9b0">t</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mein-or</span> <span style="color:#4ec9b0">e2</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── WHILE-MACRO ──────────────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">while</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">while</span> <span style="color:#4ec9b0">bedingung</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">when</span> <span style="color:#4ec9b0">bedingung</span>
+         <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span>
+         <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">loop</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">while</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">&lt;</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">i</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">" "</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">i</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">i</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; Gibt aus: 0 1 2 3 4</span>
+
+<span style="color:#546e7a">; ── VARIABLEN-MUSTER MIT ... ─────────────────────────────────────</span>
+<span style="color:#546e7a">; ... = beliebig viele Elemente (Ellipsis)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">list-of</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">list-of</span> <span style="color:#4ec9b0">element</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span> <span style="color:#4ec9b0">element</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">list-of</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; (1 2 3 4 5)</span>
+
+<span style="color:#546e7a">; ── SYNTAX-CASE (R6RS, mächtiger) ────────────────────────────────</span>
+<span style="color:#546e7a">; Erlaubt beliebigen Scheme-Code in Transformationen</span>
+<span style="color:#546e7a">; (In R6RS/Racket verfügbar)</span>
+<span style="color:#546e7a">#;</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">mein-define</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stx</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-case</span> <span style="color:#4ec9b0">stx</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">_</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">arg</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">body</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+       #<span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">name</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">arg</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">body</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">_</span> <span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">wert</span><span style="color:#9b59b6">)</span>
+       #<span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">wert</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mk1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mk1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Continuations – call/cc
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="continuations – call/cc">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Continuations – call/cc
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; call/cc = call-with-current-continuation</span>
+<span style="color:#546e7a">; Das mächtigste Feature von Scheme!</span>
+<span style="color:#546e7a">; Kapturiert den "Rest des Programms" als Funktion</span>
+
+<span style="color:#546e7a">; ── GRUNDKONZEPT ─────────────────────────────────────────────────</span>
+<span style="color:#546e7a">; (call/cc f) übergibt die aktuelle Continuation k an f</span>
+<span style="color:#546e7a">; Wenn k aufgerufen wird, springt Ausführung SOFORT zum call/cc zurück</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">call/cc</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#f78c6c">1</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k</span> <span style="color:#f78c6c">42</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; k(42) bricht sofort ab → Ergebnis: 42</span>
+<span style="color:#546e7a">; =&gt; 42  (das + 1 wird nie ausgeführt!)</span>
+
+<span style="color:#546e7a">; ── NICHT-LOKALER AUSSTIEG ────────────────────────────────────────</span>
+<span style="color:#546e7a">; Wie break/return in anderen Sprachen:</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">suche</span> <span style="color:#4ec9b0">liste</span> <span style="color:#4ec9b0">wert</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">call/cc</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">return</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#82aaff">for-each</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">element</span><span style="color:#9b59b6">)</span>
+          <span style="color:#9b59b6">(</span><span style="color:#c792ea">when</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">equal?</span> <span style="color:#4ec9b0">element</span> <span style="color:#4ec9b0">wert</span><span style="color:#9b59b6">)</span>
+            <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">return</span> <span style="color:#f78c6c">#t</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; Sofortiger Rücksprung!</span>
+        <span style="color:#4ec9b0">liste</span><span style="color:#9b59b6">)</span>
+      <span style="color:#f78c6c">#f</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; Nur erreicht wenn nicht gefunden</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">suche</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">3</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; #t</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">suche</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">9</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; #f</span>
+
+<span style="color:#546e7a">; ── GENERATOR / COROUTINE ─────────────────────────────────────────</span>
+<span style="color:#546e7a">; call/cc kann Generatoren implementieren</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-generator</span> <span style="color:#4ec9b0">liste</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">k-extern</span> <span style="color:#f78c6c">#f</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; Externe Continuation</span>
+
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">generator</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">for-each</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">call/cc</span>
+          <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k-intern</span><span style="color:#9b59b6">)</span>
+            <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">generator</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k-intern</span> <span style="color:#f78c6c">#f</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; Resume</span>
+            <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k-extern</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>                             <span style="color:#546e7a">; Yield!</span>
+      <span style="color:#4ec9b0">liste</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k-extern</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">fertig</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">call/cc</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">k</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">k-extern</span> <span style="color:#4ec9b0">k</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">generator</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── MULTIPLE VALUES ───────────────────────────────────────────────</span>
+<span style="color:#546e7a">; values gibt mehrere Werte zurück</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">div-und-rest</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">values</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">quotient</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">remainder</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">call-with-values</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">div-und-rest</span> <span style="color:#f78c6c">17</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">q</span> <span style="color:#4ec9b0">r</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">quotient:</span> <span style="color:#4ec9b0">q</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">rest:</span> <span style="color:#4ec9b0">r</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; (quotient: 3 rest: 2)</span>
+
+<span style="color:#546e7a">; R7RS: define-values und let-values</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-values</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">q</span> <span style="color:#4ec9b0">r</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">div-und-rest</span> <span style="color:#f78c6c">17</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">let-values</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">q</span> <span style="color:#4ec9b0">r</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">div-und-rest</span> <span style="color:#f78c6c">17</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">q</span> <span style="color:#4ec9b0">r</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 5</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #9b59b644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#9b59b60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b59b6">
+      <span style="display:inline-block;width:8px;height:8px;background:#9b59b6;border-radius:50%;margin-right:2px"></span>Mathematik
+    </span>
+    <span class="aa" style="color:#9b59b6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Form</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="+  -  *  /" data-d="arithmetik (n-är!)">
+      <td style="width:220px"><code style="color:#9b59b6">+  -  *  /</code></td>
+      <td style="color:#6c7a8e">Arithmetik (n-är!)</td>
+      <td style="color:#c3e88d;font-size:11px">(+ 1 2 3) → 6  (* 2 3 4) → 24</td>
+    </tr>
+    <tr class="cr" data-m="quotient remainder" data-d="ganzzahl-division und rest">
+      <td style="width:220px"><code style="color:#9b59b6">quotient remainder</code></td>
+      <td style="color:#6c7a8e">Ganzzahl-Division und Rest</td>
+      <td style="color:#c3e88d;font-size:11px">(quotient 10 3) → 3</td>
+    </tr>
+    <tr class="cr" data-m="modulo" data-d="modulo (immer positiv bei pos. div)">
+      <td style="width:220px"><code style="color:#9b59b6">modulo</code></td>
+      <td style="color:#6c7a8e">Modulo (immer positiv bei pos. div)</td>
+      <td style="color:#c3e88d;font-size:11px">(modulo -7 3) → 2</td>
+    </tr>
+    <tr class="cr" data-m="expt" data-d="potenz">
+      <td style="width:220px"><code style="color:#9b59b6">expt</code></td>
+      <td style="color:#6c7a8e">Potenz</td>
+      <td style="color:#c3e88d;font-size:11px">(expt 2 10) → 1024</td>
+    </tr>
+    <tr class="cr" data-m="sqrt" data-d="quadratwurzel (exact wenn möglich)">
+      <td style="width:220px"><code style="color:#9b59b6">sqrt</code></td>
+      <td style="color:#6c7a8e">Quadratwurzel (exact wenn möglich)</td>
+      <td style="color:#c3e88d;font-size:11px">(sqrt 4) → 2  (sqrt 2) → 1.414...</td>
+    </tr>
+    <tr class="cr" data-m="abs" data-d="absolutwert">
+      <td style="width:220px"><code style="color:#9b59b6">abs</code></td>
+      <td style="color:#6c7a8e">Absolutwert</td>
+      <td style="color:#c3e88d;font-size:11px">(abs -5) → 5</td>
+    </tr>
+    <tr class="cr" data-m="floor ceiling round truncate" data-d="runden">
+      <td style="width:220px"><code style="color:#9b59b6">floor ceiling round truncate</code></td>
+      <td style="color:#6c7a8e">Runden</td>
+      <td style="color:#c3e88d;font-size:11px">(floor 3.7) → 3.0</td>
+    </tr>
+    <tr class="cr" data-m="max min" data-d="maximum / minimum">
+      <td style="width:220px"><code style="color:#9b59b6">max min</code></td>
+      <td style="color:#6c7a8e">Maximum / Minimum</td>
+      <td style="color:#c3e88d;font-size:11px">(max 1 3 2) → 3</td>
+    </tr>
+    <tr class="cr" data-m="gcd lcm" data-d="größter gem. teiler / kgv">
+      <td style="width:220px"><code style="color:#9b59b6">gcd lcm</code></td>
+      <td style="color:#6c7a8e">Größter gem. Teiler / kgV</td>
+      <td style="color:#c3e88d;font-size:11px">(gcd 12 8) → 4</td>
+    </tr>
+    <tr class="cr" data-m="exact inexact" data-d="konvertierung (r7rs)">
+      <td style="width:220px"><code style="color:#9b59b6">exact inexact</code></td>
+      <td style="color:#6c7a8e">Konvertierung (R7RS)</td>
+      <td style="color:#c3e88d;font-size:11px">(exact 1.5) → 3/2</td>
+    </tr>
+    <tr class="cr" data-m="exact-&gt;inexact" data-d="zu floating-point">
+      <td style="width:220px"><code style="color:#9b59b6">exact-&gt;inexact</code></td>
+      <td style="color:#6c7a8e">zu Floating-Point</td>
+      <td style="color:#c3e88d;font-size:11px">(exact-&gt;inexact 1/3) → 0.333...</td>
+    </tr>
+    <tr class="cr" data-m="number-&gt;string" data-d="zahl zu string">
+      <td style="width:220px"><code style="color:#9b59b6">number-&gt;string</code></td>
+      <td style="color:#6c7a8e">Zahl zu String</td>
+      <td style="color:#c3e88d;font-size:11px">(number-&gt;string 255 16) → "ff"</td>
+    </tr>
+    <tr class="cr" data-m="string-&gt;number" data-d="string zu zahl">
+      <td style="width:220px"><code style="color:#9b59b6">string-&gt;number</code></td>
+      <td style="color:#6c7a8e">String zu Zahl</td>
+      <td style="color:#c3e88d;font-size:11px">(string-&gt;number "ff" 16) → 255</td>
+    </tr>
+    <tr class="cr" data-m="zero? positive? negative?" data-d="vorzeichen-prädikate">
+      <td style="width:220px"><code style="color:#9b59b6">zero? positive? negative?</code></td>
+      <td style="color:#6c7a8e">Vorzeichen-Prädikate</td>
+      <td style="color:#c3e88d;font-size:11px">(zero? 0) → #t</td>
+    </tr>
+    <tr class="cr" data-m="odd? even?" data-d="gerade/ungerade">
+      <td style="width:220px"><code style="color:#9b59b6">odd? even?</code></td>
+      <td style="color:#6c7a8e">Gerade/Ungerade</td>
+      <td style="color:#c3e88d;font-size:11px">(even? 4) → #t</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Listen (R7RS + SRFI-1)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Form</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="(cons x lst)" data-d="element vorne anfügen">
+      <td style="width:220px"><code style="color:#4fc3f7">(cons x lst)</code></td>
+      <td style="color:#6c7a8e">Element vorne anfügen</td>
+      <td style="color:#c3e88d;font-size:11px">(cons 1 '(2 3)) → (1 2 3)</td>
+    </tr>
+    <tr class="cr" data-m="(car lst)" data-d="erstes element">
+      <td style="width:220px"><code style="color:#4fc3f7">(car lst)</code></td>
+      <td style="color:#6c7a8e">Erstes Element</td>
+      <td style="color:#c3e88d;font-size:11px">(car '(1 2 3)) → 1</td>
+    </tr>
+    <tr class="cr" data-m="(cdr lst)" data-d="rest ohne erstes element">
+      <td style="width:220px"><code style="color:#4fc3f7">(cdr lst)</code></td>
+      <td style="color:#6c7a8e">Rest ohne erstes Element</td>
+      <td style="color:#c3e88d;font-size:11px">(cdr '(1 2 3)) → (2 3)</td>
+    </tr>
+    <tr class="cr" data-m="(list x ...)" data-d="liste erstellen">
+      <td style="width:220px"><code style="color:#4fc3f7">(list x ...)</code></td>
+      <td style="color:#6c7a8e">Liste erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">(list 1 2 3) → (1 2 3)</td>
+    </tr>
+    <tr class="cr" data-m="(length lst)" data-d="länge">
+      <td style="width:220px"><code style="color:#4fc3f7">(length lst)</code></td>
+      <td style="color:#6c7a8e">Länge</td>
+      <td style="color:#c3e88d;font-size:11px">(length '(1 2 3)) → 3</td>
+    </tr>
+    <tr class="cr" data-m="(append lst...)" data-d="listen verbinden">
+      <td style="width:220px"><code style="color:#4fc3f7">(append lst...)</code></td>
+      <td style="color:#6c7a8e">Listen verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">(append '(1 2) '(3 4)) → (1 2 3 4)</td>
+    </tr>
+    <tr class="cr" data-m="(reverse lst)" data-d="umkehren">
+      <td style="width:220px"><code style="color:#4fc3f7">(reverse lst)</code></td>
+      <td style="color:#6c7a8e">Umkehren</td>
+      <td style="color:#c3e88d;font-size:11px">(reverse '(1 2 3)) → (3 2 1)</td>
+    </tr>
+    <tr class="cr" data-m="(list-ref lst i)" data-d="element bei index (0-basiert)">
+      <td style="width:220px"><code style="color:#4fc3f7">(list-ref lst i)</code></td>
+      <td style="color:#6c7a8e">Element bei Index (0-basiert)</td>
+      <td style="color:#c3e88d;font-size:11px">(list-ref '(a b c) 1) → b</td>
+    </tr>
+    <tr class="cr" data-m="(list-tail lst i)" data-d="tail ab position i">
+      <td style="width:220px"><code style="color:#4fc3f7">(list-tail lst i)</code></td>
+      <td style="color:#6c7a8e">Tail ab Position i</td>
+      <td style="color:#c3e88d;font-size:11px">(list-tail '(a b c) 1) → (b c)</td>
+    </tr>
+    <tr class="cr" data-m="(map f lst...)" data-d="funktion auf alle anwenden">
+      <td style="width:220px"><code style="color:#4fc3f7">(map f lst...)</code></td>
+      <td style="color:#6c7a8e">Funktion auf alle anwenden</td>
+      <td style="color:#c3e88d;font-size:11px">(map car '((1 2) (3 4))) → (1 3)</td>
+    </tr>
+    <tr class="cr" data-m="(for-each f lst)" data-d="iteration (gibt void)">
+      <td style="width:220px"><code style="color:#4fc3f7">(for-each f lst)</code></td>
+      <td style="color:#6c7a8e">Iteration (gibt void)</td>
+      <td style="color:#c3e88d;font-size:11px">(for-each display '(1 2 3))</td>
+    </tr>
+    <tr class="cr" data-m="(filter pred lst)" data-d="filtern [srfi-1]">
+      <td style="width:220px"><code style="color:#4fc3f7">(filter pred lst)</code></td>
+      <td style="color:#6c7a8e">Filtern [SRFI-1]</td>
+      <td style="color:#c3e88d;font-size:11px">(filter odd? '(1 2 3 4)) → (1 3)</td>
+    </tr>
+    <tr class="cr" data-m="(fold-right f i lst)" data-d="von rechts falten [srfi-1]">
+      <td style="width:220px"><code style="color:#4fc3f7">(fold-right f i lst)</code></td>
+      <td style="color:#6c7a8e">Von rechts falten [SRFI-1]</td>
+      <td style="color:#c3e88d;font-size:11px">(fold-right + 0 '(1 2 3)) → 6</td>
+    </tr>
+    <tr class="cr" data-m="(fold-left f i lst)" data-d="von links falten [srfi-1]">
+      <td style="width:220px"><code style="color:#4fc3f7">(fold-left f i lst)</code></td>
+      <td style="color:#6c7a8e">Von links falten [SRFI-1]</td>
+      <td style="color:#c3e88d;font-size:11px">(fold-left + 0 '(1 2 3)) → 6</td>
+    </tr>
+    <tr class="cr" data-m="(find pred lst)" data-d="erstes passendes element">
+      <td style="width:220px"><code style="color:#4fc3f7">(find pred lst)</code></td>
+      <td style="color:#6c7a8e">Erstes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px">(find even? '(1 2 3)) → 2</td>
+    </tr>
+    <tr class="cr" data-m="(any pred lst)" data-d="mindestens eines passt?">
+      <td style="width:220px"><code style="color:#4fc3f7">(any pred lst)</code></td>
+      <td style="color:#6c7a8e">Mindestens eines passt?</td>
+      <td style="color:#c3e88d;font-size:11px">(any even? '(1 2 3)) → #t</td>
+    </tr>
+    <tr class="cr" data-m="(every pred lst)" data-d="alle passen?">
+      <td style="width:220px"><code style="color:#4fc3f7">(every pred lst)</code></td>
+      <td style="color:#6c7a8e">Alle passen?</td>
+      <td style="color:#c3e88d;font-size:11px">(every odd? '(1 3 5)) → #t</td>
+    </tr>
+    <tr class="cr" data-m="(member x lst)" data-d="tail ab treffer (eqv?)">
+      <td style="width:220px"><code style="color:#4fc3f7">(member x lst)</code></td>
+      <td style="color:#6c7a8e">Tail ab Treffer (eqv?)</td>
+      <td style="color:#c3e88d;font-size:11px">(member 3 '(1 2 3 4)) → (3 4)</td>
+    </tr>
+    <tr class="cr" data-m="(assoc key alist)" data-d="assoziation suchen (equal?)">
+      <td style="width:220px"><code style="color:#4fc3f7">(assoc key alist)</code></td>
+      <td style="color:#6c7a8e">Assoziation suchen (equal?)</td>
+      <td style="color:#c3e88d;font-size:11px">(assoc 'b '((a 1)(b 2))) → (b 2)</td>
+    </tr>
+    <tr class="cr" data-m="(sort lst less?)" data-d="sortieren">
+      <td style="width:220px"><code style="color:#4fc3f7">(sort lst less?)</code></td>
+      <td style="color:#6c7a8e">Sortieren</td>
+      <td style="color:#c3e88d;font-size:11px">(sort '(3 1 2) &lt;) → (1 2 3)</td>
+    </tr>
+    <tr class="cr" data-m="(iota n)" data-d="range 0..n-1 [srfi-1]">
+      <td style="width:220px"><code style="color:#4fc3f7">(iota n)</code></td>
+      <td style="color:#6c7a8e">Range 0..n-1 [SRFI-1]</td>
+      <td style="color:#c3e88d;font-size:11px">(iota 5) → (0 1 2 3 4)</td>
+    </tr>
+    <tr class="cr" data-m="(iota n start step)" data-d="range mit start/schritt">
+      <td style="width:220px"><code style="color:#4fc3f7">(iota n start step)</code></td>
+      <td style="color:#6c7a8e">Range mit Start/Schritt</td>
+      <td style="color:#c3e88d;font-size:11px">(iota 5 1) → (1 2 3 4 5)</td>
+    </tr>
+    <tr class="cr" data-m="(flatten lst)" data-d="verschachtelung auflösen [srfi]">
+      <td style="width:220px"><code style="color:#4fc3f7">(flatten lst)</code></td>
+      <td style="color:#6c7a8e">Verschachtelung auflösen [SRFI]</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(delete-duplicates)" data-d="duplikate entfernen [srfi-1]">
+      <td style="width:220px"><code style="color:#4fc3f7">(delete-duplicates)</code></td>
+      <td style="color:#6c7a8e">Duplikate entfernen [SRFI-1]</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Strings &amp; I/O
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Form</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="(string-length s)" data-d="länge">
+      <td style="width:220px"><code style="color:#c792ea">(string-length s)</code></td>
+      <td style="color:#6c7a8e">Länge</td>
+      <td style="color:#c3e88d;font-size:11px">(string-length "Hallo") → 5</td>
+    </tr>
+    <tr class="cr" data-m="(string-ref s i)" data-d="zeichen bei index">
+      <td style="width:220px"><code style="color:#c792ea">(string-ref s i)</code></td>
+      <td style="color:#6c7a8e">Zeichen bei Index</td>
+      <td style="color:#c3e88d;font-size:11px">(string-ref "Hallo" 0) → #\H</td>
+    </tr>
+    <tr class="cr" data-m="(substring s i j)" data-d="teilstring">
+      <td style="width:220px"><code style="color:#c792ea">(substring s i j)</code></td>
+      <td style="color:#6c7a8e">Teilstring</td>
+      <td style="color:#c3e88d;font-size:11px">(substring "Hallo" 1 4) → "all"</td>
+    </tr>
+    <tr class="cr" data-m="(string-append s...)" data-d="verbinden">
+      <td style="width:220px"><code style="color:#c792ea">(string-append s...)</code></td>
+      <td style="color:#6c7a8e">Verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">(string-append "Ha" "llo") → "Hallo"</td>
+    </tr>
+    <tr class="cr" data-m="(string-&gt;list s)" data-d="string zu zeichenliste">
+      <td style="width:220px"><code style="color:#c792ea">(string-&gt;list s)</code></td>
+      <td style="color:#6c7a8e">String zu Zeichenliste</td>
+      <td style="color:#c3e88d;font-size:11px">(string-&gt;list "Hallo") → (#\H ...)</td>
+    </tr>
+    <tr class="cr" data-m="(list-&gt;string lst)" data-d="zeichenliste zu string">
+      <td style="width:220px"><code style="color:#c792ea">(list-&gt;string lst)</code></td>
+      <td style="color:#6c7a8e">Zeichenliste zu String</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(string-upcase s)" data-d="großbuchstaben">
+      <td style="width:220px"><code style="color:#c792ea">(string-upcase s)</code></td>
+      <td style="color:#6c7a8e">Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">(string-upcase "hallo") → "HALLO"</td>
+    </tr>
+    <tr class="cr" data-m="(string-downcase s)" data-d="kleinbuchstaben">
+      <td style="width:220px"><code style="color:#c792ea">(string-downcase s)</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(string=? a b)" data-d="gleich?">
+      <td style="width:220px"><code style="color:#c792ea">(string=? a b)</code></td>
+      <td style="color:#6c7a8e">Gleich?</td>
+      <td style="color:#c3e88d;font-size:11px">(string=? "a" "a") → #t</td>
+    </tr>
+    <tr class="cr" data-m="(string&lt;? a b)" data-d="kleiner?">
+      <td style="width:220px"><code style="color:#c792ea">(string&lt;? a b)</code></td>
+      <td style="color:#6c7a8e">Kleiner?</td>
+      <td style="color:#c3e88d;font-size:11px">(string&lt;? "abc" "abd") → #t</td>
+    </tr>
+    <tr class="cr" data-m="(number-&gt;string n)" data-d="zahl zu string">
+      <td style="width:220px"><code style="color:#c792ea">(number-&gt;string n)</code></td>
+      <td style="color:#6c7a8e">Zahl zu String</td>
+      <td style="color:#c3e88d;font-size:11px">(number-&gt;string 42) → "42"</td>
+    </tr>
+    <tr class="cr" data-m="(string-&gt;number s)" data-d="string zu zahl">
+      <td style="width:220px"><code style="color:#c792ea">(string-&gt;number s)</code></td>
+      <td style="color:#6c7a8e">String zu Zahl</td>
+      <td style="color:#c3e88d;font-size:11px">(string-&gt;number "3.14") → 3.14</td>
+    </tr>
+    <tr class="cr" data-m="(symbol-&gt;string sym)" data-d="symbol zu string">
+      <td style="width:220px"><code style="color:#c792ea">(symbol-&gt;string sym)</code></td>
+      <td style="color:#6c7a8e">Symbol zu String</td>
+      <td style="color:#c3e88d;font-size:11px">(symbol-&gt;string 'hello) → "hello"</td>
+    </tr>
+    <tr class="cr" data-m="(string-&gt;symbol s)" data-d="string zu symbol">
+      <td style="width:220px"><code style="color:#c792ea">(string-&gt;symbol s)</code></td>
+      <td style="color:#6c7a8e">String zu Symbol</td>
+      <td style="color:#c3e88d;font-size:11px">(string-&gt;symbol "hello") → hello</td>
+    </tr>
+    <tr class="cr" data-m="(display x)" data-d="ausgabe (ohne anführungszeichen)">
+      <td style="width:220px"><code style="color:#c792ea">(display x)</code></td>
+      <td style="color:#6c7a8e">Ausgabe (ohne Anführungszeichen)</td>
+      <td style="color:#c3e88d;font-size:11px">(display "Hi") gibt Hi aus</td>
+    </tr>
+    <tr class="cr" data-m="(write x)" data-d="ausgabe (mit anführungszeichen)">
+      <td style="width:220px"><code style="color:#c792ea">(write x)</code></td>
+      <td style="color:#6c7a8e">Ausgabe (mit Anführungszeichen)</td>
+      <td style="color:#c3e88d;font-size:11px">(write "Hi") gibt "Hi" aus</td>
+    </tr>
+    <tr class="cr" data-m="(newline)" data-d="zeilenumbruch">
+      <td style="width:220px"><code style="color:#c792ea">(newline)</code></td>
+      <td style="color:#6c7a8e">Zeilenumbruch</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(read)" data-d="ausdruck von stdin lesen">
+      <td style="width:220px"><code style="color:#c792ea">(read)</code></td>
+      <td style="color:#6c7a8e">Ausdruck von stdin lesen</td>
+      <td style="color:#c3e88d;font-size:11px">Wartet auf Eingabe</td>
+    </tr>
+    <tr class="cr" data-m="(read-char)" data-d="ein zeichen lesen">
+      <td style="width:220px"><code style="color:#c792ea">(read-char)</code></td>
+      <td style="color:#6c7a8e">Ein Zeichen lesen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(read-line)" data-d="eine zeile lesen">
+      <td style="width:220px"><code style="color:#c792ea">(read-line)</code></td>
+      <td style="color:#6c7a8e">Eine Zeile lesen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(with-output-to-string thunk)" data-d="output in string">
+      <td style="width:220px"><code style="color:#c792ea">(with-output-to-string thunk)</code></td>
+      <td style="color:#6c7a8e">Output in String</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="(open-input-string s)" data-d="string als port">
+      <td style="width:220px"><code style="color:#c792ea">(open-input-string s)</code></td>
+      <td style="color:#6c7a8e">String als Port</td>
+      <td style="color:#c3e88d;font-size:11px">Für String-Parsing</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #9b59b6;color:#9b59b6;background:rgba(155,89,182,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Rekursion &amp; Akkumulatoren</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Lazy Streams (SICP-Stil)</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">OOP mit Closures</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Makros: eigene Kontrollstrukturen</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Scheme-Idiome für effiziente Rekursion</span>
+
+<span style="color:#546e7a">; ── NAIVE VS. TAIL-RECURSIVE ─────────────────────────────────────</span>
+
+<span style="color:#546e7a">; Naiv (exponentieller Stack!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fak-naiv</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">1</span>
+      <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">n</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fak-naiv</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Tail-recursive (konstanter Stack!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fak</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">hilf</span> <span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">acc</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">acc</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">hilf</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">acc</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">hilf</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Noch kürzer mit named let</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fak2</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">acc</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">acc</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">acc</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── MEHRERE RÜCKGABEWERTE ─────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">statistik</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">length</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">summe</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">apply</span> <span style="color:#82aaff">+</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mittel</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">/</span> <span style="color:#4ec9b0">summe</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">varianz</span>
+             <span style="color:#9b59b6">(</span><span style="color:#82aaff">/</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">apply</span> <span style="color:#82aaff">+</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">map</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">expt</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">mittel</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+                <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">values</span> <span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">summe</span> <span style="color:#4ec9b0">mittel</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">sqrt</span> <span style="color:#4ec9b0">varianz</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">call-with-values</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">statistik</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">2</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">6</span> <span style="color:#f78c6c">8</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">s</span> <span style="color:#4ec9b0">m</span> <span style="color:#4ec9b0">sd</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">n</span> <span style="color:#4ec9b0">n</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">sum</span> <span style="color:#4ec9b0">s</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">mean</span> <span style="color:#4ec9b0">m</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">std</span> <span style="color:#4ec9b0">sd</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; (n 5 sum 30 mean 6 std 2.828...)</span>
+
+<span style="color:#546e7a">; ── MERGESORT ──────────────────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mergesort</span> <span style="color:#4ec9b0">lst</span> <span style="color:#82aaff">less?</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">merge</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">cond</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+          <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span>
+          <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">less?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+           <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">merge</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cdr</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+          <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span>
+           <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">merge</span> <span style="color:#4ec9b0">a</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cdr</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">teile</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cdr</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">values</span> <span style="color:#4ec9b0">lst</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">call-with-values</span>
+          <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">teile</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cddr</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+          <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+            <span style="color:#9b59b6">(</span><span style="color:#c792ea">values</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">a</span><span style="color:#9b59b6">)</span>
+                    <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cadr</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cdr</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+      <span style="color:#4ec9b0">lst</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">call-with-values</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">teile</span> <span style="color:#4ec9b0">lst</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+          <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">merge</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mergesort</span> <span style="color:#4ec9b0">a</span> <span style="color:#82aaff">less?</span><span style="color:#9b59b6">)</span>
+                 <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mergesort</span> <span style="color:#4ec9b0">b</span> <span style="color:#82aaff">less?</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mergesort</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">3</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">9</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">6</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span> <span style="color:#82aaff">&lt;</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; (1 1 2 3 4 5 5 6 9)</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Lazy Evaluation mit Streams (SICP Kapitel 3)</span>
+<span style="color:#546e7a">; Unendliche Datenstrukturen durch verzögerte Auswertung!</span>
+
+<span style="color:#546e7a">; ── STREAM-IMPLEMENTIERUNG ────────────────────────────────────────</span>
+<span style="color:#546e7a">; Ein Stream ist entweder leer oder ein Paar (head . promise-of-tail)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">cons-stream</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">cons-stream</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#4ec9b0">a</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">delay</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; b wird NICHT sofort ausgewertet!</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">stream-car</span> <span style="color:#82aaff">car</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">force</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#82aaff">stream-null?</span> <span style="color:#82aaff">null?</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">the-empty-stream</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── STREAM-OPERATIONEN ────────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-ref</span> <span style="color:#4ec9b0">s</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-ref</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-take</span> <span style="color:#4ec9b0">s</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">or</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">=</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">stream-null?</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+      <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>
+            <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-take</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-map</span> <span style="color:#4ec9b0">f</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">stream-null?</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>
+      <span style="color:#4ec9b0">the-empty-stream</span>
+      <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">cons-stream</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">f</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+                   <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-map</span> <span style="color:#4ec9b0">f</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-filter</span> <span style="color:#4ec9b0">pred</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">cond</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">stream-null?</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">the-empty-stream</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">pred</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">cons-stream</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span>
+                      <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-filter</span> <span style="color:#4ec9b0">pred</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-filter</span> <span style="color:#4ec9b0">pred</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">s</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── UNENDLICHE STREAMS ────────────────────────────────────────────</span>
+<span style="color:#546e7a">; Integers ab n (unendlich!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">integers-from</span> <span style="color:#4ec9b0">n</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">cons-stream</span> <span style="color:#4ec9b0">n</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">integers-from</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">n</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">ganze-zahlen</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">integers-from</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Erste 10 Zahlen</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-take</span> <span style="color:#4ec9b0">ganze-zahlen</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; (1 2 3 4 5 6 7 8 9 10)</span>
+
+<span style="color:#546e7a">; Alle geraden Zahlen (unendlich!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">geraden</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-filter</span> <span style="color:#82aaff">even?</span> <span style="color:#4ec9b0">ganze-zahlen</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-take</span> <span style="color:#4ec9b0">geraden</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; (2 4 6 8 10)</span>
+
+<span style="color:#546e7a">; Fibonacci-Stream (elegant!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">fibs</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">fib-gen</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">a</span> <span style="color:#f78c6c">0</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">b</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">cons-stream</span> <span style="color:#4ec9b0">a</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fib-gen</span> <span style="color:#4ec9b0">b</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">a</span> <span style="color:#4ec9b0">b</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-take</span> <span style="color:#4ec9b0">fibs</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; (0 1 1 2 3 5 8 13 21 34)</span>
+
+<span style="color:#546e7a">; Primzahlen via Sieb (SICP-Klassiker!)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">sieb</span> <span style="color:#4ec9b0">stream</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">cons-stream</span>
+    <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">stream</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">sieb</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-filter</span>
+            <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">not</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">zero?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">remainder</span> <span style="color:#4ec9b0">x</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-car</span> <span style="color:#4ec9b0">stream</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+            <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-cdr</span> <span style="color:#4ec9b0">stream</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">primzahlen</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">sieb</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">integers-from</span> <span style="color:#f78c6c">2</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">stream-take</span> <span style="color:#4ec9b0">primzahlen</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; (2 3 5 7 11 13 17 19 23 29)</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Objektorientierung in Scheme mit Closures!</span>
+<span style="color:#546e7a">; Kein class-Schlüsselwort nötig – Closures sind Objekte</span>
+
+<span style="color:#546e7a">; ── EINFACHES OBJEKT-SYSTEM ──────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-tier</span> <span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">laut</span><span style="color:#9b59b6">)</span>
+  <span style="color:#546e7a">; Interner State</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">name</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">laut</span> <span style="color:#4ec9b0">laut</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">energie</span> <span style="color:#f78c6c">100</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+    <span style="color:#546e7a">; Dispatch-Funktion (das "Objekt")</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">nachricht</span> <span style="color:#4ec9b0">.</span> <span style="color:#4ec9b0">args</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">cond</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">name</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">name</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">laut</span><span style="color:#9b59b6">)</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">laut</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">status</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#82aaff">list</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">name</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">energie</span> <span style="color:#4ec9b0">energie</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">iss!</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">menge</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">null?</span> <span style="color:#4ec9b0">args</span><span style="color:#9b59b6">)</span> <span style="color:#f78c6c">10</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">args</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+           <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">energie</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">+</span> <span style="color:#4ec9b0">energie</span> <span style="color:#4ec9b0">menge</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+           <span style="color:#4ec9b0">energie</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">schlaf!</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">energie</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">-</span> <span style="color:#4ec9b0">energie</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+         <span style="color:#4ec9b0">energie</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">error</span> <span style="color:#c3e88d">"Unbekannte Nachricht"</span> <span style="color:#4ec9b0">nachricht</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Instanzen erstellen</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">hund</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-tier</span> <span style="color:#c3e88d">"Rex"</span> <span style="color:#c3e88d">"Wuff!"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">katze</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-tier</span> <span style="color:#c3e88d">"Minka"</span> <span style="color:#c3e88d">"Miau!"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Nachrichten senden</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">hund</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">name</span><span style="color:#9b59b6">)</span>          <span style="color:#546e7a">; =&gt; "Rex"</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">katze</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">laut</span><span style="color:#9b59b6">)</span>         <span style="color:#546e7a">; Gibt "Miau!" aus</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">hund</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">iss!</span> <span style="color:#f78c6c">20</span><span style="color:#9b59b6">)</span>       <span style="color:#546e7a">; =&gt; 120  (Energie)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">hund</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">status</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; =&gt; (name "Rex" energie 120)</span>
+
+<span style="color:#546e7a">; ── VERERBUNG MIT DELEGATION ─────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-hund</span> <span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">rasse</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">eltern</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-tier</span> <span style="color:#4ec9b0">name</span> <span style="color:#c3e88d">"Wuff!"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">rasse</span> <span style="color:#4ec9b0">rasse</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">nachricht</span> <span style="color:#4ec9b0">.</span> <span style="color:#4ec9b0">args</span><span style="color:#9b59b6">)</span>
+      <span style="color:#9b59b6">(</span><span style="color:#c792ea">cond</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">rasse</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">rasse</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">vorstellen</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">string-append</span> <span style="color:#4ec9b0">name</span> <span style="color:#c3e88d">" ist ein "</span> <span style="color:#4ec9b0">rasse</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#82aaff">newline</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+        <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">apply</span> <span style="color:#4ec9b0">eltern</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">cons</span> <span style="color:#4ec9b0">nachricht</span> <span style="color:#4ec9b0">args</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#546e7a">; Delegation!</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">rex</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-hund</span> <span style="color:#c3e88d">"Rex"</span> <span style="color:#c3e88d">"Labrador"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">rex</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">name</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; =&gt; "Rex"    (delegiert an eltern)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">rex</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">rasse</span><span style="color:#9b59b6">)</span>       <span style="color:#546e7a">; =&gt; "Labrador"</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">rex</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">vorstellen</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; "Rex ist ein Labrador"</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">rex</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">iss!</span> <span style="color:#f78c6c">10</span><span style="color:#9b59b6">)</span>     <span style="color:#546e7a">; =&gt; 110  (delegiert)</span>
+
+<span style="color:#546e7a">; ── RECORD-TYPEN (R7RS) ──────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-record-type</span> <span style="color:#4ec9b0">&lt;Person&gt;</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-person</span> <span style="color:#4ec9b0">name</span> <span style="color:#4ec9b0">alter</span> <span style="color:#4ec9b0">email</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; Konstruktor</span>
+  <span style="color:#82aaff">person?</span>                           <span style="color:#546e7a">; Prädikat</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">name</span>    <span style="color:#4ec9b0">person-name</span><span style="color:#9b59b6">)</span>             <span style="color:#546e7a">; Getter (read-only)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">alter</span>   <span style="color:#4ec9b0">person-alter</span> <span style="color:#4ec9b0">set-alter!</span><span style="color:#9b59b6">)</span> <span style="color:#546e7a">; Getter + Setter</span>
+  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">email</span>   <span style="color:#4ec9b0">person-email</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">alice</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">mache-person</span> <span style="color:#c3e88d">"Alice"</span> <span style="color:#f78c6c">30</span> <span style="color:#c3e88d">"alice@example.com"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">person?</span> <span style="color:#4ec9b0">alice</span><span style="color:#9b59b6">)</span>        <span style="color:#546e7a">; =&gt; #t</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">person-name</span> <span style="color:#4ec9b0">alice</span><span style="color:#9b59b6">)</span>    <span style="color:#546e7a">; =&gt; "Alice"</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">person-alter</span> <span style="color:#4ec9b0">alice</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 30</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">set-alter!</span> <span style="color:#4ec9b0">alice</span> <span style="color:#f78c6c">31</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">person-alter</span> <span style="color:#4ec9b0">alice</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; 31</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">; Scheme Macros ermöglichen neue Kontrollstrukturen!</span>
+<span style="color:#546e7a">; Die Sprache erweitern statt Bibliotheken zu nutzen</span>
+
+<span style="color:#546e7a">; ── WHILE MIT ERGEBNIS ────────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">while</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">while</span> <span style="color:#4ec9b0">test</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#4ec9b0">loop</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#4ec9b0">test</span>
+           <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span>
+                  <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">loop</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; ── FOR-SCHLEIFE ──────────────────────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#c792ea">for</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">in</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">for</span> <span style="color:#4ec9b0">var</span> <span style="color:#4ec9b0">in</span> <span style="color:#4ec9b0">liste</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#82aaff">for-each</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">lambda</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">var</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+               <span style="color:#4ec9b0">liste</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">for</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">in</span> <span style="color:#89ddff">'</span><span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">*</span> <span style="color:#4ec9b0">x</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#c3e88d">" "</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+<span style="color:#546e7a">; =&gt; 1 4 9 16 25</span>
+
+<span style="color:#546e7a">; ── LET-LIKE BINDING ──────────────────────────────────────────────</span>
+<span style="color:#546e7a">; "Fluid-let" – temporäres Überschreiben</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#4ec9b0">fluid-let</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fluid-let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">var</span> <span style="color:#4ec9b0">wert</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">alt-var</span> <span style="color:#4ec9b0">var</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">var</span> <span style="color:#4ec9b0">wert</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">...</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">ergebnis</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">set!</span> <span style="color:#4ec9b0">var</span> <span style="color:#4ec9b0">alt-var</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">...</span>
+         <span style="color:#4ec9b0">ergebnis</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#4ec9b0">*ausgabe*</span> <span style="color:#c3e88d">"normal"</span><span style="color:#9b59b6">)</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">fluid-let</span> <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">*ausgabe*</span> <span style="color:#c3e88d">"umgeleitet"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">*ausgabe*</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; "umgeleitet"</span>
+<span style="color:#9b59b6">(</span><span style="color:#82aaff">display</span> <span style="color:#4ec9b0">*ausgabe*</span><span style="color:#9b59b6">)</span>      <span style="color:#546e7a">; "normal"  (wiederhergestellt!)</span>
+
+<span style="color:#546e7a">; ── PATTERN MATCHING (vereinfacht) ────────────────────────────────</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define-syntax</span> <span style="color:#c792ea">match</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">syntax-rules</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span> <span style="color:#4ec9b0">_</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">ausdruck</span>
+       <span style="color:#9b59b6">(</span><span style="color:#c792ea">else</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">ausdruck</span>
+       <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">_</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+       <span style="color:#4ec9b0">rest</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">ausdruck</span>
+       <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#4ec9b0">operator</span> <span style="color:#4ec9b0">.</span> <span style="color:#4ec9b0">args</span><span style="color:#9b59b6">)</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+       <span style="color:#4ec9b0">rest</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#c792ea">and</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">pair?</span> <span style="color:#4ec9b0">ausdruck</span><span style="color:#9b59b6">)</span>
+              <span style="color:#9b59b6">(</span><span style="color:#82aaff">eq?</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">car</span> <span style="color:#4ec9b0">ausdruck</span><span style="color:#9b59b6">)</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">operator</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">ausdruck</span> <span style="color:#4ec9b0">rest</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">ausdruck</span>
+       <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">muster</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+       <span style="color:#4ec9b0">rest</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+     <span style="color:#9b59b6">(</span><span style="color:#c792ea">if</span> <span style="color:#9b59b6">(</span><span style="color:#82aaff">equal?</span> <span style="color:#4ec9b0">ausdruck</span> <span style="color:#89ddff">'</span><span style="color:#4ec9b0">muster</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">begin</span> <span style="color:#4ec9b0">körper</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span>
+         <span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">ausdruck</span> <span style="color:#4ec9b0">rest</span> <span style="color:#4ec9b0">...</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#546e7a">; Verwendung</span>
+<span style="color:#9b59b6">(</span><span style="color:#c792ea">define</span> <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">beschreibe</span> <span style="color:#4ec9b0">x</span><span style="color:#9b59b6">)</span>
+  <span style="color:#9b59b6">(</span><span style="color:#c792ea">match</span> <span style="color:#4ec9b0">x</span>
+    <span style="color:#9b59b6">(</span><span style="color:#f78c6c">0</span> <span style="color:#c3e88d">"null"</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#f78c6c">1</span> <span style="color:#c3e88d">"eins"</span><span style="color:#9b59b6">)</span>
+    <span style="color:#9b59b6">(</span><span style="color:#4ec9b0">_</span> <span style="color:#c3e88d">"andere Zahl"</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span><span style="color:#9b59b6">)</span>
+
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">beschreibe</span> <span style="color:#f78c6c">1</span><span style="color:#9b59b6">)</span>   <span style="color:#546e7a">; =&gt; "eins"</span>
+<span style="color:#9b59b6">(</span><span style="color:#4ec9b0">beschreibe</span> <span style="color:#f78c6c">42</span><span style="color:#9b59b6">)</span>  <span style="color:#546e7a">; =&gt; "andere Zahl"</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#9b59b60e;border:1px solid #9b59b644;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#9b59b6">Empfohlen:</strong> <code style="color:#ffb347">sudo pacman -S racket</code> (Arch) oder <code style="color:#ffb347">sudo pacman -S guile</code><br>SICP lesen: <a href="https://mitpress.mit.edu/sites/default/files/sicp/index.html" style="color:#d4a017">mitpress.mit.edu/sicp</a> – kostenlos online!</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #9b59b644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#9b59b60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b59b6">
+      <span style="display:inline-block;width:8px;height:8px;background:#9b59b6;border-radius:50%;margin-right:2px"></span>⚙ Scheme-Implementierungen
+    </span>
+    <span class="aa" style="color:#9b59b6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Implementierung / Ressource</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#9b59b6">Racket (empfohlen)</code></td><td style="color:#cdd6f4">racket-lang.org</td><td style="color:#6c7a8e">Mehr als Scheme: eigenes Makrosystem, Bibliotheken
+sudo pacman -S racket  |  racket --version</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">Guile (GNU)</code></td><td style="color:#cdd6f4">gnu.org/software/guile</td><td style="color:#6c7a8e">GNU Extension Language, gut für Scripting
+sudo pacman -S guile   |  guile --version</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">Chicken Scheme</code></td><td style="color:#cdd6f4">call-cc.org</td><td style="color:#6c7a8e">Kompiliert zu C, portabel
+sudo pacman -S chicken |  csi (REPL)</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">Chez Scheme</code></td><td style="color:#cdd6f4">cisco.github.io/ChezScheme</td><td style="color:#6c7a8e">Schnellste Implementierung (von Cisco)
+</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">MIT Scheme</code></td><td style="color:#cdd6f4">gnu.org/software/mit-scheme</td><td style="color:#6c7a8e">Original SICP-Implementierung
+sudo apt install mit-scheme  |  mit-scheme</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">Gambit</code></td><td style="color:#cdd6f4">gambitscheme.org</td><td style="color:#6c7a8e">Kompiliert zu C und JavaScript
+</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">Loko Scheme</code></td><td style="color:#cdd6f4">scheme.fail</td><td style="color:#6c7a8e">Modernes Scheme, bare-metal</td></tr><tr><td style="width:240px"><code style="color:#9b59b6">BiwaScheme</code></td><td style="color:#cdd6f4">biwascheme.org</td><td style="color:#6c7a8e">Scheme im Browser (JavaScript-Implementierung)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Racket – der modernste Dialekt
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Implementierung / Ressource</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">racket mein.rkt</code></td><td style="color:#cdd6f4">Script ausführen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">racket</code></td><td style="color:#cdd6f4">REPL starten</td><td style="color:#6c7a8e">Interaktiv</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">raco pkg install X</code></td><td style="color:#cdd6f4">Paket installieren</td><td style="color:#6c7a8e">raco pkg install rackunit</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">raco make mein.rkt</code></td><td style="color:#cdd6f4">Kompilieren</td><td style="color:#6c7a8e">Schnelleres Starten</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">raco test mein.rkt</code></td><td style="color:#cdd6f4">Tests ausführen</td><td style="color:#6c7a8e">Braucht rackunit</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">#lang racket</code></td><td style="color:#cdd6f4">Sprachauswahl</td><td style="color:#6c7a8e">Erste Zeile: Welche Sprache?</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">#lang scheme</code></td><td style="color:#cdd6f4">Reines Scheme in Racket</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">#lang typed/racket</code></td><td style="color:#cdd6f4">Statisch typisiertes Racket</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">DrRacket</code></td><td style="color:#cdd6f4">Graphische IDE</td><td style="color:#6c7a8e">Kinder-/SICP-freundlich</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Wichtige SRFIs
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Implementierung / Ressource</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">SRFI-1</code></td><td style="color:#cdd6f4">List Library</td><td style="color:#6c7a8e">filter, fold, iota, append-map, any, every...</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-9</code></td><td style="color:#cdd6f4">define-record-type</td><td style="color:#6c7a8e">Portable Record-Typen (in R7RS übernommen)</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-13</code></td><td style="color:#cdd6f4">String Libraries</td><td style="color:#6c7a8e">string-join, string-contains, string-trim...</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-26</code></td><td style="color:#cdd6f4">cut/cute (Partial Apply)</td><td style="color:#6c7a8e">(cut + &lt;&gt; 1) = (lambda (x) (+ x 1))</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-41</code></td><td style="color:#cdd6f4">Streams</td><td style="color:#6c7a8e">Offizielle Stream-Bibliothek</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-45</code></td><td style="color:#cdd6f4">Iterative Laziness</td><td style="color:#6c7a8e">Besseres delay/force</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-64</code></td><td style="color:#cdd6f4">Testing Framework</td><td style="color:#6c7a8e">Portable Tests</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SRFI-69</code></td><td style="color:#cdd6f4">Hash Tables</td><td style="color:#6c7a8e">(make-hash-table) (hash-table-set! ...)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Lernressourcen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Implementierung / Ressource</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">SICP (Pflicht!)</code></td><td style="color:#cdd6f4">mitpress.mit.edu/sicp</td><td style="color:#6c7a8e">Structure and Interpretation of Computer Programs
+Kostenlos online, die Bibel der funktionalen Prog.</td></tr><tr><td style="width:240px"><code style="color:#ffb347">The Little Schemer</code></td><td style="color:#cdd6f4">MIT Press</td><td style="color:#6c7a8e">Rekursion lernen durch Dialog
+Sehr empfohlen für Anfänger</td></tr><tr><td style="width:240px"><code style="color:#ffb347">The Seasoned Schemer</code></td><td style="color:#cdd6f4">MIT Press</td><td style="color:#6c7a8e">Fortsetzung: Continuations, call/cc</td></tr><tr><td style="width:240px"><code style="color:#ffb347">R7RS Standard</code></td><td style="color:#cdd6f4">small.r7rs.org</td><td style="color:#6c7a8e">Offizieller Standard (kurz! 80 Seiten)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">SICP-Vorlesungen</code></td><td style="color:#cdd6f4">youtube.com</td><td style="color:#6c7a8e">Originale Vorlesungen von 1986 auf YouTube!</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Racket Guide</code></td><td style="color:#cdd6f4">docs.racket-lang.org</td><td style="color:#6c7a8e">docs.racket-lang.org/guide</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Schemers.org</code></td><td style="color:#cdd6f4">schemers.org</td><td style="color:#6c7a8e">Community, SRFIs, Implementierungen</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#9b59b6';
+      btn.style.color       = '#9b59b6';
+      btn.style.background  = 'rgba(155,89,182,.08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

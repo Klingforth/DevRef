@@ -1,0 +1,2332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fortran Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #4b6fa8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(75, 111, 168, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#4b6fa8">&#x2211;</span>
+      <span style="color:#4b6fa8">Fortran</span> Syntax
+    </div>
+    <div id="hdr-sub">Fortran 2018/2023 · Arrays · LAPACK · OpenMP · Coarrays · HPC · seit 1957</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="arrays">Arrays</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="procs">Prozeduren & Module</button>
+    <button class="tb" data-tab="io">I/O & Format</button>
+    <button class="tb" data-tab="modern">Modernes Fortran</button>
+    <button class="tb" data-tab="intrinsics">Intrinsics</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#4b6fa80e;border:1px solid #4b6fa844;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#4fc3f7">Fortran (1957) – die erste höhere Programmiersprache.</strong>
+  Noch heute unschlagbar fuer numerische Berechnungen.<br>
+  <span style="color:#cdd6f4">
+    Pflicht: <code style="color:#c3e88d">implicit none</code> &nbsp;·&nbsp;
+    Arrays sind <code style="color:#c3e88d">1-basiert</code> und
+    <code style="color:#c3e88d">Column-Major</code> &nbsp;·&nbsp;
+    Gross-/Kleinschreibung <code style="color:#c3e88d">egal</code> &nbsp;·&nbsp;
+    Verwende <code style="color:#c3e88d">real(real64)</code> statt <code style="color:#e05252">double precision</code>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>Geschichte &amp; Besonderheiten
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="geschichte &amp; besonderheiten">
+  <div style="color:#4b6fa8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Geschichte &amp; Besonderheiten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Fortran = Formula Translation (1957, IBM, John Backus)</span>
+<span style="color:#546e7a">! ERSTE höhere Programmiersprache der Welt</span>
+<span style="color:#546e7a">! Dominiert noch heute: HPC, Wetterprediction, Physik, FEM-Simulation</span>
+<span style="color:#546e7a">!</span>
+<span style="color:#546e7a">! Warum noch relevant?</span>
+<span style="color:#546e7a">! - Schnellste Sprache für numerische Berechnungen (mit C konkurrierend)</span>
+<span style="color:#546e7a">! - Array-Operationen NATIV (kein numpy nötig!)</span>
+<span style="color:#546e7a">! - Jahrzehnte an optimierten numerischen Bibliotheken (LAPACK, BLAS)</span>
+<span style="color:#546e7a">! - Parallelismus eingebaut (Coarrays, OpenMP-friendly)</span>
+<span style="color:#546e7a">! - Modernes Fortran (90/95/2003/2008/2018/2023) = sehr komfortabel</span>
+<span style="color:#546e7a">!</span>
+<span style="color:#546e7a">! Wichtigste Unterschiede zu anderen Sprachen:</span>
+<span style="color:#546e7a">! - 1-basierte Arrays (arr(1) ist das erste Element!)</span>
+<span style="color:#546e7a">! - Spaltenbasierte Speicherung (Column-Major) -- anders als C!</span>
+<span style="color:#546e7a">! - Case-insensitiv: REAL = real = Real</span>
+<span style="color:#546e7a">! - IMPLICIT NONE -- immer verwenden! (sonst auto-Typisierung a-h,o-z = real)</span>
+<span style="color:#546e7a">! - Freies Format (Fortran 90+) vs. Fixed Format (Fortran 77, Spalte 7-72)</span>
+
+<span style="color:#c792ea">program</span> hallo
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>           <span style="color:#546e7a">! IMMER! Verhindert implizite Typisierung</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Hallo, Welt!"</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> hallo
+
+<span style="color:#546e7a">! Kompilieren: gfortran hallo.f90 -o hallo</span>
+<span style="color:#546e7a">! Ausfuehren:  ./hallo</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ / Deklaration</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">integer</code></td>
+      <td style="color:#c3e88d;font-size:11px">integer :: n = 42</td>
+      <td style="color:#6c7a8e">Standardgroesse (meist 32-Bit)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">integer(int32)</code></td>
+      <td style="color:#c3e88d;font-size:11px">use iso_fortran_env; integer(int32) :: n</td>
+      <td style="color:#6c7a8e">Exakt 32 Bit (empfohlen)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">integer(int64)</code></td>
+      <td style="color:#c3e88d;font-size:11px">integer(int64) :: grosseZahl</td>
+      <td style="color:#6c7a8e">Exakt 64 Bit</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">real</code></td>
+      <td style="color:#c3e88d;font-size:11px">real :: x = 3.14</td>
+      <td style="color:#6c7a8e">Einfache Genauigkeit (32-Bit Float)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">real(real64)</code></td>
+      <td style="color:#c3e88d;font-size:11px">real(real64) :: dp = 3.14d0</td>
+      <td style="color:#6c7a8e">Doppelte Genauigkeit (64-Bit, empfohlen!)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">real(real128)</code></td>
+      <td style="color:#c3e88d;font-size:11px">real(real128) :: qp</td>
+      <td style="color:#6c7a8e">Quadrupel-Genauigkeit (128-Bit)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">complex</code></td>
+      <td style="color:#c3e88d;font-size:11px">complex :: z = (3.0, 4.0)</td>
+      <td style="color:#6c7a8e">Komplexe Zahl (Real + Imaginaerteil)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">logical</code></td>
+      <td style="color:#c3e88d;font-size:11px">logical :: fertig = .true.</td>
+      <td style="color:#6c7a8e">.true. / .false. (Punkte sind Pflicht!)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">character(len=n)</code></td>
+      <td style="color:#c3e88d;font-size:11px">character(len=20) :: name = "Alice"</td>
+      <td style="color:#6c7a8e">Zeichenkette der Laenge n</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">character(*)</code></td>
+      <td style="color:#c3e88d;font-size:11px">character(*), parameter :: VER = "1.0"</td>
+      <td style="color:#6c7a8e">Laenge aus Initialisierung (nur bei parameter)</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">double precision</code></td>
+      <td style="color:#c3e88d;font-size:11px">double precision :: x</td>
+      <td style="color:#6c7a8e">Veraltet – lieber real(real64) nutzen</td>
+    </tr>
+    <tr>
+      <td style="width:200px"><code style="color:#4fc3f7">parameter</code></td>
+      <td style="color:#c3e88d;font-size:11px">real, parameter :: PI = 3.14159265358979_real64</td>
+      <td style="color:#6c7a8e">Compile-Zeit-Konstante (kein Laufzeit-Overhead)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Variablen &amp; Deklaration
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen &amp; deklaration">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen &amp; Deklaration
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">program</span> variablen
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">int32</span>, <span style="color:#ffcb6b">int64</span>, <span style="color:#ffcb6b">real32</span>, <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Grundlegende Deklaration</span>
+    <span style="color:#c792ea">integer</span> :: n
+    <span style="color:#c792ea">real</span>    :: x
+    <span style="color:#c792ea">logical</span> :: flag
+
+    <span style="color:#546e7a">! Mit Initialisierung</span>
+    <span style="color:#c792ea">integer</span> :: zaehler = <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: pi = <span style="color:#f78c6c">3.14159265358979323846_</span><span style="color:#ffcb6b">real64</span>
+
+    <span style="color:#546e7a">! Konstante (parameter)</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: LICHTGESCHWINDIGKEIT = <span style="color:#f78c6c">299792458.0_</span><span style="color:#ffcb6b">real64</span>  <span style="color:#546e7a">! m/s</span>
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: MAX_ITER = <span style="color:#f78c6c">1000</span>
+
+    <span style="color:#546e7a">! Kind-Parameter -- portabler Code</span>
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: dp = <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">real</span>(dp) :: doppelt_genau = <span style="color:#f78c6c">1.23456789012345_d</span>p
+
+    <span style="color:#546e7a">! Mehrere Variablen</span>
+    <span style="color:#c792ea">integer</span> :: i, j, k
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: a, b, c
+
+    <span style="color:#546e7a">! Zuweisung</span>
+    n = <span style="color:#f78c6c">42</span>
+    x = <span style="color:#f78c6c">3.14</span>
+    flag = <span style="color:#f78c6c">.true.</span>
+
+    <span style="color:#546e7a">! Arithmetik</span>
+    x = <span style="color:#f78c6c">2.0_</span><span style="color:#ffcb6b">real64</span> * pi * <span style="color:#f78c6c">5.0_</span><span style="color:#ffcb6b">real64</span>   <span style="color:#546e7a">! Kreisumfang</span>
+    n = n + <span style="color:#f78c6c">1</span>
+    n = n * <span style="color:#f78c6c">2</span>
+
+    <span style="color:#546e7a">! Konvertierung (explizit bevorzugen!)</span>
+    x = <span style="color:#c792ea">real</span>(n, <span style="color:#ffcb6b">real64</span>)         <span style="color:#546e7a">! int -&gt; real (mit Kind)</span>
+    n = <span style="color:#ffcb6b">int</span>(x)                  <span style="color:#546e7a">! real -&gt; int (truncate)</span>
+    n = <span style="color:#ffcb6b">nint</span>(x)                 <span style="color:#546e7a">! real -&gt; int (nearest int)</span>
+
+    <span style="color:#546e7a">! Ausgabe</span>
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f10.4)'</span>) <span style="color:#c3e88d">"Pi = "</span>, pi
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,i0)'</span>)    <span style="color:#c3e88d">"n  = "</span>, n
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> variablen</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Operatoren
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="operatoren">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Operatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Arithmetik</span>
++  -  *  /  **             <span style="color:#546e7a">! ** = Potenz (rechts-assoziativ!)</span>
+
+a + b    a - b    a * b
+a / b                       <span style="color:#546e7a">! Ganzzahl-Division wenn beide integer!</span>
+a ** <span style="color:#f78c6c">2</span>                      <span style="color:#546e7a">! a hoch 2 (= a*a)</span>
+a ** b                      <span style="color:#546e7a">! a hoch b (real noetig fuer nicht-ganzzahlige Exp.)</span>
+
+<span style="color:#546e7a">! Wichtig: 1/2 = 0 (Integer!), 1.0/2.0 = 0.5 (Real)</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#f78c6c">1</span>/<span style="color:#f78c6c">2</span>      <span style="color:#546e7a">! =&gt; 0    (integer division)</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#f78c6c">1.0</span>/<span style="color:#f78c6c">2.0</span>  <span style="color:#546e7a">! =&gt; 0.5  (real division)</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#f78c6c">1</span>/<span style="color:#f78c6c">2.0</span>    <span style="color:#546e7a">! =&gt; 0.5  (mixed: int promoted to real)</span>
+
+<span style="color:#546e7a">! Vergleiche</span>
+<span style="color:#89ddff">==</span>    <span style="color:#89ddff">/=</span>    &lt;    <span style="color:#89ddff">&lt;=</span>    &gt;    <span style="color:#89ddff">&gt;=</span>
+<span style="color:#546e7a">! Oder altmodisch: .EQ. .NE. .LT. .LE. .GT. .GE. (Fortran 77)</span>
+
+<span style="color:#c792ea">if</span> (a <span style="color:#89ddff">==</span> b) <span style="color:#c792ea">then</span> ...
+<span style="color:#c792ea">if</span> (a <span style="color:#89ddff">/=</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span> ...
+
+<span style="color:#546e7a">! Logisch</span>
+<span style="color:#89ddff">.AND.</span>    <span style="color:#89ddff">.OR.</span>    <span style="color:#89ddff">.NOT.</span>    <span style="color:#89ddff">.EQV.</span>    <span style="color:#89ddff">.NEQV.</span>
+
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">0.0</span> <span style="color:#89ddff">.AND.</span> y &gt; <span style="color:#f78c6c">0.0</span>) <span style="color:#c792ea">then</span> ...
+<span style="color:#c792ea">if</span> (<span style="color:#89ddff">.NOT.</span> fertig) <span style="color:#c792ea">then</span> ...
+
+<span style="color:#546e7a">! Konkatenation</span>
+<span style="color:#c3e88d">"Hallo"</span> // <span style="color:#c3e88d">" "</span> // <span style="color:#c3e88d">"Welt"</span>   <span style="color:#546e7a">! =&gt; "Hallo Welt"</span>
+
+<span style="color:#546e7a">! Zuweisung</span>
+=      <span style="color:#546e7a">! Skalar und Array-Zuweisung</span>
+<span style="color:#89ddff">=&gt;</span>     <span style="color:#546e7a">! Pointer-Zuweisung</span>
+
+<span style="color:#546e7a">! Array-Operationen (elementweise, OHNE Schleife!)</span>
+a = b + c          <span style="color:#546e7a">! Alle Elemente</span>
+a = <span style="color:#f78c6c">2.0</span> * b        <span style="color:#546e7a">! Skalare Multiplikation</span>
+a = <span style="color:#ffcb6b">sin</span>(b)         <span style="color:#546e7a">! Elementweise Funktion!</span>
+<span style="color:#546e7a">c = matmul(a, b)   ! Matrix-Multiplikation</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-arrays" class="tp">
+
+<div class="ac open" id="ac-ar0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ar0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>Array-Deklaration &amp; Initialisierung
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="array-deklaration &amp; initialisierung">
+  <div style="color:#4b6fa8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Array-Deklaration &amp; Initialisierung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">program</span> arrays_demo
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Feste Arrays (stack-alloziert, sehr schnell)</span>
+    <span style="color:#c792ea">integer</span> :: vektor(<span style="color:#f78c6c">5</span>)                    <span style="color:#546e7a">! 1D: Indizes 1..5</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: matrix(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)            <span style="color:#546e7a">! 2D: 3 Zeilen, 4 Spalten</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: tensor(<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)         <span style="color:#546e7a">! 3D</span>
+
+    <span style="color:#546e7a">! Mit dimension-Attribut</span>
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">dimension</span>(<span style="color:#f78c6c">10</span>) :: arr           <span style="color:#546e7a">! Aequivalent zu integer :: arr(10)</span>
+
+    <span style="color:#546e7a">! Eigene Indexgrenzen!</span>
+    <span style="color:#c792ea">real</span> :: feld(-<span style="color:#f78c6c">5</span>:<span style="color:#f78c6c">5</span>)          <span style="color:#546e7a">! Indizes -5 bis 5 (11 Elemente)</span>
+    <span style="color:#c792ea">real</span> :: bild(<span style="color:#f78c6c">0</span>:<span style="color:#f78c6c">255</span>, <span style="color:#f78c6c">0</span>:<span style="color:#f78c6c">255</span>)  <span style="color:#546e7a">! 0-basiert (256x256)</span>
+    <span style="color:#c792ea">real</span> :: jahre(<span style="color:#f78c6c">1990</span>:<span style="color:#f78c6c">2030</span>)    <span style="color:#546e7a">! Jahreszahlen als Index</span>
+
+    <span style="color:#546e7a">! Allocatable (dynamisch, empfohlen fuer grosse Arrays)</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: dyn(:)     <span style="color:#546e7a">! 1D, Groesse unbekannt</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: mat(:,:)   <span style="color:#546e7a">! 2D</span>
+
+    <span style="color:#546e7a">! Allozieren</span>
+    <span style="color:#c792ea">allocate</span>(dyn(<span style="color:#f78c6c">100</span>))
+    <span style="color:#c792ea">allocate</span>(mat(<span style="color:#f78c6c">500</span>, <span style="color:#f78c6c">500</span>))
+
+    <span style="color:#546e7a">! Initialisierung</span>
+    vektor = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]               <span style="color:#546e7a">! Array-Literal (F2003+)</span>
+    vektor = (/ <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span> /)           <span style="color:#546e7a">! Aeltere Syntax</span>
+
+    <span style="color:#546e7a">! Implizites Do (wie List Comprehension)</span>
+    vektor = [(i*i, i=<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">5</span>)]                 <span style="color:#546e7a">! [1, 4, 9, 16, 25]</span>
+    dyn    = [(<span style="color:#c792ea">real</span>(i), i=<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">100</span>)]           <span style="color:#546e7a">! [1.0, 2.0, ..., 100.0]</span>
+
+    <span style="color:#546e7a">! Alle Elemente setzen</span>
+    matrix = <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>
+    dyn    = <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>
+
+    <span style="color:#546e7a">! Freigeben</span>
+    <span style="color:#c792ea">deallocate</span>(dyn)
+    <span style="color:#c792ea">deallocate</span>(mat)
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> arrays_demo</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ar1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ar1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Array-Operationen (das Herzstück von Fortran)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="array-operationen (das herzstück von fortran)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Array-Operationen (das Herzstück von Fortran)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Fortran glaenzt bei Array-Operationen:</span>
+<span style="color:#546e7a">! KEINE Schleifen noetig fuer elementweise Operationen!</span>
+
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: a(<span style="color:#f78c6c">100</span>), b(<span style="color:#f78c6c">100</span>), c(<span style="color:#f78c6c">100</span>)
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: m1(<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">3</span>), m2(<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">3</span>), m3(<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">3</span>)
+
+<span style="color:#546e7a">! Elementweise Operationen</span>
+<span style="color:#546e7a">c = a + b           ! Alle 100 Elemente addieren</span>
+<span style="color:#546e7a">c = a * b           ! Elementweises Produkt (NICHT Matrix-Multiplikation!)</span>
+<span style="color:#546e7a">c = 2.0 * a + b     ! Linearkombination</span>
+<span style="color:#546e7a">c = sqrt(a)         ! sqrt auf alle Elemente</span>
+<span style="color:#546e7a">c = sin(a) + cos(b) ! Funktionen elementweise</span>
+
+<span style="color:#546e7a">! Matrix-Multiplikation (echtes Matprod!)</span>
+m3 = <span style="color:#ffcb6b">matmul</span>(m1, m2)
+
+<span style="color:#546e7a">! Skalarprodukt</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: skalar
+skalar = <span style="color:#ffcb6b">dot_product</span>(a, b)
+
+<span style="color:#546e7a">! Aggregation</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: gesamt, maximum, minimum
+gesamt  = <span style="color:#ffcb6b">sum</span>(a)
+maximum = <span style="color:#ffcb6b">maxval</span>(a)
+minimum = <span style="color:#ffcb6b">minval</span>(a)
+<span style="color:#c792ea">integer</span> :: max_pos(<span style="color:#f78c6c">1</span>)
+max_pos = <span style="color:#ffcb6b">maxloc</span>(a)   <span style="color:#546e7a">! Position des Maximums</span>
+
+<span style="color:#546e7a">! WHERE -- bedingte Array-Operationen (kein if-Loop!)</span>
+<span style="color:#c792ea">where</span> (a &gt; <span style="color:#f78c6c">0.0</span>)
+    c = <span style="color:#ffcb6b">sqrt</span>(a)
+<span style="color:#c792ea">elsewhere</span>
+    c = <span style="color:#f78c6c">0.0</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">where</span>
+
+<span style="color:#546e7a">! Kurzform</span>
+<span style="color:#546e7a">c = merge(sqrt(a), 0.0, a &gt; 0.0)  ! Equivalent</span>
+
+<span style="color:#546e7a">! FORALL (F95) / DO CONCURRENT (F2008) -- parallel ausfuehrbar!</span>
+<span style="color:#c792ea">forall</span> (i = <span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">100</span>, a(i) &gt; <span style="color:#f78c6c">0.0</span>)
+    c(i) = <span style="color:#ffcb6b">sqrt</span>(a(i))
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">forall</span>
+
+<span style="color:#c792ea">do</span> concurrent (<span style="color:#c792ea">integer</span> :: i = <span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">100</span>)   <span style="color:#546e7a">! Modernes Fortran</span>
+    c(i) = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">abs</span>(a(i)))
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ar2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ar2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Array-Sections &amp; Slicing
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="array-sections &amp; slicing">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Array-Sections &amp; Slicing
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: a(<span style="color:#f78c6c">10</span>), b(<span style="color:#f78c6c">10</span>)
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: m(<span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">5</span>)
+
+<span style="color:#546e7a">! Slicing: Array(start:end:stride)</span>
+a(<span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">5</span>)          <span style="color:#546e7a">! Elemente 1 bis 5</span>
+a(<span style="color:#f78c6c">3</span>:)           <span style="color:#546e7a">! Elemente 3 bis Ende</span>
+a(:<span style="color:#f78c6c">7</span>)           <span style="color:#546e7a">! Elemente 1 bis 7</span>
+a(::<span style="color:#f78c6c">2</span>)          <span style="color:#546e7a">! Jedes zweite Element (1,3,5,7,9)</span>
+a(<span style="color:#f78c6c">10</span>:<span style="color:#f78c6c">1</span>:-<span style="color:#f78c6c">1</span>)      <span style="color:#546e7a">! Rueckwaerts</span>
+
+<span style="color:#546e7a">! Zuweisung an Teilarrays</span>
+a(<span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">5</span>) = <span style="color:#f78c6c">0.0</span>            <span style="color:#546e7a">! Erste 5 Elemente = 0</span>
+a(<span style="color:#f78c6c">2</span>:<span style="color:#f78c6c">10</span>:<span style="color:#f78c6c">2</span>) = b(<span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">5</span>)      <span style="color:#546e7a">! Gerade Indizes setzen</span>
+
+<span style="color:#546e7a">! Matrix-Zeilen und Spalten</span>
+m(<span style="color:#f78c6c">1</span>,:)         <span style="color:#546e7a">! Erste Zeile (Zeilenvektor)</span>
+m(:,<span style="color:#f78c6c">1</span>)         <span style="color:#546e7a">! Erste Spalte (Spaltenvektor)</span>
+m(<span style="color:#f78c6c">2</span>:<span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">2</span>:<span style="color:#f78c6c">4</span>)   <span style="color:#546e7a">! 3x3 Untermatrix</span>
+
+<span style="color:#546e7a">! Transposition</span>
+m = <span style="color:#ffcb6b">transpose</span>(m)
+
+<span style="color:#546e7a">! reshape -- Dimensionen umformen</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: v(<span style="color:#f78c6c">12</span>), mat(<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>)
+mat = <span style="color:#ffcb6b">reshape</span>(v, [<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>])                    <span style="color:#546e7a">! 12er-Vektor zu 3x4-Matrix</span>
+mat = <span style="color:#ffcb6b">reshape</span>([(<span style="color:#c792ea">real</span>(i), i=<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">12</span>)], [<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>]) <span style="color:#546e7a">! Mit implizitem Do</span>
+
+<span style="color:#546e7a">! Wichtig: Fortran speichert Column-Major!</span>
+<span style="color:#546e7a">! mat(1,1), mat(2,1), mat(3,1), mat(1,2), mat(2,2), ...</span>
+<span style="color:#546e7a">! (Gegenteil von C/Python/NumPy Row-Major!)</span>
+<span style="color:#546e7a">! Innere Schleifen sollten ueber den ersten Index laufen fuer Cache-Effizienz:</span>
+<span style="color:#c792ea">do</span> j = <span style="color:#f78c6c">1</span>, n
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, m       <span style="color:#546e7a">! i (Zeile) innen = cache-freundlich!</span>
+        matrix(i,j) = ...
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ar3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ar3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Intrinsische Array-Funktionen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="intrinsische array-funktionen">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Intrinsische Array-Funktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: a(<span style="color:#f78c6c">100</span>), m(<span style="color:#f78c6c">50</span>, <span style="color:#f78c6c">50</span>)
+<span style="color:#c792ea">integer</span> :: n, shape_arr(<span style="color:#f78c6c">2</span>)
+
+<span style="color:#546e7a">! Groesse und Form</span>
+n          = <span style="color:#ffcb6b">size</span>(a)           <span style="color:#546e7a">! Gesamtanzahl Elemente</span>
+n          = <span style="color:#ffcb6b">size</span>(m, <span style="color:#f78c6c">1</span>)        <span style="color:#546e7a">! Anzahl Zeilen</span>
+n          = <span style="color:#ffcb6b">size</span>(m, <span style="color:#f78c6c">2</span>)        <span style="color:#546e7a">! Anzahl Spalten</span>
+shape_arr  = <span style="color:#ffcb6b">shape</span>(m)          <span style="color:#546e7a">! [50, 50]</span>
+n          = <span style="color:#ffcb6b">rank</span>(a)           <span style="color:#546e7a">! Anzahl Dimensionen: 1</span>
+
+<span style="color:#546e7a">! Grenzen</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#ffcb6b">lbound</span>(a), <span style="color:#ffcb6b">ubound</span>(a)   <span style="color:#546e7a">! 1, 100</span>
+
+<span style="color:#546e7a">! Reduktion</span>
+<span style="color:#ffcb6b">sum</span>(a)                <span style="color:#546e7a">! Summe</span>
+<span style="color:#ffcb6b">product</span>(a)            <span style="color:#546e7a">! Produkt</span>
+<span style="color:#ffcb6b">maxval</span>(a)             <span style="color:#546e7a">! Maximum</span>
+<span style="color:#ffcb6b">minval</span>(a)             <span style="color:#546e7a">! Minimum</span>
+<span style="color:#ffcb6b">maxloc</span>(a)             <span style="color:#546e7a">! Position des Maximums (als Array)</span>
+<span style="color:#ffcb6b">minloc</span>(a)             <span style="color:#546e7a">! Position des Minimums</span>
+
+<span style="color:#546e7a">! Entlang einer Dimension</span>
+<span style="color:#ffcb6b">sum</span>(m, <span style="color:#ffcb6b">dim</span>=<span style="color:#f78c6c">1</span>)         <span style="color:#546e7a">! Spaltensummen (Ergebnis: Vektor der Laenge 50)</span>
+<span style="color:#ffcb6b">sum</span>(m, <span style="color:#ffcb6b">dim</span>=<span style="color:#f78c6c">2</span>)         <span style="color:#546e7a">! Zeilensummen</span>
+<span style="color:#ffcb6b">maxval</span>(m, <span style="color:#ffcb6b">dim</span>=<span style="color:#f78c6c">1</span>)      <span style="color:#546e7a">! Zeilenweise Maximum</span>
+
+<span style="color:#546e7a">! Logische Reduktion</span>
+<span style="color:#ffcb6b">any</span>(a &gt; <span style="color:#f78c6c">0</span>)            <span style="color:#546e7a">! Mindestens ein Element &gt; 0?</span>
+<span style="color:#c792ea">all</span>(a &gt; <span style="color:#f78c6c">0</span>)            <span style="color:#546e7a">! Alle Elemente &gt; 0?</span>
+<span style="color:#546e7a">count(a &gt; 0)          ! Anzahl Elemente &gt; 0</span>
+
+<span style="color:#546e7a">! Pack / Unpack</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: positiv(:)
+positiv = <span style="color:#ffcb6b">pack</span>(a, a &gt; <span style="color:#f78c6c">0.0</span>)   <span style="color:#546e7a">! Alle positiven Elemente</span>
+
+<span style="color:#546e7a">! Spread -- Array entlang neuer Dimension wiederholen</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: zeile(<span style="color:#f78c6c">5</span>), matrix2(<span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">3</span>)
+matrix2 = <span style="color:#ffcb6b">spread</span>(zeile, <span style="color:#ffcb6b">dim</span>=<span style="color:#f78c6c">2</span>, ncopies=<span style="color:#f78c6c">3</span>)  <span style="color:#546e7a">! Zeile 3x wiederholen</span>
+
+<span style="color:#546e7a">! Cshift -- zirkulaeres Verschieben</span>
+a = <span style="color:#ffcb6b">cshift</span>(a, shift=<span style="color:#f78c6c">1</span>)   <span style="color:#546e7a">! Um 1 nach links schieben (zirkulaer)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / select case
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / select case">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / select case
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! if -- klassisch</span>
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">0.0</span>) <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Positiv"</span>
+<span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> (x &lt; <span style="color:#f78c6c">0.0</span>) <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Negativ"</span>
+<span style="color:#c792ea">else</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Null"</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+<span style="color:#546e7a">! Einzeiliges if (kein then/end if)</span>
+<span style="color:#c792ea">if</span> (fertig) <span style="color:#c792ea">return</span>
+<span style="color:#c792ea">if</span> (n &lt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">stop</span> <span style="color:#c3e88d">"Negativer Index!"</span>
+
+<span style="color:#546e7a">! select case -- wie switch (nur fuer integer, character, logical)</span>
+<span style="color:#c792ea">select</span> <span style="color:#c792ea">case</span> (farbe)
+    <span style="color:#c792ea">case</span> (<span style="color:#f78c6c">1</span>)
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Rot"</span>
+    <span style="color:#c792ea">case</span> (<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)                   <span style="color:#546e7a">! Mehrere Werte</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Gruen oder Blau"</span>
+    <span style="color:#c792ea">case</span> (<span style="color:#f78c6c">4</span>:<span style="color:#f78c6c">10</span>)                   <span style="color:#546e7a">! Bereich!</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"4 bis 10"</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">default</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Unbekannt"</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">select</span>
+
+<span style="color:#c792ea">select</span> <span style="color:#c792ea">case</span> (buchstabe)
+    <span style="color:#c792ea">case</span> (<span style="color:#c3e88d">'a'</span>, <span style="color:#c3e88d">'e'</span>, <span style="color:#c3e88d">'i'</span>, <span style="color:#c3e88d">'o'</span>, <span style="color:#c3e88d">'u'</span>)
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Vokal"</span>
+    <span style="color:#c792ea">case</span> (<span style="color:#c3e88d">'a'</span>:<span style="color:#c3e88d">'z'</span>)               <span style="color:#546e7a">! Zeichenbereich</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Konsonant"</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">default</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Kein Buchstabe"</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">select</span>
+
+<span style="color:#546e7a">! Benannte Konstrukte (fuer Lesbarkeit und Verschachtelung)</span>
+aussen: <span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span>
+    innen: <span style="color:#c792ea">if</span> (y &gt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Erster Quadrant"</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span> innen
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span> aussen</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>do-Schleifen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="do-schleifen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    do-Schleifen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Klassische do-Schleife</span>
+<span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span>
+    <span style="color:#c792ea">write</span>(*,*) i
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#546e7a">! Mit Schrittweite</span>
+<span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">100</span>, <span style="color:#f78c6c">5</span>     <span style="color:#546e7a">! 0, 5, 10, ..., 100</span>
+    ...
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">1</span>, -<span style="color:#f78c6c">1</span>     <span style="color:#546e7a">! Rueckwaerts: 10, 9, ..., 1</span>
+    ...
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#546e7a">! do while</span>
+<span style="color:#c792ea">do</span> <span style="color:#c792ea">while</span> (n &gt; <span style="color:#f78c6c">0</span>)
+    n = n / <span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#546e7a">! Unendliche Schleife mit exit</span>
+<span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">read</span>(*,*) eingabe
+    <span style="color:#c792ea">if</span> (eingabe &lt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">exit</span>   <span style="color:#546e7a">! Schleife verlassen</span>
+    <span style="color:#c792ea">if</span> (eingabe <span style="color:#89ddff">==</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">cycle</span>  <span style="color:#546e7a">! Weiter zur naechsten Iteration</span>
+    verarbeite(eingabe)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#546e7a">! Benannte Schleifen (fuer break outer)</span>
+aussen: <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span>
+    innen: <span style="color:#c792ea">do</span> j = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span>
+        <span style="color:#c792ea">if</span> (i*j &gt; <span style="color:#f78c6c">50</span>) <span style="color:#c792ea">exit</span> aussen   <span style="color:#546e7a">! Aeussere Schleife verlassen!</span>
+        <span style="color:#c792ea">if</span> (j <span style="color:#89ddff">==</span> <span style="color:#f78c6c">5</span>) <span style="color:#c792ea">cycle</span> innen     <span style="color:#546e7a">! Naechste j-Iteration</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span> innen
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span> aussen
+
+<span style="color:#546e7a">! do concurrent (Fortran 2008+) -- parallelisierbar!</span>
+<span style="color:#c792ea">do</span> concurrent (i = <span style="color:#f78c6c">1</span>:n, j = <span style="color:#f78c6c">1</span>:m)
+    c(i,j) = a(i,j) + b(i,j)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#546e7a">! Verschachtelte Schleifen mit do concurrent</span>
+<span style="color:#c792ea">do</span> concurrent (i = <span style="color:#f78c6c">1</span>:n, j = <span style="color:#f78c6c">1</span>:n, i <span style="color:#89ddff">/=</span> j)  <span style="color:#546e7a">! Mit Bedingung</span>
+    a(i,j) = <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span> / <span style="color:#c792ea">real</span>(i+j, <span style="color:#ffcb6b">real64</span>)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Fortran hat kein Try/Catch -- nutzt iostat und error_stop</span>
+
+<span style="color:#546e7a">! iostat -- Fehlercode fuer I/O</span>
+<span style="color:#c792ea">integer</span> :: ios
+<span style="color:#546e7a">character(len=200) :: fehlermeldung</span>
+
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=<span style="color:#f78c6c">10</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"datei.dat"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"old"</span>, &amp;
+     <span style="color:#c792ea">action</span>=<span style="color:#c3e88d">"read"</span>, <span style="color:#c792ea">iostat</span>=ios, <span style="color:#c792ea">iomsg</span>=fehlermeldung)
+<span style="color:#c792ea">if</span> (ios <span style="color:#89ddff">/=</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Fehler beim Oeffnen: "</span>, <span style="color:#ffcb6b">trim</span>(fehlermeldung)
+    <span style="color:#c792ea">stop</span> <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+<span style="color:#c792ea">read</span>(<span style="color:#f78c6c">10</span>, *, <span style="color:#c792ea">iostat</span>=ios) x, y, z
+<span style="color:#c792ea">if</span> (ios <span style="color:#89ddff">/=</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Lesefehler, iostat = "</span>, ios
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+<span style="color:#546e7a">! error stop (F2008+) -- Programm mit Fehlercode beenden</span>
+<span style="color:#c792ea">if</span> (n <span style="color:#89ddff">&lt;=</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">error</span> <span style="color:#c792ea">stop</span> <span style="color:#c3e88d">"n muss positiv sein!"</span>
+<span style="color:#c792ea">if</span> (<span style="color:#ffcb6b">allocated</span>(arr)) <span style="color:#c792ea">error</span> <span style="color:#c792ea">stop</span> <span style="color:#c3e88d">"Array bereits alloziert"</span>
+
+<span style="color:#546e7a">! stat -- Fehlercode fuer allocate/deallocate</span>
+<span style="color:#c792ea">integer</span> :: <span style="color:#c792ea">stat</span>
+<span style="color:#c792ea">allocate</span>(arr(n), <span style="color:#c792ea">stat</span>=<span style="color:#c792ea">stat</span>)
+<span style="color:#c792ea">if</span> (<span style="color:#c792ea">stat</span> <span style="color:#89ddff">/=</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Speicherallokation fehlgeschlagen fuer n ="</span>, n
+    <span style="color:#c792ea">stop</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+<span style="color:#546e7a">! Assertions (als Hilfsprozedur)</span>
+<span style="color:#c792ea">subroutine</span> assert(bedingung, nachricht)
+    <span style="color:#c792ea">logical</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: bedingung
+    <span style="color:#c792ea">character</span>(*), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: nachricht
+    <span style="color:#c792ea">if</span> (<span style="color:#89ddff">.not.</span> bedingung) <span style="color:#c792ea">then</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"ASSERTION FAILED: "</span>, nachricht
+        <span style="color:#c792ea">error</span> <span style="color:#c792ea">stop</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#546e7a">! check_bounds (typisches HPC-Muster)</span>
+<span style="color:#c792ea">subroutine</span> pruefe_index(i, n, name)
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: i, n
+    <span style="color:#c792ea">character</span>(*), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: name
+    <span style="color:#c792ea">if</span> (i &lt; <span style="color:#f78c6c">1</span> <span style="color:#89ddff">.or.</span> i &gt; n) <span style="color:#c792ea">then</span>
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,i0,a,i0,a,a)'</span>) &amp;
+            <span style="color:#c3e88d">"Index "</span>, i, <span style="color:#c3e88d">" ausserhalb [1,"</span>, n, <span style="color:#c3e88d">"] in "</span>, name
+        <span style="color:#c792ea">error</span> <span style="color:#c792ea">stop</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-procs" class="tp">
+
+<div class="ac open" id="ac-pr0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>Subroutinen &amp; Funktionen
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="subroutinen &amp; funktionen">
+  <div style="color:#4b6fa8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Subroutinen &amp; Funktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Fortran hat ZWEI Prozedurtypen:</span>
+<span style="color:#546e7a">! subroutine: kein Rueckgabewert (nutzt intent(out) Parameter)</span>
+<span style="color:#546e7a">! function:   hat Rueckgabewert</span>
+
+<span style="color:#546e7a">! ── SUBROUTINE ───────────────────────────────────────────────────</span>
+<span style="color:#c792ea">subroutine</span> tausche(a, b)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">inout</span>) :: a, b   <span style="color:#546e7a">! in-out: beides!</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: temp
+    temp = a
+    a    = b
+    b    = temp
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#546e7a">! Intent-Attribute:</span>
+<span style="color:#546e7a">! intent(in)    -- nur lesen (Wert nicht aenderbar)</span>
+<span style="color:#546e7a">! intent(out)   -- nur schreiben (Eingabewert unbekannt)</span>
+<span style="color:#546e7a">! intent(inout) -- lesen und schreiben</span>
+
+<span style="color:#c792ea">subroutine</span> statistik(daten, n, mittel, stdabw)
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)  :: n
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)  :: daten(n)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>) :: mittel, stdabw
+
+    mittel = <span style="color:#ffcb6b">sum</span>(daten) / n
+    stdabw = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">sum</span>((daten - mittel)**<span style="color:#f78c6c">2</span>) / (n-<span style="color:#f78c6c">1</span>))
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#546e7a">! Aufruf mit call</span>
+<span style="color:#546e7a">call tausche(x, y)</span>
+<span style="color:#546e7a">call statistik(messwerte, groesse, mu, sigma)</span>
+
+<span style="color:#546e7a">! ── FUNCTION ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> kreisflaeche(r) <span style="color:#c792ea">result</span>(flaeche)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: r
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: flaeche           <span style="color:#546e7a">! Rueckgabetyp</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: PI = <span style="color:#ffcb6b">acos</span>(-<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>)
+    flaeche = PI * r**<span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#546e7a">! Elegantere Schreibweise (wenn einfach genug)</span>
+<span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> quadrat(x) <span style="color:#c792ea">result</span>(q)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: x
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: q
+    q = x * x
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#546e7a">! Verwendung -- keine call!</span>
+flaeche = kreisflaeche(<span style="color:#f78c6c">5.0_</span><span style="color:#ffcb6b">real64</span>)
+q       = quadrat(<span style="color:#f78c6c">3.0_</span><span style="color:#ffcb6b">real64</span>)         <span style="color:#546e7a">! =&gt; 9.0</span>
+
+<span style="color:#546e7a">! Elemental function (wird auf Arrays angewendet!)</span>
+<span style="color:#c792ea">elemental</span> <span style="color:#c792ea">function</span> clamp(x, lo, hi) <span style="color:#c792ea">result</span>(y)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: x, lo, hi
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: y
+    y = <span style="color:#ffcb6b">max</span>(lo, <span style="color:#ffcb6b">min</span>(hi, x))
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#546e7a">! Kann jetzt auf Arrays angewendet werden!</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: arr(<span style="color:#f78c6c">100</span>)
+arr = clamp(arr, <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>)  <span style="color:#546e7a">! Alle Elemente klemmen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Module – Fortrans Organisationseinheit
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="module – fortrans organisationseinheit">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Module – Fortrans Organisationseinheit
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Module = Namespaces + Kapselung (seit Fortran 90)</span>
+<span style="color:#546e7a">! Ersetzen die alten COMMON-Blocks und INCLUDE-Dateien</span>
+
+<span style="color:#c792ea">module</span> mathe_konstanten
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Alles in diesem Modul ist oeffentlich (default)</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: PI    = <span style="color:#ffcb6b">acos</span>(-<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: E     = <span style="color:#ffcb6b">exp</span>(<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: SQRT2 = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#f78c6c">2.0_</span><span style="color:#ffcb6b">real64</span>)
+
+    <span style="color:#c792ea">private</span> :: intern_hilfsfunktion   <span style="color:#546e7a">! Nur intern sichtbar</span>
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> grad_zu_rad(grad) <span style="color:#c792ea">result</span>(rad)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: grad
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: rad
+        rad = grad * PI / <span style="color:#f78c6c">180.0_</span><span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+    <span style="color:#546e7a">! Private Hilfsfunktion (nicht nach aussen sichtbar)</span>
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> intern_hilfsfunktion(x) <span style="color:#c792ea">result</span>(y)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: x
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: y
+        y = x * x
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> mathe_konstanten
+
+<span style="color:#546e7a">! ── Modul verwenden ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">program</span> nutzung
+    <span style="color:#c792ea">use</span> mathe_konstanten, only: PI, grad_zu_rad   <span style="color:#546e7a">! Selektiver Import</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Pi ="</span>, PI
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"90° in Radiant:"</span>, grad_zu_rad(<span style="color:#f78c6c">90.0_</span><span style="color:#ffcb6b">real64</span>)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span>
+
+<span style="color:#546e7a">! ── Modul mit Typen ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">module</span> vektor_modul
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">type</span> :: Vec3
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: x, y, z
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">type</span> Vec3
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> laenge(v) <span style="color:#c792ea">result</span>(l)
+        <span style="color:#c792ea">type</span>(Vec3), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: v
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: l
+        l = <span style="color:#ffcb6b">sqrt</span>(v%x**<span style="color:#f78c6c">2</span> + v%y**<span style="color:#f78c6c">2</span> + v%z**<span style="color:#f78c6c">2</span>)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> skalarprodukt(a, b) <span style="color:#c792ea">result</span>(s)
+        <span style="color:#c792ea">type</span>(Vec3), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: a, b
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: s
+        s = a%x*b%x + a%y*b%y + a%z*b%z
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> vektor_modul
+
+<span style="color:#546e7a">! Verwenden:</span>
+<span style="color:#546e7a">! use vektor_modul</span>
+<span style="color:#546e7a">! type(Vec3) :: v1, v2</span>
+<span style="color:#546e7a">! v1 = Vec3(1.0d0, 2.0d0, 3.0d0)</span>
+<span style="color:#546e7a">! write(*,*) laenge(v1)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Derived Types &amp; OOP (Fortran 2003+)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="derived types &amp; oop (fortran 2003+)">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Derived Types &amp; OOP (Fortran 2003+)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">module</span> physik_modul
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Basistyp</span>
+    <span style="color:#c792ea">type</span> :: Teilchen
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: masse
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: position(<span style="color:#f78c6c">3</span>)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: geschwindigkeit(<span style="color:#f78c6c">3</span>)
+    <span style="color:#c792ea">contains</span>
+        procedure :: kinetische_energie
+        procedure :: bewege
+        procedure :: drucke <span style="color:#89ddff">=&gt;</span> drucke_teilchen
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">type</span> Teilchen
+
+    <span style="color:#546e7a">! Vererbung (Fortran 2003)</span>
+    <span style="color:#c792ea">type</span>, <span style="color:#c792ea">extends</span>(Teilchen) :: GeladenesTeilchen
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: ladung
+    <span style="color:#c792ea">contains</span>
+        procedure :: drucke <span style="color:#89ddff">=&gt;</span> drucke_geladen   <span style="color:#546e7a">! Override!</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">type</span> GeladenesTeilchen
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#546e7a">! Gebundene Methode (type-bound procedure)</span>
+    <span style="color:#c792ea">function</span> kinetische_energie(self) <span style="color:#c792ea">result</span>(ek)
+        <span style="color:#c792ea">class</span>(Teilchen), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: self
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: ek
+        ek = <span style="color:#f78c6c">0.5_</span><span style="color:#ffcb6b">real64</span> * self%masse * <span style="color:#ffcb6b">sum</span>(self%geschwindigkeit**<span style="color:#f78c6c">2</span>)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+    <span style="color:#c792ea">subroutine</span> bewege(self, dt)
+        <span style="color:#c792ea">class</span>(Teilchen), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">inout</span>) :: self
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: dt
+        self%position = self%position + self%geschwindigkeit * dt
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+    <span style="color:#c792ea">subroutine</span> drucke_teilchen(self)
+        <span style="color:#c792ea">class</span>(Teilchen), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: self
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,3f8.3)'</span>) <span style="color:#c3e88d">"Position:"</span>, self%position
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f10.4)'</span>) <span style="color:#c3e88d">"Ek:      "</span>, self%kinetische_energie()
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+    <span style="color:#c792ea">subroutine</span> drucke_geladen(self)
+        <span style="color:#c792ea">class</span>(GeladenesTeilchen), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: self
+        <span style="color:#c792ea">call</span> self%Teilchen%drucke()            <span style="color:#546e7a">! Eltern-Methode aufrufen</span>
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f8.3)'</span>) <span style="color:#c3e88d">"Ladung:  "</span>, self%ladung
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> physik_modul
+
+<span style="color:#546e7a">! Verwendung:</span>
+<span style="color:#546e7a">! type(Teilchen) :: p</span>
+<span style="color:#546e7a">! p = Teilchen(masse=9.11e-31_real64, &amp;</span>
+<span style="color:#546e7a">!              position=[0.0,0.0,0.0], &amp;</span>
+<span style="color:#546e7a">!              geschwindigkeit=[1.0e6,0.0,0.0])</span>
+<span style="color:#546e7a">! call p%bewege(1.0e-9_real64)</span>
+<span style="color:#546e7a">! call p%drucke()</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Interfaces &amp; Generische Programmierung
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="interfaces &amp; generische programmierung">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Interfaces &amp; Generische Programmierung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Interfaces fuer externe Prozeduren und Ueberladung</span>
+
+<span style="color:#c792ea">module</span> numerik
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real32</span>, <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Generische Interface (Ueberladung)</span>
+    <span style="color:#c792ea">interface</span> norm
+        <span style="color:#c792ea">module</span> procedure norm_real32
+        <span style="color:#c792ea">module</span> procedure norm_real64
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">interface</span> norm
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#546e7a">! Zwei Implementierungen, eine generische Schnittstelle</span>
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> norm_real32(v) <span style="color:#c792ea">result</span>(n)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real32</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: v(:)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real32</span>) :: n
+        n = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">sum</span>(v**<span style="color:#f78c6c">2</span>))
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> norm_real64(v) <span style="color:#c792ea">result</span>(n)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: v(:)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: n
+        n = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">sum</span>(v**<span style="color:#f78c6c">2</span>))
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> numerik
+
+<span style="color:#546e7a">! Verwendung -- Fortran waehlt automatisch die richtige Version</span>
+<span style="color:#546e7a">! write(*,*) norm([1.0, 2.0, 3.0])         ! real32</span>
+<span style="color:#546e7a">! write(*,*) norm([1.0d0, 2.0d0, 3.0d0])   ! real64</span>
+
+<span style="color:#546e7a">! Assumed-shape Arrays (sehr wichtig!)</span>
+<span style="color:#546e7a">! Prozeduren die Arrays beliebiger Groesse akzeptieren:</span>
+<span style="color:#c792ea">subroutine</span> verarbeite(arr)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">inout</span>) :: arr(:)   <span style="color:#546e7a">! Beliebige Laenge!</span>
+    <span style="color:#c792ea">integer</span> :: n
+    n = <span style="color:#ffcb6b">size</span>(arr)
+    arr = arr / <span style="color:#ffcb6b">sum</span>(arr)   <span style="color:#546e7a">! Normalisieren</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#546e7a">! 2D mit beliebiger Groesse</span>
+<span style="color:#c792ea">subroutine</span> matrix_op(a, b, c)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)  :: a(:,:), b(:,:)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>) :: c(:,:)
+    c = <span style="color:#ffcb6b">matmul</span>(a, b)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#546e7a">! Pointer-Argumente (fuer Graphen, linked lists etc.)</span>
+<span style="color:#c792ea">subroutine</span> setze_pointer(p, ziel)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">pointer</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>) :: p(:)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">target</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)   :: ziel(:)
+    p <span style="color:#89ddff">=&gt;</span> ziel
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-io" class="tp">
+
+<div class="ac open" id="ac-io0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('io0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>Ausgabe mit write &amp; format
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="ausgabe mit write &amp; format">
+  <div style="color:#4b6fa8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Ausgabe mit write &amp; format
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! write(unit, format) Variablen</span>
+<span style="color:#546e7a">! unit: * = standard output, 0 = stderr, Zahl = Datei-Unit</span>
+
+<span style="color:#546e7a">! List-directed (freies Format) -- einfachste Form</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Hallo, Welt!"</span>
+<span style="color:#c792ea">write</span>(*,*) x, y, z            <span style="color:#546e7a">! Automatisches Formatting</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"n ="</span>, n, <span style="color:#c3e88d">"x ="</span>, x
+
+<span style="color:#546e7a">! Formatiert mit Format-String</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a)'</span>) <span style="color:#c3e88d">"Nur Text"</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(i5)'</span>) <span style="color:#f78c6c">42</span>             <span style="color:#546e7a">! Integer, Breite 5</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(f10.4)'</span>) <span style="color:#f78c6c">3.14159</span>     <span style="color:#546e7a">! Float: 10 Zeichen, 4 Dezimalstellen</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(e12.4)'</span>) <span style="color:#f78c6c">1.23e-5</span>     <span style="color:#546e7a">! Wissenschaftlich</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(g12.4)'</span>) x           <span style="color:#546e7a">! Automatisch f oder e</span>
+
+<span style="color:#546e7a">! Format-Deskriptoren</span>
+<span style="color:#546e7a">!  i  -- Integer          i5, i0 (minimal)</span>
+<span style="color:#546e7a">!  f  -- Float dezimal    f10.4</span>
+<span style="color:#546e7a">!  e  -- Float wiss.      e12.4</span>
+<span style="color:#546e7a">!  g  -- Float auto       g12.4</span>
+<span style="color:#546e7a">!  d  -- Double (alt)     d12.4</span>
+<span style="color:#546e7a">!  a  -- Character        a, a20</span>
+<span style="color:#546e7a">!  l  -- Logical          l2 (gibt T oder F)</span>
+<span style="color:#546e7a">!  x  -- Leerzeichen      3x = 3 Leerzeichen</span>
+<span style="color:#546e7a">!  /  -- Newline</span>
+<span style="color:#546e7a">!  t  -- Tab              t20 = Spalte 20</span>
+
+<span style="color:#546e7a">! Komplexe Formatierungen</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,i0,a,f8.2)'</span>) <span style="color:#c3e88d">"Element"</span>, i, <span style="color:#c3e88d">": "</span>, wert
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(3f10.4)'</span>) x, y, z              <span style="color:#546e7a">! 3x float</span>
+<span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(10(i5,1x))'</span>) (arr(i), i=<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">10</span>) <span style="color:#546e7a">! Loop im Format</span>
+
+<span style="color:#546e7a">! Ausgabe in String (internal write)</span>
+<span style="color:#546e7a">character(len=50) :: zeile</span>
+<span style="color:#c792ea">write</span>(zeile,<span style="color:#c3e88d">'(a,i0,a)'</span>) <span style="color:#c3e88d">"Iteration "</span>, iter, <span style="color:#c3e88d">" abgeschlossen"</span>
+<span style="color:#c792ea">write</span>(*,*) <span style="color:#ffcb6b">trim</span>(zeile)
+
+<span style="color:#546e7a">! Stderr</span>
+<span style="color:#c792ea">write</span>(<span style="color:#f78c6c">0</span>,*) <span style="color:#c3e88d">"Warnung: Konvergenz nicht erreicht"</span>
+<span style="color:#c792ea">write</span>(<span style="color:#ffcb6b">error_unit</span>,*) <span style="color:#c3e88d">"Fehler!"</span>   <span style="color:#546e7a">! Mit iso_fortran_env</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-io1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('io1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Dateien lesen &amp; schreiben
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="dateien lesen &amp; schreiben">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Dateien lesen &amp; schreiben
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Datei oeffnen</span>
+<span style="color:#c792ea">integer</span> :: unit_nr = <span style="color:#f78c6c">10</span>
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=unit_nr, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"daten.txt"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"old"</span>, &amp;
+     <span style="color:#c792ea">action</span>=<span style="color:#c3e88d">"read"</span>, <span style="color:#c792ea">iostat</span>=ios)
+
+<span style="color:#546e7a">! status: "old"     -- Datei muss existieren</span>
+<span style="color:#546e7a">!         "new"     -- Datei darf nicht existieren</span>
+<span style="color:#546e7a">!         "replace" -- Erstellen oder ueberschreiben (empfohlen fuer Ausgabe)</span>
+<span style="color:#546e7a">!         "unknown" -- Bibliothek entscheidet</span>
+
+<span style="color:#546e7a">! Datei schreiben</span>
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=<span style="color:#f78c6c">20</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"ausgabe.dat"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"replace"</span>, <span style="color:#c792ea">action</span>=<span style="color:#c3e88d">"write"</span>)
+<span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, n
+    <span style="color:#c792ea">write</span>(<span style="color:#f78c6c">20</span>,<span style="color:#c3e88d">'(i5,3f12.6)'</span>) i, x(i), y(i), z(i)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+<span style="color:#546e7a">close(20)</span>
+
+<span style="color:#546e7a">! Datei zeilenweise lesen</span>
+<span style="color:#546e7a">character(len=256) :: zeile</span>
+<span style="color:#c792ea">integer</span> :: ios
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=<span style="color:#f78c6c">10</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"eingabe.txt"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"old"</span>, <span style="color:#c792ea">action</span>=<span style="color:#c3e88d">"read"</span>)
+<span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">read</span>(<span style="color:#f78c6c">10</span>,<span style="color:#c3e88d">'(a)'</span>, <span style="color:#c792ea">iostat</span>=ios) zeile
+    <span style="color:#c792ea">if</span> (ios <span style="color:#89ddff">/=</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">exit</span>       <span style="color:#546e7a">! EOF oder Fehler</span>
+    <span style="color:#c792ea">call</span> verarbeite_zeile(<span style="color:#ffcb6b">trim</span>(zeile))
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+<span style="color:#546e7a">close(10)</span>
+
+<span style="color:#546e7a">! Binaerdatei (schneller, kleiner)</span>
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=<span style="color:#f78c6c">30</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"daten.bin"</span>, form=<span style="color:#c3e88d">"unformatted"</span>, &amp;
+     access=<span style="color:#c3e88d">"stream"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"replace"</span>)
+<span style="color:#c792ea">write</span>(<span style="color:#f78c6c">30</span>) n
+<span style="color:#c792ea">write</span>(<span style="color:#f78c6c">30</span>) arr   <span style="color:#546e7a">! Gesamtes Array auf einmal!</span>
+<span style="color:#546e7a">close(30)</span>
+
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=<span style="color:#f78c6c">30</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"daten.bin"</span>, form=<span style="color:#c3e88d">"unformatted"</span>, &amp;
+     access=<span style="color:#c3e88d">"stream"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"old"</span>, <span style="color:#c792ea">action</span>=<span style="color:#c3e88d">"read"</span>)
+<span style="color:#c792ea">read</span>(<span style="color:#f78c6c">30</span>) n
+<span style="color:#c792ea">allocate</span>(arr(n))
+<span style="color:#c792ea">read</span>(<span style="color:#f78c6c">30</span>) arr
+<span style="color:#546e7a">close(30)</span>
+
+<span style="color:#546e7a">! Namelist -- strukturiertes Lesen/Schreiben von Parametern</span>
+namelist /<span style="color:#c792ea">parameter</span>/ dt, max_iter, toleranz, ausgabe_datei
+<span style="color:#c792ea">open</span>(<span style="color:#c792ea">unit</span>=<span style="color:#f78c6c">5</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"param.nml"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"old"</span>)
+<span style="color:#c792ea">read</span>(<span style="color:#f78c6c">5</span>, nml=<span style="color:#c792ea">parameter</span>)    <span style="color:#546e7a">! Liest automatisch alle Variablen</span>
+<span style="color:#546e7a">close(5)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-modern" class="tp">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>Coarrays – Parallelprogrammierung (Fortran 2008+)
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="coarrays – parallelprogrammierung (fortran 2008+)">
+  <div style="color:#4b6fa8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Coarrays – Parallelprogrammierung (Fortran 2008+)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Coarrays: eingebaute Parallelisierung ohne MPI-Bibliothek</span>
+<span style="color:#546e7a">! Jeder "Image" (Prozess) hat seine eigene Kopie</span>
+
+<span style="color:#c792ea">program</span> coarray_demo
+    <span style="color:#c792ea">use</span> iso_fortran_env
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span> :: n
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: lokale_summe, gesamt_summe
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: daten(:)
+
+    <span style="color:#546e7a">! Coarray-Variable -- jeder Image hat eine Kopie</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: teilsumme[*]   <span style="color:#546e7a">! [*] = Coarray!</span>
+
+    n = <span style="color:#f78c6c">1000000</span> / num_images()     <span style="color:#546e7a">! Arbeit aufteilen</span>
+
+    <span style="color:#c792ea">allocate</span>(daten(n))
+    daten = [(<span style="color:#c792ea">real</span>(i + (this_image()-<span style="color:#f78c6c">1</span>)*n, <span style="color:#ffcb6b">real64</span>), i=<span style="color:#f78c6c">1</span>,n)]
+
+    <span style="color:#546e7a">! Lokale Berechnung</span>
+    teilsumme = <span style="color:#ffcb6b">sum</span>(daten)
+
+    <span style="color:#546e7a">! Alle Images synchronisieren</span>
+    <span style="color:#c792ea">sync</span> <span style="color:#c792ea">all</span>
+
+    <span style="color:#546e7a">! Image 1 sammelt alles ein</span>
+    <span style="color:#c792ea">if</span> (this_image() <span style="color:#89ddff">==</span> <span style="color:#f78c6c">1</span>) <span style="color:#c792ea">then</span>
+        gesamt_summe = <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>
+        <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, num_images()
+            gesamt_summe = gesamt_summe + teilsumme[i]   <span style="color:#546e7a">! [i] = anderes Image!</span>
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f20.0)'</span>) <span style="color:#c3e88d">"Summe: "</span>, gesamt_summe
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> coarray_demo
+
+<span style="color:#546e7a">! Kompilieren: gfortran -fcoarray=lib coarray.f90 -lcaf_mpi -o prog</span>
+<span style="color:#546e7a">! Ausfuehren:  mpirun -np 4 ./prog</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Allocatable &amp; Pointer
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="allocatable &amp; pointer">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Allocatable &amp; Pointer
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Allocatable Arrays -- modernes Fortran (empfohlen!)</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: arr(:), mat(:,:)
+<span style="color:#c792ea">integer</span> :: n = <span style="color:#f78c6c">100</span>
+
+<span style="color:#546e7a">! Allozieren</span>
+<span style="color:#c792ea">allocate</span>(arr(n))
+<span style="color:#c792ea">allocate</span>(mat(n, n))
+
+<span style="color:#546e7a">! Pruefen ob alloziert</span>
+<span style="color:#c792ea">if</span> (<span style="color:#ffcb6b">allocated</span>(arr)) <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Alloziert, Groesse:"</span>, <span style="color:#ffcb6b">size</span>(arr)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+<span style="color:#546e7a">! Reallozieren (Fortran 2003+)</span>
+<span style="color:#546e7a">! Inhalt wird beim Vergroessern beibehalten wenn move_alloc nicht genutzt</span>
+<span style="color:#c792ea">deallocate</span>(arr)
+n = <span style="color:#f78c6c">200</span>
+<span style="color:#c792ea">allocate</span>(arr(n))
+
+<span style="color:#546e7a">! move_alloc -- effizientes Umallozieren ohne Kopieren!</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: neu(:)
+<span style="color:#c792ea">allocate</span>(neu(<span style="color:#f78c6c">2</span>*<span style="color:#ffcb6b">size</span>(arr)))
+neu(<span style="color:#f78c6c">1</span>:<span style="color:#ffcb6b">size</span>(arr)) = arr
+<span style="color:#546e7a">call move_alloc(neu, arr)   ! arr hat jetzt die Groesse von neu, neu ist dealloiziert</span>
+
+<span style="color:#546e7a">! Allocatable in Derived Types (F2003)</span>
+<span style="color:#c792ea">type</span> :: DynVektor
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: daten(:)
+    <span style="color:#c792ea">integer</span> :: groesse = <span style="color:#f78c6c">0</span>
+<span style="color:#546e7a">contains</span>
+    procedure :: initialisiere
+    procedure :: push_back
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">type</span> DynVektor
+
+<span style="color:#546e7a">! Pointer (maechtiger aber gefaehrlicher)</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">target</span>  :: daten(<span style="color:#f78c6c">100</span>)     <span style="color:#546e7a">! Kann auf dieses Array gezeigt werden</span>
+<span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">pointer</span> :: p(:) <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">null</span>() <span style="color:#546e7a">! Zeiger (explizit null() initialisieren!)</span>
+
+p <span style="color:#89ddff">=&gt;</span> daten            <span style="color:#546e7a">! p zeigt auf daten</span>
+p <span style="color:#89ddff">=&gt;</span> daten(<span style="color:#f78c6c">10</span>:<span style="color:#f78c6c">20</span>)     <span style="color:#546e7a">! p zeigt auf Teilarray</span>
+p <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">null</span>()           <span style="color:#546e7a">! Pointer loesen</span>
+
+<span style="color:#c792ea">if</span> (<span style="color:#c792ea">associated</span>(p)) <span style="color:#c792ea">then</span>        <span style="color:#546e7a">! Pointer gueltig?</span>
+    <span style="color:#c792ea">write</span>(*,*) p(<span style="color:#f78c6c">1</span>)
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+<span style="color:#c792ea">if</span> (<span style="color:#c792ea">associated</span>(p, daten)) <span style="color:#c792ea">then</span> <span style="color:#546e7a">! Zeigt p auf daten?</span>
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Ja, zeigt auf daten"</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Interoperabilitaet mit C (iso_c_binding)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="interoperabilitaet mit c (iso_c_binding)">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Interoperabilitaet mit C (iso_c_binding)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Fortran und C arbeiten hervorragend zusammen</span>
+<span style="color:#546e7a">! iso_c_binding (F2003) macht die Schnittstelle typsicher</span>
+
+<span style="color:#c792ea">module</span> c_schnittstelle
+    <span style="color:#c792ea">use</span> iso_c_binding
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Typen die C-kompatibel sind</span>
+    <span style="color:#546e7a">! c_int, c_long, c_double, c_float, c_char, c_ptr, c_funptr</span>
+
+    <span style="color:#c792ea">interface</span>
+        <span style="color:#546e7a">! C-Funktion importieren</span>
+        <span style="color:#c792ea">function</span> c_sqrt(x) <span style="color:#c792ea">bind</span>(C, name=<span style="color:#c3e88d">"sqrt"</span>) <span style="color:#c792ea">result</span>(y)
+            <span style="color:#c792ea">use</span> iso_c_binding
+            <span style="color:#c792ea">real</span>(c_double), <span style="color:#c792ea">value</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: x
+            <span style="color:#c792ea">real</span>(c_double) :: y
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span> c_sqrt
+
+        <span style="color:#546e7a">! C-Funktion mit String</span>
+        <span style="color:#c792ea">subroutine</span> c_puts(str) <span style="color:#c792ea">bind</span>(C, name=<span style="color:#c3e88d">"puts"</span>)
+            <span style="color:#c792ea">use</span> iso_c_binding
+            <span style="color:#c792ea">character</span>(<span style="color:#c792ea">kind</span>=c_char) :: str(*)
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span> c_puts
+
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">interface</span>
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#546e7a">! Fortran-Funktion fuer C exportieren</span>
+    <span style="color:#c792ea">function</span> fortran_norm(v, n) <span style="color:#c792ea">result</span>(laenge) <span style="color:#c792ea">bind</span>(C, name=<span style="color:#c3e88d">"fortran_norm"</span>)
+        <span style="color:#c792ea">use</span> iso_c_binding
+        <span style="color:#c792ea">integer</span>(c_int), <span style="color:#c792ea">value</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: n
+        <span style="color:#c792ea">real</span>(c_double), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: v(n)
+        <span style="color:#c792ea">real</span>(c_double) :: laenge
+        laenge = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">sum</span>(v**<span style="color:#f78c6c">2</span>))
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> c_schnittstelle
+
+<span style="color:#546e7a">! String-Konvertierung</span>
+<span style="color:#546e7a">! Fortran-Strings != C-Strings! (kein Nullterminieor)</span>
+<span style="color:#c792ea">function</span> to_c_string(str) <span style="color:#c792ea">result</span>(c_str)
+    <span style="color:#c792ea">character</span>(*), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: str
+    <span style="color:#c792ea">character</span>(<span style="color:#c792ea">len</span>(str)+<span style="color:#f78c6c">1</span>, <span style="color:#c792ea">kind</span>=c_char) :: c_str
+    c_str = str // c_null_char    <span style="color:#546e7a">! Nullterminieor anhaengen</span>
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>OpenMP -- Shared Memory Parallelismus
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="openmp -- shared memory parallelismus">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    OpenMP -- Shared Memory Parallelismus
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! OpenMP: pragmabasierte Parallelisierung</span>
+<span style="color:#546e7a">! Kompilieren: gfortran -fopenmp programm.f90 -o prog</span>
+
+<span style="color:#c792ea">program</span> openmp_demo
+    <span style="color:#c792ea">use</span> omp_lib           <span style="color:#546e7a">! OpenMP-Bibliothek (optional)</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span> :: n = <span style="color:#f78c6c">1000000</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#f78c6c">8</span>), <span style="color:#c792ea">allocatable</span> :: a(:), b(:), c(:)
+    <span style="color:#c792ea">integer</span> :: i, nthreads, thread_id
+
+    <span style="color:#c792ea">allocate</span>(a(n), b(n), c(n))
+    a = <span style="color:#f78c6c">1.0d0</span>; b = <span style="color:#f78c6c">2.0d0</span>
+
+    <span style="color:#546e7a">! Parallele Region</span>
+    <span style="color:#546e7a">!$omp parallel</span>
+        nthreads  = omp_get_num_threads()
+        thread_id = omp_get_thread_num()
+        <span style="color:#546e7a">!$omp single</span>
+            <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,i0,a)'</span>) <span style="color:#c3e88d">"Starte mit "</span>, nthreads, <span style="color:#c3e88d">" Threads"</span>
+        <span style="color:#546e7a">!$omp end single</span>
+    <span style="color:#546e7a">!$omp end parallel</span>
+
+    <span style="color:#546e7a">! Parallele Schleife (automatisch aufgeteilt)</span>
+    <span style="color:#546e7a">!$omp parallel do private(i) shared(a, b, c)</span>
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, n
+        c(i) = a(i) + b(i)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+    <span style="color:#546e7a">!$omp end parallel do</span>
+
+    <span style="color:#546e7a">! Reduktion (kein Race Condition!)</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#f78c6c">8</span>) :: summe = <span style="color:#f78c6c">0.0d0</span>
+    <span style="color:#546e7a">!$omp parallel do reduction(+:summe)</span>
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, n
+        summe = summe + c(i)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+    <span style="color:#546e7a">!$omp end parallel do</span>
+
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f20.2)'</span>) <span style="color:#c3e88d">"Summe:"</span>, summe
+
+    <span style="color:#546e7a">! Simd (Vektorisierung)</span>
+    <span style="color:#546e7a">!$omp simd</span>
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, n
+        c(i) = <span style="color:#ffcb6b">sqrt</span>(a(i)**<span style="color:#f78c6c">2</span> + b(i)**<span style="color:#f78c6c">2</span>)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> openmp_demo
+
+<span style="color:#546e7a">! Umgebungsvariable: export OMP_NUM_THREADS=8</span>
+<span style="color:#546e7a">! Oder: call omp_set_num_threads(8)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-intrinsics" class="tp">
+
+<div class="ac open" id="ac-int0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('int0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>Mathematik
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Intrinsic</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="abs(x)" data-d="absolutwert">
+      <td style="width:220px"><code style="color:#4b6fa8">abs(x)</code></td>
+      <td style="color:#6c7a8e">Absolutwert</td>
+      <td style="color:#c3e88d;font-size:11px">abs(-3.5) -&gt; 3.5</td>
+    </tr>
+    <tr class="cr" data-m="sqrt(x)" data-d="quadratwurzel">
+      <td style="width:220px"><code style="color:#4b6fa8">sqrt(x)</code></td>
+      <td style="color:#6c7a8e">Quadratwurzel</td>
+      <td style="color:#c3e88d;font-size:11px">sqrt(9.0d0) -&gt; 3.0</td>
+    </tr>
+    <tr class="cr" data-m="exp(x)" data-d="exponentialfunktion e^x">
+      <td style="width:220px"><code style="color:#4b6fa8">exp(x)</code></td>
+      <td style="color:#6c7a8e">Exponentialfunktion e^x</td>
+      <td style="color:#c3e88d;font-size:11px">exp(1.0d0) -&gt; 2.71828...</td>
+    </tr>
+    <tr class="cr" data-m="log(x)" data-d="natuerlicher logarithmus">
+      <td style="width:220px"><code style="color:#4b6fa8">log(x)</code></td>
+      <td style="color:#6c7a8e">Natuerlicher Logarithmus</td>
+      <td style="color:#c3e88d;font-size:11px">log(exp(1.0d0)) -&gt; 1.0</td>
+    </tr>
+    <tr class="cr" data-m="log10(x)" data-d="dekadischer logarithmus">
+      <td style="width:220px"><code style="color:#4b6fa8">log10(x)</code></td>
+      <td style="color:#6c7a8e">Dekadischer Logarithmus</td>
+      <td style="color:#c3e88d;font-size:11px">log10(100.0) -&gt; 2.0</td>
+    </tr>
+    <tr class="cr" data-m="sin(x) cos(x) tan(x)" data-d="trigonometrisch (radiant)">
+      <td style="width:220px"><code style="color:#4b6fa8">sin(x) cos(x) tan(x)</code></td>
+      <td style="color:#6c7a8e">Trigonometrisch (Radiant)</td>
+      <td style="color:#c3e88d;font-size:11px">sin(acos(-1.0d0)) -&gt; 0.0</td>
+    </tr>
+    <tr class="cr" data-m="asin acos atan" data-d="inverse trig.">
+      <td style="width:220px"><code style="color:#4b6fa8">asin acos atan</code></td>
+      <td style="color:#6c7a8e">Inverse trig.</td>
+      <td style="color:#c3e88d;font-size:11px">acos(-1.0d0) -&gt; pi</td>
+    </tr>
+    <tr class="cr" data-m="atan2(y,x)" data-d="arctan mit quadrant">
+      <td style="width:220px"><code style="color:#4b6fa8">atan2(y,x)</code></td>
+      <td style="color:#6c7a8e">Arctan mit Quadrant</td>
+      <td style="color:#c3e88d;font-size:11px">atan2(1.0,1.0) -&gt; pi/4</td>
+    </tr>
+    <tr class="cr" data-m="mod(a,p)" data-d="rest (a mod p)">
+      <td style="width:220px"><code style="color:#4b6fa8">mod(a,p)</code></td>
+      <td style="color:#6c7a8e">Rest (a mod p)</td>
+      <td style="color:#c3e88d;font-size:11px">mod(10,3) -&gt; 1</td>
+    </tr>
+    <tr class="cr" data-m="modulo(a,p)" data-d="modulo (immer positiv)">
+      <td style="width:220px"><code style="color:#4b6fa8">modulo(a,p)</code></td>
+      <td style="color:#6c7a8e">Modulo (immer positiv)</td>
+      <td style="color:#c3e88d;font-size:11px">modulo(-1,3) -&gt; 2</td>
+    </tr>
+    <tr class="cr" data-m="sign(a,b)" data-d="betrag von a, vorzeichen von b">
+      <td style="width:220px"><code style="color:#4b6fa8">sign(a,b)</code></td>
+      <td style="color:#6c7a8e">Betrag von a, Vorzeichen von b</td>
+      <td style="color:#c3e88d;font-size:11px">sign(3.0,-1.0) -&gt; -3.0</td>
+    </tr>
+    <tr class="cr" data-m="max(a,b,...)" data-d="maximum mehrerer werte">
+      <td style="width:220px"><code style="color:#4b6fa8">max(a,b,...)</code></td>
+      <td style="color:#6c7a8e">Maximum mehrerer Werte</td>
+      <td style="color:#c3e88d;font-size:11px">max(1,3,2) -&gt; 3</td>
+    </tr>
+    <tr class="cr" data-m="min(a,b,...)" data-d="minimum">
+      <td style="width:220px"><code style="color:#4b6fa8">min(a,b,...)</code></td>
+      <td style="color:#6c7a8e">Minimum</td>
+      <td style="color:#c3e88d;font-size:11px">min(1,3,2) -&gt; 1</td>
+    </tr>
+    <tr class="cr" data-m="floor(x)" data-d="abrunden">
+      <td style="width:220px"><code style="color:#4b6fa8">floor(x)</code></td>
+      <td style="color:#6c7a8e">Abrunden</td>
+      <td style="color:#c3e88d;font-size:11px">floor(3.7) -&gt; 3</td>
+    </tr>
+    <tr class="cr" data-m="ceiling(x)" data-d="aufrunden">
+      <td style="width:220px"><code style="color:#4b6fa8">ceiling(x)</code></td>
+      <td style="color:#6c7a8e">Aufrunden</td>
+      <td style="color:#c3e88d;font-size:11px">ceiling(3.2) -&gt; 4</td>
+    </tr>
+    <tr class="cr" data-m="nint(x)" data-d="naechste ganze zahl">
+      <td style="width:220px"><code style="color:#4b6fa8">nint(x)</code></td>
+      <td style="color:#6c7a8e">Naechste ganze Zahl</td>
+      <td style="color:#c3e88d;font-size:11px">nint(3.5) -&gt; 4</td>
+    </tr>
+    <tr class="cr" data-m="int(x)" data-d="truncate zu integer">
+      <td style="width:220px"><code style="color:#4b6fa8">int(x)</code></td>
+      <td style="color:#6c7a8e">Truncate zu Integer</td>
+      <td style="color:#c3e88d;font-size:11px">int(3.9) -&gt; 3</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-int1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('int1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Array-Intrinsics
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Intrinsic</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="size(a)" data-d="anzahl elemente gesamt">
+      <td style="width:220px"><code style="color:#4fc3f7">size(a)</code></td>
+      <td style="color:#6c7a8e">Anzahl Elemente gesamt</td>
+      <td style="color:#c3e88d;font-size:11px">size([1,2,3]) -&gt; 3</td>
+    </tr>
+    <tr class="cr" data-m="size(a,dim)" data-d="groesse entlang dimension">
+      <td style="width:220px"><code style="color:#4fc3f7">size(a,dim)</code></td>
+      <td style="color:#6c7a8e">Groesse entlang Dimension</td>
+      <td style="color:#c3e88d;font-size:11px">size(m,1) -&gt; Anzahl Zeilen</td>
+    </tr>
+    <tr class="cr" data-m="shape(a)" data-d="form als integer-array">
+      <td style="width:220px"><code style="color:#4fc3f7">shape(a)</code></td>
+      <td style="color:#6c7a8e">Form als Integer-Array</td>
+      <td style="color:#c3e88d;font-size:11px">shape(m) -&gt; [3, 4]</td>
+    </tr>
+    <tr class="cr" data-m="lbound(a)" data-d="untere index-grenze">
+      <td style="width:220px"><code style="color:#4fc3f7">lbound(a)</code></td>
+      <td style="color:#6c7a8e">Untere Index-Grenze</td>
+      <td style="color:#c3e88d;font-size:11px">lbound(a) -&gt; 1 (oder eigene)</td>
+    </tr>
+    <tr class="cr" data-m="ubound(a)" data-d="obere index-grenze">
+      <td style="width:220px"><code style="color:#4fc3f7">ubound(a)</code></td>
+      <td style="color:#6c7a8e">Obere Index-Grenze</td>
+      <td style="color:#c3e88d;font-size:11px">ubound(a) -&gt; n</td>
+    </tr>
+    <tr class="cr" data-m="sum(a)" data-d="summe aller elemente">
+      <td style="width:220px"><code style="color:#4fc3f7">sum(a)</code></td>
+      <td style="color:#6c7a8e">Summe aller Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">sum([1,2,3]) -&gt; 6</td>
+    </tr>
+    <tr class="cr" data-m="sum(a,dim=d)" data-d="summe entlang dimension">
+      <td style="width:220px"><code style="color:#4fc3f7">sum(a,dim=d)</code></td>
+      <td style="color:#6c7a8e">Summe entlang Dimension</td>
+      <td style="color:#c3e88d;font-size:11px">sum(m, dim=1) -&gt; Spaltensummen</td>
+    </tr>
+    <tr class="cr" data-m="product(a)" data-d="produkt aller elemente">
+      <td style="width:220px"><code style="color:#4fc3f7">product(a)</code></td>
+      <td style="color:#6c7a8e">Produkt aller Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">product([1,2,3]) -&gt; 6</td>
+    </tr>
+    <tr class="cr" data-m="maxval(a)" data-d="maximum">
+      <td style="width:220px"><code style="color:#4fc3f7">maxval(a)</code></td>
+      <td style="color:#6c7a8e">Maximum</td>
+      <td style="color:#c3e88d;font-size:11px">maxval([3,1,4]) -&gt; 4</td>
+    </tr>
+    <tr class="cr" data-m="minval(a)" data-d="minimum">
+      <td style="width:220px"><code style="color:#4fc3f7">minval(a)</code></td>
+      <td style="color:#6c7a8e">Minimum</td>
+      <td style="color:#c3e88d;font-size:11px">minval([3,1,4]) -&gt; 1</td>
+    </tr>
+    <tr class="cr" data-m="maxloc(a)" data-d="position des maximums">
+      <td style="width:220px"><code style="color:#4fc3f7">maxloc(a)</code></td>
+      <td style="color:#6c7a8e">Position des Maximums</td>
+      <td style="color:#c3e88d;font-size:11px">maxloc([3,1,4]) -&gt; [3]</td>
+    </tr>
+    <tr class="cr" data-m="minloc(a)" data-d="position des minimums">
+      <td style="width:220px"><code style="color:#4fc3f7">minloc(a)</code></td>
+      <td style="color:#6c7a8e">Position des Minimums</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="any(a &gt; 0)" data-d="mindestens ein element?">
+      <td style="width:220px"><code style="color:#4fc3f7">any(a &gt; 0)</code></td>
+      <td style="color:#6c7a8e">Mindestens ein Element?</td>
+      <td style="color:#c3e88d;font-size:11px">any([1,-1,2] &gt; 0) -&gt; T</td>
+    </tr>
+    <tr class="cr" data-m="all(a &gt; 0)" data-d="alle elemente?">
+      <td style="width:220px"><code style="color:#4fc3f7">all(a &gt; 0)</code></td>
+      <td style="color:#6c7a8e">Alle Elemente?</td>
+      <td style="color:#c3e88d;font-size:11px">all([1,2,3] &gt; 0) -&gt; T</td>
+    </tr>
+    <tr class="cr" data-m="count(mask)" data-d="anzahl .true. elemente">
+      <td style="width:220px"><code style="color:#4fc3f7">count(mask)</code></td>
+      <td style="color:#6c7a8e">Anzahl .TRUE. Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">count([T,F,T]) -&gt; 2</td>
+    </tr>
+    <tr class="cr" data-m="matmul(a,b)" data-d="matrix-multiplikation">
+      <td style="width:220px"><code style="color:#4fc3f7">matmul(a,b)</code></td>
+      <td style="color:#6c7a8e">Matrix-Multiplikation</td>
+      <td style="color:#c3e88d;font-size:11px">c = matmul(a, b)</td>
+    </tr>
+    <tr class="cr" data-m="dot_product(a,b)" data-d="skalarprodukt">
+      <td style="width:220px"><code style="color:#4fc3f7">dot_product(a,b)</code></td>
+      <td style="color:#6c7a8e">Skalarprodukt</td>
+      <td style="color:#c3e88d;font-size:11px">dot_product(v1, v2)</td>
+    </tr>
+    <tr class="cr" data-m="transpose(m)" data-d="transponieren">
+      <td style="width:220px"><code style="color:#4fc3f7">transpose(m)</code></td>
+      <td style="color:#6c7a8e">Transponieren</td>
+      <td style="color:#c3e88d;font-size:11px">mt = transpose(m)</td>
+    </tr>
+    <tr class="cr" data-m="reshape(a,shp)" data-d="dimensionen umformen">
+      <td style="width:220px"><code style="color:#4fc3f7">reshape(a,shp)</code></td>
+      <td style="color:#6c7a8e">Dimensionen umformen</td>
+      <td style="color:#c3e88d;font-size:11px">reshape(v, [3,4])</td>
+    </tr>
+    <tr class="cr" data-m="pack(a,mask)" data-d="elemente extrahieren wo mask=t">
+      <td style="width:220px"><code style="color:#4fc3f7">pack(a,mask)</code></td>
+      <td style="color:#6c7a8e">Elemente extrahieren wo mask=T</td>
+      <td style="color:#c3e88d;font-size:11px">pack(a, a &gt; 0)</td>
+    </tr>
+    <tr class="cr" data-m="spread(a,d,n)" data-d="entlang dimension wiederholen">
+      <td style="width:220px"><code style="color:#4fc3f7">spread(a,d,n)</code></td>
+      <td style="color:#6c7a8e">Entlang Dimension wiederholen</td>
+      <td style="color:#c3e88d;font-size:11px">spread(row, 2, 10)</td>
+    </tr>
+    <tr class="cr" data-m="cshift(a,n)" data-d="zirkulaeres verschieben">
+      <td style="width:220px"><code style="color:#4fc3f7">cshift(a,n)</code></td>
+      <td style="color:#6c7a8e">Zirkulaeres Verschieben</td>
+      <td style="color:#c3e88d;font-size:11px">cshift(a, 1)</td>
+    </tr>
+    <tr class="cr" data-m="merge(t,f,mask)" data-d="bedingtes auswaehlen">
+      <td style="width:220px"><code style="color:#4fc3f7">merge(t,f,mask)</code></td>
+      <td style="color:#6c7a8e">Bedingtes Auswaehlen</td>
+      <td style="color:#c3e88d;font-size:11px">merge(a, 0.0, a&gt;0)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-int2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('int2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>String-Intrinsics
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Intrinsic</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="len(s)" data-d="laenge (inkl. leerzeichen)">
+      <td style="width:220px"><code style="color:#4ec9b0">len(s)</code></td>
+      <td style="color:#6c7a8e">Laenge (inkl. Leerzeichen)</td>
+      <td style="color:#c3e88d;font-size:11px">len("hi   ") -&gt; 6</td>
+    </tr>
+    <tr class="cr" data-m="len_trim(s)" data-d="laenge ohne trailing spaces">
+      <td style="width:220px"><code style="color:#4ec9b0">len_trim(s)</code></td>
+      <td style="color:#6c7a8e">Laenge ohne trailing spaces</td>
+      <td style="color:#c3e88d;font-size:11px">len_trim("hi   ") -&gt; 2</td>
+    </tr>
+    <tr class="cr" data-m="trim(s)" data-d="trailing spaces entfernen">
+      <td style="width:220px"><code style="color:#4ec9b0">trim(s)</code></td>
+      <td style="color:#6c7a8e">Trailing Spaces entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">trim("hi   ") -&gt; "hi"</td>
+    </tr>
+    <tr class="cr" data-m="adjustl(s)" data-d="links buendig ausrichten">
+      <td style="width:220px"><code style="color:#4ec9b0">adjustl(s)</code></td>
+      <td style="color:#6c7a8e">Links buendig ausrichten</td>
+      <td style="color:#c3e88d;font-size:11px">adjustl("  hi") -&gt; "hi  "</td>
+    </tr>
+    <tr class="cr" data-m="adjustr(s)" data-d="rechts buendig ausrichten">
+      <td style="width:220px"><code style="color:#4ec9b0">adjustr(s)</code></td>
+      <td style="color:#6c7a8e">Rechts buendig ausrichten</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="index(s,sub)" data-d="position des substrings">
+      <td style="width:220px"><code style="color:#4ec9b0">index(s,sub)</code></td>
+      <td style="color:#6c7a8e">Position des Substrings</td>
+      <td style="color:#c3e88d;font-size:11px">index("hallo","all") -&gt; 2</td>
+    </tr>
+    <tr class="cr" data-m="char(i)" data-d="ascii-code zu zeichen">
+      <td style="width:220px"><code style="color:#4ec9b0">char(i)</code></td>
+      <td style="color:#6c7a8e">ASCII-Code zu Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">char(65) -&gt; "A"</td>
+    </tr>
+    <tr class="cr" data-m="ichar(c)" data-d="zeichen zu ascii-code">
+      <td style="width:220px"><code style="color:#4ec9b0">ichar(c)</code></td>
+      <td style="color:#6c7a8e">Zeichen zu ASCII-Code</td>
+      <td style="color:#c3e88d;font-size:11px">ichar("A") -&gt; 65</td>
+    </tr>
+    <tr class="cr" data-m="achar(i)" data-d="iso 10646 code zu zeichen">
+      <td style="width:220px"><code style="color:#4ec9b0">achar(i)</code></td>
+      <td style="color:#6c7a8e">ISO 10646 Code zu Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">achar(10) -&gt; Newline</td>
+    </tr>
+    <tr class="cr" data-m="iachar(c)" data-d="zeichen zu iso 10646 code">
+      <td style="width:220px"><code style="color:#4ec9b0">iachar(c)</code></td>
+      <td style="color:#6c7a8e">Zeichen zu ISO 10646 Code</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="repeat(s,n)" data-d="string n-mal wiederholen">
+      <td style="width:220px"><code style="color:#4ec9b0">repeat(s,n)</code></td>
+      <td style="color:#6c7a8e">String n-mal wiederholen</td>
+      <td style="color:#c3e88d;font-size:11px">repeat("ab",3) -&gt; "ababab"</td>
+    </tr>
+    <tr class="cr" data-m="scan(s,set)" data-d="erstes zeichen aus menge">
+      <td style="width:220px"><code style="color:#4ec9b0">scan(s,set)</code></td>
+      <td style="color:#6c7a8e">Erstes Zeichen aus Menge</td>
+      <td style="color:#c3e88d;font-size:11px">scan("hallo","aeiou") -&gt; 2</td>
+    </tr>
+    <tr class="cr" data-m="verify(s,set)" data-d="erstes zeichen nicht in menge">
+      <td style="width:220px"><code style="color:#4ec9b0">verify(s,set)</code></td>
+      <td style="color:#6c7a8e">Erstes Zeichen NICHT in Menge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="new_line("a")" data-d="plattformspezifisches newline">
+      <td style="width:220px"><code style="color:#4ec9b0">new_line("a")</code></td>
+      <td style="color:#6c7a8e">Plattformspezifisches Newline</td>
+      <td style="color:#c3e88d;font-size:11px">Portabler als char(10)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #4b6fa8;color:#4b6fa8;background:rgba(75,111,168,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Lineare Algebra &amp; LAPACK</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Monte Carlo Simulation</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Differenzialgleichung (Runge-Kutta)</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Stern-Simulation (N-Koerper)</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Fortrans Staerke: numerische Berechnungen mit LAPACK/BLAS</span>
+<span style="color:#546e7a">! gfortran programm.f90 -o prog -llapack -lblas</span>
+
+<span style="color:#c792ea">program</span> lineare_algebra
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: n = <span style="color:#f78c6c">3</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: A(n,n), b(n), x(n)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: eigenvalues(n)
+    <span style="color:#c792ea">integer</span> :: ipiv(n), info
+
+    <span style="color:#546e7a">! Matrix A und Rechte Seite b</span>
+    A = <span style="color:#ffcb6b">reshape</span>([<span style="color:#f78c6c">2.0</span>, <span style="color:#f78c6c">1.0</span>, <span style="color:#f78c6c">0.0</span>,  &amp;
+                 <span style="color:#f78c6c">1.0</span>, <span style="color:#f78c6c">3.0</span>, <span style="color:#f78c6c">1.0</span>,  &amp;
+                 <span style="color:#f78c6c">0.0</span>, <span style="color:#f78c6c">1.0</span>, <span style="color:#f78c6c">2.0</span>], [n, n])
+    b = [<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">2.0_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">3.0_</span><span style="color:#ffcb6b">real64</span>]
+
+    <span style="color:#546e7a">! LU-Zerlegung und Loesung: Ax = b (LAPACK dgesv)</span>
+    x = b
+    <span style="color:#c792ea">call</span> dgesv(n, <span style="color:#f78c6c">1</span>, A, n, ipiv, x, n, info)
+    <span style="color:#c792ea">if</span> (info <span style="color:#89ddff">==</span> <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">then</span>
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,3f10.4)'</span>) <span style="color:#c3e88d">"Loesung x ="</span>, x
+    <span style="color:#c792ea">else</span>
+        <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"LAPACK-Fehler, info ="</span>, info
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">if</span>
+
+    <span style="color:#546e7a">! Matrix-Vektor-Produkt (BLAS dgemv)</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: y(n)
+    <span style="color:#c792ea">call</span> dgemv(<span style="color:#c3e88d">'N'</span>, n, n, <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>, A, n, x, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>, y, <span style="color:#f78c6c">1</span>)
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,3f10.4)'</span>) <span style="color:#c3e88d">"Ax ="</span>, y     <span style="color:#546e7a">! Sollte = b sein</span>
+
+    <span style="color:#546e7a">! Reine Fortran-Alternative (keine LAPACK-Abhaengigkeit)</span>
+    y = <span style="color:#ffcb6b">matmul</span>(A, x)    <span style="color:#546e7a">! Direkt, aber langsamer fuer grosse Matrizen</span>
+
+    <span style="color:#546e7a">! Frobenius-Norm</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: fnorm
+    fnorm = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">sum</span>(A**<span style="color:#f78c6c">2</span>))
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f10.4)'</span>) <span style="color:#c3e88d">"Frobenius-Norm:"</span>, fnorm
+
+    <span style="color:#546e7a">! Spur (Summe der Diagonalen)</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: spur
+    spur = <span style="color:#ffcb6b">sum</span>([(A(i,i), i=<span style="color:#f78c6c">1</span>,n)])
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f10.4)'</span>) <span style="color:#c3e88d">"Spur:"</span>, spur
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> lineare_algebra</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Monte Carlo: Pi-Berechnung durch Zufallspunkte</span>
+<span style="color:#546e7a">! Zeigt Fortrans Staerke bei Array-Operationen</span>
+
+<span style="color:#c792ea">program</span> monte_carlo_pi
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>, <span style="color:#ffcb6b">int64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span>(<span style="color:#ffcb6b">int64</span>), <span style="color:#c792ea">parameter</span> :: N = <span style="color:#f78c6c">10000000</span>    <span style="color:#546e7a">! 10 Millionen Punkte</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">allocatable</span> :: x(:), y(:)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: pi_approx
+    <span style="color:#c792ea">integer</span>(<span style="color:#ffcb6b">int64</span>) :: treffer
+    <span style="color:#c792ea">integer</span> :: seed_groesse
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">allocatable</span> :: seed(:)
+
+    <span style="color:#546e7a">! Zufallszahlen-Generator initialisieren</span>
+    <span style="color:#c792ea">call</span> random_seed(<span style="color:#ffcb6b">size</span>=seed_groesse)
+    <span style="color:#c792ea">allocate</span>(seed(seed_groesse))
+    seed = <span style="color:#f78c6c">42</span>   <span style="color:#546e7a">! Reproduzierbar</span>
+    <span style="color:#c792ea">call</span> random_seed(put=seed)
+
+    <span style="color:#546e7a">! Punkte generieren (als Arrays -- sehr schnell!)</span>
+    <span style="color:#c792ea">allocate</span>(x(N), y(N))
+    <span style="color:#c792ea">call</span> random_number(x)    <span style="color:#546e7a">! Alle N Zahlen auf einmal!</span>
+    <span style="color:#c792ea">call</span> random_number(y)
+
+    <span style="color:#546e7a">! Bereich [-1, 1] x [-1, 1]</span>
+    x = <span style="color:#f78c6c">2.0_</span><span style="color:#ffcb6b">real64</span> * x - <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>
+    y = <span style="color:#f78c6c">2.0_</span><span style="color:#ffcb6b">real64</span> * y - <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>
+
+    <span style="color:#546e7a">! Zählen wie viele im Einheitskreis liegen</span>
+    <span style="color:#546e7a">! count() auf logisches Array -- kein Schleife!</span>
+    treffer = <span style="color:#ffcb6b">count</span>(x**<span style="color:#f78c6c">2</span> + y**<span style="color:#f78c6c">2</span> <span style="color:#89ddff">&lt;=</span> <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>)
+
+    <span style="color:#546e7a">! Pi-Naherung</span>
+    pi_approx = <span style="color:#f78c6c">4.0_</span><span style="color:#ffcb6b">real64</span> * <span style="color:#c792ea">real</span>(treffer, <span style="color:#ffcb6b">real64</span>) / <span style="color:#c792ea">real</span>(N, <span style="color:#ffcb6b">real64</span>)
+
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f12.8)'</span>) <span style="color:#c3e88d">"Pi (approximiert): "</span>, pi_approx
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,f12.8)'</span>) <span style="color:#c3e88d">"Pi (exakt):        "</span>, <span style="color:#ffcb6b">acos</span>(-<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>)
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a,es10.3)'</span>) <span style="color:#c3e88d">"Fehler:            "</span>, <span style="color:#ffcb6b">abs</span>(pi_approx - <span style="color:#ffcb6b">acos</span>(-<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>))
+
+    <span style="color:#c792ea">deallocate</span>(x, y, seed)
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> monte_carlo_pi
+
+<span style="color:#546e7a">! Typische Laufzeit: ~0.1s fuer 10M Punkte</span>
+<span style="color:#546e7a">! Vergleich Python (numpy): aehnlich schnell (numpy auch BLAS/LAPACK)</span>
+<span style="color:#546e7a">! Vergleich reines Python: ~50x langsamer</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! Numerische Integration einer ODE mit Runge-Kutta 4. Ordnung</span>
+<span style="color:#546e7a">! dy/dt = f(t, y), y(0) = y0</span>
+
+<span style="color:#c792ea">module</span> ode_modul
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#546e7a">! Abstrakte Interface fuer die Ableitung</span>
+    abstract <span style="color:#c792ea">interface</span>
+        <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> ableitungsfunktion(t, y) <span style="color:#c792ea">result</span>(dydt)
+            import <span style="color:#ffcb6b">real64</span>
+            <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: t
+            <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: y(:)
+            <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: dydt(<span style="color:#ffcb6b">size</span>(y))
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">interface</span>
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#546e7a">! Runge-Kutta 4. Ordnung Schritt</span>
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">subroutine</span> rk4_schritt(f, t, y, h, y_neu)
+        procedure(ableitungsfunktion) :: f
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)    :: t, h
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)    :: y(:)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>)   :: y_neu(<span style="color:#ffcb6b">size</span>(y))
+
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: k1(<span style="color:#ffcb6b">size</span>(y)), k2(<span style="color:#ffcb6b">size</span>(y))
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: k3(<span style="color:#ffcb6b">size</span>(y)), k4(<span style="color:#ffcb6b">size</span>(y))
+
+        k1 = h * f(t,         y)
+        k2 = h * f(t + h/<span style="color:#f78c6c">2</span>,   y + k1/<span style="color:#f78c6c">2</span>)
+        k3 = h * f(t + h/<span style="color:#f78c6c">2</span>,   y + k2/<span style="color:#f78c6c">2</span>)
+        k4 = h * f(t + h,     y + k3)
+
+        y_neu = y + (k1 + <span style="color:#f78c6c">2</span>*k2 + <span style="color:#f78c6c">2</span>*k3 + k4) / <span style="color:#f78c6c">6.0_</span><span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+    <span style="color:#546e7a">! Vollstaendige Integration</span>
+    <span style="color:#c792ea">subroutine</span> integriere(f, t0, t_end, y0, n_schritte, t_arr, y_arr)
+        procedure(ableitungsfunktion) :: f
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)  :: t0, t_end, y0(:)
+        <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)       :: n_schritte
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>) :: t_arr(<span style="color:#f78c6c">0</span>:n_schritte)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>) :: y_arr(<span style="color:#ffcb6b">size</span>(y0), <span style="color:#f78c6c">0</span>:n_schritte)
+
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: h, t
+        <span style="color:#c792ea">integer</span> :: i
+
+        h = (t_end - t0) / n_schritte
+        t_arr(<span style="color:#f78c6c">0</span>) = t0
+        y_arr(:, <span style="color:#f78c6c">0</span>) = y0
+
+        <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, n_schritte
+            <span style="color:#c792ea">call</span> rk4_schritt(f, t_arr(i-<span style="color:#f78c6c">1</span>), y_arr(:,i-<span style="color:#f78c6c">1</span>), h, y_arr(:,i))
+            t_arr(i) = t0 + i * h
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> ode_modul
+
+<span style="color:#546e7a">! Beispiel: Gedaempfter harmonischer Oszillator</span>
+<span style="color:#546e7a">! y'' + 2*gamma*omega*y' + omega^2*y = 0</span>
+<span style="color:#546e7a">! als System: [y, v]' = [v, -2*gamma*omega*v - omega^2*y]</span>
+
+<span style="color:#c792ea">program</span> oszillator
+    <span style="color:#c792ea">use</span> ode_modul
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: n_schritte = <span style="color:#f78c6c">1000</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: t_arr(<span style="color:#f78c6c">0</span>:n_schritte), y_arr(<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">0</span>:n_schritte)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: y0(<span style="color:#f78c6c">2</span>)
+    <span style="color:#c792ea">integer</span> :: i
+
+    y0 = [<span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>]   <span style="color:#546e7a">! Anfangsbedingungen: y=1, v=0</span>
+
+    <span style="color:#c792ea">call</span> integriere(ableitung, <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">10.0_</span><span style="color:#ffcb6b">real64</span>, y0, n_schritte, t_arr, y_arr)
+
+    <span style="color:#546e7a">! Ausgabe</span>
+    <span style="color:#c792ea">open</span>(<span style="color:#f78c6c">10</span>, <span style="color:#c792ea">file</span>=<span style="color:#c3e88d">"oszillator.dat"</span>, <span style="color:#c792ea">status</span>=<span style="color:#c3e88d">"replace"</span>)
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">0</span>, n_schritte
+        <span style="color:#c792ea">write</span>(<span style="color:#f78c6c">10</span>,<span style="color:#c3e88d">'(3f12.6)'</span>) t_arr(i), y_arr(<span style="color:#f78c6c">1</span>,i), y_arr(<span style="color:#f78c6c">2</span>,i)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">close</span>(<span style="color:#f78c6c">10</span>)
+    <span style="color:#c792ea">write</span>(*,*) <span style="color:#c3e88d">"Ausgabe in oszillator.dat"</span>
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#c792ea">pure</span> <span style="color:#c792ea">function</span> ableitung(t, y) <span style="color:#c792ea">result</span>(dydt)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>) :: t, y(:)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: dydt(<span style="color:#ffcb6b">size</span>(y))
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: omega = <span style="color:#f78c6c">2.0_</span><span style="color:#ffcb6b">real64</span>, gamma = <span style="color:#f78c6c">0.1_</span><span style="color:#ffcb6b">real64</span>
+        dydt(<span style="color:#f78c6c">1</span>) = y(<span style="color:#f78c6c">2</span>)
+        dydt(<span style="color:#f78c6c">2</span>) = -<span style="color:#f78c6c">2</span>*gamma*omega*y(<span style="color:#f78c6c">2</span>) - omega**<span style="color:#f78c6c">2</span>*y(<span style="color:#f78c6c">1</span>)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">function</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> oszillator</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">! N-Koerper-Simulation: Gravitationssystem</span>
+<span style="color:#546e7a">! Klassisches HPC-Problem -- Fortran glaenzt hier!</span>
+
+<span style="color:#c792ea">module</span> nbody
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: NDIM = <span style="color:#f78c6c">3</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: G = <span style="color:#f78c6c">6.674e-11_</span><span style="color:#ffcb6b">real64</span>   <span style="color:#546e7a">! Gravitationskonstante</span>
+
+<span style="color:#546e7a">contains</span>
+
+    <span style="color:#c792ea">subroutine</span> berechne_kraefte(pos, masse, kraft, n)
+        <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)  :: n
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)  :: pos(NDIM, n), masse(n)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">out</span>) :: kraft(NDIM, n)
+
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: r(NDIM), abstand, f_mag
+        <span style="color:#c792ea">integer</span> :: i, j
+
+        kraft = <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>
+
+        <span style="color:#c792ea">do</span> j = <span style="color:#f78c6c">1</span>, n
+            <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, j-<span style="color:#f78c6c">1</span>
+                <span style="color:#546e7a">! Verbindungsvektor</span>
+                r = pos(:, j) - pos(:, i)
+                abstand = <span style="color:#ffcb6b">sqrt</span>(<span style="color:#ffcb6b">sum</span>(r**<span style="color:#f78c6c">2</span>)) + <span style="color:#f78c6c">1.0e-10_</span><span style="color:#ffcb6b">real64</span>   <span style="color:#546e7a">! Softening</span>
+
+                <span style="color:#546e7a">! Gravitationskraft</span>
+                f_mag = G * masse(i) * masse(j) / abstand**<span style="color:#f78c6c">2</span>
+
+                <span style="color:#546e7a">! Kraft auf i (in Richtung j)</span>
+                kraft(:, i) = kraft(:, i) + f_mag * r / abstand
+
+                <span style="color:#546e7a">! Reaktionskraft auf j (Newton: actio = reactio)</span>
+                kraft(:, j) = kraft(:, j) - f_mag * r / abstand
+            <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+    <span style="color:#c792ea">subroutine</span> zeitschritt(pos, vel, masse, n, dt)
+        <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)    :: n
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">inout</span>) :: pos(NDIM, n), vel(NDIM, n)
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">intent</span>(<span style="color:#c792ea">in</span>)    :: masse(n), dt
+
+        <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: kraft(NDIM, n)
+        <span style="color:#c792ea">integer</span> :: i
+
+        <span style="color:#c792ea">call</span> berechne_kraefte(pos, masse, kraft, n)
+
+        <span style="color:#546e7a">! Leapfrog-Integration (energieerhaltend!)</span>
+        <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, n
+            vel(:, i) = vel(:, i) + kraft(:, i) / masse(i) * dt
+            pos(:, i) = pos(:, i) + vel(:, i) * dt
+        <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">subroutine</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">module</span> nbody
+
+<span style="color:#c792ea">program</span> simulation
+    <span style="color:#c792ea">use</span> nbody
+    <span style="color:#c792ea">use</span> iso_fortran_env, only: <span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">implicit</span> <span style="color:#c792ea">none</span>
+
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: N = <span style="color:#f78c6c">4</span>         <span style="color:#546e7a">! Sonne + 3 Planeten</span>
+    <span style="color:#c792ea">integer</span>, <span style="color:#c792ea">parameter</span> :: STEPS = <span style="color:#f78c6c">10000</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: pos(<span style="color:#f78c6c">3</span>, N), vel(<span style="color:#f78c6c">3</span>, N), masse(N)
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>) :: dt = <span style="color:#f78c6c">86400.0_</span><span style="color:#ffcb6b">real64</span>  <span style="color:#546e7a">! 1 Tag in Sekunden</span>
+    <span style="color:#c792ea">integer</span> :: i
+
+    <span style="color:#546e7a">! Initiale Positionen (vereinfacht, in AU * AU_TO_M)</span>
+    <span style="color:#546e7a">! Sonne, Merkur, Venus, Erde</span>
+    <span style="color:#c792ea">real</span>(<span style="color:#ffcb6b">real64</span>), <span style="color:#c792ea">parameter</span> :: AU = <span style="color:#f78c6c">1.496e11_</span><span style="color:#ffcb6b">real64</span>
+    masse = [<span style="color:#f78c6c">1.989e30_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">3.3e23_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">4.87e24_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">5.97e24_</span><span style="color:#ffcb6b">real64</span>]
+    pos   = <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>
+    pos(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>:<span style="color:#f78c6c">4</span>) = [<span style="color:#f78c6c">0.39_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">0.72_</span><span style="color:#ffcb6b">real64</span>, <span style="color:#f78c6c">1.0_</span><span style="color:#ffcb6b">real64</span>] * AU   <span style="color:#546e7a">! x-Positionen</span>
+
+    <span style="color:#546e7a">! Kreisbahn-Geschwindigkeiten (v = sqrt(GM/r))</span>
+    vel = <span style="color:#f78c6c">0.0_</span><span style="color:#ffcb6b">real64</span>
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">2</span>, N
+        vel(<span style="color:#f78c6c">2</span>, i) = <span style="color:#ffcb6b">sqrt</span>(G * masse(<span style="color:#f78c6c">1</span>) / pos(<span style="color:#f78c6c">1</span>, i))   <span style="color:#546e7a">! y-Geschwindigkeit</span>
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+    <span style="color:#546e7a">! Simulation</span>
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, STEPS
+        <span style="color:#c792ea">call</span> zeitschritt(pos, vel, masse, N, dt)
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+    <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(a)'</span>) <span style="color:#c3e88d">"Endpositionen (in AU):"</span>
+    <span style="color:#c792ea">do</span> i = <span style="color:#f78c6c">1</span>, N
+        <span style="color:#c792ea">write</span>(*,<span style="color:#c3e88d">'(i3,3f12.4)'</span>) i, pos(:,i) / AU
+    <span style="color:#c792ea">end</span> <span style="color:#c792ea">do</span>
+
+<span style="color:#c792ea">end</span> <span style="color:#c792ea">program</span> simulation</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#4b6fa80e;border:1px solid #4b6fa844;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#4fc3f7">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S gcc-fortran openblas lapack</code><br>Paketmanager: <code style="color:#ffb347">curl -fsSL https://github.com/fortran-lang/fpm/releases/latest/download/fpm-linux-x86_64 -o fpm && chmod +x fpm</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #4b6fa844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4b6fa80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4b6fa8">
+      <span style="display:inline-block;width:8px;height:8px;background:#4b6fa8;border-radius:50%;margin-right:2px"></span>⚙ Compiler installieren (Linux)
+    </span>
+    <span class="aa" style="color:#4b6fa8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4b6fa8">GFortran (empfohlen)</code></td><td style="color:#cdd6f4">gfortran</td><td style="color:#6c7a8e">sudo pacman -S gcc-fortran  # Arch
+sudo apt install gfortran  # Ubuntu
+gfortran --version</td></tr><tr><td style="width:240px"><code style="color:#4b6fa8">Intel oneAPI (ifort)</code></td><td style="color:#cdd6f4">oneAPI</td><td style="color:#6c7a8e">Kostenlos von intel.com
+# Schnellster Compiler fuer Intel-CPUs</td></tr><tr><td style="width:240px"><code style="color:#4b6fa8">NVHPC (Nvidia)</code></td><td style="color:#cdd6f4">nvhpc</td><td style="color:#6c7a8e">Fuer GPU-Beschleunigung
+nvfortran programm.f90</td></tr><tr><td style="width:240px"><code style="color:#4b6fa8">LFortran</code></td><td style="color:#cdd6f4">lfortran.org</td><td style="color:#6c7a8e">Moderner Compiler (LLVM-basiert)
+conda install lfortran -c conda-forge</td></tr><tr><td style="width:240px"><code style="color:#4b6fa8">Flang</code></td><td style="color:#cdd6f4">llvm.org</td><td style="color:#6c7a8e">LLVM Fortran Frontend (in Entwicklung)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ gfortran – wichtige Flags
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">gfortran prog.f90 -o prog</code></td><td style="color:#cdd6f4">Kompilieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-O2 / -O3</code></td><td style="color:#cdd6f4">Optimierung (empfohlen)</td><td style="color:#6c7a8e">-O3 fuer maximale Geschwindigkeit</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-march=native</code></td><td style="color:#cdd6f4">CPU-spezifische Optimierung</td><td style="color:#6c7a8e">Fuer lokale Binaries</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-ffast-math</code></td><td style="color:#cdd6f4">Unsichere Float-Optimierungen</td><td style="color:#6c7a8e">Kann Genauigkeit reduzieren!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fopenmp</code></td><td style="color:#cdd6f4">OpenMP aktivieren</td><td style="color:#6c7a8e">Parallelschleifen</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fcoarray=lib</code></td><td style="color:#cdd6f4">Coarray-Support</td><td style="color:#6c7a8e">Mit -lcaf_mpi oder -lcaf_single</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-Wall -Wextra</code></td><td style="color:#cdd6f4">Alle Warnungen</td><td style="color:#6c7a8e">Immer empfohlen!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fcheck=all</code></td><td style="color:#cdd6f4">Laufzeit-Checks (Debug)</td><td style="color:#6c7a8e">Array-Bounds, Pointer, ...</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-g</code></td><td style="color:#cdd6f4">Debug-Symbole</td><td style="color:#6c7a8e">Fuer GDB</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-std=f2018</code></td><td style="color:#cdd6f4">Fortran 2018 Standard</td><td style="color:#6c7a8e">Auch: f2008, f2003, f95</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-ffree-form</code></td><td style="color:#cdd6f4">Freies Format erzwingen</td><td style="color:#6c7a8e">Standard seit Fortran 90</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-ffixed-form</code></td><td style="color:#cdd6f4">Fixed Format (Fortran 77)</td><td style="color:#6c7a8e">Fuer alte Codes</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-cpp</code></td><td style="color:#cdd6f4">C-Praeprozessor aktivieren</td><td style="color:#6c7a8e">Fuer #ifdef etc.</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-llapack -lblas</code></td><td style="color:#cdd6f4">LAPACK/BLAS linken</td><td style="color:#6c7a8e">Numerische Bibliotheken</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-finit-real=nan</code></td><td style="color:#cdd6f4">Floats mit NaN initialisieren</td><td style="color:#6c7a8e">Findet uninitialisierte Variablen!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fbacktrace</code></td><td style="color:#cdd6f4">Stack-Trace bei Fehler</td><td style="color:#6c7a8e">Sehr nuetzlich!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fsanitize=address,undefined</code></td><td style="color:#cdd6f4">Sanitizer (Debug)</td><td style="color:#6c7a8e"></td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Build-Systeme
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">Make</code></td><td style="color:#cdd6f4">make</td><td style="color:#6c7a8e">Klassisch, noch weit verbreitet
+# Fortran-Abhaengigkeiten manuell oder via makedepf90</td></tr><tr><td style="width:240px"><code style="color:#c792ea">CMake</code></td><td style="color:#cdd6f4">cmake</td><td style="color:#6c7a8e">cmake -B build &amp;&amp; cmake --build build
+# cmake hat Fortran-Support (enable_language(Fortran))</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Meson</code></td><td style="color:#cdd6f4">meson</td><td style="color:#6c7a8e">meson setup build &amp;&amp; ninja -C build
+# Exzellenter Fortran-Support</td></tr><tr><td style="width:240px"><code style="color:#c792ea">fpm (Fortran PM)</code></td><td style="color:#cdd6f4">fpm.fortran-lang.org</td><td style="color:#6c7a8e">fpm new mein_projekt
+fpm build &amp;&amp; fpm run
+# Offizieller Fortran-Paketmanager!</td></tr><tr><td style="width:240px"><code style="color:#c792ea">SCons</code></td><td style="color:#cdd6f4">scons.org</td><td style="color:#6c7a8e">Python-basiert, gut fuer HPC</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Bibliotheken
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">LAPACK</code></td><td style="color:#cdd6f4">netlib.org/lapack</td><td style="color:#6c7a8e">Lineare Algebra: Gleichungssysteme, Eigenwerte
+Meist als openblas oder MKL</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">BLAS</code></td><td style="color:#cdd6f4">netlib.org/blas</td><td style="color:#6c7a8e">Basic Linear Algebra Subprograms
+-lblas oder -lopenblas</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">OpenBLAS</code></td><td style="color:#cdd6f4">openblas.net</td><td style="color:#6c7a8e">Optimiertes BLAS
+sudo pacman -S openblas</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Intel MKL</code></td><td style="color:#cdd6f4">intel.com</td><td style="color:#6c7a8e">Schnellstes BLAS/LAPACK fuer Intel
+Kostenlos in oneAPI</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">FFTW</code></td><td style="color:#cdd6f4">fftw.org</td><td style="color:#6c7a8e">Schnelle Fouriertransformation
+-lfftw3</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">HDF5</code></td><td style="color:#cdd6f4">hdfgroup.org</td><td style="color:#6c7a8e">Hierarchisches Dateiformat fuer grosse Daten
+-lhdf5_fortran</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">NetCDF</code></td><td style="color:#cdd6f4">unidata.ucar.edu</td><td style="color:#6c7a8e">Klimadaten, Atmosphaerenmodelle
+-lnetcdff</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">MPI</code></td><td style="color:#cdd6f4">open-mpi.org</td><td style="color:#6c7a8e">Message Passing Interface (Distributed)
+sudo pacman -S openmpi</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">PETSc</code></td><td style="color:#cdd6f4">petsc.org</td><td style="color:#6c7a8e">Parallele Gleichungsloeser (sehr mächtig)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Lernressourcen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">Fortran Best Practices</code></td><td style="color:#cdd6f4">fortran-lang.org/learn</td><td style="color:#6c7a8e">Offizielles Fortran-Tutorial</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Modern Fortran</code></td><td style="color:#cdd6f4">modernfortran.org</td><td style="color:#6c7a8e">Modern Fortran Explained (Buch)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">FLOSS Fortran</code></td><td style="color:#cdd6f4">github.com/fortran-lang</td><td style="color:#6c7a8e">Fortran-lang Community</td></tr><tr><td style="width:240px"><code style="color:#ffb347">fpm Registry</code></td><td style="color:#cdd6f4">github.com/fortran-lang/fpm-registry</td><td style="color:#6c7a8e">Pakete fuer fpm</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Fortran Discourse</code></td><td style="color:#cdd6f4">fortran-lang.discourse.group</td><td style="color:#6c7a8e">Aktive Community</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Rosetta Code</code></td><td style="color:#cdd6f4">rosettacode.org</td><td style="color:#6c7a8e">Fortran-Beispiele zu vielen Aufgaben</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Numerical Recipes</code></td><td style="color:#cdd6f4">numerical.recipes</td><td style="color:#6c7a8e">Klassische numerische Algorithmen in Fortran</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#4b6fa8';
+      btn.style.color       = '#4b6fa8';
+      btn.style.background  = 'rgba(75, 111, 168, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

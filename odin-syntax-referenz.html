@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odin Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #e28f37;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(226, 143, 55, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#e28f37">&#x25B7;</span>
+      <span style="color:#e28f37">Odin</span> Syntax
+    </div>
+    <div id="hdr-sub">Odin · Systems-Programmierung · C-Alternative · Linux</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="procs">Prozeduren</button>
+    <button class="tb" data-tab="types_adv">Typen & Structs</button>
+    <button class="tb" data-tab="memory">Memory</button>
+    <button class="tb" data-tab="packages">Packages & Testing</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-types" class="tp active">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #e28f3744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e28f370e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e28f37">
+      <span style="display:inline-block;width:8px;height:8px;background:#e28f37;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Integer &amp; Float
+    </span>
+    <span class="aa" style="color:#e28f37;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">int / uint</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: int = 42  |  x := 42</td>
+      <td style="color:#6c7a8e">Plattformabhängig (64-bit auf 64-bit Systemen)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">i8..i128</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: i32 = 2147483647  |  x: i64 = 0</td>
+      <td style="color:#6c7a8e">Explizite Größen. Auch: u8, u16, u32, u64, u128</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">f32 / f64</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: f32 = 3.14  |  x := 3.14</td>
+      <td style="color:#6c7a8e">f64 ist Standard-Float-Typ</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">byte</code></td>
+      <td style="color:#c3e88d;font-size:11px">b: byte = 255   // = u8</td>
+      <td style="color:#6c7a8e">Alias für u8. Für Byte-Daten.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">rune</code></td>
+      <td style="color:#c3e88d;font-size:11px">r: rune = 'A'  // = i32</td>
+      <td style="color:#6c7a8e">Unicode-Codepunkt. Alias für i32.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">Endian-Typen</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: i32le = 42  |  y: u64be = 0xFF</td>
+      <td style="color:#6c7a8e">le = Little-Endian, be = Big-Endian – selten nötig</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#e28f37">uintptr / rawptr</code></td>
+      <td style="color:#c3e88d;font-size:11px">p: rawptr = nil</td>
+      <td style="color:#6c7a8e">rawptr = typloser Zeiger (wie void* in C)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>String &amp; Bool
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#c792ea">string</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo, Welt!"  |  ""</td>
+      <td style="color:#6c7a8e">Immutabler UTF-8 String. Intern: ptr + len.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#c792ea">cstring</code></td>
+      <td style="color:#c3e88d;font-size:11px">cstring("hello\x00")</td>
+      <td style="color:#6c7a8e">Null-terminiert – für C-Interop.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#c792ea">Raw String</code></td>
+      <td style="color:#c3e88d;font-size:11px">`Kein \n Escape nötig`</td>
+      <td style="color:#6c7a8e">Backtick-String. Newlines direkt möglich.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#c792ea">bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Kein truthy/falsy. Nur echte Booleans.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#c792ea">b8 / b16 / b32</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: b32 = true</td>
+      <td style="color:#6c7a8e">Boolean in größerer Speicherform – für Interop</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Zusammengesetzte Typen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Array</code></td>
+      <td style="color:#c3e88d;font-size:11px">[4]int{1, 2, 3, 4}  |  [?]int{1, 2, 3}</td>
+      <td style="color:#6c7a8e">Feste Größe, Teil des Typs. [?] = Größe auto-bestimmt.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Slice</code></td>
+      <td style="color:#c3e88d;font-size:11px">[]int  |  make([]int, 5)  |  array[1:3]</td>
+      <td style="color:#6c7a8e">Dynamisch. Referenz auf Array-Abschnitt.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Dynamic Array</code></td>
+      <td style="color:#c3e88d;font-size:11px">[dynamic]int  |  make([dynamic]int, 0, 10)</td>
+      <td style="color:#6c7a8e">Wächst automatisch. Heap-alloziert.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Map</code></td>
+      <td style="color:#c3e88d;font-size:11px">map[string]int  |  make(map[string]int)</td>
+      <td style="color:#6c7a8e">Hash-Map. Key muss comparable sein.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Struct</code></td>
+      <td style="color:#c3e88d;font-size:11px">struct { x, y: f32 }</td>
+      <td style="color:#6c7a8e">Wertetyp. Methoden als eigene Prozeduren.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Union</code></td>
+      <td style="color:#c3e88d;font-size:11px">union { int, f32, string }</td>
+      <td style="color:#6c7a8e">Tagged Union – immer mit Typ-Info (außer #no_nil).</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Enum</code></td>
+      <td style="color:#c3e88d;font-size:11px">enum { Nord, Süd, Ost, West }</td>
+      <td style="color:#6c7a8e">Aufzählung. Basis-Typ einstellbar.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Bit-Set</code></td>
+      <td style="color:#c3e88d;font-size:11px">bit_set[Richtung]  |  bit_set[0..8]</td>
+      <td style="color:#6c7a8e">Effiziente Menge von Flags – ein Integer intern.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Pointer</code></td>
+      <td style="color:#c3e88d;font-size:11px">^int  |  ^MyStruct</td>
+      <td style="color:#6c7a8e">^ statt * für Pointer. nil = kein Zeiger.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Multi-Pointer</code></td>
+      <td style="color:#c3e88d;font-size:11px">[^]int  |  [^]u8</td>
+      <td style="color:#6c7a8e">Zeiger auf Arrays – für C-Interop.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">Proc</code></td>
+      <td style="color:#c3e88d;font-size:11px">proc(int, string) -&gt; bool</td>
+      <td style="color:#6c7a8e">Prozedurtyp. First-Class.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">any</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: any = 42</td>
+      <td style="color:#6c7a8e">Laufzeit-Typinfo + Datenzeiger. Wie interface{} in Go.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">typeid</code></td>
+      <td style="color:#c3e88d;font-size:11px">id := typeid_of(int)</td>
+      <td style="color:#6c7a8e">Typ-Identifikator zur Laufzeit.</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Variablen &amp; Konstanten
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">:= Kurzform</code></td>
+      <td style="color:#c3e88d;font-size:11px">x := 42  |  name := "Alice"</td>
+      <td style="color:#6c7a8e">Deklaration + Initialisierung. Typ wird inferiert.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">: Typisiert</code></td>
+      <td style="color:#c3e88d;font-size:11px">x: int = 42  |  name: string</td>
+      <td style="color:#6c7a8e">Expliziter Typ. Ohne Wert = Zero-Value.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">:: Konstante</code></td>
+      <td style="color:#c3e88d;font-size:11px">PI :: 3.14159  |  MAX :: 100</td>
+      <td style="color:#6c7a8e">Compile-Zeit-Konstante. Kein := für Konstanten!</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">distinct</code></td>
+      <td style="color:#c3e88d;font-size:11px">Meter :: distinct f64</td>
+      <td style="color:#6c7a8e">Neuer Typ – inkompatibel mit Basis-Typ. Verhindert Fehler.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">Zero-Values</code></td>
+      <td style="color:#c3e88d;font-size:11px">int→0  f64→0.0  bool→false  string→""  ptr→nil</td>
+      <td style="color:#6c7a8e">Alle Variablen sind immer initialisiert!</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">using</code></td>
+      <td style="color:#c3e88d;font-size:11px">using m: MyStruct  // Felder direkt zugänglich</td>
+      <td style="color:#6c7a8e">Importiert Felder/Namen in aktuellen Scope.</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>if / when / switch
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / when / switch">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / when / switch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// if – wie C, aber Klammern optional</span>
+<span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">10</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"groß"</span>)
+} <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">5</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"mittel"</span>)
+} <span style="color:#c792ea">else</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"klein"</span>)
+}
+
+<span style="color:#546e7a">// if mit Initialisierung</span>
+<span style="color:#c792ea">if</span> val, ok <span style="color:#89ddff">:=</span> my_map[<span style="color:#c3e88d">"key"</span>]; ok {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Gefunden:"</span>, val)
+}
+
+<span style="color:#546e7a">// when – compile-time if (kein Laufzeit-Overhead!)</span>
+<span style="color:#c792ea">when</span> <span style="color:#ffcb6b">ODIN_OS</span> == .<span style="color:#ffcb6b">Windows</span> {
+    platform_init_windows()
+} <span style="color:#c792ea">else</span> <span style="color:#c792ea">when</span> <span style="color:#ffcb6b">ODIN_OS</span> == .<span style="color:#ffcb6b">Linux</span> {
+    platform_init_linux()
+} <span style="color:#c792ea">else</span> {
+    platform_init_generic()
+}
+
+<span style="color:#546e7a">// switch – kein break nötig, kein fall-through by default</span>
+<span style="color:#c792ea">switch</span> betriebssystem {
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"linux"</span>:
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Linux"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"darwin"</span>, <span style="color:#c3e88d">"freebsd"</span>:   <span style="color:#546e7a">// mehrere Werte</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Unix-artig"</span>)
+<span style="color:#c792ea">case</span>:                        <span style="color:#546e7a">// default</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Unbekannt"</span>)
+}
+
+<span style="color:#546e7a">// switch ohne Ausdruck (wie if-else-Chain)</span>
+<span style="color:#c792ea">switch</span> {
+<span style="color:#c792ea">case</span> x &lt; <span style="color:#f78c6c">0</span>:  <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Negativ"</span>)
+<span style="color:#c792ea">case</span> x == <span style="color:#f78c6c">0</span>: <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Null"</span>)
+<span style="color:#c792ea">case</span>:        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Positiv"</span>)
+}
+
+<span style="color:#546e7a">// switch auf Typ (Union Type Switch)</span>
+<span style="color:#c792ea">switch</span> v <span style="color:#c792ea">in</span> my_union {
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">int</span>:    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"int: %d\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">f32</span>:    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"float: %f\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">string</span>: <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"string: %s\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#c792ea">nil</span>:    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"nil"</span>)
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>for – der einzige Loop
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for – der einzige loop">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    for – der einzige Loop
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// C-Stil for</span>
+<span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i += <span style="color:#f78c6c">1</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(i)
+}
+
+<span style="color:#546e7a">// while-Ersatz</span>
+<span style="color:#c792ea">for</span> n &lt; <span style="color:#f78c6c">100</span> {
+    n *= <span style="color:#f78c6c">2</span>
+}
+
+<span style="color:#546e7a">// Endlosschleife</span>
+<span style="color:#c792ea">for</span> {
+    <span style="color:#c792ea">if</span> done { <span style="color:#c792ea">break</span> }
+    do_work()
+}
+
+<span style="color:#546e7a">// for-in über Array/Slice</span>
+zahlen <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>}
+<span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> zahlen {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(v)
+}
+
+<span style="color:#546e7a">// for-in mit Index</span>
+<span style="color:#c792ea">for</span> v, i <span style="color:#c792ea">in</span> zahlen {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d: %d\n"</span>, i, v)
+    <span style="color:#546e7a">// Achtung: Reihenfolge ist (value, index) – anders als Go!</span>
+}
+
+<span style="color:#546e7a">// for-in über Map</span>
+<span style="color:#c792ea">for</span> key, val <span style="color:#c792ea">in</span> my_map {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%s = %v\n"</span>, key, val)
+}
+
+<span style="color:#546e7a">// for-in über String (liefert rune + byte-offset)</span>
+<span style="color:#c792ea">for</span> r, byte_idx <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"Héllo"</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Byte %d: %r\n"</span>, byte_idx, r)
+}
+
+<span style="color:#546e7a">// Range mit ..&lt;  (exclusive) und ..= (inclusive)</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#f78c6c">10</span> {    <span style="color:#546e7a">// 0, 1, ..., 9</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(i)
+}
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">1..</span>=<span style="color:#f78c6c">5</span> {     <span style="color:#546e7a">// 1, 2, 3, 4, 5</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(i)
+}
+
+<span style="color:#546e7a">// break und continue</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#f78c6c">10</span> {
+    <span style="color:#c792ea">if</span> i % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> { <span style="color:#c792ea">continue</span> }   <span style="color:#546e7a">// ungerade ausgeben</span>
+    <span style="color:#c792ea">if</span> i &gt; <span style="color:#f78c6c">7</span>      { <span style="color:#c792ea">break</span> }
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(i)   <span style="color:#546e7a">// 1 3 5 7</span>
+}
+
+<span style="color:#546e7a">// Labeled break für verschachtelte Schleifen</span>
+outer: <span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#f78c6c">5</span> {
+    <span style="color:#c792ea">for</span> j <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#f78c6c">5</span> {
+        <span style="color:#c792ea">if</span> i + j &gt; <span style="color:#f78c6c">6</span> { <span style="color:#c792ea">break</span> outer }
+    }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>defer &amp; Fehlerbehandlung
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="defer &amp; fehlerbehandlung">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    defer &amp; Fehlerbehandlung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// defer – wie Go: LIFO, läuft bei Prozedur-Ende</span>
+open_file <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(name: <span style="color:#ffcb6b">string</span>) <span style="color:#89ddff">-&gt;</span> (os.<span style="color:#ffcb6b">Handle</span>, os.<span style="color:#ffcb6b">Error</span>) {
+    f, err <span style="color:#89ddff">:=</span> os.open(name)
+    <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> { <span style="color:#c792ea">return</span> {}, err }
+    <span style="color:#c792ea">defer</span> os.close(f)   <span style="color:#546e7a">// wird immer ausgeführt</span>
+
+    <span style="color:#546e7a">// ... Datei verarbeiten</span>
+    <span style="color:#c792ea">return</span> f, <span style="color:#c792ea">nil</span>
+}
+
+<span style="color:#546e7a">// or_return – Fehler weiterleiten ohne if err != nil { return }</span>
+<span style="color:#546e7a">// Macht Error-Handling deutlich kürzer!</span>
+lese_konfiguration <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">Config</span>, <span style="color:#ffcb6b">Error</span>) {
+    data, err <span style="color:#89ddff">:=</span> os.read_entire_file(<span style="color:#c3e88d">"config.json"</span>)
+    <span style="color:#c792ea">if</span> err != <span style="color:#c792ea">nil</span> { <span style="color:#c792ea">return</span> {}, err }
+    <span style="color:#546e7a">// Mit or_return:</span>
+    data2 <span style="color:#89ddff">:=</span> os.read_entire_file(<span style="color:#c3e88d">"config.json"</span>) <span style="color:#c792ea">or_return</span>
+    <span style="color:#546e7a">// Gibt automatisch den zweiten Rückgabewert (Error) zurück</span>
+
+    cfg, parse_err <span style="color:#89ddff">:=</span> json.parse(data2)
+    <span style="color:#c792ea">if</span> parse_err != <span style="color:#c792ea">nil</span> { <span style="color:#c792ea">return</span> {}, parse_err }
+    <span style="color:#c792ea">return</span> cfg, <span style="color:#c792ea">nil</span>
+}
+
+<span style="color:#546e7a">// or_else – Default-Wert bei Fehler</span>
+wert <span style="color:#89ddff">:=</span> holen_wert() <span style="color:#c792ea">or_else</span> default_wert
+
+<span style="color:#546e7a">// or_break / or_continue – in Schleifen</span>
+<span style="color:#c792ea">for</span> zeile <span style="color:#c792ea">in</span> zeilen {
+    parsed <span style="color:#89ddff">:=</span> parse_line(zeile) <span style="color:#c792ea">or_continue</span>   <span style="color:#546e7a">// überspringen bei Fehler</span>
+}
+
+<span style="color:#546e7a">// Typisches Error-Pattern in Odin:</span>
+<span style="color:#546e7a">// Prozeduren geben (Ergebnis, Fehler) zurück</span>
+<span style="color:#546e7a">// Fehler sind oft ein enum oder union – keine Exceptions!</span>
+
+<span style="color:#ffcb6b">My_Error</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#ffcb6b">None</span>,
+    <span style="color:#ffcb6b">Not_Found</span>,
+    <span style="color:#ffcb6b">Permission_Denied</span>,
+    <span style="color:#ffcb6b">Invalid_Argument</span>,
+}
+
+<span style="color:#546e7a">// Fehlertyp als Union für mehr Info</span>
+<span style="color:#ffcb6b">Error</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">union</span> {
+    <span style="color:#ffcb6b">My_Error</span>,
+    os.<span style="color:#ffcb6b">Error</span>,
+    <span style="color:#82aaff">fmt</span>.<span style="color:#ffcb6b">Error</span>,
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Operatoren &amp; Casting
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="operatoren &amp; casting">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Operatoren &amp; Casting
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Arithmetik</span>
+x <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">10</span> + <span style="color:#f78c6c">3</span>    <span style="color:#546e7a">// 13</span>
+x  = <span style="color:#f78c6c">10</span> - <span style="color:#f78c6c">3</span>    <span style="color:#546e7a">// 7</span>
+x  = <span style="color:#f78c6c">10</span> * <span style="color:#f78c6c">3</span>    <span style="color:#546e7a">// 30</span>
+x  = <span style="color:#f78c6c">10</span> / <span style="color:#f78c6c">3</span>    <span style="color:#546e7a">// 3  (ganzzahlig!)</span>
+x  = <span style="color:#f78c6c">10</span> % <span style="color:#f78c6c">3</span>    <span style="color:#546e7a">// 1</span>
+<span style="color:#546e7a">// Kein ** – nutze math.pow(x, y)</span>
+
+<span style="color:#546e7a">// Vergleich</span>
+x == y  |  x != y
+x &lt;  y  |  x &lt;= y
+x &gt;  y  |  x &gt;= y
+
+<span style="color:#546e7a">// Logisch</span>
+x &amp;&amp; y  |  x || y  |  !x
+
+<span style="color:#546e7a">// Bitweise</span>
+x &amp; y  |  x | y  |  x ~ y   <span style="color:#546e7a">// AND  OR  XOR (~ statt ^ wie in C!)</span>
+~x                            <span style="color:#546e7a">// NOT (~ statt ~ wie in C, aber ~ ist XOR!)</span>
+x &lt;&lt; <span style="color:#f78c6c">2</span>  |  x &gt;&gt; <span style="color:#f78c6c">2</span>
+
+<span style="color:#546e7a">// Odin-spezifisch: &amp;~ = AND NOT (bit clear)</span>
+flags &amp;~ mask
+
+<span style="color:#546e7a">// Casting – explizit, kein implizites Casting!</span>
+n: <span style="color:#ffcb6b">int</span> = <span style="color:#f78c6c">42</span>
+f: <span style="color:#ffcb6b">f64</span> = <span style="color:#ffcb6b">f64</span>(n)           <span style="color:#546e7a">// Wert-Cast</span>
+
+<span style="color:#546e7a">// cast() – explizit mit Laufzeit-Prüfung (Debug-Modus)</span>
+f2 <span style="color:#89ddff">:=</span> <span style="color:#c792ea">cast</span>(<span style="color:#ffcb6b">f64</span>)n
+
+<span style="color:#546e7a">// transmute() – bitweise Neuinterpretation (wie reinterpret_cast)</span>
+bits: <span style="color:#ffcb6b">u32</span> = <span style="color:#c792ea">transmute</span>(<span style="color:#ffcb6b">u32</span>)<span style="color:#ffcb6b">f32</span>(<span style="color:#f78c6c">3.14</span>)
+
+<span style="color:#546e7a">// auto_cast – Compiler wählt passenden Cast (sparsam nutzen!)</span>
+x <span style="color:#89ddff">:=</span> <span style="color:#c792ea">auto_cast</span> some_value
+
+<span style="color:#546e7a">// in / not_in – Membership-Test</span>
+<span style="color:#c792ea">if</span> key <span style="color:#c792ea">in</span> my_map { <span style="color:#89ddff">...</span> }
+<span style="color:#c792ea">if</span> <span style="color:#f78c6c">5</span> <span style="color:#c792ea">not_in</span> zahlen { <span style="color:#89ddff">...</span> }
+
+<span style="color:#546e7a">// Range-Check mit Slices</span>
+<span style="color:#c792ea">if</span> idx &gt;= <span style="color:#f78c6c">0</span> &amp;&amp; idx &lt; <span style="color:#82aaff">len</span>(zahlen) { <span style="color:#89ddff">...</span> }</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-procs" class="tp">
+
+<div class="ac open" id="ac-pr0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Prozeduren definieren
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="prozeduren definieren">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Prozeduren definieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+
+<span style="color:#546e7a">// Einfache Prozedur (:: = Konstanten-Deklaration, also compile-time)</span>
+addiere <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> {
+    <span style="color:#c792ea">return</span> a + b
+}
+
+<span style="color:#546e7a">// Mehrere Rückgabewerte</span>
+divide <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b: <span style="color:#ffcb6b">f64</span>) <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">f64</span>, <span style="color:#ffcb6b">bool</span>) {
+    <span style="color:#c792ea">if</span> b == <span style="color:#f78c6c">0</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">false</span> }
+    <span style="color:#c792ea">return</span> a / b, <span style="color:#c792ea">true</span>
+}
+
+<span style="color:#546e7a">// Benannte Rückgabewerte</span>
+min_max <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(arr: []<span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> (<span style="color:#82aaff">min</span>, <span style="color:#82aaff">max</span>: <span style="color:#ffcb6b">int</span>) {
+    <span style="color:#82aaff">min</span>, <span style="color:#82aaff">max</span> = arr[<span style="color:#f78c6c">0</span>], arr[<span style="color:#f78c6c">0</span>]
+    <span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> arr[<span style="color:#f78c6c">1</span>:] {
+        <span style="color:#c792ea">if</span> v &lt; <span style="color:#82aaff">min</span> { <span style="color:#82aaff">min</span> = v }
+        <span style="color:#c792ea">if</span> v &gt; <span style="color:#82aaff">max</span> { <span style="color:#82aaff">max</span> = v }
+    }
+    <span style="color:#c792ea">return</span>   <span style="color:#546e7a">// gibt min und max zurück</span>
+}
+
+<span style="color:#546e7a">// Mehrere Parameter gleichen Typs</span>
+addiere3 <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b, c: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> {
+    <span style="color:#c792ea">return</span> a + b + c
+}
+
+<span style="color:#546e7a">// Variadic – beliebig viele Argumente</span>
+summe <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(zahlen: ..<span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> {
+    total <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">for</span> n <span style="color:#c792ea">in</span> zahlen { total += n }
+    <span style="color:#c792ea">return</span> total
+}
+summe(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)
+summe(..mein_slice)   <span style="color:#546e7a">// Slice entpacken</span>
+
+<span style="color:#546e7a">// Default-Parameter</span>
+verbinde <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(host: <span style="color:#ffcb6b">string</span>, port: <span style="color:#ffcb6b">int</span> = <span style="color:#f78c6c">80</span>, ssl: <span style="color:#ffcb6b">bool</span> = <span style="color:#c792ea">false</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">string</span> {
+    prefix <span style="color:#89ddff">:=</span> <span style="color:#c3e88d">"https"</span> <span style="color:#c792ea">if</span> ssl <span style="color:#c792ea">else</span> <span style="color:#c3e88d">"http"</span>
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">fmt</span>.tprintf(<span style="color:#c3e88d">"%s://%s:%d"</span>, prefix, host, port)
+}
+
+main <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(addiere(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>))               <span style="color:#546e7a">// 7</span>
+    result, ok <span style="color:#89ddff">:=</span> divide(<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">3</span>)
+    lo, hi <span style="color:#89ddff">:=</span> min_max([]<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span>})
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Prozedur-Typen &amp; Überladung
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="prozedur-typen &amp; überladung">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Prozedur-Typen &amp; Überladung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Prozedur als Wert (First-Class)</span>
+op <span style="color:#89ddff">:=</span> addiere    <span style="color:#546e7a">// Typ: proc(int, int) -&gt; int</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(op(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>))   <span style="color:#546e7a">// 7</span>
+
+<span style="color:#546e7a">// Anonyme Prozedur</span>
+doppeln <span style="color:#89ddff">:=</span> <span style="color:#c792ea">proc</span>(n: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> n * <span style="color:#f78c6c">2</span> }
+
+<span style="color:#546e7a">// Prozedur als Parameter</span>
+apply <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []<span style="color:#ffcb6b">int</span>, fn: <span style="color:#c792ea">proc</span>(<span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> []<span style="color:#ffcb6b">int</span> {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#82aaff">len</span>(slice))
+    <span style="color:#c792ea">for</span> v, i <span style="color:#c792ea">in</span> slice { result[i] = fn(v) }
+    <span style="color:#c792ea">return</span> result
+}
+
+<span style="color:#546e7a">// Prozedur-Überladung (in Odin per proc group!)</span>
+_add_ints   <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b: <span style="color:#ffcb6b">int</span>)   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span>   { <span style="color:#c792ea">return</span> a + b }
+_add_floats <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b: <span style="color:#ffcb6b">f64</span>)   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">f64</span>   { <span style="color:#c792ea">return</span> a + b }
+_add_str    <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b: <span style="color:#ffcb6b">string</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">string</span> { <span style="color:#c792ea">return</span> <span style="color:#82aaff">fmt</span>.tprintf(<span style="color:#c3e88d">"%s%s"</span>, a, b) }
+
+add <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span> { _add_ints, _add_floats, _add_str }
+
+<span style="color:#546e7a">// Aufruf – Compiler wählt die richtige Variante</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(add(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>))          <span style="color:#546e7a">// int Version</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(add(<span style="color:#f78c6c">1.5</span>, <span style="color:#f78c6c">2.5</span>))     <span style="color:#546e7a">// f64 Version</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(add(<span style="color:#c3e88d">"hi"</span>, <span style="color:#c3e88d">" welt"</span>)) <span style="color:#546e7a">// string Version</span>
+
+<span style="color:#546e7a">// Polymorphe Prozeduren (Generics)</span>
+erste <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []$<span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">T</span> {
+    <span style="color:#c792ea">return</span> slice[<span style="color:#f78c6c">0</span>]
+}
+
+<span style="color:#546e7a">// Mehrere Typparameter</span>
+zip <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a: []$<span style="color:#ffcb6b">A</span>, b: []$<span style="color:#ffcb6b">B</span>) <span style="color:#89ddff">-&gt;</span> [](<span style="color:#c792ea">struct</span>{first: <span style="color:#ffcb6b">A</span>; second: <span style="color:#ffcb6b">B</span>}) {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([](<span style="color:#c792ea">struct</span>{first: <span style="color:#ffcb6b">A</span>; second: <span style="color:#ffcb6b">B</span>}), <span style="color:#82aaff">min</span>(<span style="color:#82aaff">len</span>(a), <span style="color:#82aaff">len</span>(b)))
+    <span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#82aaff">len</span>(result) {
+        result[i] = {a[i], b[i]}
+    }
+    <span style="color:#c792ea">return</span> result
+}
+
+<span style="color:#546e7a">// where-Klausel für Constraints</span>
+add_numbers <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(a, b: $<span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">T</span> <span style="color:#c792ea">where</span> intrinsics.type_is_numeric(<span style="color:#ffcb6b">T</span>) {
+    <span style="color:#c792ea">return</span> a + b
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Closures &amp; Context
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="closures &amp; context">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Closures &amp; Context
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Closures – Prozeduren können Variablen capturen</span>
+make_counter <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">proc</span>() <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> {
+    count <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">proc</span>() <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> {
+        count += <span style="color:#f78c6c">1</span>
+        <span style="color:#c792ea">return</span> count
+    }
+}
+
+counter <span style="color:#89ddff">:=</span> make_counter()
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(counter(), counter(), counter())   <span style="color:#546e7a">// 1 2 3</span>
+
+<span style="color:#546e7a">// Der Context – Odin's implizites Argument</span>
+<span style="color:#546e7a">// Jede Prozedur bekommt automatisch einen `context`-Parameter</span>
+<span style="color:#546e7a">// Dieser enthält: Allocator, Logger, User-Daten</span>
+
+<span style="color:#546e7a">// Eigenen Allocator nutzen</span>
+temp_alloc <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#546e7a">// context.allocator ist der Standard-Allocator</span>
+    <span style="color:#c792ea">context</span>.allocator = <span style="color:#c792ea">context</span>.temp_allocator
+
+    <span style="color:#546e7a">// Alle Allokierungen in diesem Scope nutzen temp_allocator</span>
+    data <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">100</span>)   <span style="color:#546e7a">// geht in temp-Speicher</span>
+    <span style="color:#546e7a">// free(data) nicht nötig – wird am Ende freigegeben</span>
+}
+
+<span style="color:#546e7a">// Logger im Context</span>
+mein_proc <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#c792ea">context</span>.logger = log.create_console_logger()
+    log.info(<span style="color:#c3e88d">"Hallo vom Context-Logger!"</span>)
+}
+
+<span style="color:#546e7a">// Context weitergeben / anpassen</span>
+custom_context <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    ctx <span style="color:#89ddff">:=</span> <span style="color:#c792ea">context</span>
+    ctx.user_index = <span style="color:#f78c6c">42</span>   <span style="color:#546e7a">// eigene Daten</span>
+    andere_prozedur(ctx)
+}
+
+<span style="color:#546e7a">// Expliziter Kontext-Parameter (selten nötig)</span>
+mit_ctx <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(ctx: runtime.<span style="color:#ffcb6b">Context</span>) {
+    <span style="color:#c792ea">context</span> = ctx   <span style="color:#546e7a">// Context übernehmen</span>
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-types_adv" class="tp">
+
+<div class="ac open" id="ac-ta0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ta0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Structs
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="structs">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Structs
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Struct-Definition</span>
+<span style="color:#ffcb6b">Person</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> {
+    name:  <span style="color:#ffcb6b">string</span>,
+    alter: <span style="color:#ffcb6b">int</span>,
+    aktiv: <span style="color:#ffcb6b">bool</span>,
+}
+
+<span style="color:#546e7a">// Initialisierung</span>
+p1 <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Person</span>{name = <span style="color:#c3e88d">"Alice"</span>, alter = <span style="color:#f78c6c">30</span>, aktiv = <span style="color:#c792ea">true</span>}
+p2 <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Person</span>{<span style="color:#c3e88d">"Bob"</span>, <span style="color:#f78c6c">25</span>, <span style="color:#c792ea">true</span>}   <span style="color:#546e7a">// Reihenfolge</span>
+
+<span style="color:#546e7a">// Zugriff</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(p1.name)
+p1.alter = <span style="color:#f78c6c">31</span>
+
+<span style="color:#546e7a">// Zeiger auf Struct</span>
+p <span style="color:#89ddff">:=</span> <span style="color:#82aaff">new</span>(<span style="color:#ffcb6b">Person</span>)
+p.name = <span style="color:#c3e88d">"Carol"</span>   <span style="color:#546e7a">// Auto-Dereferenzierung</span>
+
+<span style="color:#546e7a">// Struct mit Tags (für Serialisierung)</span>
+<span style="color:#ffcb6b">User</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> {
+    id:    <span style="color:#ffcb6b">int</span>    <span style="color:#c3e88d">`json:"id"`</span>,
+    name:  <span style="color:#ffcb6b">string</span> <span style="color:#c3e88d">`json:"name"`</span>,
+    email: <span style="color:#ffcb6b">string</span> <span style="color:#c3e88d">`json:"email,omitempty"`</span>,
+}
+
+<span style="color:#546e7a">// Eingebetteter Struct (wie Embedding in Go)</span>
+<span style="color:#ffcb6b">Mitarbeiter</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">using</span> person: <span style="color:#ffcb6b">Person</span>,   <span style="color:#546e7a">// using = Felder direkt zugänglich!</span>
+    firma:  <span style="color:#ffcb6b">string</span>,
+    gehalt: <span style="color:#ffcb6b">f64</span>,
+}
+
+m <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Mitarbeiter</span>{person = {name = <span style="color:#c3e88d">"Eve"</span>, alter = <span style="color:#f78c6c">35</span>}, firma = <span style="color:#c3e88d">"ACME"</span>}
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(m.name)   <span style="color:#546e7a">// direkt, dank `using`</span>
+
+<span style="color:#546e7a">// SOA (Structure of Arrays) – für Performance</span>
+<span style="color:#ffcb6b">Partikel_SOA</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> <span style="color:#ff9800">#soa</span> {
+    x, y, z: [<span style="color:#f78c6c">1000</span>]<span style="color:#ffcb6b">f32</span>,
+    vx, vy, vz: [<span style="color:#f78c6c">1000</span>]<span style="color:#ffcb6b">f32</span>,
+}
+<span style="color:#546e7a">// Cache-freundlich für SIMD / Game-Engines</span>
+
+<span style="color:#546e7a">// Anonymer Struct</span>
+punkt <span style="color:#89ddff">:=</span> <span style="color:#c792ea">struct</span> { x, y: <span style="color:#ffcb6b">f32</span> }{x = <span style="color:#f78c6c">1.0</span>, y = <span style="color:#f78c6c">2.0</span>}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ta1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ta1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Enums &amp; Bit-Sets
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="enums &amp; bit-sets">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Enums &amp; Bit-Sets
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Enum</span>
+<span style="color:#ffcb6b">Richtung</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#ffcb6b">Nord</span>,
+    <span style="color:#ffcb6b">Süd</span>,
+    <span style="color:#ffcb6b">Ost</span>,
+    <span style="color:#ffcb6b">West</span>,
+}
+
+r <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Richtung</span>.<span style="color:#ffcb6b">Nord</span>
+<span style="color:#c792ea">switch</span> r {
+<span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">Nord</span>: <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Norden"</span>)
+<span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">Süd</span>:  <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Süden"</span>)
+<span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">Ost</span>:  <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Osten"</span>)
+<span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">West</span>: <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Westen"</span>)
+}
+
+<span style="color:#546e7a">// Enum mit Basistyp</span>
+<span style="color:#ffcb6b">Status</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> <span style="color:#ffcb6b">u8</span> {
+    <span style="color:#ffcb6b">Ok</span>      = <span style="color:#f78c6c">0</span>,
+    <span style="color:#ffcb6b">Fehler</span>  = <span style="color:#f78c6c">1</span>,
+    <span style="color:#ffcb6b">Timeout</span> = <span style="color:#f78c6c">2</span>,
+}
+
+<span style="color:#546e7a">// Enum-Iteration</span>
+<span style="color:#c792ea">for</span> richtung <span style="color:#c792ea">in</span> <span style="color:#ffcb6b">Richtung</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(richtung)
+}
+
+<span style="color:#546e7a">// Bit-Set – effiziente Menge von Flags</span>
+<span style="color:#ffcb6b">Berechtigung</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#ffcb6b">Lesen</span>,
+    <span style="color:#ffcb6b">Schreiben</span>,
+    <span style="color:#ffcb6b">Ausführen</span>,
+    <span style="color:#ffcb6b">Admin</span>,
+}
+
+<span style="color:#ffcb6b">Berechtigungen</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">bit_set</span>[<span style="color:#ffcb6b">Berechtigung</span>]
+
+user_rechte: <span style="color:#ffcb6b">Berechtigungen</span> = {.<span style="color:#ffcb6b">Lesen</span>, .<span style="color:#ffcb6b">Schreiben</span>}
+admin_rechte: <span style="color:#ffcb6b">Berechtigungen</span> = {.<span style="color:#ffcb6b">Lesen</span>, .<span style="color:#ffcb6b">Schreiben</span>, .<span style="color:#ffcb6b">Ausführen</span>, .<span style="color:#ffcb6b">Admin</span>}
+
+<span style="color:#546e7a">// Mengen-Operationen</span>
+hat_lese  <span style="color:#89ddff">:=</span> .<span style="color:#ffcb6b">Lesen</span> <span style="color:#c792ea">in</span> user_rechte           <span style="color:#546e7a">// true</span>
+alle      <span style="color:#89ddff">:=</span> user_rechte | admin_rechte       <span style="color:#546e7a">// Vereinigung</span>
+beide     <span style="color:#89ddff">:=</span> user_rechte &amp; admin_rechte       <span style="color:#546e7a">// Schnittmenge</span>
+nur_admin <span style="color:#89ddff">:=</span> admin_rechte &amp;~ user_rechte      <span style="color:#546e7a">// Differenz</span>
+
+<span style="color:#546e7a">// Bit-Set aus Range</span>
+<span style="color:#ffcb6b">Flags</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">bit_set</span>[<span style="color:#f78c6c">0..</span>=<span style="color:#f78c6c">7</span>; <span style="color:#ffcb6b">u8</span>]   <span style="color:#546e7a">// 8 Bits in einem u8</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ta2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ta2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Union &amp; any
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="union &amp; any">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Union &amp; any
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Union – Tagged Union (sicher, kein undefined behavior)</span>
+<span style="color:#ffcb6b">Wert</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">union</span> {
+    <span style="color:#ffcb6b">int</span>,
+    <span style="color:#ffcb6b">f64</span>,
+    <span style="color:#ffcb6b">string</span>,
+    <span style="color:#ffcb6b">bool</span>,
+}
+
+w: <span style="color:#ffcb6b">Wert</span> = <span style="color:#f78c6c">42</span>
+w = <span style="color:#c3e88d">"Hallo"</span>
+w = <span style="color:#f78c6c">3.14</span>
+
+<span style="color:#546e7a">// Type Switch</span>
+<span style="color:#c792ea">switch</span> v <span style="color:#c792ea">in</span> w {
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">int</span>:    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"int: %d\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">f64</span>:    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"f64: %f\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">string</span>: <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"string: %s\n"</span>, v)
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">bool</span>:   <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"bool: %v\n"</span>, v)
+<span style="color:#c792ea">case</span>:        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"nil"</span>)
+}
+
+<span style="color:#546e7a">// Nil-Check</span>
+<span style="color:#c792ea">if</span> w == <span style="color:#c792ea">nil</span> { <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Leer"</span>) }
+
+<span style="color:#546e7a">// Union mit #no_nil (kein nil möglich, spart Speicher)</span>
+<span style="color:#ffcb6b">Zahl</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">union</span> <span style="color:#ff9800">#no_nil</span> { <span style="color:#ffcb6b">int</span>, <span style="color:#ffcb6b">f64</span> }
+
+<span style="color:#546e7a">// any – dynamischer Typ (sparsam verwenden)</span>
+x: <span style="color:#c792ea">any</span> = <span style="color:#f78c6c">42</span>
+x = <span style="color:#c3e88d">"jetzt ein String"</span>
+
+<span style="color:#546e7a">// Type Assertion</span>
+<span style="color:#c792ea">if</span> n, ok <span style="color:#89ddff">:=</span> x.(<span style="color:#ffcb6b">int</span>); ok {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Es ist ein int:"</span>, n)
+}
+
+<span style="color:#546e7a">// maybe(T) – Optional-Pattern (T oder nil)</span>
+<span style="color:#546e7a">// In Odin: union { T } oder (T, bool)</span>
+find <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(arr: []<span style="color:#ffcb6b">int</span>, val: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">int</span>, <span style="color:#ffcb6b">bool</span>) {
+    <span style="color:#c792ea">for</span> v, i <span style="color:#c792ea">in</span> arr {
+        <span style="color:#c792ea">if</span> v == val { <span style="color:#c792ea">return</span> i, <span style="color:#c792ea">true</span> }
+    }
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">false</span>
+}
+
+<span style="color:#c792ea">if</span> idx, ok <span style="color:#89ddff">:=</span> find(mein_array, <span style="color:#f78c6c">42</span>); ok {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Gefunden bei Index"</span>, idx)
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ta3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ta3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Generics &amp; Polymorphismus
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="generics &amp; polymorphismus">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Generics &amp; Polymorphismus
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Polymorphe Typen – wie Generics</span>
+<span style="color:#ffcb6b">Stack</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span>($<span style="color:#ffcb6b">T</span>: <span style="color:#c792ea">typeid</span>) {
+    data: [<span style="color:#c792ea">dynamic</span>]<span style="color:#ffcb6b">T</span>,
+}
+
+stack_push <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(s: ^<span style="color:#ffcb6b">Stack</span>($<span style="color:#ffcb6b">T</span>), val: <span style="color:#ffcb6b">T</span>) {
+    <span style="color:#82aaff">append</span>(&amp;s.data, val)
+}
+
+stack_pop <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(s: ^<span style="color:#ffcb6b">Stack</span>($<span style="color:#ffcb6b">T</span>)) <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">T</span>, <span style="color:#ffcb6b">bool</span>) {
+    <span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(s.data) == <span style="color:#f78c6c">0</span> { <span style="color:#c792ea">return</span> {}, <span style="color:#c792ea">false</span> }
+    val <span style="color:#89ddff">:=</span> s.data[<span style="color:#82aaff">len</span>(s.data) - <span style="color:#f78c6c">1</span>]
+    <span style="color:#82aaff">pop</span>(&amp;s.data)
+    <span style="color:#c792ea">return</span> val, <span style="color:#c792ea">true</span>
+}
+
+<span style="color:#546e7a">// Nutzung</span>
+int_stack: <span style="color:#ffcb6b">Stack</span>(<span style="color:#ffcb6b">int</span>)
+stack_push(&amp;int_stack, <span style="color:#f78c6c">1</span>)
+stack_push(&amp;int_stack, <span style="color:#f78c6c">2</span>)
+v, ok <span style="color:#89ddff">:=</span> stack_pop(&amp;int_stack)   <span style="color:#546e7a">// v = 2, ok = true</span>
+
+<span style="color:#546e7a">// Polymorphe Prozedur</span>
+filter <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []$<span style="color:#ffcb6b">T</span>, pred: <span style="color:#c792ea">proc</span>(<span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span>, allocator <span style="color:#89ddff">:=</span> <span style="color:#c792ea">context</span>.allocator) <span style="color:#89ddff">-&gt;</span> []<span style="color:#ffcb6b">T</span> {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([<span style="color:#c792ea">dynamic</span>]<span style="color:#ffcb6b">T</span>, allocator = allocator)
+    <span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> slice {
+        <span style="color:#c792ea">if</span> pred(v) { <span style="color:#82aaff">append</span>(&amp;result, v) }
+    }
+    <span style="color:#c792ea">return</span> result[:]
+}
+
+gerade <span style="color:#89ddff">:=</span> filter([]<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">5</span>}, <span style="color:#c792ea">proc</span>(n: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span> { <span style="color:#c792ea">return</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> })
+
+<span style="color:#546e7a">// where-Constraints</span>
+sum <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []$<span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">T</span> <span style="color:#c792ea">where</span> intrinsics.type_is_numeric(<span style="color:#ffcb6b">T</span>) {
+    total: <span style="color:#ffcb6b">T</span>
+    <span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> slice { total += v }
+    <span style="color:#c792ea">return</span> total
+}
+
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(sum([]<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">5</span>}))         <span style="color:#546e7a">// 15</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(sum([]<span style="color:#ffcb6b">f64</span>{<span style="color:#f78c6c">1.1</span>, <span style="color:#f78c6c">2.2</span>, <span style="color:#f78c6c">3.3</span>}))    <span style="color:#546e7a">// 6.6</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-memory" class="tp">
+
+<div class="ac open" id="ac-mem0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mem0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Speicherverwaltung – kein GC!
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="speicherverwaltung – kein gc!">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Speicherverwaltung – kein GC!
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Odin hat keinen Garbage Collector!</span>
+<span style="color:#546e7a">// Manuelle oder Allocator-basierte Verwaltung.</span>
+
+<span style="color:#546e7a">// Heap-Allokation</span>
+n <span style="color:#89ddff">:=</span> <span style="color:#82aaff">new</span>(<span style="color:#ffcb6b">int</span>)          <span style="color:#546e7a">// ^int – einzelner Wert</span>
+<span style="color:#c792ea">defer</span> <span style="color:#82aaff">free</span>(n)           <span style="color:#546e7a">// muss explizit freigegeben werden!</span>
+n^ = <span style="color:#f78c6c">42</span>               <span style="color:#546e7a">// Dereferenzierung mit ^</span>
+
+<span style="color:#546e7a">// Arrays und Slices</span>
+data <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">10</span>)
+<span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(data)
+
+dynamic_arr <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([<span style="color:#c792ea">dynamic</span>]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">100</span>)
+<span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(dynamic_arr)
+<span style="color:#82aaff">append</span>(&amp;dynamic_arr, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)
+
+<span style="color:#546e7a">// Structs</span>
+person <span style="color:#89ddff">:=</span> <span style="color:#82aaff">new</span>(<span style="color:#ffcb6b">Person</span>)
+<span style="color:#c792ea">defer</span> <span style="color:#82aaff">free</span>(person)
+person.name = <span style="color:#c3e88d">"Alice"</span>
+
+<span style="color:#546e7a">// Stack vs Heap</span>
+x <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">42</span>          <span style="color:#546e7a">// Stack – automatisch freigegeben</span>
+p <span style="color:#89ddff">:=</span> <span style="color:#82aaff">new</span>(<span style="color:#ffcb6b">int</span>)    <span style="color:#546e7a">// Heap – muss mit free() freigegeben werden</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mem1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mem1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Allocatoren
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="allocatoren">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Allocatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Odin hat ein mächtiges Allocator-System</span>
+<span style="color:#546e7a">// Jede Allokation kann einen Allocator angeben</span>
+
+<span style="color:#546e7a">// Standard-Allocator (Heap)</span>
+data <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">100</span>)         <span style="color:#546e7a">// nutzt context.allocator</span>
+data2 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">100</span>, allocator = <span style="color:#c792ea">context</span>.allocator)
+
+<span style="color:#546e7a">// Temp-Allocator – für kurzlebige Daten</span>
+<span style="color:#546e7a">// Wird automatisch freigegeben (z.B. am Frame-Ende)</span>
+temp_str <span style="color:#89ddff">:=</span> <span style="color:#82aaff">fmt</span>.tprintf(<span style="color:#c3e88d">"Hallo %s!"</span>, name)   <span style="color:#546e7a">// im temp-Speicher</span>
+<span style="color:#c792ea">defer</span> free_all(<span style="color:#c792ea">context</span>.temp_allocator)        <span style="color:#546e7a">// alles auf einmal freigeben</span>
+
+<span style="color:#546e7a">// Arena-Allocator – alle zusammen freigeben</span>
+arena: vmem.<span style="color:#ffcb6b">Arena</span>
+<span style="color:#c792ea">defer</span> vmem.arena_destroy(&amp;arena)
+arena_alloc <span style="color:#89ddff">:=</span> vmem.arena_allocator(&amp;arena)
+
+data3 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">100</span>, allocator = arena_alloc)
+data4 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">u8</span>,  <span style="color:#f78c6c">200</span>, allocator = arena_alloc)
+<span style="color:#546e7a">// Beide werden mit arena_destroy() auf einmal freigegeben!</span>
+
+<span style="color:#546e7a">// Tracking-Allocator – Memory-Leaks finden</span>
+<span style="color:#c792ea">when</span> <span style="color:#ffcb6b">ODIN_DEBUG</span> {
+    tracking: mem.<span style="color:#ffcb6b">Tracking_Allocator</span>
+    mem.tracking_allocator_init(&amp;tracking, <span style="color:#c792ea">context</span>.allocator)
+    <span style="color:#c792ea">context</span>.allocator = mem.tracking_allocator(&amp;tracking)
+    <span style="color:#c792ea">defer</span> {
+        <span style="color:#c792ea">for</span> _, leak <span style="color:#c792ea">in</span> tracking.allocation_map {
+            <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">eprintf</span>(<span style="color:#c3e88d">"LEAK: %v\n"</span>, leak.location)
+        }
+        mem.tracking_allocator_destroy(&amp;tracking)
+    }
+}
+
+<span style="color:#546e7a">// Context-Allocator anpassen</span>
+verarbeite_daten <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#c792ea">context</span>.allocator = my_pool_allocator
+    <span style="color:#546e7a">// Alle make/new in diesem Scope nutzen Pool</span>
+    data <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#f78c6c">100</span>)
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(data)   <span style="color:#546e7a">// gibt an Pool zurück</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mem2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mem2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Zeiger &amp; Slices
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="zeiger &amp; slices">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Zeiger &amp; Slices
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Zeiger  ^T  (^ statt * wie in C)</span>
+x <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">42</span>
+p <span style="color:#89ddff">:=</span> &amp;x         <span style="color:#546e7a">// Zeiger auf x: ^int</span>
+p^ = <span style="color:#f78c6c">99</span>         <span style="color:#546e7a">// Dereferenzierung: x ist jetzt 99</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(x)  <span style="color:#546e7a">// 99</span>
+
+<span style="color:#546e7a">// Nil-Zeiger</span>
+var ptr: ^<span style="color:#ffcb6b">int</span> = <span style="color:#c792ea">nil</span>
+<span style="color:#c792ea">if</span> ptr != <span style="color:#c792ea">nil</span> {
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(ptr^)
+}
+
+<span style="color:#546e7a">// Zeiger auf Struct-Felder</span>
+person <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">Person</span>{name = <span style="color:#c3e88d">"Alice"</span>}
+name_ptr <span style="color:#89ddff">:=</span> &amp;person.name
+name_ptr^ = <span style="color:#c3e88d">"Bob"</span>
+
+<span style="color:#546e7a">// Slices – Wertetyp mit Interna</span>
+<span style="color:#ffcb6b">Slice_Header</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> {
+    data: <span style="color:#ffcb6b">rawptr</span>,
+    <span style="color:#82aaff">len</span>:  <span style="color:#ffcb6b">int</span>,
+    <span style="color:#82aaff">cap</span>:  <span style="color:#ffcb6b">int</span>,  <span style="color:#546e7a">// nur bei [dynamic]</span>
+}
+
+arr <span style="color:#89ddff">:=</span> [<span style="color:#f78c6c">5</span>]<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>}
+sl <span style="color:#89ddff">:=</span> arr[<span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">4</span>]   <span style="color:#546e7a">// sl = {2, 3, 4}</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#82aaff">len</span>(sl))   <span style="color:#546e7a">// 3</span>
+
+<span style="color:#546e7a">// Slicing</span>
+sl2 <span style="color:#89ddff">:=</span> sl[<span style="color:#f78c6c">1</span>:]    <span style="color:#546e7a">// ab Index 1</span>
+sl3 <span style="color:#89ddff">:=</span> sl[:<span style="color:#f78c6c">2</span>]    <span style="color:#546e7a">// bis Index 2 (exklusiv)</span>
+
+<span style="color:#546e7a">// Copy</span>
+dst <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">int</span>, <span style="color:#82aaff">len</span>(src))
+<span style="color:#82aaff">copy</span>(dst, src)
+
+<span style="color:#546e7a">// Multi-Pointer  [^]T  (für C-Interop)</span>
+c_array: [^]<span style="color:#ffcb6b">int</span> = get_c_array()
+<span style="color:#546e7a">// Kann wie Array indexiert werden, aber keine Bounds-Checks!</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(c_array[<span style="color:#f78c6c">0</span>], c_array[<span style="color:#f78c6c">1</span>])</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-packages" class="tp">
+
+<div class="ac open" id="ac-pk0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Package-System
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="package-system">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Package-System
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Jede Datei beginnt mit package-Deklaration</span>
+<span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">package</span> mein_paket   <span style="color:#546e7a">// Bibliotheks-Package</span>
+
+<span style="color:#546e7a">// Imports</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:os"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:strings"</span>
+
+<span style="color:#546e7a">// Gruppenimport</span>
+<span style="color:#c792ea">import</span> (
+    <span style="color:#c3e88d">"core:fmt"</span>
+    <span style="color:#c3e88d">"core:math"</span>
+    <span style="color:#c3e88d">"core:os"</span>
+    <span style="color:#c3e88d">"core:slice"</span>
+    <span style="color:#c3e88d">"core:strings"</span>
+    <span style="color:#c3e88d">"core:strconv"</span>
+
+    <span style="color:#546e7a">// Vendor-Packages</span>
+    <span style="color:#c3e88d">"vendor:sdl2"</span>
+    <span style="color:#c3e88d">"vendor:stb/image"</span>
+
+    <span style="color:#546e7a">// Eigene Packages (relativ)</span>
+    <span style="color:#c3e88d">"../utils"</span>
+    <span style="color:#c3e88d">"./renderer"</span>
+)
+
+<span style="color:#546e7a">// Alias</span>
+<span style="color:#c792ea">import</span> <span style="color:#82aaff">fmt</span> <span style="color:#c3e88d">"core:fmt"</span>
+<span style="color:#c792ea">import</span> my_utils <span style="color:#c3e88d">"../utils"</span>
+
+<span style="color:#546e7a">// Nur Seiteneffekte (init wird ausgeführt)</span>
+<span style="color:#c792ea">import</span> _ <span style="color:#c3e88d">"mein_plugin"</span>
+
+<span style="color:#546e7a">// Exported vs Unexported</span>
+<span style="color:#546e7a">// Klein = privat (nur im Package sichtbar)</span>
+privat_proc <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {}
+privat_var  <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">42</span>
+
+<span style="color:#546e7a">// Groß = öffentlich (von außen sichtbar)</span>
+<span style="color:#ffcb6b">Öffentlich_Proc</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {}
+<span style="color:#ffcb6b">ÖFFENTLICHE_KONSTANTE</span> <span style="color:#89ddff">::</span> <span style="color:#f78c6c">42</span>
+
+<span style="color:#546e7a">// Package-Initialisierung</span>
+@(init)
+init_proc <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#546e7a">// Wird vor main() ausgeführt</span>
+    <span style="color:#546e7a">// Mehrere @(init) möglich!</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pk1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Standard-Packages (core:)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="standard-packages (core:)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Standard-Packages (core:)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// core:fmt – Ausgabe und Formatierung</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Hallo, Welt!"</span>)
+<span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%s hat %d Jahre\n"</span>, name, alter)
+<span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"Kombi: %v"</span>, wert)   <span style="color:#546e7a">// println + printf</span>
+s <span style="color:#89ddff">:=</span> <span style="color:#82aaff">fmt</span>.tprintf(<span style="color:#c3e88d">"Temp: %s"</span>, name)   <span style="color:#546e7a">// temp-allocator</span>
+s2 <span style="color:#89ddff">:=</span> <span style="color:#82aaff">fmt</span>.aprintf(<span style="color:#c3e88d">"Heap: %s"</span>, name)   <span style="color:#546e7a">// heap-allocator</span>
+<span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(s2)
+
+<span style="color:#546e7a">// core:os – Betriebssystem</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:os"</span>
+data, ok <span style="color:#89ddff">:=</span> os.read_entire_file(<span style="color:#c3e88d">"datei.txt"</span>)
+<span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(data)
+os.write_entire_file(<span style="color:#c3e88d">"aus.txt"</span>, daten)
+exists <span style="color:#89ddff">:=</span> os.exists(<span style="color:#c3e88d">"pfad/zu/datei"</span>)
+os.exit(<span style="color:#f78c6c">0</span>)
+
+<span style="color:#546e7a">// core:strings – String-Operationen</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:strings"</span>
+b <span style="color:#89ddff">:=</span> strings.contains(<span style="color:#c3e88d">"hallo"</span>, <span style="color:#c3e88d">"all"</span>)       <span style="color:#546e7a">// true</span>
+s <span style="color:#89ddff">:=</span> strings.to_upper(<span style="color:#c3e88d">"hallo"</span>)              <span style="color:#546e7a">// "HALLO"</span>
+parts <span style="color:#89ddff">:=</span> strings.split(<span style="color:#c3e88d">"a,b,c"</span>, <span style="color:#c3e88d">","</span>)        <span style="color:#546e7a">// ["a", "b", "c"]</span>
+joined <span style="color:#89ddff">:=</span> strings.join(parts, <span style="color:#c3e88d">"-"</span>)          <span style="color:#546e7a">// "a-b-c"</span>
+
+<span style="color:#546e7a">// core:slice – Slice-Operationen</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:slice"</span>
+slice.sort(mein_slice)
+slice.reverse(mein_slice)
+contains <span style="color:#89ddff">:=</span> slice.contains(mein_slice, <span style="color:#f78c6c">42</span>)
+idx, found <span style="color:#89ddff">:=</span> slice.linear_search(s, <span style="color:#f78c6c">42</span>)
+
+<span style="color:#546e7a">// core:math – Mathematik</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:math"</span>
+math.sqrt(<span style="color:#ffcb6b">f64</span>(<span style="color:#f78c6c">16</span>))   <span style="color:#546e7a">// 4.0</span>
+math.pow(<span style="color:#f78c6c">2.0</span>, <span style="color:#f78c6c">10.0</span>)  <span style="color:#546e7a">// 1024.0</span>
+math.sin(math.<span style="color:#ffcb6b">PI</span>)    <span style="color:#546e7a">// ~0</span>
+
+<span style="color:#546e7a">// core:encoding/json – JSON</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:encoding/json"</span>
+data, err <span style="color:#89ddff">:=</span> json.marshal(mein_struct)
+err = json.unmarshal(data, &amp;mein_struct)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pk2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>Testing in Odin
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="testing in odin">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Testing in Odin
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Testdateien: xxx_test.odin im selben Package</span>
+<span style="color:#c792ea">package</span> mein_paket
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:testing"</span>
+
+<span style="color:#546e7a">// Normaler Test</span>
+@(test)
+test_addiere <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(t: ^testing.<span style="color:#ffcb6b">T</span>) {
+    ergebnis <span style="color:#89ddff">:=</span> addiere(<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)
+    testing.expect_value(t, ergebnis, <span style="color:#f78c6c">5</span>)
+}
+
+<span style="color:#546e7a">// Mit Fehlermeldung</span>
+@(test)
+test_divide <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(t: ^testing.<span style="color:#ffcb6b">T</span>) {
+    result, ok <span style="color:#89ddff">:=</span> divide(<span style="color:#f78c6c">10.0</span>, <span style="color:#f78c6c">2.0</span>)
+    testing.expect(t, ok, <span style="color:#c3e88d">"divide sollte ok sein"</span>)
+    testing.expect_value(t, result, <span style="color:#f78c6c">5.0</span>)
+
+    _, not_ok <span style="color:#89ddff">:=</span> divide(<span style="color:#f78c6c">10.0</span>, <span style="color:#f78c6c">0.0</span>)
+    testing.expect(t, !not_ok, <span style="color:#c3e88d">"divide durch 0 sollte fehlschlagen"</span>)
+}
+
+<span style="color:#546e7a">// Test mit Logging</span>
+@(test)
+test_mit_log <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(t: ^testing.<span style="color:#ffcb6b">T</span>) {
+    testing.logf(t, <span style="color:#c3e88d">"Testing mit x = %d"</span>, <span style="color:#f78c6c">42</span>)
+    <span style="color:#c792ea">if</span> !bedingung {
+        testing.errorf(t, <span style="color:#c3e88d">"Erwartet %v, bekam %v"</span>, erwartet, tatsächlich)
+    }
+}
+
+<span style="color:#546e7a">// Tests ausführen:</span>
+<span style="color:#546e7a">// odin test .</span>
+<span style="color:#546e7a">// odin test . -file:mein_test.odin</span>
+<span style="color:#546e7a">// odin test . -verbose</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #e28f37;color:#e28f37;background:rgba(226,143,55,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Hallo Welt &amp; Grundlagen</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Structs &amp; Unions</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generics &amp; Polymorphismus</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">CLI &amp; File I/O</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:os"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:strings"</span>
+
+<span style="color:#546e7a">// Distinct Types – verhindert versehentliche Vermischung</span>
+<span style="color:#ffcb6b">Meter</span>    <span style="color:#89ddff">::</span> <span style="color:#c792ea">distinct</span> <span style="color:#ffcb6b">f64</span>
+<span style="color:#ffcb6b">Kilogramm</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">distinct</span> <span style="color:#ffcb6b">f64</span>
+
+berechneBMI <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(gewicht: <span style="color:#ffcb6b">Kilogramm</span>, größe: <span style="color:#ffcb6b">Meter</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">f64</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#ffcb6b">f64</span>(gewicht) / (<span style="color:#ffcb6b">f64</span>(größe) * <span style="color:#ffcb6b">f64</span>(größe))
+}
+
+<span style="color:#546e7a">// Proc mit mehreren Rückgabewerten</span>
+parse_int <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(s: <span style="color:#ffcb6b">string</span>) <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">int</span>, <span style="color:#ffcb6b">bool</span>) {
+    n <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">for</span> r <span style="color:#c792ea">in</span> s {
+        <span style="color:#c792ea">if</span> r &lt; <span style="color:#c3e88d">'0'</span> || r &gt; <span style="color:#c3e88d">'9'</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">false</span> }
+        n = n * <span style="color:#f78c6c">10</span> + <span style="color:#ffcb6b">int</span>(r - <span style="color:#c3e88d">'0'</span>)
+    }
+    <span style="color:#c792ea">return</span> n, <span style="color:#c792ea">true</span>
+}
+
+main <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#546e7a">// Variablen</span>
+    name  <span style="color:#89ddff">:=</span> <span style="color:#c3e88d">"Alice"</span>
+    alter <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">30</span>
+    pi    <span style="color:#89ddff">::</span> <span style="color:#f78c6c">3.14159</span>    <span style="color:#546e7a">// Konstante</span>
+
+    <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"Hallo, %s! Du bist %d Jahre alt."</span>, name, alter)
+
+    <span style="color:#546e7a">// Distinct Types</span>
+    bmi <span style="color:#89ddff">:=</span> berechneBMI(<span style="color:#ffcb6b">Kilogramm</span>(<span style="color:#f78c6c">70</span>), <span style="color:#ffcb6b">Meter</span>(<span style="color:#f78c6c">1.75</span>))
+    <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"BMI: %.1f"</span>, bmi)
+
+    <span style="color:#546e7a">// Mehrere Rückgabewerte + or_else</span>
+    <span style="color:#c792ea">if</span> n, ok <span style="color:#89ddff">:=</span> parse_int(<span style="color:#c3e88d">"42"</span>); ok {
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Geparst:"</span>, n)
+    }
+
+    <span style="color:#546e7a">// for mit Range</span>
+    <span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">1..</span>=<span style="color:#f78c6c">5</span> {
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, i)
+    }
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>()
+
+    <span style="color:#546e7a">// Array und Slice</span>
+    zahlen <span style="color:#89ddff">:=</span> [<span style="color:#f78c6c">5</span>]<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">40</span>, <span style="color:#f78c6c">50</span>}
+    sl <span style="color:#89ddff">:=</span> zahlen[<span style="color:#f78c6c">1</span>:<span style="color:#f78c6c">4</span>]   <span style="color:#546e7a">// {20, 30, 40}</span>
+    <span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> sl {
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, v)
+    }
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>()
+
+    <span style="color:#546e7a">// Map</span>
+    farben <span style="color:#89ddff">:=</span> <span style="color:#c792ea">map</span>[<span style="color:#ffcb6b">string</span>]<span style="color:#ffcb6b">string</span>{
+        <span style="color:#c3e88d">"rot"</span>   = <span style="color:#c3e88d">"#ff0000"</span>,
+        <span style="color:#c3e88d">"grün"</span>  = <span style="color:#c3e88d">"#00ff00"</span>,
+        <span style="color:#c3e88d">"blau"</span>  = <span style="color:#c3e88d">"#0000ff"</span>,
+    }
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(farben)
+
+    <span style="color:#c792ea">for</span> name, hex <span style="color:#c792ea">in</span> farben {
+        <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"%s = %s"</span>, name, hex)
+    }
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+
+<span style="color:#546e7a">// Enum für Tier-Typen</span>
+<span style="color:#ffcb6b">Tier_Art</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#ffcb6b">Hund</span>,
+    <span style="color:#ffcb6b">Katze</span>,
+    <span style="color:#ffcb6b">Vogel</span>,
+}
+
+<span style="color:#546e7a">// Struct mit Methoden-ähnlichen Prozeduren</span>
+<span style="color:#ffcb6b">Tier</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> {
+    name:  <span style="color:#ffcb6b">string</span>,
+    art:   <span style="color:#ffcb6b">Tier_Art</span>,
+    alter: <span style="color:#ffcb6b">int</span>,
+}
+
+tier_spreche <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(t: <span style="color:#ffcb6b">Tier</span>) {
+    <span style="color:#c792ea">switch</span> t.art {
+    <span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">Hund</span>:  <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"%s sagt: Wuff!"</span>, t.name)
+    <span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">Katze</span>: <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"%s sagt: Miau!"</span>, t.name)
+    <span style="color:#c792ea">case</span> .<span style="color:#ffcb6b">Vogel</span>: <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"%s sagt: Tweet!"</span>, t.name)
+    }
+}
+
+tier_beschreibung <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(t: <span style="color:#ffcb6b">Tier</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">string</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">fmt</span>.tprintf(<span style="color:#c3e88d">"%s (%v, %d Jahre)"</span>, t.name, t.art, t.alter)
+}
+
+<span style="color:#546e7a">// Union als Fehler-Typ (idiomatisch in Odin)</span>
+<span style="color:#ffcb6b">Parse_Error</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#ffcb6b">Invalid_Format</span>,
+    <span style="color:#ffcb6b">Out_Of_Range</span>,
+    <span style="color:#ffcb6b">Empty_Input</span>,
+}
+
+<span style="color:#ffcb6b">IO_Error</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#ffcb6b">Not_Found</span>,
+    <span style="color:#ffcb6b">Permission_Denied</span>,
+}
+
+<span style="color:#ffcb6b">Error</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">union</span> { <span style="color:#ffcb6b">Parse_Error</span>, <span style="color:#ffcb6b">IO_Error</span> }
+
+<span style="color:#546e7a">// Bit-Set für Berechtigungen</span>
+<span style="color:#ffcb6b">Recht</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">enum</span> { <span style="color:#ffcb6b">Lesen</span>, <span style="color:#ffcb6b">Schreiben</span>, <span style="color:#ffcb6b">Ausführen</span> }
+<span style="color:#ffcb6b">Rechte</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">bit_set</span>[<span style="color:#ffcb6b">Recht</span>]
+
+prüfe_rechte <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(rechte: <span style="color:#ffcb6b">Rechte</span>, benötigt: <span style="color:#ffcb6b">Rechte</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span> {
+    <span style="color:#c792ea">return</span> (rechte &amp; benötigt) == benötigt
+}
+
+main <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    tiere <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">Tier</span>{
+        {name = <span style="color:#c3e88d">"Rex"</span>,    art = .<span style="color:#ffcb6b">Hund</span>,  alter = <span style="color:#f78c6c">3</span>},
+        {name = <span style="color:#c3e88d">"Minka"</span>,  art = .<span style="color:#ffcb6b">Katze</span>, alter = <span style="color:#f78c6c">7</span>},
+        {name = <span style="color:#c3e88d">"Tweety"</span>, art = .<span style="color:#ffcb6b">Vogel</span>, alter = <span style="color:#f78c6c">2</span>},
+    }
+
+    <span style="color:#c792ea">for</span> tier <span style="color:#c792ea">in</span> tiere {
+        tier_spreche(tier)
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">" -&gt;"</span>, tier_beschreibung(tier))
+    }
+
+    <span style="color:#546e7a">// Bit-Set</span>
+    user_rechte: <span style="color:#ffcb6b">Rechte</span> = {.<span style="color:#ffcb6b">Lesen</span>, .<span style="color:#ffcb6b">Schreiben</span>}
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Darf lesen:    "</span>, .<span style="color:#ffcb6b">Lesen</span>    <span style="color:#c792ea">in</span> user_rechte)
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Darf ausführen:"</span>, .<span style="color:#ffcb6b">Ausführen</span> <span style="color:#c792ea">in</span> user_rechte)
+
+    <span style="color:#546e7a">// Alle Rechte ausgeben</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Rechte: "</span>)
+    <span style="color:#c792ea">for</span> recht <span style="color:#c792ea">in</span> user_rechte {
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%v "</span>, recht)
+    }
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>()
+}</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:slice"</span>
+
+<span style="color:#546e7a">// Generische Stack-Datenstruktur</span>
+<span style="color:#ffcb6b">Stack</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span>($<span style="color:#ffcb6b">T</span>: <span style="color:#c792ea">typeid</span>) {
+    data: [<span style="color:#c792ea">dynamic</span>]<span style="color:#ffcb6b">T</span>,
+}
+
+stack_push <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(s: ^<span style="color:#ffcb6b">Stack</span>($<span style="color:#ffcb6b">T</span>), val: <span style="color:#ffcb6b">T</span>) {
+    <span style="color:#82aaff">append</span>(&amp;s.data, val)
+}
+
+stack_pop <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(s: ^<span style="color:#ffcb6b">Stack</span>($<span style="color:#ffcb6b">T</span>)) <span style="color:#89ddff">-&gt;</span> (val: <span style="color:#ffcb6b">T</span>, ok: <span style="color:#ffcb6b">bool</span>) {
+    <span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(s.data) == <span style="color:#f78c6c">0</span> { <span style="color:#c792ea">return</span> {}, <span style="color:#c792ea">false</span> }
+    val = <span style="color:#82aaff">pop</span>(&amp;s.data)
+    <span style="color:#c792ea">return</span> val, <span style="color:#c792ea">true</span>
+}
+
+stack_peek <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(s: ^<span style="color:#ffcb6b">Stack</span>($<span style="color:#ffcb6b">T</span>)) <span style="color:#89ddff">-&gt;</span> (val: <span style="color:#ffcb6b">T</span>, ok: <span style="color:#ffcb6b">bool</span>) {
+    <span style="color:#c792ea">if</span> <span style="color:#82aaff">len</span>(s.data) == <span style="color:#f78c6c">0</span> { <span style="color:#c792ea">return</span> {}, <span style="color:#c792ea">false</span> }
+    <span style="color:#c792ea">return</span> s.data[<span style="color:#82aaff">len</span>(s.data)-<span style="color:#f78c6c">1</span>], <span style="color:#c792ea">true</span>
+}
+
+<span style="color:#546e7a">// Generische Utility-Prozeduren</span>
+map_proc <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []$<span style="color:#ffcb6b">T</span>, fn: <span style="color:#c792ea">proc</span>(<span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> $<span style="color:#ffcb6b">R</span>, allocator <span style="color:#89ddff">:=</span> <span style="color:#c792ea">context</span>.allocator) <span style="color:#89ddff">-&gt;</span> []<span style="color:#ffcb6b">R</span> {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([]<span style="color:#ffcb6b">R</span>, <span style="color:#82aaff">len</span>(slice), allocator)
+    <span style="color:#c792ea">for</span> v, i <span style="color:#c792ea">in</span> slice { result[i] = fn(v) }
+    <span style="color:#c792ea">return</span> result
+}
+
+filter_proc <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []$<span style="color:#ffcb6b">T</span>, pred: <span style="color:#c792ea">proc</span>(<span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span>, allocator <span style="color:#89ddff">:=</span> <span style="color:#c792ea">context</span>.allocator) <span style="color:#89ddff">-&gt;</span> []<span style="color:#ffcb6b">T</span> {
+    result <span style="color:#89ddff">:=</span> <span style="color:#82aaff">make</span>([<span style="color:#c792ea">dynamic</span>]<span style="color:#ffcb6b">T</span>, allocator = allocator)
+    <span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> slice {
+        <span style="color:#c792ea">if</span> pred(v) { <span style="color:#82aaff">append</span>(&amp;result, v) }
+    }
+    <span style="color:#c792ea">return</span> result[:]
+}
+
+reduce <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(slice: []$<span style="color:#ffcb6b">T</span>, init: $<span style="color:#ffcb6b">R</span>, fn: <span style="color:#c792ea">proc</span>(<span style="color:#ffcb6b">R</span>, <span style="color:#ffcb6b">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">R</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">R</span> {
+    acc <span style="color:#89ddff">:=</span> init
+    <span style="color:#c792ea">for</span> v <span style="color:#c792ea">in</span> slice { acc = fn(acc, v) }
+    <span style="color:#c792ea">return</span> acc
+}
+
+main <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    <span style="color:#546e7a">// Stack testen</span>
+    s: <span style="color:#ffcb6b">Stack</span>(<span style="color:#ffcb6b">int</span>)
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(s.data)
+
+    <span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">1..</span>=<span style="color:#f78c6c">5</span> { stack_push(&amp;s, i) }
+
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Stack (pop): "</span>)
+    <span style="color:#c792ea">for</span> {
+        v, ok <span style="color:#89ddff">:=</span> stack_pop(&amp;s)
+        <span style="color:#c792ea">if</span> !ok { <span style="color:#c792ea">break</span> }
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, v)
+    }
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>()   <span style="color:#546e7a">// 5 4 3 2 1</span>
+
+    <span style="color:#546e7a">// Funktionale Pipeline</span>
+    zahlen <span style="color:#89ddff">:=</span> []<span style="color:#ffcb6b">int</span>{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>}
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(zahlen)
+
+    gerade <span style="color:#89ddff">:=</span> filter_proc(zahlen, <span style="color:#c792ea">proc</span>(n: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span> { <span style="color:#c792ea">return</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> })
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(gerade)
+
+    quadrate <span style="color:#89ddff">:=</span> map_proc(gerade, <span style="color:#c792ea">proc</span>(n: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> n * n })
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(quadrate)
+
+    summe <span style="color:#89ddff">:=</span> reduce(quadrate, <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">proc</span>(acc, n: <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span> { <span style="color:#c792ea">return</span> acc + n })
+
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Gerade:"</span>, gerade)       <span style="color:#546e7a">// [2 4 6 8 10]</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Quadrate:"</span>, quadrate)   <span style="color:#546e7a">// [4 16 36 64 100]</span>
+    <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Summe:"</span>, summe)         <span style="color:#546e7a">// 220</span>
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">package</span> main
+
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:fmt"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:os"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:strings"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:strconv"</span>
+<span style="color:#c792ea">import</span> <span style="color:#c3e88d">"core:bufio"</span>
+
+<span style="color:#546e7a">// Einfaches CLI-Argument-Parsing</span>
+<span style="color:#ffcb6b">Args</span> <span style="color:#89ddff">::</span> <span style="color:#c792ea">struct</span> {
+    eingabe_datei: <span style="color:#ffcb6b">string</span>,
+    ausgabe_datei: <span style="color:#ffcb6b">string</span>,
+    verbose:        <span style="color:#ffcb6b">bool</span>,
+    max_zeilen:    <span style="color:#ffcb6b">int</span>,
+}
+
+parse_args <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() <span style="color:#89ddff">-&gt;</span> (args: <span style="color:#ffcb6b">Args</span>, ok: <span style="color:#ffcb6b">bool</span>) {
+    args.max_zeilen = -<span style="color:#f78c6c">1</span>   <span style="color:#546e7a">// kein Limit</span>
+    argv <span style="color:#89ddff">:=</span> os.args[<span style="color:#f78c6c">1</span>:]     <span style="color:#546e7a">// os.args[0] = Programmname</span>
+
+    <span style="color:#c792ea">for</span> i <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#82aaff">len</span>(argv); i += <span style="color:#f78c6c">1</span> {
+        <span style="color:#c792ea">switch</span> argv[i] {
+        <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"-v"</span>, <span style="color:#c3e88d">"--verbose"</span>:
+            args.verbose = <span style="color:#c792ea">true</span>
+        <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"-n"</span>, <span style="color:#c3e88d">"--max-lines"</span>:
+            <span style="color:#c792ea">if</span> i + <span style="color:#f78c6c">1</span> &gt;= <span style="color:#82aaff">len</span>(argv) {
+                <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">eprintln</span>(<span style="color:#c3e88d">"Fehler: -n braucht Argument"</span>)
+                <span style="color:#c792ea">return</span> {}, <span style="color:#c792ea">false</span>
+            }
+            i += <span style="color:#f78c6c">1</span>
+            n, parse_ok <span style="color:#89ddff">:=</span> strconv.parse_int(argv[i])
+            <span style="color:#c792ea">if</span> !parse_ok {
+                <span style="color:#82aaff">fmt</span>.eprintfln(<span style="color:#c3e88d">"Fehler: '%s' ist keine Zahl"</span>, argv[i])
+                <span style="color:#c792ea">return</span> {}, <span style="color:#c792ea">false</span>
+            }
+            args.max_zeilen = n
+        <span style="color:#c792ea">case</span>:
+            <span style="color:#c792ea">if</span> args.eingabe_datei == <span style="color:#c3e88d">""</span> {
+                args.eingabe_datei = argv[i]
+            } <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> args.ausgabe_datei == <span style="color:#c3e88d">""</span> {
+                args.ausgabe_datei = argv[i]
+            }
+        }
+    }
+    <span style="color:#c792ea">return</span> args, <span style="color:#c792ea">true</span>
+}
+
+<span style="color:#546e7a">// Datei zeilenweise verarbeiten</span>
+verarbeite_datei <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>(pfad: <span style="color:#ffcb6b">string</span>, <span style="color:#82aaff">max</span>: <span style="color:#ffcb6b">int</span>, verbose: <span style="color:#ffcb6b">bool</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span> {
+    data, ok <span style="color:#89ddff">:=</span> os.read_entire_file(pfad)
+    <span style="color:#c792ea">if</span> !ok {
+        <span style="color:#82aaff">fmt</span>.eprintfln(<span style="color:#c3e88d">"Fehler: Kann %s nicht lesen"</span>, pfad)
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">false</span>
+    }
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(data)
+
+    text   <span style="color:#89ddff">:=</span> <span style="color:#ffcb6b">string</span>(data)
+    zeilen <span style="color:#89ddff">:=</span> strings.split_lines(text)
+    <span style="color:#c792ea">defer</span> <span style="color:#82aaff">delete</span>(zeilen)
+
+    count <span style="color:#89ddff">:=</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">for</span> zeile, i <span style="color:#c792ea">in</span> zeilen {
+        <span style="color:#c792ea">if</span> <span style="color:#82aaff">max</span> &gt;= <span style="color:#f78c6c">0</span> &amp;&amp; count &gt;= <span style="color:#82aaff">max</span> { <span style="color:#c792ea">break</span> }
+        <span style="color:#c792ea">if</span> verbose {
+            <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%4d | %s\n"</span>, i + <span style="color:#f78c6c">1</span>, zeile)
+        } <span style="color:#c792ea">else</span> {
+            <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">println</span>(zeile)
+        }
+        count += <span style="color:#f78c6c">1</span>
+    }
+
+    <span style="color:#c792ea">if</span> verbose {
+        <span style="color:#82aaff">fmt</span>.printfln(<span style="color:#c3e88d">"--- %d Zeile(n) ausgegeben ---"</span>, count)
+    }
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">true</span>
+}
+
+main <span style="color:#89ddff">::</span> <span style="color:#c792ea">proc</span>() {
+    args, ok <span style="color:#89ddff">:=</span> parse_args()
+    <span style="color:#c792ea">if</span> !ok { os.exit(<span style="color:#f78c6c">1</span>) }
+
+    <span style="color:#c792ea">if</span> args.eingabe_datei == <span style="color:#c3e88d">""</span> {
+        <span style="color:#82aaff">fmt</span>.<span style="color:#82aaff">eprintln</span>(<span style="color:#c3e88d">"Verwendung: prog [-v] [-n N] &lt;eingabe&gt; [ausgabe]"</span>)
+        os.exit(<span style="color:#f78c6c">1</span>)
+    }
+
+    <span style="color:#c792ea">if</span> !verarbeite_datei(args.eingabe_datei, args.max_zeilen, args.verbose) {
+        os.exit(<span style="color:#f78c6c">1</span>)
+    }
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+
+<div style="background:#e28f3711;border:1px solid #e28f3744;border-radius:8px;
+            padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.8">
+  <strong style="color:#e28f37">Arch / CachyOS:</strong>
+  <code style="color:#ffb347">yay -S odin ols</code><br>
+  <strong style="color:#e28f37">Andere Linux:</strong>
+  Aus Quellen bauen – <code style="color:#ffb347">git clone https://github.com/odin-lang/Odin && ./build_odin.sh release</code>
+</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e28f3744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e28f370e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e28f37">
+      <span style="display:inline-block;width:8px;height:8px;background:#e28f37;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>⚙ Odin installieren (Linux)
+    </span>
+    <span class="aa" style="color:#e28f37;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e28f37;font-weight:700">Aus Quellen</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">git + clang</span>
+  </div>
+  <code style="color:#ffb347">git clone https://github.com/odin-lang/Odin
+cd Odin &amp;&amp; ./build_odin.sh release
+export PATH=$PATH:$(pwd)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e28f37;font-weight:700">Arch/CachyOS</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">odin (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S odin
+odin version</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e28f37;font-weight:700">Nightly</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">AUR</span>
+  </div>
+  <code style="color:#ffb347">yay -S odin-git  # Neuester Build</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e28f37;font-weight:700">Prüfen</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">odin</span>
+  </div>
+  <code style="color:#ffb347">odin version  |  odin report</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>⚙ odin CLI
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin run main.odin</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Kompilieren + ausführen</span>
+  </div>
+  <code style="color:#ffb347">odin run .  (ganzes Package)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin build .</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Kompilieren</span>
+  </div>
+  <code style="color:#ffb347">odin build . -out:meinprog</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin test .</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Tests ausführen</span>
+  </div>
+  <code style="color:#ffb347">odin test . -verbose</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin check .</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Nur Typ-Prüfung (kein Output)</span>
+  </div>
+  <code style="color:#ffb347">Schnell für Fehlersuche</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin run . -debug</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Mit Debug-Infos</span>
+  </div>
+  <code style="color:#ffb347">Bounds-Checks, Tracking-Alloc</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin run . -opt:3</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Maximale Optimierung</span>
+  </div>
+  <code style="color:#ffb347">Für Produktion</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin run . -target:linux_amd64</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Cross-Compile</span>
+  </div>
+  <code style="color:#ffb347">linux/windows/darwin + amd64/arm64</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin run . -define:VAR=42</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Compile-Zeit Defines</span>
+  </div>
+  <code style="color:#ffb347">when VAR == 42 { ... }</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin run . -vet</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Extra Analyse-Checks</span>
+  </div>
+  <code style="color:#ffb347">Empfohlen!</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">odin doc . --json</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Dokumentation generieren</span>
+  </div>
+  <code style="color:#ffb347"></code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>⚙ Editoren &amp; LSP
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">ols</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">odin-lang/ols</span>
+  </div>
+  <code style="color:#ffb347">git clone https://github.com/DanielGavin/ols
+cd ols &amp;&amp; ./build.sh
+# Dann in Editor konfigurieren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">VS Code</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Extension</span>
+  </div>
+  <code style="color:#ffb347">Extension: Tetralux.odin-lang
+odinfmt automatisch beim Speichern</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">Neovim</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">nvim-lspconfig</span>
+  </div>
+  <code style="color:#ffb347">require("lspconfig").ols.setup{}
+# ols muss im PATH sein</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">Helix</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">helix</span>
+  </div>
+  <code style="color:#ffb347">Eingebaut – einfach ols installieren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">Emacs</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">odin-mode</span>
+  </div>
+  <code style="color:#ffb347">MELPA: odin-mode
+hook auf ols</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>⚙ Wichtige Packages &amp; Ressourcen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">core:</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Standard-Library</span>
+  </div>
+  <code style="color:#ffb347">fmt os strings math slice strconv
+encoding/json crypto net/http</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">vendor:</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Bundled Libs</span>
+  </div>
+  <code style="color:#ffb347">sdl2 stb/image stb/truetype
+OpenGL GLFW vulkan raylib</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">odin-http</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">HTTP-Server</span>
+  </div>
+  <code style="color:#ffb347">github.com/laytan/odin-http</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">odin-imgui</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Immediate GUI</span>
+  </div>
+  <code style="color:#ffb347">Bindings für Dear ImGui</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Playground</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Browser</span>
+  </div>
+  <code style="color:#ffb347">odin-lang.org/docs/overview (mit Playground)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Docs</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Offizielle Docs</span>
+  </div>
+  <code style="color:#ffb347">pkg.odin-lang.org – alle Packages</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:2px;transform:rotate(45deg);margin-right:4px"></span>⚙ Compiler-Direktiven
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#file</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Aktueller Dateiname (Compile-Zeit)</span>
+  </div>
+  <code style="color:#ffb347">#file</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#line</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Aktuelle Zeilennummer</span>
+  </div>
+  <code style="color:#ffb347">#line</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#procedure</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Aktuelle Prozedur</span>
+  </div>
+  <code style="color:#ffb347">#procedure</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#caller_location</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Aufruf-Ort als Source_Code_Location</span>
+  </div>
+  <code style="color:#ffb347">func(loc := #caller_location)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#config(VAR,DEF)</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Compile-Zeit Konfiguration</span>
+  </div>
+  <code style="color:#ffb347">#config(DEBUG, false)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#load("file")</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Datei-Inhalt als []byte laden</span>
+  </div>
+  <code style="color:#ffb347">data :: #load("shader.glsl")</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#type</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Explizit als Typ interpretieren</span>
+  </div>
+  <code style="color:#ffb347">#type proc(int) -&gt; bool</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#no_nil</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Union ohne nil-Möglichkeit</span>
+  </div>
+  <code style="color:#ffb347">U :: union #no_nil { A, B }</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#soa</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Structure of Arrays</span>
+  </div>
+  <code style="color:#ffb347">S :: struct #soa { x: [N]f32 }</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">#align(n)</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Alignment festlegen</span>
+  </div>
+  <code style="color:#ffb347">S :: struct #align(64) { ... }</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">@(export)</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">Symbol für C-Export markieren</span>
+  </div>
+  <code style="color:#ffb347">@(export)
+my_proc :: proc "c" () {}</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">@(link_name)</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">C-Link-Name überschreiben</span>
+  </div>
+  <code style="color:#ffb347">@(link_name="my_c_func")
+my_proc :: proc "c" () ---</code>
+</div>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-cf"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#e28f37';
+      btn.style.color       = '#e28f37';
+      btn.style.background  = 'rgba(226, 143, 55, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

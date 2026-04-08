@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HolyC Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #f5d020;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0d0d07, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; text-shadow: 0 0 16px rgba(245,208,32,.35); }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(245,208,32,.06); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(245,208,32,.03); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(245,208,32,.07); padding: 1px 5px; border-radius: 3px; color: #f5d020; }
+.cd { background: rgba(0,0,0,.65); border: 1px solid rgba(245,208,32,.12); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#f5d020">&#x271E;</span>
+      <span style="color:#f5d020">HolyC</span> Syntax
+    </div>
+    <div id="hdr-sub">HolyC · TempleOS · Terry A. Davis · JIT · Ring 0 · 640×480 · 16 Farben · Direkter Hardware-Zugriff</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="klassen">Klassen & Speicher</button>
+    <button class="tb" data-tab="hardware">Hardware & Grafik</button>
+    <button class="tb" data-tab="strings">Strings & I/O</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#f5d02008;border:1px solid #f5d02044;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#f5d020">HolyC – Terry A. Davis schrieb das gesamte OS alleine.</strong>
+  Kernel, Compiler, Dateisystem, Grafik, Editor – 15 Jahre, ~100.000 Zeilen.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">U0</code> = void &nbsp;·&nbsp;
+    <code style="color:#c3e88d">I64</code> = Standard-Integer &nbsp;·&nbsp;
+    <code style="color:#c3e88d">U8*</code> = String &nbsp;·&nbsp;
+    <code style="color:#c3e88d">MAlloc/Free</code> &nbsp;·&nbsp;
+    JIT in RAM, kein Linker &nbsp;·&nbsp;
+    Ring 0 überall &nbsp;·&nbsp;
+    640×480, 16 Farben
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #f5d02044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f5d0200e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f5d020">
+      <span style="display:inline-block;width:8px;height:8px;background:#f5d020;border-radius:50%;margin-right:2px"></span>Was HolyC ist – TempleOS &amp; Terry Davis
+    </span>
+    <span class="aa" style="color:#f5d020;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="was holyc ist – templeos &amp; terry davis">
+  <div style="color:#f5d020;font-weight:700;font-size:12px;margin-bottom:8px">
+    Was HolyC ist – TempleOS &amp; Terry Davis
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// HolyC – von Terry A. Davis, für TempleOS (2013)</span>
+<span style="color:#546e7a">// "The 3rd Temple of Jerusalem" – ein 64-Bit x86 Betriebssystem,</span>
+<span style="color:#546e7a">// das Terry Davis ALLEINE über 15 Jahre entwickelte.</span>
+
+<span style="color:#546e7a">// WAS HOLYC BESONDERS MACHT:</span>
+<span style="color:#546e7a">// 1. JIT-Compiler: Code wird SOFORT in RAM kompiliert und ausgeführt</span>
+<span style="color:#546e7a">//    Kein Linker, kein ELF-Format, kein Laden von Disk</span>
+<span style="color:#546e7a">// 2. Ring 0 überall: KEIN User-Mode / Kernel-Mode Trennung</span>
+<span style="color:#546e7a">//    Jedes Programm läuft im Kernel-Modus (wie ein Bootloader!)</span>
+<span style="color:#546e7a">// 3. Direkter Hardware-Zugriff: Port I/O, Speicher, Interrupts</span>
+<span style="color:#546e7a">// 4. Eingebauter Assembler: Inline-ASM ohne Klimmzüge</span>
+<span style="color:#546e7a">// 5. Kein virtuelles Dateisystem: RedSea FS direkt auf Disk</span>
+<span style="color:#546e7a">// 6. 640x480, 16 Farben, kein Netzwerk – absichtlich simpel</span>
+
+<span style="color:#546e7a">// Das erste HolyC-Programm</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">Main</span>()   <span style="color:#546e7a">// U0 = void, Main = Einstiegspunkt</span>
+{
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Praise the Lord!</span>
+<span style="color:#c3e88d">");</span>
+}
+
+<span style="color:#546e7a">// Typen kurz:</span>
+<span style="color:#546e7a">// U0  = void (kein Wert)</span>
+<span style="color:#546e7a">// U8  = unsigned 8-Bit  (0..255)</span>
+<span style="color:#546e7a">// U16 = unsigned 16-Bit</span>
+<span style="color:#546e7a">// U32 = unsigned 32-Bit</span>
+<span style="color:#546e7a">// U64 = unsigned 64-Bit (Zeiger-Größe auf x86-64)</span>
+<span style="color:#546e7a">// I64 = signed 64-Bit   (Standard-Integer)</span>
+<span style="color:#546e7a">// F64 = 64-Bit Float    (wie double in C)</span>
+
+<span style="color:#546e7a">// Kompilieren &amp; Ausführen in TempleOS:</span>
+<span style="color:#546e7a">// Einfach Datei laden und ausführen – JIT macht den Rest</span>
+<span style="color:#546e7a">// #include "Datei.HC"    // Andere Datei einbinden</span>
+<span style="color:#546e7a">// Datei();               // Direkt aufrufen!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Bereich / Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U0</code></td>
+      <td style="color:#c3e88d;font-size:11px">kein Wert</td>
+      <td style="color:#6c7a8e">Void. Kein Rückgabewert, kein sizeof</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U8</code></td>
+      <td style="color:#c3e88d;font-size:11px">0 .. 255</td>
+      <td style="color:#6c7a8e">8-Bit unsigned. Char-Typ</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U16</code></td>
+      <td style="color:#c3e88d;font-size:11px">0 .. 65535</td>
+      <td style="color:#6c7a8e">16-Bit unsigned</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U32</code></td>
+      <td style="color:#c3e88d;font-size:11px">0 .. 4294967295</td>
+      <td style="color:#6c7a8e">32-Bit unsigned</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U64</code></td>
+      <td style="color:#c3e88d;font-size:11px">0 .. 18446744073709551615</td>
+      <td style="color:#6c7a8e">64-Bit unsigned. Zeiger-Größe!</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">I8</code></td>
+      <td style="color:#c3e88d;font-size:11px">-128 .. 127</td>
+      <td style="color:#6c7a8e">8-Bit signed</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">I16</code></td>
+      <td style="color:#c3e88d;font-size:11px">-32768 .. 32767</td>
+      <td style="color:#6c7a8e">16-Bit signed</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">I32</code></td>
+      <td style="color:#c3e88d;font-size:11px">-2147483648 .. 2147483647</td>
+      <td style="color:#6c7a8e">32-Bit signed</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">I64</code></td>
+      <td style="color:#c3e88d;font-size:11px">-9223372036854775808 .. max</td>
+      <td style="color:#6c7a8e">64-Bit signed. Standard-Integer in HolyC</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">F64</code></td>
+      <td style="color:#c3e88d;font-size:11px">~15 Dezimalstellen</td>
+      <td style="color:#6c7a8e">64-Bit Float (double)</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">Bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">TRUE / FALSE</td>
+      <td style="color:#6c7a8e">Boolean (intern U8)</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U8 *</code></td>
+      <td style="color:#c3e88d;font-size:11px">Zeiger auf U8</td>
+      <td style="color:#6c7a8e">Zeiger. Alle Typen können * sein</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">U8[]</code></td>
+      <td style="color:#c3e88d;font-size:11px">Array</td>
+      <td style="color:#6c7a8e">Festes Array: U8 buf[256]</td>
+    </tr>
+    <tr>
+      <td style="width:140px"><code style="color:#4fc3f7">class</code></td>
+      <td style="color:#c3e88d;font-size:11px">class Punkt { I64 x, y; }</td>
+      <td style="color:#6c7a8e">Struct mit Methoden (kein Erben!)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Variablen, Zeiger &amp; Operatoren
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen, zeiger &amp; operatoren">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen, Zeiger &amp; Operatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// ── VARIABLEN ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> x = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">F64</span> pi = <span style="color:#f78c6c">3.14159</span>;
+<span style="color:#c792ea">U8</span>  zeichen = <span style="color:#c3e88d">'A'</span>;
+<span style="color:#c792ea">Bool</span> aktiv = <span style="color:#c792ea">TRUE</span>;
+
+<span style="color:#546e7a">// Mehrere auf einmal</span>
+<span style="color:#c792ea">I64</span> a, b, c;
+<span style="color:#c792ea">I64</span> i = <span style="color:#f78c6c">0</span>, j = <span style="color:#f78c6c">10</span>;
+
+<span style="color:#546e7a">// Konstanten via #define</span>
+<span style="color:#ff9800">#define MAX_SIZE 1024</span>
+<span style="color:#ff9800">#define TITLE "TempleOS"</span>
+
+<span style="color:#546e7a">// ── ZEIGER ────────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> n = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">I64</span> <span style="color:#89ddff">*</span>ptr = <span style="color:#89ddff">&amp;</span>n;       <span style="color:#546e7a">// ptr zeigt auf n</span>
+<span style="color:#89ddff">*</span>ptr = <span style="color:#f78c6c">99</span>;           <span style="color:#546e7a">// n ist jetzt 99</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%d</span>
+<span style="color:#c3e88d">", n);    // 99</span>
+
+<span style="color:#546e7a">// Zeiger-Arithmetik</span>
+<span style="color:#c792ea">U8</span> <span style="color:#89ddff">*</span>buf = <span style="color:#82aaff">MAlloc</span>(<span style="color:#f78c6c">256</span>);
+buf[<span style="color:#f78c6c">0</span>] = <span style="color:#c3e88d">'H'</span>;
+buf[<span style="color:#f78c6c">1</span>] = <span style="color:#c3e88d">'i'</span>;
+<span style="color:#89ddff">*</span>(buf + <span style="color:#f78c6c">2</span>) = <span style="color:#c3e88d">' '</span>;
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%s</span>
+<span style="color:#c3e88d">", buf);  // "</span><span style="color:#4ec9b0">Hi</span><span style="color:#c3e88d">"</span>
+<span style="color:#82aaff">Free</span>(buf);
+
+<span style="color:#546e7a">// ── ARRAYS ────────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> zahlen[<span style="color:#f78c6c">5</span>] = {<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>};
+<span style="color:#c792ea">U8</span>  name[<span style="color:#f78c6c">32</span>];
+zahlen[<span style="color:#f78c6c">0</span>] = <span style="color:#f78c6c">10</span>;           <span style="color:#546e7a">// Zugriff</span>
+<span style="color:#c792ea">I64</span> laenge = sizeof(zahlen) / sizeof(<span style="color:#c792ea">I64</span>);  <span style="color:#546e7a">// 5</span>
+
+<span style="color:#546e7a">// 2D-Array</span>
+<span style="color:#c792ea">I64</span> matrix[<span style="color:#f78c6c">3</span>][<span style="color:#f78c6c">3</span>];
+matrix[<span style="color:#f78c6c">0</span>][<span style="color:#f78c6c">0</span>] = <span style="color:#f78c6c">1</span>;
+
+<span style="color:#546e7a">// ── OPERATOREN ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Arithmetik: + - * / %</span>
+<span style="color:#546e7a">// Vergleich:  == != &lt; &lt;= &gt; &gt;=</span>
+<span style="color:#546e7a">// Logisch:    &amp;&amp; || !</span>
+<span style="color:#546e7a">// Bitweise:   &amp; | ^ ~ &lt;&lt; &gt;&gt;</span>
+<span style="color:#546e7a">// Zuweisung:  = += -= *= /= %= &amp;= |= ^= &lt;&lt;= &gt;&gt;=</span>
+<span style="color:#546e7a">// Inkrement:  ++ --  (prefix und postfix)</span>
+
+<span style="color:#546e7a">// Besonderheit: Bit-Operatoren sehr wichtig für Hardware!</span>
+<span style="color:#c792ea">U8</span> port = <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x60</span>);     <span style="color:#546e7a">// Keyboard-Port lesen</span>
+<span style="color:#c792ea">if</span> (port <span style="color:#89ddff">&amp;</span> <span style="color:#f78c6c">0x80</span>)          <span style="color:#546e7a">// Bit 7 prüfen (Key released)</span>
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Taste losgelassen</span>
+<span style="color:#c3e88d">");</span>
+<span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x43</span>, <span style="color:#f78c6c">0x36</span>);        <span style="color:#546e7a">// Timer programmieren</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #f5d02044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f5d0200e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f5d020">
+      <span style="display:inline-block;width:8px;height:8px;background:#f5d020;border-radius:50%;margin-right:2px"></span>if, switch, Schleifen
+    </span>
+    <span class="aa" style="color:#f5d020;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if, switch, schleifen">
+  <div style="color:#f5d020;font-weight:700;font-size:12px;margin-bottom:8px">
+    if, switch, Schleifen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// ── IF / ELSE ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> x = <span style="color:#f78c6c">42</span>;
+
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">0</span>)
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Positiv</span>
+<span style="color:#c3e88d">");</span>
+<span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> (x &lt; <span style="color:#f78c6c">0</span>)
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Negativ</span>
+<span style="color:#c3e88d">");</span>
+<span style="color:#c792ea">else</span>
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Null</span>
+<span style="color:#c3e88d">");</span>
+
+<span style="color:#546e7a">// Mit Block</span>
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">10</span>) {
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Groß: %d</span>
+<span style="color:#c3e88d">", x);</span>
+    x--;
+}
+
+<span style="color:#546e7a">// ── SWITCH ────────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> tag = <span style="color:#f78c6c">3</span>;
+<span style="color:#c792ea">switch</span> (tag) {
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">1</span>: <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Montag</span>
+<span style="color:#c3e88d">");    break;</span>
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">2</span>: <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Dienstag</span>
+<span style="color:#c3e88d">");  break;</span>
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">3</span>: <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Mittwoch</span>
+<span style="color:#c3e88d">");  break;</span>
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">6</span>:
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">7</span>: <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Wochenende</span>
+<span style="color:#c3e88d">"); break;</span>
+    <span style="color:#c792ea">default</span>: <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Anderer Tag</span>
+<span style="color:#c3e88d">");</span>
+}
+
+<span style="color:#546e7a">// ── FOR ───────────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> i;
+<span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++)
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%d "</span>, i);
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">");       // 0 1 2 3 4 5 6 7 8 9</span>
+
+<span style="color:#546e7a">// Mit Block</span>
+<span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">5</span>; i++) {
+    <span style="color:#c792ea">if</span> (i == <span style="color:#f78c6c">3</span>) <span style="color:#c792ea">continue</span>;    <span style="color:#546e7a">// Überspringen</span>
+    <span style="color:#c792ea">if</span> (i == <span style="color:#f78c6c">4</span>) <span style="color:#c792ea">break</span>;       <span style="color:#546e7a">// Abbrechen</span>
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%d "</span>, i);         <span style="color:#546e7a">// 0 1 2</span>
+}
+
+<span style="color:#546e7a">// ── WHILE ─────────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> n = <span style="color:#f78c6c">1</span>;
+<span style="color:#c792ea">while</span> (n &lt; <span style="color:#f78c6c">100</span>)
+    n <span style="color:#89ddff">*</span>= <span style="color:#f78c6c">2</span>;
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Erstes n&gt;=100: %d</span>
+<span style="color:#c3e88d">", n);   // 128</span>
+
+<span style="color:#546e7a">// ── DO-WHILE ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">U8</span> zeichen;
+<span style="color:#c792ea">do</span> {
+    zeichen = <span style="color:#82aaff">KeyGet</span>();
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Gedrückt: %c</span>
+<span style="color:#c3e88d">", zeichen);</span>
+} <span style="color:#c792ea">while</span> (zeichen != <span style="color:#c3e88d">'q'</span>);
+
+<span style="color:#546e7a">// ── GOTO (in HolyC legitim!) ──────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> versuch = <span style="color:#f78c6c">0</span>;
+nochmal:
+    versuch++;
+    <span style="color:#c792ea">if</span> (versuch &lt; <span style="color:#f78c6c">3</span>)
+        <span style="color:#c792ea">goto</span> nochmal;
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Versuche: %d</span>
+<span style="color:#c3e88d">", versuch);   // 3</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Funktionen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// ── FUNKTIONSDEFINITION ───────────────────────────────────────────</span>
+<span style="color:#546e7a">// RückgabeTyp FunktionsName(Typ param1, Typ param2)</span>
+
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">BegruesseAlle</span>()
+{
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Hallo, TempleOS!</span>
+<span style="color:#c3e88d">");</span>
+}
+
+<span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">Addiere</span>(<span style="color:#c792ea">I64</span> a, <span style="color:#c792ea">I64</span> b)
+{
+    <span style="color:#c792ea">return</span> a + b;
+}
+
+<span style="color:#c792ea">F64</span> <span style="color:#4ec9b0">Kreisflaeche</span>(<span style="color:#c792ea">F64</span> radius)
+{
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">3.14159265358979</span> <span style="color:#89ddff">*</span> radius <span style="color:#89ddff">*</span> radius;
+}
+
+<span style="color:#546e7a">// Funktion aufrufen</span>
+<span style="color:#4ec9b0">BegruesseAlle</span>();
+<span style="color:#c792ea">I64</span> summe = <span style="color:#4ec9b0">Addiere</span>(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>);   <span style="color:#546e7a">// 7</span>
+<span style="color:#c792ea">F64</span> f = <span style="color:#4ec9b0">Kreisflaeche</span>(<span style="color:#f78c6c">5.0</span>);   <span style="color:#546e7a">// 78.539...</span>
+
+<span style="color:#546e7a">// ── ZEIGER ALS PARAMETER (Referenz-Simulation) ────────────────────</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">Verdopple</span>(<span style="color:#c792ea">I64</span> <span style="color:#89ddff">*</span>n)
+{
+    <span style="color:#89ddff">*</span>n = <span style="color:#89ddff">*</span>n <span style="color:#89ddff">*</span> <span style="color:#f78c6c">2</span>;
+}
+
+<span style="color:#c792ea">I64</span> x = <span style="color:#f78c6c">21</span>;
+<span style="color:#4ec9b0">Verdopple</span>(<span style="color:#89ddff">&amp;</span>x);
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%d</span>
+<span style="color:#c3e88d">", x);   // 42</span>
+
+<span style="color:#546e7a">// ── RÜCKGABE MEHRERER WERTE via Zeiger ────────────────────────────</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">MinMax</span>(<span style="color:#c792ea">I64</span> <span style="color:#89ddff">*</span>arr, <span style="color:#c792ea">I64</span> laenge, <span style="color:#c792ea">I64</span> <span style="color:#89ddff">*</span>min_out, <span style="color:#c792ea">I64</span> <span style="color:#89ddff">*</span>max_out)
+{
+    <span style="color:#c792ea">I64</span> i;
+    <span style="color:#89ddff">*</span>min_out = arr[<span style="color:#f78c6c">0</span>];
+    <span style="color:#89ddff">*</span>max_out = arr[<span style="color:#f78c6c">0</span>];
+    <span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">1</span>; i &lt; laenge; i++) {
+        <span style="color:#c792ea">if</span> (arr[i] &lt; <span style="color:#89ddff">*</span>min_out) <span style="color:#89ddff">*</span>min_out = arr[i];
+        <span style="color:#c792ea">if</span> (arr[i] &gt; <span style="color:#89ddff">*</span>max_out) <span style="color:#89ddff">*</span>max_out = arr[i];
+    }
+}
+
+<span style="color:#c792ea">I64</span> daten[<span style="color:#f78c6c">6</span>] = {<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">9</span>};
+<span style="color:#c792ea">I64</span> min_val, max_val;
+<span style="color:#4ec9b0">MinMax</span>(daten, <span style="color:#f78c6c">6</span>, <span style="color:#89ddff">&amp;</span>min_val, <span style="color:#89ddff">&amp;</span>max_val);
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Min: %d, Max: %d</span>
+<span style="color:#c3e88d">", min_val, max_val);   // Min: 1, Max: 9</span>
+
+<span style="color:#546e7a">// ── REKURSION ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">Fak</span>(<span style="color:#c792ea">I64</span> n)
+{
+    <span style="color:#c792ea">if</span> (n &lt;= <span style="color:#f78c6c">1</span>) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>;
+    <span style="color:#c792ea">return</span> n <span style="color:#89ddff">*</span> <span style="color:#4ec9b0">Fak</span>(n - <span style="color:#f78c6c">1</span>);
+}
+
+<span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">Fib</span>(<span style="color:#c792ea">I64</span> n)
+{
+    <span style="color:#c792ea">if</span> (n &lt;= <span style="color:#f78c6c">1</span>) <span style="color:#c792ea">return</span> n;
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Fib</span>(n - <span style="color:#f78c6c">1</span>) + <span style="color:#4ec9b0">Fib</span>(n - <span style="color:#f78c6c">2</span>);
+}
+
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"5! = %d</span>
+<span style="color:#c3e88d">", Fak(5));    // 120</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Fib(10) = %d</span>
+<span style="color:#c3e88d">", Fib(10));  // 55</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-klassen" class="tp">
+
+<div class="ac open" id="ac-kl0"
+     style="border:1px solid #f5d02044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f5d0200e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f5d020">
+      <span style="display:inline-block;width:8px;height:8px;background:#f5d020;border-radius:50%;margin-right:2px"></span>Classes &amp; Structs
+    </span>
+    <span class="aa" style="color:#f5d020;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="classes &amp; structs">
+  <div style="color:#f5d020;font-weight:700;font-size:12px;margin-bottom:8px">
+    Classes &amp; Structs
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// In HolyC sind "class" wie C-Structs mit Methoden</span>
+<span style="color:#546e7a">// KEINE Vererbung, KEINE virtual, KEINE Polymorphismus</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Punkt</span>
+{
+    <span style="color:#c792ea">I64</span> x, y;
+};
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Rechteck</span>
+{
+    <span style="color:#c792ea">I64</span> x, y;       <span style="color:#546e7a">// Position</span>
+    <span style="color:#c792ea">I64</span> breite;
+    <span style="color:#c792ea">I64</span> hoehe;
+
+    <span style="color:#546e7a">// Methoden – können auf die Felder zugreifen!</span>
+    <span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">Flaeche</span>()
+    {
+        <span style="color:#c792ea">return</span> breite <span style="color:#89ddff">*</span> hoehe;
+    }
+
+    <span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">Umfang</span>()
+    {
+        <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> <span style="color:#89ddff">*</span> (breite + hoehe);
+    }
+
+    <span style="color:#c792ea">Bool</span> <span style="color:#4ec9b0">EnthaeltPunkt</span>(<span style="color:#c792ea">I64</span> px, <span style="color:#c792ea">I64</span> py)
+    {
+        <span style="color:#c792ea">return</span> px &gt;= x <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&amp;</span> px &lt; x + breite <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&amp;</span>
+               py &gt;= y <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&amp;</span> py &lt; y + hoehe;
+    }
+};
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#4ec9b0">Rechteck</span> r;
+r.x = <span style="color:#f78c6c">10</span>;
+r.y = <span style="color:#f78c6c">20</span>;
+r.breite = <span style="color:#f78c6c">100</span>;
+r.hoehe  = <span style="color:#f78c6c">50</span>;
+
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Fläche: %d</span>
+<span style="color:#c3e88d">", r.Flaeche());       // 5000</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Umfang: %d</span>
+<span style="color:#c3e88d">", r.Umfang());         // 300</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Enthält (50,40): %d</span>
+<span style="color:#c3e88d">",</span>
+    r.<span style="color:#4ec9b0">EnthaeltPunkt</span>(<span style="color:#f78c6c">50</span>, <span style="color:#f78c6c">40</span>));               <span style="color:#546e7a">// 1 (TRUE)</span>
+
+<span style="color:#546e7a">// Zeiger auf Klassen-Instanzen</span>
+<span style="color:#4ec9b0">Rechteck</span> <span style="color:#89ddff">*</span>rp = <span style="color:#82aaff">MAlloc</span>(sizeof(<span style="color:#4ec9b0">Rechteck</span>));
+rp<span style="color:#89ddff">-&gt;</span>x = <span style="color:#f78c6c">0</span>;
+rp<span style="color:#89ddff">-&gt;</span>y = <span style="color:#f78c6c">0</span>;
+rp<span style="color:#89ddff">-&gt;</span>breite = <span style="color:#f78c6c">640</span>;
+rp<span style="color:#89ddff">-&gt;</span>hoehe  = <span style="color:#f78c6c">480</span>;
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Bildschirm: %dx%d</span>
+<span style="color:#c3e88d">", rp-&gt;breite, rp-&gt;hoehe);</span>
+<span style="color:#82aaff">Free</span>(rp);
+
+<span style="color:#546e7a">// UNION – überlappende Felder (für Low-Level!)</span>
+<span style="color:#c792ea">union</span> <span style="color:#4ec9b0">FarbRegister</span>
+{
+    <span style="color:#c792ea">U32</span> wert;
+    struct {
+        <span style="color:#c792ea">U8</span> blau;
+        <span style="color:#c792ea">U8</span> gruen;
+        <span style="color:#c792ea">U8</span> rot;
+        <span style="color:#c792ea">U8</span> alpha;
+    };
+};
+
+<span style="color:#4ec9b0">FarbRegister</span> f;
+f.wert = <span style="color:#f78c6c">0xFF0080FF</span>;
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Rot: %d, Grün: %d, Blau: %d</span>
+<span style="color:#c3e88d">",</span>
+    f.rot, f.gruen, f.blau);  <span style="color:#546e7a">// 128, 0, 255</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Speicherverwaltung
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="speicherverwaltung">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Speicherverwaltung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// In TempleOS verwaltest du Speicher SELBST</span>
+<span style="color:#546e7a">// Kein Garbage Collector, kein RAII – nur MAlloc/Free</span>
+
+<span style="color:#546e7a">// ── GRUNDLEGENDES ─────────────────────────────────────────────────</span>
+<span style="color:#c792ea">U8</span> <span style="color:#89ddff">*</span>buf = <span style="color:#82aaff">MAlloc</span>(<span style="color:#f78c6c">1024</span>);     <span style="color:#546e7a">// 1024 Bytes allozieren</span>
+<span style="color:#82aaff">MemSet</span>(buf, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1024</span>);       <span style="color:#546e7a">// Auf 0 setzen</span>
+buf[<span style="color:#f78c6c">0</span>] = <span style="color:#c3e88d">'H'</span>;
+buf[<span style="color:#f78c6c">1</span>] = <span style="color:#c3e88d">'i'</span>;
+<span style="color:#82aaff">Free</span>(buf);                   <span style="color:#546e7a">// IMMER freigeben!</span>
+
+<span style="color:#546e7a">// CAlloc – alloziert UND nullt den Speicher</span>
+<span style="color:#c792ea">U8</span> <span style="color:#89ddff">*</span>sauber = <span style="color:#82aaff">CAlloc</span>(<span style="color:#f78c6c">512</span>);   <span style="color:#546e7a">// Wie calloc in C</span>
+<span style="color:#82aaff">Free</span>(sauber);
+
+<span style="color:#546e7a">// ── ARRAYS AUF DEM HEAP ────────────────────────────────────────────</span>
+<span style="color:#c792ea">I64</span> <span style="color:#89ddff">*</span>zahlen = <span style="color:#82aaff">MAlloc</span>(<span style="color:#f78c6c">10</span> <span style="color:#89ddff">*</span> sizeof(<span style="color:#c792ea">I64</span>));
+<span style="color:#c792ea">I64</span> i;
+<span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++)
+    zahlen[i] = i <span style="color:#89ddff">*</span> i;      <span style="color:#546e7a">// 0,1,4,9,16,25,36,49,64,81</span>
+<span style="color:#82aaff">Free</span>(zahlen);
+
+<span style="color:#546e7a">// ── STRUCTS AUF DEM HEAP ──────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Node</span>
+{
+    <span style="color:#c792ea">I64</span> wert;
+    <span style="color:#4ec9b0">Node</span> <span style="color:#89ddff">*</span>naechster;
+};
+
+<span style="color:#4ec9b0">Node</span> <span style="color:#89ddff">*</span>kopf = <span style="color:#82aaff">CAlloc</span>(sizeof(<span style="color:#4ec9b0">Node</span>));
+kopf<span style="color:#89ddff">-&gt;</span>wert = <span style="color:#f78c6c">1</span>;
+kopf<span style="color:#89ddff">-&gt;</span>naechster = <span style="color:#82aaff">CAlloc</span>(sizeof(<span style="color:#4ec9b0">Node</span>));
+kopf<span style="color:#89ddff">-&gt;</span>naechster<span style="color:#89ddff">-&gt;</span>wert = <span style="color:#f78c6c">2</span>;
+kopf<span style="color:#89ddff">-&gt;</span>naechster<span style="color:#89ddff">-&gt;</span>naechster = <span style="color:#c792ea">NULL</span>;
+
+<span style="color:#546e7a">// Durchlaufen</span>
+<span style="color:#4ec9b0">Node</span> <span style="color:#89ddff">*</span>aktuell = kopf;
+<span style="color:#c792ea">while</span> (aktuell != <span style="color:#c792ea">NULL</span>) {
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%d -&gt; "</span>, aktuell<span style="color:#89ddff">-&gt;</span>wert);
+    aktuell = aktuell<span style="color:#89ddff">-&gt;</span>naechster;
+}
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"NULL</span>
+<span style="color:#c3e88d">");   // 1 -&gt; 2 -&gt; NULL</span>
+
+<span style="color:#546e7a">// Aufräumen</span>
+<span style="color:#82aaff">Free</span>(kopf<span style="color:#89ddff">-&gt;</span>naechster);
+<span style="color:#82aaff">Free</span>(kopf);
+
+<span style="color:#546e7a">// ── STACK vs. HEAP ────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Stack (automatisch, schnell, begrenzt):</span>
+<span style="color:#c792ea">I64</span> stack_var = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">U8</span>  stack_buf[<span style="color:#f78c6c">256</span>];     <span style="color:#546e7a">// 256 Bytes auf dem Stack</span>
+
+<span style="color:#546e7a">// Heap (MAlloc, langsamer, größer):</span>
+<span style="color:#c792ea">U8</span> <span style="color:#89ddff">*</span>heap_buf = <span style="color:#82aaff">MAlloc</span>(<span style="color:#f78c6c">1024</span> <span style="color:#89ddff">*</span> <span style="color:#f78c6c">1024</span>);  <span style="color:#546e7a">// 1 MB auf dem Heap</span>
+<span style="color:#82aaff">Free</span>(heap_buf);
+
+<span style="color:#546e7a">// ACHTUNG: In TempleOS gibt es nur EINEN Adressraum!</span>
+<span style="color:#546e7a">// Kein User/Kernel-Trennung – alles ist Ring 0!</span>
+<span style="color:#546e7a">// Ein Bug = OS-Crash (kein Segfault, direkter Absturz)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-hardware" class="tp">
+
+<div class="ac open" id="ac-hw0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('hw0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Direkter Hardware-Zugriff – Ziel von HolyC
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="direkter hardware-zugriff – ziel von holyc">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Direkter Hardware-Zugriff – Ziel von HolyC
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// Das Herz von HolyC: direkter Zugriff auf Hardware!</span>
+<span style="color:#546e7a">// Keine Abstraktionsschicht – du redest direkt mit der CPU</span>
+
+<span style="color:#546e7a">// ── PORT I/O ──────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// x86 I/O Ports: Kommunikation mit Hardware-Controllern</span>
+
+<span style="color:#546e7a">// Tastatur (8042 Controller)</span>
+<span style="color:#c792ea">U8</span> status = <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x64</span>);      <span style="color:#546e7a">// Status-Register lesen</span>
+<span style="color:#c792ea">U8</span> scancode = <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x60</span>);    <span style="color:#546e7a">// Scan-Code lesen</span>
+
+<span style="color:#546e7a">// Lautsprecher über PC-Speaker</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">BeepTon</span>(<span style="color:#c792ea">I64</span> frequenz)
+{
+    <span style="color:#c792ea">I64</span> divisor = <span style="color:#f78c6c">1193180</span> / frequenz;
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x43</span>, <span style="color:#f78c6c">0xB6</span>);            <span style="color:#546e7a">// PIT Kanal 2, Square Wave</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x42</span>, divisor <span style="color:#89ddff">&amp;</span> <span style="color:#f78c6c">0xFF</span>);  <span style="color:#546e7a">// Low Byte</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x42</span>, (divisor &gt;&gt; <span style="color:#f78c6c">8</span>) <span style="color:#89ddff">&amp;</span> <span style="color:#f78c6c">0xFF</span>); <span style="color:#546e7a">// High Byte</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x61</span>, <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x61</span>) | <span style="color:#f78c6c">3</span>); <span style="color:#546e7a">// Speaker einschalten</span>
+    <span style="color:#82aaff">Sleep</span>(<span style="color:#f78c6c">200</span>);
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x61</span>, <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x61</span>) <span style="color:#89ddff">&amp;</span> ~<span style="color:#f78c6c">3</span>); <span style="color:#546e7a">// Speaker ausschalten</span>
+}
+
+<span style="color:#4ec9b0">BeepTon</span>(<span style="color:#f78c6c">440</span>);   <span style="color:#546e7a">// A4 – concert pitch!</span>
+
+<span style="color:#546e7a">// ── DIREKTER SPEICHERZUGRIFF ──────────────────────────────────────</span>
+<span style="color:#546e7a">// In TempleOS: kein virtuelles Speicher! Direkte physische Adressen</span>
+
+<span style="color:#546e7a">// Grafik-Framebuffer direkt beschreiben</span>
+<span style="color:#c792ea">U32</span> <span style="color:#89ddff">*</span>framebuffer = <span style="color:#f78c6c">0x</span><span style="color:#4ec9b0">A0000</span>;  <span style="color:#546e7a">// VGA-Speicher (Mode 13h)</span>
+framebuffer[<span style="color:#f78c6c">0</span>] = <span style="color:#f78c6c">0xFF0000</span>;   <span style="color:#546e7a">// Erstes Pixel = Rot</span>
+
+<span style="color:#546e7a">// VGA Textmodus-Speicher</span>
+<span style="color:#c792ea">U16</span> <span style="color:#89ddff">*</span>text_buf = <span style="color:#f78c6c">0xB8000</span>;     <span style="color:#546e7a">// Textpuffer-Adresse</span>
+text_buf[<span style="color:#f78c6c">0</span>] = <span style="color:#f78c6c">0x0741</span>;        <span style="color:#546e7a">// 'A' mit weißer Farbe</span>
+
+<span style="color:#546e7a">// ── INLINE ASSEMBLER ─────────────────────────────────────────────</span>
+<span style="color:#546e7a">// HolyC hat eingebauten Assembler – kein GAS-Syntax nötig!</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">Hlt</span>()
+{
+    <span style="color:#c792ea">asm</span> {
+        <span style="color:#4ec9b0">HLT</span>     <span style="color:#546e7a">// CPU anhalten bis Interrupt</span>
+    }
+}
+
+<span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">GetRAX</span>()
+{
+    <span style="color:#c792ea">I64</span> result;
+    <span style="color:#c792ea">asm</span> {
+        <span style="color:#4ec9b0">MOV</span> result, <span style="color:#4ec9b0">RAX</span>    <span style="color:#546e7a">// RAX-Register lesen</span>
+    }
+    <span style="color:#c792ea">return</span> result;
+}
+
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">Clrscr</span>()
+{
+    <span style="color:#c792ea">asm</span> {
+        <span style="color:#4ec9b0">XOR</span> <span style="color:#4ec9b0">EAX</span>, <span style="color:#4ec9b0">EAX</span>
+        <span style="color:#4ec9b0">MOV</span> <span style="color:#4ec9b0">ECX</span>, <span style="color:#f78c6c">80</span> <span style="color:#89ddff">*</span> <span style="color:#f78c6c">25</span>
+        <span style="color:#4ec9b0">MOV</span> <span style="color:#4ec9b0">EDI</span>, <span style="color:#f78c6c">0xB8000</span>
+        <span style="color:#4ec9b0">REP</span> <span style="color:#4ec9b0">STOSW</span>          <span style="color:#546e7a">// Textpuffer leeren</span>
+    }
+}
+
+<span style="color:#546e7a">// ── INTERRUPTS ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Interrupt-Handler direkt in HolyC!</span>
+<span style="color:#c792ea">interrupt</span> <span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">TimerHandler</span>()
+{
+    <span style="color:#546e7a">// Wird bei jedem Timer-Interrupt aufgerufen</span>
+    <span style="color:#546e7a">// (IRQ 0, Interrupt 0x20)</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x20</span>, <span style="color:#f78c6c">0x20</span>);     <span style="color:#546e7a">// End Of Interrupt senden</span>
+}
+
+<span style="color:#546e7a">// ── CPU TIMESTAMP COUNTER ─────────────────────────────────────────</span>
+<span style="color:#c792ea">U64</span> start = <span style="color:#82aaff">GetTSC</span>();      <span style="color:#546e7a">// CPU-Takte seit Boot</span>
+<span style="color:#546e7a">// ... irgendwas machen ...</span>
+<span style="color:#c792ea">U64</span> ende = <span style="color:#82aaff">GetTSC</span>();
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Takte: %d</span>
+<span style="color:#c3e88d">", ende - start);</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-hw1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('hw1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Grafik in TempleOS (640x480, 16 Farben)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="grafik in templeos (640x480, 16 farben)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Grafik in TempleOS (640x480, 16 Farben)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// TempleOS nutzt 640x480, 16 Farben – absichtlich simpel</span>
+<span style="color:#546e7a">// Alle Grafikoperationen via DC (Device Context)</span>
+
+<span style="color:#546e7a">// ── FARBEN (0-15) ─────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// 0  = Schwarz     1  = Blau        2  = Grün        3  = Cyan</span>
+<span style="color:#546e7a">// 4  = Rot         5  = Magenta     6  = Braun        7  = Hellgrau</span>
+<span style="color:#546e7a">// 8  = Dunkelgrau  9  = Hellblau    10 = Hellgrün     11 = Hellcyan</span>
+<span style="color:#546e7a">// 12 = Hellrot     13 = Hellmagenta 14 = Gelb         15 = Weiß</span>
+
+<span style="color:#546e7a">// ── TEXT AUSGEBEN ────────────────────────────────────────────────</span>
+<span style="color:#82aaff">GrPrint</span>(<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">15</span>, <span style="color:#f78c6c">0</span>, <span style="color:#c3e88d">"Hallo, TempleOS!"</span>);
+<span style="color:#546e7a">// GrPrint(x, y, farbe, hintergrund, text)</span>
+
+<span style="color:#546e7a">// ── GRAFIK-PRIMITIVEN ─────────────────────────────────────────────</span>
+<span style="color:#4ec9b0">CDC</span> <span style="color:#89ddff">*</span>dc = <span style="color:#4ec9b0">DCAllocGet</span>();      <span style="color:#546e7a">// Device Context holen</span>
+
+<span style="color:#546e7a">// Linie zeichnen</span>
+<span style="color:#82aaff">DCFill</span>(dc, <span style="color:#f78c6c">0</span>);               <span style="color:#546e7a">// Bildschirm schwarz füllen</span>
+<span style="color:#82aaff">DCLine</span>(dc, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">640</span>, <span style="color:#f78c6c">480</span>, <span style="color:#f78c6c">14</span>);  <span style="color:#546e7a">// Diagonale in Gelb</span>
+
+<span style="color:#546e7a">// Pixel setzen</span>
+<span style="color:#4ec9b0">DCPixel</span>(dc, <span style="color:#f78c6c">320</span>, <span style="color:#f78c6c">240</span>, <span style="color:#f78c6c">12</span>);   <span style="color:#546e7a">// Mittelpunkt rot</span>
+
+<span style="color:#546e7a">// Rechteck</span>
+<span style="color:#4ec9b0">DCRect</span>(dc, <span style="color:#f78c6c">100</span>, <span style="color:#f78c6c">100</span>, <span style="color:#f78c6c">200</span>, <span style="color:#f78c6c">150</span>, <span style="color:#f78c6c">9</span>);  <span style="color:#546e7a">// Blau</span>
+
+<span style="color:#546e7a">// Kreis</span>
+<span style="color:#4ec9b0">DCCircle</span>(dc, <span style="color:#f78c6c">320</span>, <span style="color:#f78c6c">240</span>, <span style="color:#f78c6c">100</span>, <span style="color:#f78c6c">15</span>);  <span style="color:#546e7a">// Weiß</span>
+
+<span style="color:#4ec9b0">DCDel</span>(dc);   <span style="color:#546e7a">// Device Context freigeben</span>
+
+<span style="color:#546e7a">// ── VOLL-BILDSCHIRM DEMO ─────────────────────────────────────────</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">PlasmaDemo</span>()
+{
+    <span style="color:#c792ea">I64</span> x, y, t = <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">while</span> (!<span style="color:#82aaff">ScanKey</span>()) {    <span style="color:#546e7a">// Bis Taste gedrückt</span>
+        <span style="color:#4ec9b0">CDC</span> <span style="color:#89ddff">*</span>dc = <span style="color:#4ec9b0">DCAllocGet</span>();
+        <span style="color:#c792ea">for</span> (y = <span style="color:#f78c6c">0</span>; y &lt; <span style="color:#f78c6c">480</span>; y++) {
+            <span style="color:#c792ea">for</span> (x = <span style="color:#f78c6c">0</span>; x &lt; <span style="color:#f78c6c">640</span>; x++) {
+                <span style="color:#546e7a">// Einfache Plasma-Funktion</span>
+                <span style="color:#c792ea">I64</span> v = (<span style="color:#c792ea">I64</span>)(
+                    <span style="color:#82aaff">Sin</span>(x <span style="color:#89ddff">*</span> <span style="color:#f78c6c">0.02</span> + t <span style="color:#89ddff">*</span> <span style="color:#f78c6c">0.1</span>) <span style="color:#89ddff">*</span> <span style="color:#f78c6c">7</span> +
+                    <span style="color:#82aaff">Sin</span>(y <span style="color:#89ddff">*</span> <span style="color:#f78c6c">0.03</span> + t <span style="color:#89ddff">*</span> <span style="color:#f78c6c">0.07</span>) <span style="color:#89ddff">*</span> <span style="color:#f78c6c">7</span>
+                ) + <span style="color:#f78c6c">8</span>;
+                <span style="color:#4ec9b0">DCPixel</span>(dc, x, y, v <span style="color:#89ddff">&amp;</span> <span style="color:#f78c6c">15</span>);
+            }
+        }
+        <span style="color:#4ec9b0">DCDel</span>(dc);
+        t++;
+    }
+}
+
+<span style="color:#4ec9b0">PlasmaDemo</span>();</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-strings" class="tp">
+
+<div class="ac open" id="ac-si0"
+     style="border:1px solid #f5d02044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('si0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f5d0200e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f5d020">
+      <span style="display:inline-block;width:8px;height:8px;background:#f5d020;border-radius:50%;margin-right:2px"></span>Strings &amp; Print
+    </span>
+    <span class="aa" style="color:#f5d020;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="strings &amp; print">
+  <div style="color:#f5d020;font-weight:700;font-size:12px;margin-bottom:8px">
+    Strings &amp; Print
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// HolyC Strings sind U8* (Null-terminiert wie in C)</span>
+
+<span style="color:#546e7a">// ── PRINT ─────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Print ist die Hauptausgabe-Funktion in TempleOS</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Einfacher Text</span>
+<span style="color:#c3e88d">");</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Zahl: %d</span>
+<span style="color:#c3e88d">", 42);</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Float: %f</span>
+<span style="color:#c3e88d">", 3.14);</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Hex: 0x%X</span>
+<span style="color:#c3e88d">", 255);          // 0xFF</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Char: %c</span>
+<span style="color:#c3e88d">", 65);             // 'A'</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"String: %s</span>
+<span style="color:#c3e88d">", "</span><span style="color:#4ec9b0">Hallo</span><span style="color:#c3e88d">");</span>
+
+<span style="color:#546e7a">// FORMAT-SPEZIFIZIERER:</span>
+<span style="color:#546e7a">// %d = signed integer    %u = unsigned    %i = integer</span>
+<span style="color:#546e7a">// %f = float             %e = scientific</span>
+<span style="color:#546e7a">// %x = hex klein         %X = hex groß</span>
+<span style="color:#546e7a">// %c = Zeichen           %s = String</span>
+<span style="color:#546e7a">// %p = Zeiger-Adresse    %b = binär (HolyC-spezifisch!)</span>
+
+<span style="color:#546e7a">// Binärausgabe (nur in HolyC!)</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Binär: %b</span>
+<span style="color:#c3e88d">", 42);    // "</span><span style="color:#f78c6c">101010</span><span style="color:#c3e88d">"</span>
+
+<span style="color:#546e7a">// ── STRING-MANIPULATION ───────────────────────────────────────────</span>
+<span style="color:#c792ea">U8</span> buf[<span style="color:#f78c6c">256</span>];
+<span style="color:#c792ea">U8</span> <span style="color:#89ddff">*</span>s1 = <span style="color:#c3e88d">"Hallo"</span>;
+<span style="color:#c792ea">U8</span> <span style="color:#89ddff">*</span>s2 = <span style="color:#c3e88d">" Welt"</span>;
+
+<span style="color:#82aaff">StrCpy</span>(buf, s1);         <span style="color:#546e7a">// buf = "Hallo"</span>
+<span style="color:#82aaff">StrCat</span>(buf, s2);         <span style="color:#546e7a">// buf = "Hallo Welt"</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%s</span>
+<span style="color:#c3e88d">", buf);      // "</span><span style="color:#4ec9b0">Hallo</span> <span style="color:#4ec9b0">Welt</span><span style="color:#c3e88d">"</span>
+
+<span style="color:#c792ea">I64</span> laenge = <span style="color:#82aaff">StrLen</span>(buf); <span style="color:#546e7a">// 10</span>
+
+<span style="color:#546e7a">// String-Vergleich</span>
+<span style="color:#c792ea">if</span> (<span style="color:#82aaff">StrCmp</span>(s1, <span style="color:#c3e88d">"Hallo"</span>) == <span style="color:#f78c6c">0</span>)
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Gleich!</span>
+<span style="color:#c3e88d">");</span>
+
+<span style="color:#546e7a">// String aus Zahl</span>
+<span style="color:#c792ea">I64</span> n = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">U8</span> zahl_str[<span style="color:#f78c6c">32</span>];
+<span style="color:#82aaff">StrPrint</span>(zahl_str, <span style="color:#c3e88d">"%d"</span>, n);    <span style="color:#546e7a">// "42"</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Als String: %s</span>
+<span style="color:#c3e88d">", zahl_str);</span>
+
+<span style="color:#546e7a">// Zahl aus String</span>
+<span style="color:#c792ea">I64</span> wert = <span style="color:#82aaff">StrToI64</span>(<span style="color:#c3e88d">"123"</span>, <span style="color:#f78c6c">10</span>);  <span style="color:#546e7a">// 123</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Wert: %d</span>
+<span style="color:#c3e88d">", wert);</span>
+
+<span style="color:#546e7a">// ── TASTATUR-EINGABE ──────────────────────────────────────────────</span>
+<span style="color:#c792ea">U8</span> taste = <span style="color:#82aaff">KeyGet</span>();     <span style="color:#546e7a">// Einzelne Taste warten</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Gedrückt: %c</span>
+<span style="color:#c3e88d">", taste);</span>
+
+<span style="color:#546e7a">// Zeile einlesen</span>
+<span style="color:#c792ea">U8</span> eingabe[<span style="color:#f78c6c">256</span>];
+<span style="color:#4ec9b0">GetS</span>(eingabe, <span style="color:#f78c6c">256</span>);      <span style="color:#546e7a">// Wie fgets (Enter beendet)</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Eingabe: %s</span>
+<span style="color:#c3e88d">", eingabe);</span>
+
+<span style="color:#546e7a">// ── SPRINTF-ÄQUIVALENT ────────────────────────────────────────────</span>
+<span style="color:#c792ea">U8</span> nachricht[<span style="color:#f78c6c">128</span>];
+<span style="color:#82aaff">StrPrint</span>(nachricht, <span style="color:#c3e88d">"TempleOS Version %d.%d"</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">03</span>);
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%s</span>
+<span style="color:#c3e88d">", nachricht);   // "</span><span style="color:#4ec9b0">TempleOS</span> <span style="color:#4ec9b0">Version</span> <span style="color:#f78c6c">5.3</span><span style="color:#c3e88d">"</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #f5d02044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f5d0200e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f5d020">
+      <span style="display:inline-block;width:8px;height:8px;background:#f5d020;border-radius:50%;margin-right:2px"></span>Speicher &amp; Strings
+    </span>
+    <span class="aa" style="color:#f5d020;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="malloc(groesse)" data-d="speicher allozieren (nicht genullt)">
+      <td style="width:220px"><code style="color:#f5d020">MAlloc(groesse)</code></td>
+      <td style="color:#6c7a8e">Speicher allozieren (nicht genullt)</td>
+      <td style="color:#c3e88d;font-size:11px">U8 *p = MAlloc(256)</td>
+    </tr>
+    <tr class="cr" data-m="calloc(groesse)" data-d="speicher allozieren + auf 0 setzen">
+      <td style="width:220px"><code style="color:#f5d020">CAlloc(groesse)</code></td>
+      <td style="color:#6c7a8e">Speicher allozieren + auf 0 setzen</td>
+      <td style="color:#c3e88d;font-size:11px">wie calloc()</td>
+    </tr>
+    <tr class="cr" data-m="free(ptr)" data-d="speicher freigeben">
+      <td style="width:220px"><code style="color:#f5d020">Free(ptr)</code></td>
+      <td style="color:#6c7a8e">Speicher freigeben</td>
+      <td style="color:#c3e88d;font-size:11px">Free(p)</td>
+    </tr>
+    <tr class="cr" data-m="memcpy(dst, src, n)" data-d="speicher kopieren">
+      <td style="width:220px"><code style="color:#f5d020">MemCpy(dst, src, n)</code></td>
+      <td style="color:#6c7a8e">Speicher kopieren</td>
+      <td style="color:#c3e88d;font-size:11px">MemCpy(dst, src, 64)</td>
+    </tr>
+    <tr class="cr" data-m="memset(ptr, val, n)" data-d="speicher füllen">
+      <td style="width:220px"><code style="color:#f5d020">MemSet(ptr, val, n)</code></td>
+      <td style="color:#6c7a8e">Speicher füllen</td>
+      <td style="color:#c3e88d;font-size:11px">MemSet(buf, 0, 256)</td>
+    </tr>
+    <tr class="cr" data-m="memcmp(a, b, n)" data-d="speicher vergleichen (0 = gleich)">
+      <td style="width:220px"><code style="color:#f5d020">MemCmp(a, b, n)</code></td>
+      <td style="color:#6c7a8e">Speicher vergleichen (0 = gleich)</td>
+      <td style="color:#c3e88d;font-size:11px">if (!MemCmp(a, b, 8))</td>
+    </tr>
+    <tr class="cr" data-m="strlen(s)" data-d="string-länge">
+      <td style="width:220px"><code style="color:#f5d020">StrLen(s)</code></td>
+      <td style="color:#6c7a8e">String-Länge</td>
+      <td style="color:#c3e88d;font-size:11px">StrLen("Hi") → 2</td>
+    </tr>
+    <tr class="cr" data-m="strcpy(dst, src)" data-d="string kopieren">
+      <td style="width:220px"><code style="color:#f5d020">StrCpy(dst, src)</code></td>
+      <td style="color:#6c7a8e">String kopieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="strcat(dst, src)" data-d="string anhängen">
+      <td style="width:220px"><code style="color:#f5d020">StrCat(dst, src)</code></td>
+      <td style="color:#6c7a8e">String anhängen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="strcmp(a, b)" data-d="vergleich (0 = gleich)">
+      <td style="width:220px"><code style="color:#f5d020">StrCmp(a, b)</code></td>
+      <td style="color:#6c7a8e">Vergleich (0 = gleich)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="strprint(dst, fmt, …)" data-d="string formatieren">
+      <td style="width:220px"><code style="color:#f5d020">StrPrint(dst, fmt, …)</code></td>
+      <td style="color:#6c7a8e">String formatieren</td>
+      <td style="color:#c3e88d;font-size:11px">wie snprintf</td>
+    </tr>
+    <tr class="cr" data-m="strtoi64(s, basis)" data-d="string zu integer">
+      <td style="width:220px"><code style="color:#f5d020">StrToI64(s, basis)</code></td>
+      <td style="color:#6c7a8e">String zu Integer</td>
+      <td style="color:#c3e88d;font-size:11px">StrToI64("FF", 16) → 255</td>
+    </tr>
+    <tr class="cr" data-m="i64tostr(n, dst)" data-d="integer zu string">
+      <td style="width:220px"><code style="color:#f5d020">I64ToStr(n, dst)</code></td>
+      <td style="color:#6c7a8e">Integer zu String</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="catprint(dst, fmt, …)" data-d="anhängen + formatieren">
+      <td style="width:220px"><code style="color:#f5d020">CatPrint(dst, fmt, …)</code></td>
+      <td style="color:#6c7a8e">Anhängen + formatieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Mathematik &amp; Zufall
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="abs(n)" data-d="absolutwert">
+      <td style="width:220px"><code style="color:#4fc3f7">Abs(n)</code></td>
+      <td style="color:#6c7a8e">Absolutwert</td>
+      <td style="color:#c3e88d;font-size:11px">Abs(-5) → 5</td>
+    </tr>
+    <tr class="cr" data-m="clamp(n, lo, hi)" data-d="begrenzen auf [lo, hi]">
+      <td style="width:220px"><code style="color:#4fc3f7">Clamp(n, lo, hi)</code></td>
+      <td style="color:#6c7a8e">Begrenzen auf [lo, hi]</td>
+      <td style="color:#c3e88d;font-size:11px">Clamp(200, 0, 100) → 100</td>
+    </tr>
+    <tr class="cr" data-m="sqrt(x)" data-d="quadratwurzel">
+      <td style="width:220px"><code style="color:#4fc3f7">Sqrt(x)</code></td>
+      <td style="color:#6c7a8e">Quadratwurzel</td>
+      <td style="color:#c3e88d;font-size:11px">Sqrt(9.0) → 3.0</td>
+    </tr>
+    <tr class="cr" data-m="sin(x)" data-d="sinus (radiant)">
+      <td style="width:220px"><code style="color:#4fc3f7">Sin(x)</code></td>
+      <td style="color:#6c7a8e">Sinus (Radiant)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="cos(x)" data-d="kosinus (radiant)">
+      <td style="width:220px"><code style="color:#4fc3f7">Cos(x)</code></td>
+      <td style="color:#6c7a8e">Kosinus (Radiant)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="tan(x)" data-d="tangens (radiant)">
+      <td style="width:220px"><code style="color:#4fc3f7">Tan(x)</code></td>
+      <td style="color:#6c7a8e">Tangens (Radiant)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="toi64(f)" data-d="float zu integer (truncate)">
+      <td style="width:220px"><code style="color:#4fc3f7">ToI64(f)</code></td>
+      <td style="color:#6c7a8e">Float zu Integer (truncate)</td>
+      <td style="color:#c3e88d;font-size:11px">ToI64(3.7) → 3</td>
+    </tr>
+    <tr class="cr" data-m="tof64(n)" data-d="integer zu float">
+      <td style="width:220px"><code style="color:#4fc3f7">ToF64(n)</code></td>
+      <td style="color:#6c7a8e">Integer zu Float</td>
+      <td style="color:#c3e88d;font-size:11px">ToF64(3) → 3.0</td>
+    </tr>
+    <tr class="cr" data-m="randu32()" data-d="zufallszahl 0..2^32">
+      <td style="width:220px"><code style="color:#4fc3f7">RandU32()</code></td>
+      <td style="color:#6c7a8e">Zufallszahl 0..2^32</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="randi64()" data-d="zufallszahl (signed 64-bit)">
+      <td style="width:220px"><code style="color:#4fc3f7">RandI64()</code></td>
+      <td style="color:#6c7a8e">Zufallszahl (signed 64-Bit)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>System &amp; Hardware
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="inu8(port)" data-d="byte von i/o-port lesen">
+      <td style="width:220px"><code style="color:#e05252">InU8(port)</code></td>
+      <td style="color:#6c7a8e">Byte von I/O-Port lesen</td>
+      <td style="color:#c3e88d;font-size:11px">InU8(0x60) → Keyboard</td>
+    </tr>
+    <tr class="cr" data-m="inu16(port)" data-d="16-bit von i/o-port lesen">
+      <td style="width:220px"><code style="color:#e05252">InU16(port)</code></td>
+      <td style="color:#6c7a8e">16-Bit von I/O-Port lesen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="inu32(port)" data-d="32-bit von i/o-port lesen">
+      <td style="width:220px"><code style="color:#e05252">InU32(port)</code></td>
+      <td style="color:#6c7a8e">32-Bit von I/O-Port lesen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="outu8(port, val)" data-d="byte zu i/o-port schreiben">
+      <td style="width:220px"><code style="color:#e05252">OutU8(port, val)</code></td>
+      <td style="color:#6c7a8e">Byte zu I/O-Port schreiben</td>
+      <td style="color:#c3e88d;font-size:11px">OutU8(0x43, 0xB6)</td>
+    </tr>
+    <tr class="cr" data-m="outu16(port, val)" data-d="16-bit zu i/o-port">
+      <td style="width:220px"><code style="color:#e05252">OutU16(port, val)</code></td>
+      <td style="color:#6c7a8e">16-Bit zu I/O-Port</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="outu32(port, val)" data-d="32-bit zu i/o-port">
+      <td style="width:220px"><code style="color:#e05252">OutU32(port, val)</code></td>
+      <td style="color:#6c7a8e">32-Bit zu I/O-Port</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="gettsc()" data-d="cpu timestamp counter (takte)">
+      <td style="width:220px"><code style="color:#e05252">GetTSC()</code></td>
+      <td style="color:#6c7a8e">CPU Timestamp Counter (Takte)</td>
+      <td style="color:#c3e88d;font-size:11px">für Benchmarking</td>
+    </tr>
+    <tr class="cr" data-m="sleep(ms)" data-d="warten (millisekunden)">
+      <td style="width:220px"><code style="color:#e05252">Sleep(ms)</code></td>
+      <td style="color:#6c7a8e">Warten (Millisekunden)</td>
+      <td style="color:#c3e88d;font-size:11px">Sleep(1000) → 1s</td>
+    </tr>
+    <tr class="cr" data-m="yield()" data-d="cpu abgeben (multitasking)">
+      <td style="width:220px"><code style="color:#e05252">Yield()</code></td>
+      <td style="color:#6c7a8e">CPU abgeben (Multitasking)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="beep()" data-d="kurzer signalton">
+      <td style="width:220px"><code style="color:#e05252">Beep()</code></td>
+      <td style="color:#6c7a8e">Kurzer Signalton</td>
+      <td style="color:#c3e88d;font-size:11px">PC-Speaker</td>
+    </tr>
+    <tr class="cr" data-m="sndfreq(hz)" data-d="ton mit frequenz spielen">
+      <td style="width:220px"><code style="color:#e05252">SndFreq(hz)</code></td>
+      <td style="color:#6c7a8e">Ton mit Frequenz spielen</td>
+      <td style="color:#c3e88d;font-size:11px">SndFreq(440) → A4</td>
+    </tr>
+    <tr class="cr" data-m="keyget()" data-d="auf taste warten und zurückgeben">
+      <td style="width:220px"><code style="color:#e05252">KeyGet()</code></td>
+      <td style="color:#6c7a8e">Auf Taste warten und zurückgeben</td>
+      <td style="color:#c3e88d;font-size:11px">U8 k = KeyGet()</td>
+    </tr>
+    <tr class="cr" data-m="scankey()" data-d="taste vorhanden? (non-blocking)">
+      <td style="width:220px"><code style="color:#e05252">ScanKey()</code></td>
+      <td style="color:#6c7a8e">Taste vorhanden? (non-blocking)</td>
+      <td style="color:#c3e88d;font-size:11px">if (ScanKey()) ...</td>
+    </tr>
+    <tr class="cr" data-m="gets(buf, max)" data-d="zeile von tastatur lesen">
+      <td style="width:220px"><code style="color:#e05252">GetS(buf, max)</code></td>
+      <td style="color:#6c7a8e">Zeile von Tastatur lesen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="exit(code)" data-d="programm beenden">
+      <td style="width:220px"><code style="color:#e05252">Exit(code)</code></td>
+      <td style="color:#6c7a8e">Programm beenden</td>
+      <td style="color:#c3e88d;font-size:11px">Exit(0)</td>
+    </tr>
+    <tr class="cr" data-m="halt()" data-d="system anhalten (hlt)">
+      <td style="width:220px"><code style="color:#e05252">Halt()</code></td>
+      <td style="color:#6c7a8e">System anhalten (HLT)</td>
+      <td style="color:#c3e88d;font-size:11px">Nur Ring 0!</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib3"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Grafik (TempleOS)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-3" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="grprint(x,y,fg,bg,s)" data-d="text ausgeben auf bildschirm">
+      <td style="width:220px"><code style="color:#c792ea">GrPrint(x,y,fg,bg,s)</code></td>
+      <td style="color:#6c7a8e">Text ausgeben auf Bildschirm</td>
+      <td style="color:#c3e88d;font-size:11px">GrPrint(0,0,15,0,"Hi")</td>
+    </tr>
+    <tr class="cr" data-m="dcallocget()" data-d="device context holen">
+      <td style="width:220px"><code style="color:#c792ea">DCAllocGet()</code></td>
+      <td style="color:#6c7a8e">Device Context holen</td>
+      <td style="color:#c3e88d;font-size:11px">CDC *dc = DCAllocGet()</td>
+    </tr>
+    <tr class="cr" data-m="dcdel(dc)" data-d="device context freigeben">
+      <td style="width:220px"><code style="color:#c792ea">DCDel(dc)</code></td>
+      <td style="color:#6c7a8e">Device Context freigeben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="dcfill(dc, farbe)" data-d="bildschirm füllen">
+      <td style="width:220px"><code style="color:#c792ea">DCFill(dc, farbe)</code></td>
+      <td style="color:#6c7a8e">Bildschirm füllen</td>
+      <td style="color:#c3e88d;font-size:11px">DCFill(dc, 0) = schwarz</td>
+    </tr>
+    <tr class="cr" data-m="dcline(dc,x1,y1,x2,y2,c)" data-d="linie zeichnen">
+      <td style="width:220px"><code style="color:#c792ea">DCLine(dc,x1,y1,x2,y2,c)</code></td>
+      <td style="color:#6c7a8e">Linie zeichnen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="dcpixel(dc, x, y, c)" data-d="einzelnes pixel setzen">
+      <td style="width:220px"><code style="color:#c792ea">DCPixel(dc, x, y, c)</code></td>
+      <td style="color:#6c7a8e">Einzelnes Pixel setzen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="dcrect(dc,x,y,b,h,c)" data-d="rechteck zeichnen">
+      <td style="width:220px"><code style="color:#c792ea">DCRect(dc,x,y,b,h,c)</code></td>
+      <td style="color:#6c7a8e">Rechteck zeichnen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="dccircle(dc,x,y,r,c)" data-d="kreis zeichnen">
+      <td style="width:220px"><code style="color:#c792ea">DCCircle(dc,x,y,r,c)</code></td>
+      <td style="color:#6c7a8e">Kreis zeichnen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="dcblit(dc, x, y, bmp)" data-d="bitmap zeichnen">
+      <td style="width:220px"><code style="color:#c792ea">DCBlit(dc, x, y, bmp)</code></td>
+      <td style="color:#6c7a8e">Bitmap zeichnen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #f5d020;color:#f5d020;background:rgba(245,208,32,.07);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Linked List</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">PC Speaker – Melodie</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Mandelbrot Set (Textmodus)</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Primzahlsieb</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// Doppelt verkettete Liste in HolyC</span>
+<span style="color:#546e7a">// Zeigt: Klassen, Zeiger, MAlloc/Free, Schleifen</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ListNode</span>
+{
+    <span style="color:#c792ea">I64</span> wert;
+    <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>prev;
+    <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>next;
+};
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">LinkedList</span>
+{
+    <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>head;
+    <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>tail;
+    <span style="color:#c792ea">I64</span> groesse;
+
+    <span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">Init</span>()
+    {
+        head = <span style="color:#c792ea">NULL</span>;
+        tail = <span style="color:#c792ea">NULL</span>;
+        groesse = <span style="color:#f78c6c">0</span>;
+    }
+
+    <span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">PushBack</span>(<span style="color:#c792ea">I64</span> val)
+    {
+        <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>n = <span style="color:#82aaff">CAlloc</span>(sizeof(<span style="color:#4ec9b0">ListNode</span>));
+        n<span style="color:#89ddff">-&gt;</span>wert = val;
+        n<span style="color:#89ddff">-&gt;</span>prev = tail;
+        n<span style="color:#89ddff">-&gt;</span>next = <span style="color:#c792ea">NULL</span>;
+
+        <span style="color:#c792ea">if</span> (tail != <span style="color:#c792ea">NULL</span>)
+            tail<span style="color:#89ddff">-&gt;</span>next = n;
+        <span style="color:#c792ea">else</span>
+            head = n;
+
+        tail = n;
+        groesse++;
+    }
+
+    <span style="color:#c792ea">I64</span> <span style="color:#4ec9b0">PopFront</span>()
+    {
+        <span style="color:#c792ea">if</span> (head == <span style="color:#c792ea">NULL</span>) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;
+
+        <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>n = head;
+        <span style="color:#c792ea">I64</span> val = n<span style="color:#89ddff">-&gt;</span>wert;
+        head = n<span style="color:#89ddff">-&gt;</span>next;
+
+        <span style="color:#c792ea">if</span> (head != <span style="color:#c792ea">NULL</span>)
+            head<span style="color:#89ddff">-&gt;</span>prev = <span style="color:#c792ea">NULL</span>;
+        <span style="color:#c792ea">else</span>
+            tail = <span style="color:#c792ea">NULL</span>;
+
+        <span style="color:#82aaff">Free</span>(n);
+        groesse--;
+        <span style="color:#c792ea">return</span> val;
+    }
+
+    <span style="color:#c792ea">U0</span> <span style="color:#82aaff">Print</span>()
+    {
+        <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>n = head;
+        <span style="color:#c792ea">while</span> (n != <span style="color:#c792ea">NULL</span>) {
+            ::<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%d -&gt; "</span>, n<span style="color:#89ddff">-&gt;</span>wert);  <span style="color:#546e7a">// :: = global Print</span>
+            n = n<span style="color:#89ddff">-&gt;</span>next;
+        }
+        ::<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"NULL</span>
+<span style="color:#c3e88d">");</span>
+    }
+
+    <span style="color:#c792ea">U0</span> <span style="color:#82aaff">Free</span>()
+    {
+        <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>n = head;
+        <span style="color:#c792ea">while</span> (n != <span style="color:#c792ea">NULL</span>) {
+            <span style="color:#4ec9b0">ListNode</span> <span style="color:#89ddff">*</span>next = n<span style="color:#89ddff">-&gt;</span>next;
+            ::<span style="color:#82aaff">Free</span>(n);
+            n = next;
+        }
+        head = <span style="color:#c792ea">NULL</span>;
+        tail = <span style="color:#c792ea">NULL</span>;
+        groesse = <span style="color:#f78c6c">0</span>;
+    }
+};
+
+<span style="color:#546e7a">// Hauptprogramm</span>
+<span style="color:#4ec9b0">LinkedList</span> liste;
+liste.<span style="color:#4ec9b0">Init</span>();
+
+liste.<span style="color:#4ec9b0">PushBack</span>(<span style="color:#f78c6c">1</span>);
+liste.<span style="color:#4ec9b0">PushBack</span>(<span style="color:#f78c6c">2</span>);
+liste.<span style="color:#4ec9b0">PushBack</span>(<span style="color:#f78c6c">3</span>);
+liste.<span style="color:#82aaff">Print</span>();              <span style="color:#546e7a">// 1 -&gt; 2 -&gt; 3 -&gt; NULL</span>
+
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Pop: %d</span>
+<span style="color:#c3e88d">", liste.PopFront());  // 1</span>
+liste.<span style="color:#82aaff">Print</span>();              <span style="color:#546e7a">// 2 -&gt; 3 -&gt; NULL</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Größe: %d</span>
+<span style="color:#c3e88d">", liste.groesse);  // 2</span>
+
+liste.<span style="color:#82aaff">Free</span>();               <span style="color:#546e7a">// Alles freigeben!</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// Musik auf dem PC-Speaker!</span>
+<span style="color:#546e7a">// Terry Davis liebte es, Melodien in TempleOS zu spielen.</span>
+
+<span style="color:#546e7a">// Ton-Frequenzen (Hz)</span>
+<span style="color:#ff9800">#define C4  262</span>
+<span style="color:#ff9800">#define D4  294</span>
+<span style="color:#ff9800">#define E4  330</span>
+<span style="color:#ff9800">#define F4  349</span>
+<span style="color:#ff9800">#define G4  392</span>
+<span style="color:#ff9800">#define A4  440</span>
+<span style="color:#ff9800">#define B4  494</span>
+<span style="color:#ff9800">#define C5  523</span>
+<span style="color:#ff9800">#define PAUSE 0</span>
+
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">SpieleTon</span>(<span style="color:#c792ea">I64</span> freq, <span style="color:#c792ea">I64</span> dauer_ms)
+{
+    <span style="color:#c792ea">if</span> (freq == <span style="color:#f78c6c">0</span>) {
+        <span style="color:#82aaff">Sleep</span>(dauer_ms);   <span style="color:#546e7a">// Pause</span>
+        <span style="color:#c792ea">return</span>;
+    }
+
+    <span style="color:#546e7a">// PIT (Programmable Interval Timer) konfigurieren</span>
+    <span style="color:#c792ea">I64</span> divisor = <span style="color:#f78c6c">1193180</span> / freq;
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x43</span>, <span style="color:#f78c6c">0xB6</span>);                   <span style="color:#546e7a">// PIT Kanal 2, Square Wave Mode</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x42</span>, divisor <span style="color:#89ddff">&amp;</span> <span style="color:#f78c6c">0xFF</span>);          <span style="color:#546e7a">// Low Byte</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x42</span>, (divisor &gt;&gt; <span style="color:#f78c6c">8</span>) <span style="color:#89ddff">&amp;</span> <span style="color:#f78c6c">0xFF</span>);  <span style="color:#546e7a">// High Byte</span>
+
+    <span style="color:#546e7a">// Speaker einschalten</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x61</span>, <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x61</span>) | <span style="color:#f78c6c">0x03</span>);
+
+    <span style="color:#82aaff">Sleep</span>(dauer_ms);
+
+    <span style="color:#546e7a">// Speaker ausschalten</span>
+    <span style="color:#82aaff">OutU8</span>(<span style="color:#f78c6c">0x61</span>, <span style="color:#82aaff">InU8</span>(<span style="color:#f78c6c">0x61</span>) <span style="color:#89ddff">&amp;</span> ~<span style="color:#f78c6c">0x03</span>);
+    <span style="color:#82aaff">Sleep</span>(<span style="color:#f78c6c">20</span>);    <span style="color:#546e7a">// Kurze Pause zwischen Noten</span>
+}
+
+<span style="color:#546e7a">// "Ode an die Freude" (vereinfacht)</span>
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">OdeAnDieFreude</span>()
+{
+    <span style="color:#546e7a">// Noten: {Frequenz, Dauer_ms}</span>
+    <span style="color:#c792ea">I64</span> melodie[][<span style="color:#f78c6c">2</span>] = {
+        {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">F4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">G4</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">G4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">F4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">C4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">C4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">450</span>}, {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">150</span>}, {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">600</span>},
+        {<span style="color:#4ec9b0">PAUSE</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">F4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">G4</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">G4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">F4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">C4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">C4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">300</span>}, {<span style="color:#4ec9b0">E4</span>, <span style="color:#f78c6c">300</span>},
+        {<span style="color:#4ec9b0">D4</span>, <span style="color:#f78c6c">450</span>}, {<span style="color:#4ec9b0">C4</span>, <span style="color:#f78c6c">150</span>}, {<span style="color:#4ec9b0">C4</span>, <span style="color:#f78c6c">600</span>},
+    };
+
+    <span style="color:#c792ea">I64</span> i;
+    <span style="color:#c792ea">I64</span> anzahl = sizeof(melodie) / sizeof(melodie[<span style="color:#f78c6c">0</span>]);
+
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Spiele Ode an die Freude...</span>
+<span style="color:#c3e88d">");</span>
+    <span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">0</span>; i &lt; anzahl; i++)
+        <span style="color:#4ec9b0">SpieleTon</span>(melodie[i][<span style="color:#f78c6c">0</span>], melodie[i][<span style="color:#f78c6c">1</span>]);
+
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"Fertig!</span>
+<span style="color:#c3e88d">");</span>
+}
+
+<span style="color:#4ec9b0">OdeAnDieFreude</span>();</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// Mandelbrot-Menge in TempleOS Textmodus</span>
+<span style="color:#546e7a">// Terry Davis schrieb ähnliche Demos für TempleOS!</span>
+
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">Mandelbrot</span>()
+{
+    <span style="color:#546e7a">// Textmodus: 80x25 Zeichen</span>
+    <span style="color:#c792ea">I64</span> breite  = <span style="color:#f78c6c">78</span>;
+    <span style="color:#c792ea">I64</span> hoehe   = <span style="color:#f78c6c">22</span>;
+    <span style="color:#c792ea">F64</span> x_min   = -<span style="color:#f78c6c">2.5</span>;
+    <span style="color:#c792ea">F64</span> x_max   =  <span style="color:#f78c6c">1.0</span>;
+    <span style="color:#c792ea">F64</span> y_min   = -<span style="color:#f78c6c">1.2</span>;
+    <span style="color:#c792ea">F64</span> y_max   =  <span style="color:#f78c6c">1.2</span>;
+    <span style="color:#c792ea">I64</span> max_iter = <span style="color:#f78c6c">64</span>;
+
+    <span style="color:#c792ea">U8</span> zeichen[] = <span style="color:#c3e88d">" .:-=+*#%@"</span>;
+    <span style="color:#c792ea">I64</span> anz_zeichen = <span style="color:#82aaff">StrLen</span>(zeichen);
+
+    <span style="color:#c792ea">I64</span> px, py;
+    <span style="color:#c792ea">for</span> (py = <span style="color:#f78c6c">0</span>; py &lt; hoehe; py++) {
+        <span style="color:#c792ea">F64</span> cy = y_min + (y_max - y_min) <span style="color:#89ddff">*</span> py / hoehe;
+
+        <span style="color:#c792ea">for</span> (px = <span style="color:#f78c6c">0</span>; px &lt; breite; px++) {
+            <span style="color:#c792ea">F64</span> cx = x_min + (x_max - x_min) <span style="color:#89ddff">*</span> px / breite;
+
+            <span style="color:#546e7a">// Mandelbrot-Iteration: z = z² + c</span>
+            <span style="color:#c792ea">F64</span> zr = <span style="color:#f78c6c">0.0</span>, zi = <span style="color:#f78c6c">0.0</span>;
+            <span style="color:#c792ea">I64</span> iter = <span style="color:#f78c6c">0</span>;
+
+            <span style="color:#c792ea">while</span> (zr*zr + zi*zi &lt; <span style="color:#f78c6c">4.0</span> <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&amp;</span> iter &lt; max_iter) {
+                <span style="color:#c792ea">F64</span> nr = zr*zr - zi*zi + cx;
+                <span style="color:#c792ea">F64</span> ni = <span style="color:#f78c6c">2.0</span> <span style="color:#89ddff">*</span> zr <span style="color:#89ddff">*</span> zi + cy;
+                zr = nr;
+                zi = ni;
+                iter++;
+            }
+
+            <span style="color:#546e7a">// Zeichen je nach Iterationstiefe</span>
+            <span style="color:#c792ea">I64</span> idx = (iter <span style="color:#89ddff">*</span> anz_zeichen) / max_iter;
+            <span style="color:#c792ea">if</span> (idx &gt;= anz_zeichen) idx = anz_zeichen - <span style="color:#f78c6c">1</span>;
+            <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%c"</span>, zeichen[idx]);
+        }
+        <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">");</span>
+    }
+}
+
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"=== MANDELBROT SET ===</span>
+<span style="color:#c3e88d">");</span>
+<span style="color:#4ec9b0">Mandelbrot</span>();
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"=====================</span>
+<span style="color:#c3e88d">");</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre;text-shadow:0 0 6px rgba(245,208,32,.08)"><span style="color:#546e7a">// Sieb des Eratosthenes in HolyC</span>
+<span style="color:#546e7a">// Zeigt: Arrays, Schleifen, Port-Zugriff für Timing</span>
+
+<span style="color:#c792ea">U0</span> <span style="color:#4ec9b0">SiebEratosthenes</span>(<span style="color:#c792ea">I64</span> limit)
+{
+    <span style="color:#546e7a">// Boolean-Array: ist_prim[i] = TRUE wenn i prim</span>
+    <span style="color:#c792ea">Bool</span> <span style="color:#89ddff">*</span>ist_prim = <span style="color:#82aaff">CAlloc</span>((limit + <span style="color:#f78c6c">1</span>) <span style="color:#89ddff">*</span> sizeof(<span style="color:#c792ea">Bool</span>));
+    <span style="color:#c792ea">I64</span> i, j;
+
+    <span style="color:#546e7a">// Alle als prim markieren</span>
+    <span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">2</span>; i &lt;= limit; i++)
+        ist_prim[i] = <span style="color:#c792ea">TRUE</span>;
+
+    <span style="color:#546e7a">// Sieben</span>
+    <span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">2</span>; i <span style="color:#89ddff">*</span> i &lt;= limit; i++) {
+        <span style="color:#c792ea">if</span> (ist_prim[i]) {
+            <span style="color:#546e7a">// Alle Vielfachen von i als nicht-prim markieren</span>
+            <span style="color:#c792ea">for</span> (j = i <span style="color:#89ddff">*</span> i; j &lt;= limit; j += i)
+                ist_prim[j] = <span style="color:#c792ea">FALSE</span>;
+        }
+    }
+
+    <span style="color:#546e7a">// Primzahlen ausgeben</span>
+    <span style="color:#c792ea">I64</span> anzahl = <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">I64</span> pro_zeile = <span style="color:#f78c6c">0</span>;
+
+    <span style="color:#c792ea">for</span> (i = <span style="color:#f78c6c">2</span>; i &lt;= limit; i++) {
+        <span style="color:#c792ea">if</span> (ist_prim[i]) {
+            <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"%4d"</span>, i);
+            anzahl++;
+            pro_zeile++;
+            <span style="color:#c792ea">if</span> (pro_zeile &gt;= <span style="color:#f78c6c">15</span>) {
+                <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">");</span>
+                pro_zeile = <span style="color:#f78c6c">0</span>;
+            }
+        }
+    }
+    <span style="color:#c792ea">if</span> (pro_zeile &gt; <span style="color:#f78c6c">0</span>) <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">");</span>
+
+    <span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"</span>
+<span style="color:#4ec9b0">Gefunden</span>: %d <span style="color:#4ec9b0">Primzahlen</span> bis %d
+<span style="color:#c3e88d">", anzahl, limit);</span>
+    <span style="color:#82aaff">Free</span>(ist_prim);
+}
+
+<span style="color:#546e7a">// Primzahlen bis 200</span>
+<span style="color:#82aaff">Print</span>(<span style="color:#c3e88d">"=== Primzahlen bis 200 ===</span>
+<span style="color:#c3e88d">");</span>
+<span style="color:#4ec9b0">SiebEratosthenes</span>(<span style="color:#f78c6c">200</span>);</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#f5d02008;border:1px solid #f5d02044;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#f5d020">Schnellstart:</strong> TempleOS.ISO herunterladen und in QEMU starten:<br><code style="color:#ffb347">qemu-system-x86_64 -cdrom TempleOS.ISO -m 256 -vga std</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #f5d02044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f5d0200e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f5d020">
+      <span style="display:inline-block;width:8px;height:8px;background:#f5d020;border-radius:50%;margin-right:2px"></span>⚙ TempleOS &amp; HolyC ausprobieren
+    </span>
+    <span class="aa" style="color:#f5d020;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Thema</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#f5d020">TempleOS (original)</code></td><td style="color:#cdd6f4">templeos.org</td><td style="color:#6c7a8e">Lade TempleOS.ISO herunter
+In VirtualBox/QEMU starten (256 MB RAM!)</td></tr><tr><td style="width:240px"><code style="color:#f5d020">QEMU</code></td><td style="color:#cdd6f4">qemu.org</td><td style="color:#6c7a8e">qemu-system-x86_64 -cdrom TempleOS.ISO -m 256
+Sofort lauffähig auf Linux/macOS/Windows</td></tr><tr><td style="width:240px"><code style="color:#f5d020">VirtualBox</code></td><td style="color:#cdd6f4">virtualbox.org</td><td style="color:#6c7a8e">Neues VM: Typ "Other", 64-Bit, 256 MB RAM
+ISO einlegen und starten</td></tr><tr><td style="width:240px"><code style="color:#f5d020">TinkerOS</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">TempleOS-Fork mit besserer Kompatibilität
+github.com/tinkeros/TinkerOS</td></tr><tr><td style="width:240px"><code style="color:#f5d020">ZealOS</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">Moderner TempleOS-Fork
+github.com/Zeal-Operating-System/ZealOS</td></tr><tr><td style="width:240px"><code style="color:#f5d020">Shrine</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">TempleOS-Fork mit Netzwerk-Support!
+github.com/minexew/Shrine</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ In TempleOS arbeiten
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Thema</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">F5</code></td><td style="color:#cdd6f4">Datei ausführen / kompilieren</td><td style="color:#6c7a8e">Aktuellen Buffer JIT-kompilieren</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">F1</code></td><td style="color:#cdd6f4">Editor öffnen</td><td style="color:#6c7a8e">Built-in Editor (mit Syntax-Highlighting!)</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Ctrl+Alt+F</code></td><td style="color:#cdd6f4">Datei-Manager</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">#include "pfad.HC"</code></td><td style="color:#cdd6f4">Andere Datei einbinden</td><td style="color:#6c7a8e">#include "/Adam/Gr/Gr.HC"</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Dir;</code></td><td style="color:#cdd6f4">Verzeichnis anzeigen</td><td style="color:#6c7a8e">(direkt in Shell eingeben)</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Ed("Datei.HC");</code></td><td style="color:#cdd6f4">Datei im Editor öffnen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Cd("/Home");</code></td><td style="color:#cdd6f4">Verzeichnis wechseln</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Copy("a.HC","b.HC");</code></td><td style="color:#cdd6f4">Datei kopieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Del("Datei.HC");</code></td><td style="color:#cdd6f4">Datei löschen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">Sys-&gt;time</code></td><td style="color:#cdd6f4">Systemzeit</td><td style="color:#6c7a8e">Direkte Struct-Zugriff!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ HolyC vs. C – Unterschiede
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Thema</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">U0/U8/U64/I64 statt void/char/uint64_t</code></td><td style="color:#cdd6f4">Eigene Typ-Namen</td><td style="color:#6c7a8e">Kürzer, konsistenter</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Keine Header-Dateien</code></td><td style="color:#cdd6f4">Alles JIT</td><td style="color:#6c7a8e">Kein .h nötig – direkte Kompilierung</td></tr><tr><td style="width:240px"><code style="color:#c792ea">class mit Methoden</code></td><td style="color:#cdd6f4">Struct + Methoden</td><td style="color:#6c7a8e">Aber keine Vererbung!</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Print statt printf</code></td><td style="color:#cdd6f4">Ausgabe</td><td style="color:#6c7a8e">Außerdem %b für Binär!</td></tr><tr><td style="width:240px"><code style="color:#c792ea">MAlloc/Free statt malloc/free</code></td><td style="color:#cdd6f4">Speicher</td><td style="color:#6c7a8e">CAlloc = calloc</td></tr><tr><td style="width:240px"><code style="color:#c792ea">asm { ... }</code></td><td style="color:#cdd6f4">Inline-Assembler</td><td style="color:#6c7a8e">Direkt eingebaut, kein __asm__</td></tr><tr><td style="width:240px"><code style="color:#c792ea">interrupt Funktion()</code></td><td style="color:#cdd6f4">Interrupt-Handler</td><td style="color:#6c7a8e">Schlüsselwort direkt in Sprache</td></tr><tr><td style="width:240px"><code style="color:#c792ea">noreg Variable</code></td><td style="color:#cdd6f4">Nicht in Register</td><td style="color:#6c7a8e">Für Adress-Operationen</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Ring 0 überall</code></td><td style="color:#cdd6f4">Kein User-Mode</td><td style="color:#6c7a8e">Absoluter Zugriff auf alles</td></tr><tr><td style="width:240px"><code style="color:#c792ea">JIT direkt in RAM</code></td><td style="color:#cdd6f4">Kein Linker</td><td style="color:#6c7a8e">Kompiliert und läuft sofort</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Über Terry A. Davis (1969–2018)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Thema</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">15 Jahre</code></td><td style="color:#cdd6f4">Entwicklungszeit</td><td style="color:#6c7a8e">Terry schrieb TempleOS von 2003 bis 2018 alleine</td></tr><tr><td style="width:240px"><code style="color:#ffb347">100.000 LOC</code></td><td style="color:#cdd6f4">Codeumfang</td><td style="color:#6c7a8e">~100.000 Zeilen HolyC – alles alleine</td></tr><tr><td style="width:240px"><code style="color:#ffb347">1 Person</code></td><td style="color:#cdd6f4">Gesamtes System</td><td style="color:#6c7a8e">Kernel, Compiler, FS, Grafik, Editor, Spiele – alles</td></tr><tr><td style="width:240px"><code style="color:#ffb347">IQ 180</code></td><td style="color:#cdd6f4">Nach eigener Aussage</td><td style="color:#6c7a8e">Für Terry war TempleOS ein religiöser Auftrag</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Turing Award</code></td><td style="color:#cdd6f4">inoffiziell</td><td style="color:#6c7a8e">Einige Programmierer nennen ihn das größte Einzelprojekt</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Vermächtnis</code></td><td style="color:#cdd6f4">TempleOS lebt weiter</td><td style="color:#6c7a8e">ZealOS, TinkerOS, Shrine, Studium des Quellcodes</td></tr><tr><td style="width:240px"><code style="color:#ffb347">YouTube</code></td><td style="color:#cdd6f4">Dokumentation</td><td style="color:#6c7a8e">Viele Videos von Terry zeigen seine Denkweise</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Respekt</code></td><td style="color:#cdd6f4">Programmier-Community</td><td style="color:#6c7a8e">Unabhängig von allem: eine außergewöhnliche Leistung</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#f5d020';
+      btn.style.color       = '#f5d020';
+      btn.style.background  = 'rgba(245,208,32,.07)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

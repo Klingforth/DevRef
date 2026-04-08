@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++ Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #00599c;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(0, 89, 156, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#00599c">&#x2B23;</span>
+      <span style="color:#00599c">C++</span> Syntax
+    </div>
+    <div id="hdr-sub">C++20 / C++23 · Ranges · Concepts · Coroutinen · Modules · Zero-Cost-Abstraktionen</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="oop">OOP & Klassen</button>
+    <button class="tb" data-tab="modern">Modernes C++</button>
+    <button class="tb" data-tab="stl">STL</button>
+    <button class="tb" data-tab="memory">Speicher & Threads</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#00599c0e;border:1px solid #00599c44;border-radius:8px;
+            padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.8">
+  <span style="color:#cdd6f4">
+    Bevorzuge: <code style="color:#c3e88d">auto</code>  ·
+    <code style="color:#c3e88d">const</code> wo immer möglich  ·
+    <code style="color:#c3e88d">unique_ptr</code> statt raw pointer  ·
+    <code style="color:#c3e88d">{}</code> für Initialisierung  ·
+    Rule of Zero
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #00599c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00599c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00599c">
+      <span style="display:inline-block;width:8px;height:8px;background:#00599c;border-radius:50%;margin-right:2px"></span>Datentypen &amp; Variablen
+    </span>
+    <span class="aa" style="color:#00599c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Bereich</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">int</code></td>
+      <td style="color:#c3e88d;font-size:11px">32 Bit  |  ca. ±2,1 Mrd</td>
+      <td style="color:#6c7a8e">Standard-Ganzzahl</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">long long</code></td>
+      <td style="color:#c3e88d;font-size:11px">64 Bit  |  ca. ±9,2 × 10^18</td>
+      <td style="color:#6c7a8e">Literale: 42LL</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">double</code></td>
+      <td style="color:#c3e88d;font-size:11px">64 Bit IEEE 754  |  ~15 Stellen</td>
+      <td style="color:#6c7a8e">Standard-Float. float = 32 Bit.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">true / false</td>
+      <td style="color:#6c7a8e">Kein truthy/falsy!</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">char</code></td>
+      <td style="color:#c3e88d;font-size:11px">1 Byte  |  ASCII oder UTF-8-Byte</td>
+      <td style="color:#6c7a8e">char8_t für sicheres UTF-8 (C++20)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">auto</code></td>
+      <td style="color:#c3e88d;font-size:11px">auto x = 42;  // int inferiert</td>
+      <td style="color:#6c7a8e">Typ-Inferenz – fast immer verwenden!</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">const</code></td>
+      <td style="color:#c3e88d;font-size:11px">const int MAX = 100;</td>
+      <td style="color:#6c7a8e">Unveränderlich zur Laufzeit</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">constexpr</code></td>
+      <td style="color:#c3e88d;font-size:11px">constexpr int N = 10;</td>
+      <td style="color:#6c7a8e">Unveränderlich zur Compile-Zeit</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">consteval</code></td>
+      <td style="color:#c3e88d;font-size:11px">consteval int sq(int x) { return x*x; }</td>
+      <td style="color:#6c7a8e">Muss zur Compile-Zeit ausführbar sein (C++20)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">std::size_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">sizeof(arr)/sizeof(arr[0])</td>
+      <td style="color:#6c7a8e">Für Größen und Array-Indizes</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#00599c">int64_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">#include &lt;cstdint&gt;</td>
+      <td style="color:#6c7a8e">Garantiert 64 Bit (aus &lt;cstdint&gt;)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Variablendeklaration &amp; Initialisierung
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablendeklaration &amp; initialisierung">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablendeklaration &amp; Initialisierung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// C++11+ Uniform Initialization: {} bevorzugen!</span>
+<span style="color:#c792ea">int</span> a = <span style="color:#f78c6c">42</span>;          <span style="color:#546e7a">// copy-init (C-Stil)</span>
+<span style="color:#c792ea">int</span> b(<span style="color:#f78c6c">42</span>);           <span style="color:#546e7a">// direct-init</span>
+<span style="color:#c792ea">int</span> c{<span style="color:#f78c6c">42</span>};           <span style="color:#546e7a">// uniform-init (beste Variante!)</span>
+<span style="color:#c792ea">int</span> d{};             <span style="color:#546e7a">// zero-init: d = 0</span>
+
+<span style="color:#546e7a">// auto – Typ-Inferenz (fast immer bevorzugen)</span>
+<span style="color:#c792ea">auto</span> x = <span style="color:#f78c6c">42</span>;         <span style="color:#546e7a">// int</span>
+<span style="color:#c792ea">auto</span> y = <span style="color:#f78c6c">3.14</span>;       <span style="color:#546e7a">// double</span>
+<span style="color:#c792ea">auto</span> z = <span style="color:#c3e88d">"Hallo"</span>;    <span style="color:#546e7a">// const char*</span>
+<span style="color:#c792ea">auto</span> s = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>{<span style="color:#c3e88d">"Hallo"</span>};   <span style="color:#546e7a">// std::string</span>
+
+<span style="color:#546e7a">// const und constexpr</span>
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span> <span style="color:#4ec9b0">MAX</span> = <span style="color:#f78c6c">100</span>;          <span style="color:#546e7a">// Runtime-Konstante</span>
+<span style="color:#c792ea">constexpr</span> <span style="color:#c792ea">int</span> <span style="color:#4ec9b0">N</span> = <span style="color:#f78c6c">10</span>;         <span style="color:#546e7a">// Compile-Zeit-Konstante</span>
+<span style="color:#c792ea">constexpr</span> <span style="color:#c792ea">auto</span> <span style="color:#4ec9b0">PI</span> = <span style="color:#f78c6c">3.14159</span>;  <span style="color:#546e7a">// constexpr auto!</span>
+
+<span style="color:#546e7a">// Structured Bindings (C++17)</span>
+<span style="color:#c792ea">auto</span> [x2, y2] = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">pair</span>{<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>};
+<span style="color:#c792ea">auto</span> [key, val] = *myMap.<span style="color:#82aaff">begin</span>();
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">auto</span>&amp; [k, v] : myMap) { /* ... */ }
+
+<span style="color:#546e7a">// if/switch mit Initializer (C++17)</span>
+<span style="color:#c792ea">if</span> (<span style="color:#c792ea">auto</span> it = m.<span style="color:#82aaff">find</span>(key); it != m.<span style="color:#82aaff">end</span>()) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; it<span style="color:#89ddff">-&gt;</span>second;
+}
+
+<span style="color:#546e7a">// Multiple Declarations</span>
+<span style="color:#c792ea">int</span> i{<span style="color:#f78c6c">0</span>}, j{<span style="color:#f78c6c">0</span>}, k{<span style="color:#f78c6c">0</span>};
+
+<span style="color:#546e7a">// Array-Init</span>
+<span style="color:#c792ea">int</span> arr[]{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>};   <span style="color:#546e7a">// {} deduziert die Größe</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">array</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>, <span style="color:#f78c6c">5</span>&gt; arr2{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>};  <span style="color:#546e7a">// besser!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Referenzen &amp; Zeiger
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="referenzen &amp; zeiger">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Referenzen &amp; Zeiger
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── REFERENZEN – kein Null, kein Neuzuweis ────────────────────────</span>
+<span style="color:#c792ea">int</span>   x = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">int</span>&amp;  ref = x;      <span style="color:#546e7a">// Referenz – Alias für x</span>
+ref = <span style="color:#f78c6c">99</span>;           <span style="color:#546e7a">// x ist jetzt 99!</span>
+
+<span style="color:#546e7a">// const-Referenz (für Pass-by-Reference ohne Kopie)</span>
+<span style="color:#c792ea">void</span> drucke(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&amp; s) {   <span style="color:#546e7a">// keine Kopie, keine Mutation</span>
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; s;
+}
+
+<span style="color:#546e7a">// Rvalue-Referenz (Move-Semantik, C++11)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> s1 = <span style="color:#c3e88d">"Hallo"</span>;
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&amp;&amp; rref = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(s1);  <span style="color:#546e7a">// Move: s1 ist danach leer</span>
+
+<span style="color:#546e7a">// ── ZEIGER – nullable, neuweisbar ─────────────────────────────────</span>
+<span style="color:#c792ea">int</span>* p = &amp;x;        <span style="color:#546e7a">// p zeigt auf x</span>
+*p = <span style="color:#f78c6c">100</span>;           <span style="color:#546e7a">// x ist jetzt 100 (Dereferenzierung)</span>
+p = <span style="color:#c792ea">nullptr</span>;        <span style="color:#546e7a">// kein Zeiger</span>
+
+<span style="color:#546e7a">// Pointer Arithmetik</span>
+<span style="color:#c792ea">int</span> arr[] = {<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>};
+<span style="color:#c792ea">int</span>* ptr = arr;
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; *(ptr + <span style="color:#f78c6c">1</span>);   <span style="color:#546e7a">// 20</span>
+
+<span style="color:#546e7a">// const-Zeiger Varianten</span>
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span>* cp1 = &amp;x;   <span style="color:#546e7a">// Zeiger auf const – Wert nicht änderbar</span>
+<span style="color:#c792ea">int</span>* <span style="color:#c792ea">const</span> cp2 = &amp;x;   <span style="color:#546e7a">// Const-Zeiger – Adresse nicht änderbar</span>
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span>* <span style="color:#c792ea">const</span> cp3 = &amp;x;  <span style="color:#546e7a">// Beides const</span>
+
+<span style="color:#546e7a">// ── SMART POINTER (fast immer besser als rohe Zeiger!) ────────────</span>
+<span style="color:#c792ea">auto</span> up = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_unique</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt;(<span style="color:#f78c6c">42</span>);    <span style="color:#546e7a">// Alleinbesitzer</span>
+<span style="color:#c792ea">auto</span> sp = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_shared</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt;(<span style="color:#c3e88d">"Hallo"</span>);  <span style="color:#546e7a">// Geteilt</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">weak_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt; wp = sp;    <span style="color:#546e7a">// Nicht-besitzend</span>
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; *up &lt;&lt; <span style="color:#c3e88d">" "</span> &lt;&lt; *sp;
+<span style="color:#546e7a">// up/sp geben Speicher automatisch frei!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-oop" class="tp ">
+
+<div class="ac open" id="ac-oop0"
+     style="border:1px solid #00599c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00599c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00599c">
+      <span style="display:inline-block;width:8px;height:8px;background:#00599c;border-radius:50%;margin-right:2px"></span>Klassen &amp; Objekte
+    </span>
+    <span class="aa" style="color:#00599c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="klassen &amp; objekte">
+  <div style="color:#00599c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Klassen &amp; Objekte
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdexcept&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;utility&gt;</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Person</span> {
+<span style="color:#c792ea">public</span>:
+    <span style="color:#546e7a">// Konstruktor mit Member-Initializer-Liste (bevorzugt!)</span>
+    <span style="color:#4ec9b0">Person</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> name, <span style="color:#c792ea">int</span> alter)
+        : name_{<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(name)}   <span style="color:#546e7a">// Move statt Copy!</span>
+        , alter_{alter}
+    {
+        <span style="color:#c792ea">if</span> (name_.<span style="color:#82aaff">empty</span>())
+            <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>invalid_argument{<span style="color:#c3e88d">"Name darf nicht leer sein"</span>};
+        <span style="color:#c792ea">if</span> (alter_ &lt; <span style="color:#f78c6c">0</span> || alter_ &gt; <span style="color:#f78c6c">150</span>)
+            <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>out_of_range{<span style="color:#c3e88d">"Ungültiges Alter"</span>};
+    }
+
+    <span style="color:#546e7a">// Destruktor (virtual für Basisklassen!)</span>
+    ~<span style="color:#4ec9b0">Person</span>() = <span style="color:#c792ea">default</span>;
+
+    <span style="color:#546e7a">// Copy + Move automatisch generiert wenn kein Destruktor custom</span>
+
+    <span style="color:#546e7a">// Getter (const-Methoden!)</span>
+    <span style="color:#c792ea">const</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&amp; name()  <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> name_; }
+    <span style="color:#c792ea">int</span>                alter() <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> alter_; }
+
+    <span style="color:#546e7a">// Setter</span>
+    <span style="color:#c792ea">void</span> setAlter(<span style="color:#c792ea">int</span> alter) {
+        <span style="color:#c792ea">if</span> (alter &lt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>invalid_argument{<span style="color:#c3e88d">"Negatives Alter"</span>};
+        alter_ = alter;
+    }
+
+    <span style="color:#546e7a">// Statische Methode</span>
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">int</span> anzahl() { <span style="color:#c792ea">return</span> anzahl_; }
+
+    <span style="color:#546e7a">// Operator-Overloading</span>
+    <span style="color:#c792ea">bool</span> <span style="color:#c792ea">operator</span>==(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Person</span>&amp; o) <span style="color:#c792ea">const</span> {
+        <span style="color:#c792ea">return</span> name_ == o.name_ &amp;&amp; alter_ == o.alter_;
+    }
+
+    <span style="color:#c792ea">auto</span> <span style="color:#c792ea">operator</span><span style="color:#ffcb6b">&lt;</span>=&gt;(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Person</span>&amp; o) <span style="color:#c792ea">const</span> = <span style="color:#c792ea">default</span>;  <span style="color:#546e7a">// C++20</span>
+
+    <span style="color:#546e7a">// Stream-Operator (als friend)</span>
+    <span style="color:#c792ea">friend</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>ostream&amp; <span style="color:#c792ea">operator</span><span style="color:#ffcb6b">&lt;</span>&lt;(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>ostream&amp; os, <span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Person</span>&amp; p) {
+        <span style="color:#c792ea">return</span> os &lt;&lt; <span style="color:#c3e88d">"Person{"</span> &lt;&lt; p.name_ &lt;&lt; <span style="color:#c3e88d">", "</span> &lt;&lt; p.alter_ &lt;&lt; <span style="color:#c3e88d">"}"</span>;
+    }
+
+<span style="color:#c792ea">private</span>:
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> name_;
+    <span style="color:#c792ea">int</span>         alter_;
+    <span style="color:#c792ea">inline</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">int</span> anzahl_ = <span style="color:#f78c6c">0</span>;   <span style="color:#546e7a">// C++17: inline static</span>
+};
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#4ec9b0">Person</span> alice{<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>};
+<span style="color:#c792ea">auto</span>   bob = <span style="color:#4ec9b0">Person</span>{<span style="color:#c3e88d">"Bob"</span>, <span style="color:#f78c6c">25</span>};
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; alice &lt;&lt; <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">";   // Person{Alice, 30}</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-oop1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Vererbung &amp; Polymorphismus
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="vererbung &amp; polymorphismus">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Vererbung &amp; Polymorphismus
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Abstrakte Basisklasse</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Form</span> {
+<span style="color:#c792ea">public</span>:
+    <span style="color:#c792ea">virtual</span> ~<span style="color:#4ec9b0">Form</span>() = <span style="color:#c792ea">default</span>;   <span style="color:#546e7a">// virtual Destruktor IMMER bei Vererbung!</span>
+
+    <span style="color:#c792ea">virtual</span> <span style="color:#c792ea">double</span> flaeche()  <span style="color:#c792ea">const</span> = <span style="color:#f78c6c">0</span>;   <span style="color:#546e7a">// pure virtual (abstrakt)</span>
+    <span style="color:#c792ea">virtual</span> <span style="color:#c792ea">double</span> umfang()   <span style="color:#c792ea">const</span> = <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">virtual</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> name() <span style="color:#c792ea">const</span> = <span style="color:#f78c6c">0</span>;
+
+    <span style="color:#546e7a">// Nicht-virtuelle Methode</span>
+    <span style="color:#c792ea">void</span> drucke() <span style="color:#c792ea">const</span> {
+        <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; name() &lt;&lt; <span style="color:#c3e88d">": Fläche="</span> &lt;&lt; flaeche()
+                  &lt;&lt; <span style="color:#c3e88d">" Umfang="</span> &lt;&lt; umfang() &lt;&lt; <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">";</span>
+    }
+};
+
+<span style="color:#546e7a">// Abgeleitete Klasse</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Kreis</span> <span style="color:#c792ea">final</span> : <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Form</span> {   <span style="color:#546e7a">// final = keine weitere Ableitung</span>
+    <span style="color:#c792ea">double</span> radius_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#c792ea">explicit</span> <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">double</span> r) : radius_{r} {}
+
+    <span style="color:#c792ea">double</span>      flaeche()  <span style="color:#c792ea">const</span> <span style="color:#c792ea">override</span> { <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">M_PI</span> * radius_ * radius_; }
+    <span style="color:#c792ea">double</span>      umfang()   <span style="color:#c792ea">const</span> <span style="color:#c792ea">override</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> * <span style="color:#4ec9b0">M_PI</span> * radius_; }
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> name()     <span style="color:#c792ea">const</span> <span style="color:#c792ea">override</span> { <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Kreis"</span>; }
+};
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Rechteck</span> : <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Form</span> {
+    <span style="color:#c792ea">double</span> b_, h_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">double</span> b, <span style="color:#c792ea">double</span> h) : b_{b}, h_{h} {}
+
+    <span style="color:#c792ea">double</span>      flaeche()  <span style="color:#c792ea">const</span> <span style="color:#c792ea">override</span> { <span style="color:#c792ea">return</span> b_ * h_; }
+    <span style="color:#c792ea">double</span>      umfang()   <span style="color:#c792ea">const</span> <span style="color:#c792ea">override</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> * (b_ + h_); }
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> name()     <span style="color:#c792ea">const</span> <span style="color:#c792ea">override</span> { <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Rechteck"</span>; }
+};
+
+<span style="color:#546e7a">// Polymorphismus via Zeiger/Referenz auf Basisklasse</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">unique_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Form</span>&gt;&gt; formen;
+formen.push_back(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_unique</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Kreis</span>&gt;(<span style="color:#f78c6c">5.0</span>));
+formen.push_back(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_unique</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Rechteck</span>&gt;(<span style="color:#f78c6c">4.0</span>, <span style="color:#f78c6c">6.0</span>));
+
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; f : formen) {
+    f<span style="color:#89ddff">-&gt;</span>drucke();    <span style="color:#546e7a">// Dynamischer Dispatch!</span>
+}
+
+<span style="color:#546e7a">// dynamic_cast für sicheren Downcast</span>
+<span style="color:#c792ea">if</span> (<span style="color:#c792ea">auto</span>* k = <span style="color:#c792ea">dynamic_cast</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Kreis</span>*&gt;(formen[<span style="color:#f78c6c">0</span>].<span style="color:#82aaff">get</span>())) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; <span style="color:#c3e88d">"Radius: "</span> &lt;&lt; k<span style="color:#89ddff">-&gt;</span>radius_;  <span style="color:#546e7a">// Fehler: radius_ ist private</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-oop2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Rule of Five / Zero
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="rule of five / zero">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Rule of Five / Zero
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// C++ Ressourcenverwaltung: Rule of Five (oder Zero!)</span>
+
+<span style="color:#546e7a">// Rule of ZERO: Wenn Smart Pointer und STL-Container genutzt werden,</span>
+<span style="color:#546e7a">// braucht man NICHTS manuell definieren.</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ModernKlasse</span> {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>         name_;
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt;    daten_;
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">unique_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Foo</span>&gt; ressource_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#4ec9b0">ModernKlasse</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> n) : name_{<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(n)} {}
+    <span style="color:#546e7a">// Destruktor, Copy, Move – alles automatisch korrekt!</span>
+};
+
+<span style="color:#546e7a">// Rule of FIVE: Wenn Rohe Ressourcen verwaltet werden:</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">RawRessource</span> {
+    <span style="color:#c792ea">int</span>* data_;
+    <span style="color:#4ec9b0">size_t</span> size_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#546e7a">// 1. Konstruktor</span>
+    <span style="color:#c792ea">explicit</span> <span style="color:#4ec9b0">RawRessource</span>(<span style="color:#4ec9b0">size_t</span> n)
+        : data_{<span style="color:#c792ea">new</span> <span style="color:#c792ea">int</span>[n]}, size_{n} {}
+
+    <span style="color:#546e7a">// 2. Destruktor</span>
+    ~<span style="color:#4ec9b0">RawRessource</span>() { <span style="color:#c792ea">delete</span>[] data_; }
+
+    <span style="color:#546e7a">// 3. Copy-Konstruktor (tiefe Kopie)</span>
+    <span style="color:#4ec9b0">RawRessource</span>(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">RawRessource</span>&amp; o)
+        : data_{<span style="color:#c792ea">new</span> <span style="color:#c792ea">int</span>[o.size_]}, size_{o.size_} {
+        <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">copy</span>(o.data_, o.data_ + o.size_, data_);
+    }
+
+    <span style="color:#546e7a">// 4. Copy-Zuweisung</span>
+    <span style="color:#4ec9b0">RawRessource</span>&amp; <span style="color:#c792ea">operator</span>=(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">RawRessource</span>&amp; o) {
+        <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> != &amp;o) {
+            <span style="color:#c792ea">delete</span>[] data_;
+            data_ = <span style="color:#c792ea">new</span> <span style="color:#c792ea">int</span>[o.size_];
+            size_ = o.size_;
+            <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">copy</span>(o.data_, o.data_ + o.size_, data_);
+        }
+        <span style="color:#c792ea">return</span> *<span style="color:#c792ea">this</span>;
+    }
+
+    <span style="color:#546e7a">// 5. Move-Konstruktor (übernimmt, gibt nichts zurück)</span>
+    <span style="color:#4ec9b0">RawRessource</span>(<span style="color:#4ec9b0">RawRessource</span>&amp;&amp; o) <span style="color:#c792ea">noexcept</span>
+        : data_{<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">exchange</span>(o.data_, <span style="color:#c792ea">nullptr</span>)}
+        , size_{<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">exchange</span>(o.size_, <span style="color:#f78c6c">0</span>)} {}
+
+    <span style="color:#546e7a">// 6. Move-Zuweisung</span>
+    <span style="color:#4ec9b0">RawRessource</span>&amp; <span style="color:#c792ea">operator</span>=(<span style="color:#4ec9b0">RawRessource</span>&amp;&amp; o) <span style="color:#c792ea">noexcept</span> {
+        <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span> != &amp;o) {
+            <span style="color:#c792ea">delete</span>[] data_;
+            data_ = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">exchange</span>(o.data_, <span style="color:#c792ea">nullptr</span>);
+            size_ = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">exchange</span>(o.size_, <span style="color:#f78c6c">0</span>);
+        }
+        <span style="color:#c792ea">return</span> *<span style="color:#c792ea">this</span>;
+    }
+};
+
+<span style="color:#546e7a">// TIPP: Immer Rule of Zero bevorzugen!</span>
+<span style="color:#546e7a">// Nur Rule of Five wenn wirklich low-level nötig.</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-oop3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Templates &amp; Concepts (C++20)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="templates &amp; concepts (c++20)">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Templates &amp; Concepts (C++20)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── FUNCTION TEMPLATES ────────────────────────────────────────────</span>
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#4ec9b0">T</span> maximum(<span style="color:#4ec9b0">T</span> a, <span style="color:#4ec9b0">T</span> b) {
+    <span style="color:#c792ea">return</span> (a &gt; b) ? a : b;
+}
+
+maximum(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">7</span>);            <span style="color:#546e7a">// int</span>
+maximum(<span style="color:#f78c6c">3.14</span>, <span style="color:#f78c6c">2.72</span>);      <span style="color:#546e7a">// double</span>
+maximum<span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt;(<span style="color:#f78c6c">3.5</span>, <span style="color:#f78c6c">2.1</span>);   <span style="color:#546e7a">// explizit: int</span>
+
+<span style="color:#546e7a">// ── CLASS TEMPLATES ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#4ec9b0">size_t</span> <span style="color:#4ec9b0">N</span>&gt;
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">FixedArray</span> {
+    <span style="color:#4ec9b0">T</span> data_[<span style="color:#4ec9b0">N</span>];
+<span style="color:#c792ea">public</span>:
+    <span style="color:#4ec9b0">T</span>&amp;       <span style="color:#c792ea">operator</span>[](<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#4ec9b0">size_t</span> i)       { <span style="color:#c792ea">return</span> data_[i]; }
+    <span style="color:#c792ea">const</span> <span style="color:#4ec9b0">T</span>&amp; <span style="color:#c792ea">operator</span>[](<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#4ec9b0">size_t</span> i) <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> data_[i]; }
+    <span style="color:#c792ea">constexpr</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#4ec9b0">size_t</span> <span style="color:#82aaff">size</span>() <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">N</span>; }
+    <span style="color:#4ec9b0">T</span>* <span style="color:#82aaff">begin</span>() { <span style="color:#c792ea">return</span> data_; }
+    <span style="color:#4ec9b0">T</span>* <span style="color:#82aaff">end</span>()   { <span style="color:#c792ea">return</span> data_ + <span style="color:#4ec9b0">N</span>; }
+};
+
+<span style="color:#4ec9b0">FixedArray</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>, <span style="color:#f78c6c">5</span>&gt; arr;
+
+<span style="color:#546e7a">// ── CONCEPTS (C++20) – Constraints für Templates ──────────────────</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;concepts&gt;</span>
+
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#c792ea">concept</span> <span style="color:#4ec9b0">Numeric</span> = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>integral<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt; || <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>floating_point<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt;;
+
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Numeric</span> <span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#4ec9b0">T</span> summe(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt; v) {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">reduce</span>(v.<span style="color:#82aaff">begin</span>(), v.<span style="color:#82aaff">end</span>(), <span style="color:#4ec9b0">T</span>{<span style="color:#f78c6c">0</span>});
+}
+
+<span style="color:#546e7a">// Kurzform mit auto</span>
+<span style="color:#c792ea">auto</span> mul(<span style="color:#4ec9b0">Numeric</span> <span style="color:#c792ea">auto</span> a, <span style="color:#4ec9b0">Numeric</span> <span style="color:#c792ea">auto</span> b) {
+    <span style="color:#c792ea">return</span> a * b;
+}
+
+<span style="color:#546e7a">// requires-Klausel</span>
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#c792ea">requires</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>equality_comparable<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt; &amp;&amp; <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>copyable<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#c792ea">bool</span> istIn(<span style="color:#4ec9b0">T</span> wert, <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt; container) {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">find</span>(container.<span style="color:#82aaff">begin</span>(), container.<span style="color:#82aaff">end</span>(), wert)
+           != container.<span style="color:#82aaff">end</span>();
+}
+
+<span style="color:#546e7a">// ── VARIADIC TEMPLATES ────────────────────────────────────────────</span>
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span>... <span style="color:#4ec9b0">Ts</span>&gt;
+<span style="color:#c792ea">auto</span> meinTuple(<span style="color:#4ec9b0">Ts</span>&amp;&amp;... args) {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">tuple</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Ts</span>...&gt;{<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">forward</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Ts</span>&gt;(args)...};
+}
+
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>, <span style="color:#c792ea">typename</span>... <span style="color:#4ec9b0">Rest</span>&gt;
+<span style="color:#c792ea">void</span> druckeAlle(<span style="color:#4ec9b0">T</span> first, <span style="color:#4ec9b0">Rest</span>... rest) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; first &lt;&lt; <span style="color:#c3e88d">" "</span>;
+    <span style="color:#c792ea">if</span> <span style="color:#c792ea">constexpr</span> (<span style="color:#c792ea">sizeof</span>...(rest) &gt; <span style="color:#f78c6c">0</span>) {
+        druckeAlle(rest...);
+    }
+}
+
+druckeAlle(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2.5</span>, <span style="color:#c3e88d">"Hallo"</span>, <span style="color:#c3e88d">'x'</span>);   <span style="color:#546e7a">// 1 2.5 Hallo x</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-modern" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Feature suchen…">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #00599c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00599c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00599c">
+      <span style="display:inline-block;width:8px;height:8px;background:#00599c;border-radius:50%;margin-right:2px"></span>Move-Semantik &amp; Perfect Forwarding
+    </span>
+    <span class="aa" style="color:#00599c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="move-semantik &amp; perfect forwarding">
+  <div style="color:#00599c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Move-Semantik &amp; Perfect Forwarding
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;utility&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;vector&gt;</span>
+
+<span style="color:#546e7a">// ── MOVE-SEMANTIK (C++11) ─────────────────────────────────────────</span>
+<span style="color:#546e7a">// Statt teuer zu kopieren: Ressource "stehlen"</span>
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> s1 = <span style="color:#c3e88d">"Langer String mit vielen Zeichen"</span>;
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> s2 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(s1);   <span style="color:#546e7a">// s1 ist jetzt leer ("moved-from")</span>
+<span style="color:#546e7a">// s2 hat die Ressource übernommen – KEINE Kopie!</span>
+
+<span style="color:#546e7a">// In Funktionen: by-value + move ist oft optimal</span>
+<span style="color:#c792ea">void</span> verarbeite(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> text) {   <span style="color:#546e7a">// Kopie oder Move</span>
+    <span style="color:#546e7a">// ...</span>
+}
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> einText = <span style="color:#c3e88d">"Hallo"</span>;
+verarbeite(einText);             <span style="color:#546e7a">// Kopie</span>
+verarbeite(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(einText));  <span style="color:#546e7a">// Move – einText danach leer</span>
+verarbeite(<span style="color:#c3e88d">"Welt"</span>);              <span style="color:#546e7a">// Move (temporär)</span>
+
+<span style="color:#546e7a">// ── PERFECT FORWARDING ────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Leitet Argumente ohne Typverlust weiter</span>
+
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>, <span style="color:#c792ea">typename</span>... <span style="color:#4ec9b0">Args</span>&gt;
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">unique_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt; machUnique(<span style="color:#4ec9b0">Args</span>&amp;&amp;... args) {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">unique_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt;(<span style="color:#c792ea">new</span> <span style="color:#4ec9b0">T</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">forward</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Args</span>&gt;(args)...));
+}
+
+<span style="color:#546e7a">// std::forward erhält die Wert-Kategorie (lvalue/rvalue)</span>
+
+<span style="color:#546e7a">// ── RVALUE-REFERENZEN IN DER PRAXIS ──────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Buffer</span> {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">char</span>&gt; data_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#546e7a">// Move-Konstruktor: übernimmt den Vektor</span>
+    <span style="color:#4ec9b0">Buffer</span>(<span style="color:#4ec9b0">Buffer</span>&amp;&amp; o) <span style="color:#c792ea">noexcept</span> : data_{<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(o.data_)} {}
+
+    <span style="color:#546e7a">// Effiziente Rückgabe großer Objekte (NRVO macht es oft eh)</span>
+    <span style="color:#c792ea">static</span> <span style="color:#4ec9b0">Buffer</span> erstelle(<span style="color:#4ec9b0">size_t</span> n) {
+        <span style="color:#4ec9b0">Buffer</span> b;
+        b.data_.resize(n);
+        <span style="color:#c792ea">return</span> b;   <span style="color:#546e7a">// Move oder RVO</span>
+    }
+};</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Lambda-Ausdrücke
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="lambda-ausdrücke">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Lambda-Ausdrücke
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;functional&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;algorithm&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;vector&gt;</span>
+
+<span style="color:#546e7a">// Grundform: [capture](params) -&gt; rettype { body }</span>
+
+<span style="color:#546e7a">// Einfaches Lambda</span>
+<span style="color:#c792ea">auto</span> addiere = [](<span style="color:#c792ea">int</span> a, <span style="color:#c792ea">int</span> b) { <span style="color:#c792ea">return</span> a + b; };
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; addiere(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>);   <span style="color:#546e7a">// 7</span>
+
+<span style="color:#546e7a">// Mit Rückgabetyp</span>
+<span style="color:#c792ea">auto</span> teile = [](<span style="color:#c792ea">double</span> a, <span style="color:#c792ea">double</span> b) <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">double</span> {
+    <span style="color:#c792ea">if</span> (b == <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>runtime_error{<span style="color:#c3e88d">"Division durch 0"</span>};
+    <span style="color:#c792ea">return</span> a / b;
+};
+
+<span style="color:#546e7a">// ── CAPTURES ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">int</span> x = <span style="color:#f78c6c">10</span>, y = <span style="color:#f78c6c">20</span>;
+
+<span style="color:#c792ea">auto</span> f1 = [x]()    { <span style="color:#c792ea">return</span> x; };      <span style="color:#546e7a">// Kopie von x</span>
+<span style="color:#c792ea">auto</span> f2 = [&amp;x]()   { <span style="color:#c792ea">return</span> x; };      <span style="color:#546e7a">// Referenz auf x</span>
+<span style="color:#c792ea">auto</span> f3 = [=]()    { <span style="color:#c792ea">return</span> x + y; };  <span style="color:#546e7a">// Alle per Kopie</span>
+<span style="color:#c792ea">auto</span> f4 = [&amp;]()    { x++; y++; };     <span style="color:#546e7a">// Alle per Referenz</span>
+<span style="color:#c792ea">auto</span> f5 = [x, &amp;y]() { <span style="color:#c792ea">return</span> x + y; }; <span style="color:#546e7a">// Mixed</span>
+<span style="color:#c792ea">auto</span> f6 = [<span style="color:#c792ea">this</span>]() { /* <span style="color:#4ec9b0">Membervariablen</span> */ };  <span style="color:#546e7a">// this-Pointer</span>
+
+<span style="color:#546e7a">// mutable – erlaubt Änderung der Kopien</span>
+<span style="color:#c792ea">auto</span> f7 = [x]() <span style="color:#c792ea">mutable</span> { x++; <span style="color:#c792ea">return</span> x; };  <span style="color:#546e7a">// x-Kopie änderbar</span>
+
+<span style="color:#546e7a">// ── IN STL-ALGORITHMEN ────────────────────────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt; v{<span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">6</span>};
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">sort</span>(v.<span style="color:#82aaff">begin</span>(), v.<span style="color:#82aaff">end</span>());                           <span style="color:#546e7a">// aufsteigend</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">sort</span>(v.<span style="color:#82aaff">begin</span>(), v.<span style="color:#82aaff">end</span>(), <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>greater<span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt;{});      <span style="color:#546e7a">// absteigend</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">sort</span>(v.<span style="color:#82aaff">begin</span>(), v.<span style="color:#82aaff">end</span>(), [](<span style="color:#c792ea">int</span> a, <span style="color:#c792ea">int</span> b) {         <span style="color:#546e7a">// custom</span>
+    <span style="color:#c792ea">return</span> a % <span style="color:#f78c6c">2</span> &lt; b % <span style="color:#f78c6c">2</span>;   <span style="color:#546e7a">// Gerade zuerst</span>
+});
+
+<span style="color:#c792ea">auto</span> anzahl = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">count_if</span>(v.<span style="color:#82aaff">begin</span>(), v.<span style="color:#82aaff">end</span>(),
+    [](<span style="color:#c792ea">int</span> n) { <span style="color:#c792ea">return</span> n &gt; <span style="color:#f78c6c">5</span>; });
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">transform</span>(v.<span style="color:#82aaff">begin</span>(), v.<span style="color:#82aaff">end</span>(), v.<span style="color:#82aaff">begin</span>(),
+    [](<span style="color:#c792ea">int</span> n) { <span style="color:#c792ea">return</span> n * n; });
+
+<span style="color:#546e7a">// ── IIFLE (Immediately Invoked) ───────────────────────────────────</span>
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span> ergebnis = [&amp;]() {
+    <span style="color:#546e7a">// Komplexe Berechnung als Ausdruck</span>
+    <span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">10</span>) <span style="color:#c792ea">return</span> x * <span style="color:#f78c6c">2</span>;
+    <span style="color:#c792ea">return</span> x + y;
+}();
+
+<span style="color:#546e7a">// ── GENERIC LAMBDA (C++14) ────────────────────────────────────────</span>
+<span style="color:#c792ea">auto</span> drucke = [](<span style="color:#c792ea">auto</span> <span style="color:#c792ea">const</span>&amp; val) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; val &lt;&lt; <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">";</span>
+};
+drucke(<span style="color:#f78c6c">42</span>); drucke(<span style="color:#c3e88d">"Hallo"</span>); drucke(<span style="color:#f78c6c">3.14</span>);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Ranges &amp; Views (C++20)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="ranges &amp; views (c++20)">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Ranges &amp; Views (C++20)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;ranges&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;vector&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;algorithm&gt;</span>
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt; zahlen{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>};
+
+<span style="color:#546e7a">// ── RANGES PIPELINE (wie Unix-Pipes | ) ──────────────────────────</span>
+<span style="color:#546e7a">// Lazy – wird erst bei Iteration ausgewertet!</span>
+<span style="color:#c792ea">namespace</span> rv = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">views</span>;
+
+<span style="color:#c792ea">auto</span> gerade_quadrate = zahlen
+    | rv<span style="color:#89ddff">::</span>filter([](<span style="color:#c792ea">int</span> n) { <span style="color:#c792ea">return</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>; })
+    | rv<span style="color:#89ddff">::</span><span style="color:#82aaff">transform</span>([](<span style="color:#c792ea">int</span> n) { <span style="color:#c792ea">return</span> n * n; });
+
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> n : gerade_quadrate) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; n &lt;&lt; <span style="color:#c3e88d">" "</span>;   <span style="color:#546e7a">// 4 16 36 64 100</span>
+}
+
+<span style="color:#546e7a">// Sammeln in vector</span>
+<span style="color:#c792ea">auto</span> vec = gerade_quadrate | <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">ranges</span><span style="color:#89ddff">::</span>to<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span>&gt;();  <span style="color:#546e7a">// C++23</span>
+
+<span style="color:#546e7a">// ── VIEWS – Lazy Transformationen ─────────────────────────────────</span>
+rv<span style="color:#89ddff">::</span>iota(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">11</span>)         <span style="color:#546e7a">// [1, 2, ..., 10]</span>
+rv<span style="color:#89ddff">::</span>iota(<span style="color:#f78c6c">0</span>)             <span style="color:#546e7a">// [0, 1, 2, ...] (unendlich!)</span>
+rv<span style="color:#89ddff">::</span>repeat(<span style="color:#f78c6c">42</span>)          <span style="color:#546e7a">// [42, 42, 42, ...] (unendlich)</span>
+
+<span style="color:#546e7a">// take/drop</span>
+rv<span style="color:#89ddff">::</span>iota(<span style="color:#f78c6c">0</span>) | rv<span style="color:#89ddff">::</span>take(<span style="color:#f78c6c">5</span>)     <span style="color:#546e7a">// [0, 1, 2, 3, 4]</span>
+zahlen | rv<span style="color:#89ddff">::</span>drop(<span style="color:#f78c6c">3</span>)           <span style="color:#546e7a">// [4, 5, 6, 7, 8, 9, 10]</span>
+
+<span style="color:#546e7a">// reverse, keys, values</span>
+zahlen | rv<span style="color:#89ddff">::</span><span style="color:#82aaff">reverse</span>           <span style="color:#546e7a">// [10, 9, 8, ..., 1]</span>
+
+<span style="color:#546e7a">// zip (C++23)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt; namen{<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Bob"</span>, <span style="color:#c3e88d">"Carol"</span>};
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">auto</span> [n, s] : rv<span style="color:#89ddff">::</span>zip(zahlen, namen)) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; n &lt;&lt; <span style="color:#c3e88d">":"</span> &lt;&lt; s &lt;&lt; <span style="color:#c3e88d">" "</span>;
+}
+
+<span style="color:#546e7a">// chunk/slide (C++23)</span>
+zahlen | rv<span style="color:#89ddff">::</span>chunk(<span style="color:#f78c6c">3</span>)   <span style="color:#546e7a">// [[1,2,3],[4,5,6],[7,8,9],[10]]</span>
+zahlen | rv<span style="color:#89ddff">::</span>slide(<span style="color:#f78c6c">3</span>)   <span style="color:#546e7a">// [[1,2,3],[2,3,4],...,[8,9,10]]</span>
+
+<span style="color:#546e7a">// Ranges-Algorithmen (direkt, kein begin/end nötig!)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">ranges</span><span style="color:#89ddff">::</span><span style="color:#82aaff">sort</span>(zahlen);
+<span style="color:#c792ea">auto</span> <span style="color:#82aaff">max</span> = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">ranges</span><span style="color:#89ddff">::</span><span style="color:#82aaff">max_element</span>(zahlen);
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">ranges</span><span style="color:#89ddff">::</span><span style="color:#82aaff">for_each</span>(zahlen, [](<span style="color:#c792ea">int</span> n) { <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; n; });</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Coroutinen (C++20)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="coroutinen (c++20)">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Coroutinen (C++20)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;coroutine&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;generator&gt;   // C++23</span>
+
+<span style="color:#546e7a">// ── GENERATOR – Lazy Sequences ────────────────────────────────────</span>
+<span style="color:#546e7a">// std::generator (C++23) macht das einfach</span>
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>generator<span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt; fibonacci() {
+    <span style="color:#c792ea">int</span> a = <span style="color:#f78c6c">0</span>, b = <span style="color:#f78c6c">1</span>;
+    <span style="color:#c792ea">while</span> (<span style="color:#c792ea">true</span>) {
+        <span style="color:#c792ea">co_yield</span> a;           <span style="color:#546e7a">// Gibt Wert zurück, pausiert</span>
+        <span style="color:#c792ea">auto</span> temp = a + b;
+        a = b;
+        b = temp;
+    }
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> n : fibonacci() | <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">views</span><span style="color:#89ddff">::</span>take(<span style="color:#f78c6c">10</span>)) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; n &lt;&lt; <span style="color:#c3e88d">" "</span>;   <span style="color:#546e7a">// 0 1 1 2 3 5 8 13 21 34</span>
+}
+
+<span style="color:#546e7a">// Erste Fibonacci-Zahl &gt; 1000</span>
+<span style="color:#c792ea">auto</span> gen = fibonacci();
+<span style="color:#c792ea">auto</span> it = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">ranges</span><span style="color:#89ddff">::</span><span style="color:#82aaff">find_if</span>(gen, [](<span style="color:#c792ea">int</span> n) { <span style="color:#c792ea">return</span> n &gt; <span style="color:#f78c6c">1000</span>; });
+<span style="color:#546e7a">// *it == 1597</span>
+
+<span style="color:#546e7a">// ── ASYNC COROUTINEN (vereinfacht) ───────────────────────────────</span>
+<span style="color:#546e7a">// (Für vollständiges Beispiel braucht man Coroutine-Framework</span>
+<span style="color:#546e7a">//  wie cppcoro, libcoro oder Asio)</span>
+
+<span style="color:#546e7a">// Mit Asio (populärstes Async-Framework):</span>
+<span style="color:#546e7a">// asio::awaitable&lt;void&gt; holeUser(int id) {</span>
+<span style="color:#546e7a">//     auto response = co_await httpClient.get("/users/" + id);</span>
+<span style="color:#546e7a">//     auto user     = parseUser(co_await response.body());</span>
+<span style="color:#546e7a">//     co_return user;</span>
+<span style="color:#546e7a">// }</span>
+
+<span style="color:#546e7a">// co_await – warte auf Ergebnis</span>
+<span style="color:#546e7a">// co_yield – gib Wert zurück und pausiere</span>
+<span style="color:#546e7a">// co_return – beende die Coroutine</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod4"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>std::format &amp; Print (C++20/23)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="std::format &amp; print (c++20/23)">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    std::format &amp; Print (C++20/23)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;format&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;print&gt;   // C++23</span>
+
+<span style="color:#546e7a">// ── std::format (C++20) – typsicherer printf-Ersatz ──────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> s = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"Name: {}, Alter: {}"</span>, <span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>);
+<span style="color:#546e7a">// "Name: Alice, Alter: 30"</span>
+
+<span style="color:#546e7a">// Format-Spezifikationen</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:.2f}"</span>, <span style="color:#f78c6c">3.14159</span>);       <span style="color:#546e7a">// "3.14"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:10d}"</span>, <span style="color:#f78c6c">42</span>);            <span style="color:#546e7a">// "        42"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:&lt;10}"</span>, <span style="color:#c3e88d">"links"</span>);       <span style="color:#546e7a">// "links     "</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:&gt;10}"</span>, <span style="color:#c3e88d">"rechts"</span>);      <span style="color:#546e7a">// "     rechts"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:^10}"</span>, <span style="color:#c3e88d">"mitte"</span>);       <span style="color:#546e7a">// "  mitte   "</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:05}"</span>, <span style="color:#f78c6c">42</span>);             <span style="color:#546e7a">// "00042"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:x}"</span>, <span style="color:#f78c6c">255</span>);             <span style="color:#546e7a">// "ff"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:#x}"</span>, <span style="color:#f78c6c">255</span>);            <span style="color:#546e7a">// "0xff"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:b}"</span>, <span style="color:#f78c6c">0b1010</span>);          <span style="color:#546e7a">// "1010"</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{:e}"</span>, <span style="color:#f78c6c">1234567.89</span>);      <span style="color:#546e7a">// "1.234568e+06"</span>
+
+<span style="color:#546e7a">// Indizierte Argumente</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{0} und {1}, nicht {0}"</span>, <span style="color:#c3e88d">"Brot"</span>, <span style="color:#c3e88d">"Butter"</span>);
+<span style="color:#546e7a">// "Brot und Butter, nicht Brot"</span>
+
+<span style="color:#546e7a">// Mit eigenen Typen (std::formatter spezialisieren)</span>
+<span style="color:#546e7a">// template&lt;&gt;</span>
+<span style="color:#546e7a">// struct std::formatter&lt;Person&gt; {</span>
+<span style="color:#546e7a">//     auto format(const Person&amp; p, auto&amp; ctx) const {</span>
+<span style="color:#546e7a">//         return std::format_to(ctx.out(), "Person({}, {})",</span>
+<span style="color:#546e7a">//                               p.name(), p.alter());</span>
+<span style="color:#546e7a">//     }</span>
+<span style="color:#546e7a">// };</span>
+
+<span style="color:#546e7a">// ── std::print (C++23) – direkte Ausgabe ─────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Hallo, {}!</span>
+<span style="color:#c3e88d">", "</span><span style="color:#4ec9b0">Welt</span><span style="color:#c3e88d">");   // Wie cout + format</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Name: {}"</span>, name);        <span style="color:#546e7a">// Automatisch Newline</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cerr</span>, <span style="color:#c3e88d">"Fehler: {}"</span>, msg);  <span style="color:#546e7a">// Zu stderr</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod5"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod5')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Modules (C++20)
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="modules (c++20)">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Modules (C++20)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── MODULE DEKLARIEREN ────────────────────────────────────────────</span>
+<span style="color:#546e7a">// math.cppm (oder .ixx)</span>
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">module</span> math;
+
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">namespace</span> math {
+    <span style="color:#c792ea">constexpr</span> <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">PI</span> = <span style="color:#f78c6c">3.14159265358979</span>;
+
+    <span style="color:#c792ea">export</span> <span style="color:#c792ea">double</span> kreis_flaeche(<span style="color:#c792ea">double</span> r) {
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">PI</span> * r * r;
+    }
+
+    <span style="color:#546e7a">// Nicht-exportiert (nur intern nutzbar)</span>
+    <span style="color:#c792ea">double</span> helfer(<span style="color:#c792ea">double</span> x) { <span style="color:#c792ea">return</span> x * x; }
+}
+
+<span style="color:#546e7a">// ── MODULE IMPORTIEREN ────────────────────────────────────────────</span>
+<span style="color:#546e7a">// main.cpp</span>
+<span style="color:#c792ea">import</span> math;
+<span style="color:#c792ea">import</span> &lt;iostream&gt;;   <span style="color:#546e7a">// Standard-Library als Modul</span>
+<span style="color:#c792ea">import</span> &lt;<span style="color:#82aaff">vector</span>&gt;;
+
+<span style="color:#c792ea">int</span> main() {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; math<span style="color:#89ddff">::</span>kreis_flaeche(<span style="color:#f78c6c">5.0</span>) &lt;&lt; <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">";</span>
+    <span style="color:#546e7a">// 78.5398...</span>
+}
+
+<span style="color:#546e7a">// ── MODUL-PARTITIONEN (für große Module) ─────────────────────────</span>
+<span style="color:#546e7a">// math.kreis.cppm</span>
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">module</span> math:kreis;
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">double</span> kreis_flaeche(<span style="color:#c792ea">double</span> r);
+
+<span style="color:#546e7a">// math.cppm</span>
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">module</span> math;
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">import</span> :kreis;   <span style="color:#546e7a">// Partition re-exportieren</span>
+
+<span style="color:#546e7a">// ── VORTEILE GEGENÜBER HEADER-DATEIEN ────────────────────────────</span>
+<span style="color:#546e7a">// 1. Schnellere Kompilierung (einmal kompiliert, gecacht)</span>
+<span style="color:#546e7a">// 2. Kein Header-Guard nötig</span>
+<span style="color:#546e7a">// 3. Klare Export/Import-Semantik</span>
+<span style="color:#546e7a">// 4. Makros "lecken" nicht aus dem Modul raus</span>
+<span style="color:#546e7a">// 5. Keine ODR-Verletzungen</span>
+
+<span style="color:#546e7a">// Status (2024): GCC 14, Clang 16, MSVC 2022 – alle unterstützen Module</span>
+<span style="color:#546e7a">// Build-System-Support: CMake 3.28+ mit CMAKE_CXX_SCAN_FOR_MODULES</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stl" class="tp">
+
+<div class="ac open" id="ac-stl0"
+     style="border:1px solid #00599c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('stl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00599c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00599c">
+      <span style="display:inline-block;width:8px;height:8px;background:#00599c;border-radius:50%;margin-right:2px"></span>std::vector&lt;T&gt;
+    </span>
+    <span class="aa" style="color:#00599c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="vec.push_back(x)" data-d="element hinten anfügen (kopie)">
+      <td style="width:220px"><code style="color:#00599c">vec.push_back(x)</code></td>
+      <td style="color:#6c7a8e">Element hinten anfügen (Kopie)</td>
+      <td style="color:#c3e88d;font-size:11px">vec.push_back(42)</td>
+    </tr>
+    <tr class="cr" data-m="vec.emplace_back(args)" data-d="element in-place konstruieren">
+      <td style="width:220px"><code style="color:#00599c">vec.emplace_back(args)</code></td>
+      <td style="color:#6c7a8e">Element in-place konstruieren</td>
+      <td style="color:#c3e88d;font-size:11px">vec.emplace_back("Alice", 30)</td>
+    </tr>
+    <tr class="cr" data-m="vec.pop_back()" data-d="letztes element entfernen">
+      <td style="width:220px"><code style="color:#00599c">vec.pop_back()</code></td>
+      <td style="color:#6c7a8e">Letztes Element entfernen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="vec[i] / vec.at(i)" data-d="zugriff ([] = kein check, at = safe)">
+      <td style="width:220px"><code style="color:#00599c">vec[i] / vec.at(i)</code></td>
+      <td style="color:#6c7a8e">Zugriff ([] = kein Check, at = safe)</td>
+      <td style="color:#c3e88d;font-size:11px">vec.at(0) wirft bei OOB</td>
+    </tr>
+    <tr class="cr" data-m="vec.front() / back()" data-d="erstes / letztes element">
+      <td style="width:220px"><code style="color:#00599c">vec.front() / back()</code></td>
+      <td style="color:#6c7a8e">Erstes / Letztes Element</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="vec.size()" data-d="anzahl elemente">
+      <td style="width:220px"><code style="color:#00599c">vec.size()</code></td>
+      <td style="color:#6c7a8e">Anzahl Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">size_t</td>
+    </tr>
+    <tr class="cr" data-m="vec.empty()" data-d="leer?">
+      <td style="width:220px"><code style="color:#00599c">vec.empty()</code></td>
+      <td style="color:#6c7a8e">Leer?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="vec.clear()" data-d="alle elemente löschen">
+      <td style="width:220px"><code style="color:#00599c">vec.clear()</code></td>
+      <td style="color:#6c7a8e">Alle Elemente löschen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="vec.reserve(n)" data-d="speicher vorallozieren">
+      <td style="width:220px"><code style="color:#00599c">vec.reserve(n)</code></td>
+      <td style="color:#6c7a8e">Speicher vorallozieren</td>
+      <td style="color:#c3e88d;font-size:11px">Verhindert Re-Allokierung</td>
+    </tr>
+    <tr class="cr" data-m="vec.resize(n)" data-d="größe setzen (füllt mit 0)">
+      <td style="width:220px"><code style="color:#00599c">vec.resize(n)</code></td>
+      <td style="color:#6c7a8e">Größe setzen (füllt mit 0)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="vec.insert(it, x)" data-d="an position einfügen">
+      <td style="width:220px"><code style="color:#00599c">vec.insert(it, x)</code></td>
+      <td style="color:#6c7a8e">An Position einfügen</td>
+      <td style="color:#c3e88d;font-size:11px">O(n)</td>
+    </tr>
+    <tr class="cr" data-m="vec.erase(it)" data-d="an position löschen">
+      <td style="width:220px"><code style="color:#00599c">vec.erase(it)</code></td>
+      <td style="color:#6c7a8e">An Position löschen</td>
+      <td style="color:#c3e88d;font-size:11px">O(n)</td>
+    </tr>
+    <tr class="cr" data-m="vec.erase(it1, it2)" data-d="bereich löschen">
+      <td style="width:220px"><code style="color:#00599c">vec.erase(it1, it2)</code></td>
+      <td style="color:#6c7a8e">Bereich löschen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="vec.begin() / end()" data-d="iteratoren">
+      <td style="width:220px"><code style="color:#00599c">vec.begin() / end()</code></td>
+      <td style="color:#6c7a8e">Iteratoren</td>
+      <td style="color:#c3e88d;font-size:11px">Für Algorithmen</td>
+    </tr>
+    <tr class="cr" data-m="vec.data()" data-d="roher zeiger auf daten">
+      <td style="width:220px"><code style="color:#00599c">vec.data()</code></td>
+      <td style="color:#6c7a8e">Roher Zeiger auf Daten</td>
+      <td style="color:#c3e88d;font-size:11px">C-API-Kompatibilität</td>
+    </tr>
+    <tr class="cr" data-m="std::vector&lt;t&gt;(n, v)" data-d="n elemente mit wert v">
+      <td style="width:220px"><code style="color:#00599c">std::vector&lt;T&gt;(n, v)</code></td>
+      <td style="color:#6c7a8e">n Elemente mit Wert v</td>
+      <td style="color:#c3e88d;font-size:11px">std::vector&lt;int&gt;(10, 0)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-stl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('stl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>std::map&lt;K,V&gt; &amp; unordered_map
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="m[key] = val" data-d="einfügen oder überschreiben">
+      <td style="width:220px"><code style="color:#4fc3f7">m[key] = val</code></td>
+      <td style="color:#6c7a8e">Einfügen oder überschreiben</td>
+      <td style="color:#c3e88d;font-size:11px">Erstellt Key wenn nicht vorhanden!</td>
+    </tr>
+    <tr class="cr" data-m="m.at(key)" data-d="zugriff (wirft wenn fehlt)">
+      <td style="width:220px"><code style="color:#4fc3f7">m.at(key)</code></td>
+      <td style="color:#6c7a8e">Zugriff (wirft wenn fehlt)</td>
+      <td style="color:#c3e88d;font-size:11px">Sicherer als []</td>
+    </tr>
+    <tr class="cr" data-m="m.insert({k,v})" data-d="einfügen (kein überschreiben)">
+      <td style="width:220px"><code style="color:#4fc3f7">m.insert({k,v})</code></td>
+      <td style="color:#6c7a8e">Einfügen (kein Überschreiben)</td>
+      <td style="color:#c3e88d;font-size:11px">Gibt pair&lt;iterator,bool&gt; zurück</td>
+    </tr>
+    <tr class="cr" data-m="m.emplace(k, v)" data-d="in-place konstruieren">
+      <td style="width:220px"><code style="color:#4fc3f7">m.emplace(k, v)</code></td>
+      <td style="color:#6c7a8e">In-place konstruieren</td>
+      <td style="color:#c3e88d;font-size:11px">Effizienter</td>
+    </tr>
+    <tr class="cr" data-m="m.find(key)" data-d="iterator (end() wenn nicht gefunden)">
+      <td style="width:220px"><code style="color:#4fc3f7">m.find(key)</code></td>
+      <td style="color:#6c7a8e">Iterator (end() wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px">if (it != m.end())</td>
+    </tr>
+    <tr class="cr" data-m="m.contains(key)" data-d="vorhanden? (c++20)">
+      <td style="width:220px"><code style="color:#4fc3f7">m.contains(key)</code></td>
+      <td style="color:#6c7a8e">Vorhanden? (C++20)</td>
+      <td style="color:#c3e88d;font-size:11px">Bevorzuge gegenüber count()</td>
+    </tr>
+    <tr class="cr" data-m="m.erase(key)" data-d="eintrag löschen">
+      <td style="width:220px"><code style="color:#4fc3f7">m.erase(key)</code></td>
+      <td style="color:#6c7a8e">Eintrag löschen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="m.count(key)" data-d="0 oder 1 (oder mehr bei multimap)">
+      <td style="width:220px"><code style="color:#4fc3f7">m.count(key)</code></td>
+      <td style="color:#6c7a8e">0 oder 1 (oder mehr bei multimap)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="m.size()" data-d="anzahl einträge">
+      <td style="width:220px"><code style="color:#4fc3f7">m.size()</code></td>
+      <td style="color:#6c7a8e">Anzahl Einträge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="m.empty()" data-d="leer?">
+      <td style="width:220px"><code style="color:#4fc3f7">m.empty()</code></td>
+      <td style="color:#6c7a8e">Leer?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="m.begin() / end()" data-d="iteratoren über pair&lt;k,v&gt;">
+      <td style="width:220px"><code style="color:#4fc3f7">m.begin() / end()</code></td>
+      <td style="color:#6c7a8e">Iteratoren über pair&lt;K,V&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">for(auto&amp; [k,v] : m)</td>
+    </tr>
+    <tr class="cr" data-m="m.lower_bound(k)" data-d="erster eintrag &gt;= k">
+      <td style="width:220px"><code style="color:#4fc3f7">m.lower_bound(k)</code></td>
+      <td style="color:#6c7a8e">Erster Eintrag &gt;= k</td>
+      <td style="color:#c3e88d;font-size:11px">Nur bei map (sortiert)</td>
+    </tr>
+    <tr class="cr" data-m="m.upper_bound(k)" data-d="erster eintrag &gt; k">
+      <td style="width:220px"><code style="color:#4fc3f7">m.upper_bound(k)</code></td>
+      <td style="color:#6c7a8e">Erster Eintrag &gt; k</td>
+      <td style="color:#c3e88d;font-size:11px">Nur bei map</td>
+    </tr>
+    <tr class="cr" data-m="m.merge(other)" data-d="einträge übernehmen (c++17)">
+      <td style="width:220px"><code style="color:#4fc3f7">m.merge(other)</code></td>
+      <td style="color:#6c7a8e">Einträge übernehmen (C++17)</td>
+      <td style="color:#c3e88d;font-size:11px">Kein Copy!</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-stl2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('stl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Algorithmen (&lt;algorithm&gt;)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="std::sort(b,e)" data-d="in-place sortieren o(n log n)">
+      <td style="width:220px"><code style="color:#4ec9b0">std::sort(b,e)</code></td>
+      <td style="color:#6c7a8e">In-place sortieren O(n log n)</td>
+      <td style="color:#c3e88d;font-size:11px">Braucht RandomAccessIterator</td>
+    </tr>
+    <tr class="cr" data-m="std::sort(b,e,comp)" data-d="mit komparator">
+      <td style="width:220px"><code style="color:#4ec9b0">std::sort(b,e,comp)</code></td>
+      <td style="color:#6c7a8e">Mit Komparator</td>
+      <td style="color:#c3e88d;font-size:11px">comp(a,b) -&gt; bool</td>
+    </tr>
+    <tr class="cr" data-m="std::ranges::sort(v)" data-d="range direkt (c++20)">
+      <td style="width:220px"><code style="color:#4ec9b0">std::ranges::sort(v)</code></td>
+      <td style="color:#6c7a8e">Range direkt (C++20)</td>
+      <td style="color:#c3e88d;font-size:11px">Kein begin/end nötig</td>
+    </tr>
+    <tr class="cr" data-m="std::find(b,e,val)" data-d="wert suchen -&gt; iterator">
+      <td style="width:220px"><code style="color:#4ec9b0">std::find(b,e,val)</code></td>
+      <td style="color:#6c7a8e">Wert suchen -&gt; Iterator</td>
+      <td style="color:#c3e88d;font-size:11px">O(n)</td>
+    </tr>
+    <tr class="cr" data-m="std::find_if(b,e,f)" data-d="suche mit prädikat">
+      <td style="width:220px"><code style="color:#4ec9b0">std::find_if(b,e,f)</code></td>
+      <td style="color:#6c7a8e">Suche mit Prädikat</td>
+      <td style="color:#c3e88d;font-size:11px">O(n)</td>
+    </tr>
+    <tr class="cr" data-m="std::binary_search(b,e,v)" data-d="binäre suche (sortiert!)">
+      <td style="width:220px"><code style="color:#4ec9b0">std::binary_search(b,e,v)</code></td>
+      <td style="color:#6c7a8e">Binäre Suche (sortiert!)</td>
+      <td style="color:#c3e88d;font-size:11px">O(log n)</td>
+    </tr>
+    <tr class="cr" data-m="std::count(b,e,v)" data-d="vorkommen zählen">
+      <td style="width:220px"><code style="color:#4ec9b0">std::count(b,e,v)</code></td>
+      <td style="color:#6c7a8e">Vorkommen zählen</td>
+      <td style="color:#c3e88d;font-size:11px">O(n)</td>
+    </tr>
+    <tr class="cr" data-m="std::transform(b,e,o,f)" data-d="transformieren -&gt; ausgabe">
+      <td style="width:220px"><code style="color:#4ec9b0">std::transform(b,e,o,f)</code></td>
+      <td style="color:#6c7a8e">Transformieren -&gt; Ausgabe</td>
+      <td style="color:#c3e88d;font-size:11px">Output-Iterator</td>
+    </tr>
+    <tr class="cr" data-m="std::for_each(b,e,f)" data-d="funktion auf alle anwenden">
+      <td style="width:220px"><code style="color:#4ec9b0">std::for_each(b,e,f)</code></td>
+      <td style="color:#6c7a8e">Funktion auf alle anwenden</td>
+      <td style="color:#c3e88d;font-size:11px">Oder Range-for</td>
+    </tr>
+    <tr class="cr" data-m="std::copy(b,e,out)" data-d="bereich kopieren">
+      <td style="width:220px"><code style="color:#4ec9b0">std::copy(b,e,out)</code></td>
+      <td style="color:#6c7a8e">Bereich kopieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="std::fill(b,e,v)" data-d="mit wert füllen">
+      <td style="width:220px"><code style="color:#4ec9b0">std::fill(b,e,v)</code></td>
+      <td style="color:#6c7a8e">Mit Wert füllen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="std::any_of(b,e,f)" data-d="mindestens eines erfüllt prädikat?">
+      <td style="width:220px"><code style="color:#4ec9b0">std::any_of(b,e,f)</code></td>
+      <td style="color:#6c7a8e">Mindestens eines erfüllt Prädikat?</td>
+      <td style="color:#c3e88d;font-size:11px">bool</td>
+    </tr>
+    <tr class="cr" data-m="std::all_of(b,e,f)" data-d="alle erfüllen prädikat?">
+      <td style="width:220px"><code style="color:#4ec9b0">std::all_of(b,e,f)</code></td>
+      <td style="color:#6c7a8e">Alle erfüllen Prädikat?</td>
+      <td style="color:#c3e88d;font-size:11px">bool</td>
+    </tr>
+    <tr class="cr" data-m="std::none_of(b,e,f)" data-d="keines erfüllt prädikat?">
+      <td style="width:220px"><code style="color:#4ec9b0">std::none_of(b,e,f)</code></td>
+      <td style="color:#6c7a8e">Keines erfüllt Prädikat?</td>
+      <td style="color:#c3e88d;font-size:11px">bool</td>
+    </tr>
+    <tr class="cr" data-m="std::accumulate(b,e,init)" data-d="akkumulieren (summe etc.)">
+      <td style="width:220px"><code style="color:#4ec9b0">std::accumulate(b,e,init)</code></td>
+      <td style="color:#6c7a8e">Akkumulieren (Summe etc.)</td>
+      <td style="color:#c3e88d;font-size:11px">#include &lt;numeric&gt;</td>
+    </tr>
+    <tr class="cr" data-m="std::reduce(b,e)" data-d="wie accumulate, parallelisierbar">
+      <td style="width:220px"><code style="color:#4ec9b0">std::reduce(b,e)</code></td>
+      <td style="color:#6c7a8e">Wie accumulate, parallelisierbar</td>
+      <td style="color:#c3e88d;font-size:11px">C++17</td>
+    </tr>
+    <tr class="cr" data-m="std::min(a,b) / max" data-d="minimum / maximum">
+      <td style="width:220px"><code style="color:#4ec9b0">std::min(a,b) / max</code></td>
+      <td style="color:#6c7a8e">Minimum / Maximum</td>
+      <td style="color:#c3e88d;font-size:11px">Auch: min_element</td>
+    </tr>
+    <tr class="cr" data-m="std::unique(b,e)" data-d="aufeinanderfolgende duplikate entf.">
+      <td style="width:220px"><code style="color:#4ec9b0">std::unique(b,e)</code></td>
+      <td style="color:#6c7a8e">Aufeinanderfolgende Duplikate entf.</td>
+      <td style="color:#c3e88d;font-size:11px">Erst sort() aufrufen!</td>
+    </tr>
+    <tr class="cr" data-m="std::remove_if(b,e,f)" data-d="elemente markieren (erase-remove!)">
+      <td style="width:220px"><code style="color:#4ec9b0">std::remove_if(b,e,f)</code></td>
+      <td style="color:#6c7a8e">Elemente markieren (erase-remove!)</td>
+      <td style="color:#c3e88d;font-size:11px">Erase-Remove Idiom</td>
+    </tr>
+    <tr class="cr" data-m="std::reverse(b,e)" data-d="reihenfolge umkehren">
+      <td style="width:220px"><code style="color:#4ec9b0">std::reverse(b,e)</code></td>
+      <td style="color:#6c7a8e">Reihenfolge umkehren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="std::rotate(b,m,e)" data-d="rotieren">
+      <td style="width:220px"><code style="color:#4ec9b0">std::rotate(b,m,e)</code></td>
+      <td style="color:#6c7a8e">Rotieren</td>
+      <td style="color:#c3e88d;font-size:11px">middle wird zum neuen Anfang</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-memory" class="tp ">
+
+<div class="ac open" id="ac-mem0"
+     style="border:1px solid #00599c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mem0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00599c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00599c">
+      <span style="display:inline-block;width:8px;height:8px;background:#00599c;border-radius:50%;margin-right:2px"></span>RAII &amp; Smart Pointer
+    </span>
+    <span class="aa" style="color:#00599c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="raii &amp; smart pointer">
+  <div style="color:#00599c;font-weight:700;font-size:12px;margin-bottom:8px">
+    RAII &amp; Smart Pointer
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// RAII = Resource Acquisition Is Initialization</span>
+<span style="color:#546e7a">// Ressourcen werden im Konstruktor erworben und im Destruktor freigegeben</span>
+<span style="color:#546e7a">// → Automatische, fehlerfreie Ressourcenverwaltung</span>
+
+<span style="color:#546e7a">// ── unique_ptr – Alleinbesitzer ───────────────────────────────────</span>
+<span style="color:#c792ea">auto</span> p1 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_unique</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt;(<span style="color:#f78c6c">42</span>);      <span style="color:#546e7a">// Empfohlen</span>
+<span style="color:#546e7a">// std::unique_ptr&lt;int&gt; p1{new int{42}};  // Alternativ</span>
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; *p1;         <span style="color:#546e7a">// 42</span>
+p1.reset();               <span style="color:#546e7a">// Löscht; p1 ist jetzt nullptr</span>
+p1 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_unique</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt;(<span style="color:#f78c6c">99</span>);
+
+<span style="color:#546e7a">// Übertragen (unique → kein Copy, nur Move!)</span>
+<span style="color:#c792ea">auto</span> p2 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(p1);  <span style="color:#546e7a">// p1 ist jetzt nullptr</span>
+
+<span style="color:#546e7a">// Custom Deleter</span>
+<span style="color:#c792ea">auto</span> file = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">unique_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">FILE</span>, <span style="color:#c792ea">decltype</span>(&amp;fclose)&gt;(
+    fopen(<span style="color:#c3e88d">"datei.txt"</span>, <span style="color:#c3e88d">"r"</span>), fclose
+);
+
+<span style="color:#546e7a">// ── shared_ptr – Geteilter Besitz ────────────────────────────────</span>
+<span style="color:#c792ea">auto</span> sp1 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">make_shared</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt;(<span style="color:#c3e88d">"Hallo"</span>);
+<span style="color:#c792ea">auto</span> sp2 = sp1;           <span style="color:#546e7a">// beide besitzen den String</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; sp1.use_count();   <span style="color:#546e7a">// 2</span>
+
+<span style="color:#546e7a">// Löscht nur wenn letzter Owner weg</span>
+sp1.reset();              <span style="color:#546e7a">// use_count = 1</span>
+<span style="color:#546e7a">// sp2.reset();           // jetzt wird gelöscht</span>
+
+<span style="color:#546e7a">// ── weak_ptr – Nicht-besitzend ───────────────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">weak_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt; wp = sp2;
+<span style="color:#c792ea">if</span> (<span style="color:#c792ea">auto</span> locked = wp.lock()) {   <span style="color:#546e7a">// Gibt shared_ptr zurück oder nullptr</span>
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; *locked;
+}
+
+<span style="color:#546e7a">// ── enable_shared_from_this ───────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Widget</span> : <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>enable_shared_from_this<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Widget</span>&gt; {
+<span style="color:#c792ea">public</span>:
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">shared_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Widget</span>&gt; self() {
+        <span style="color:#c792ea">return</span> shared_from_this();   <span style="color:#546e7a">// Sicherer this-shared_ptr</span>
+    }
+};</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mem1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mem1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Speicherlayout &amp; Performance
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="speicherlayout &amp; performance">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Speicherlayout &amp; Performance
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── STACK vs HEAP ────────────────────────────────────────────────</span>
+<span style="color:#c792ea">int</span>  x = <span style="color:#f78c6c">42</span>;                    <span style="color:#546e7a">// Stack – automatisch, sehr schnell</span>
+<span style="color:#c792ea">auto</span> p = <span style="color:#c792ea">new</span> <span style="color:#c792ea">int</span>{<span style="color:#f78c6c">42</span>};           <span style="color:#546e7a">// Heap – manuell, langsamer</span>
+<span style="color:#c792ea">delete</span> p;
+
+<span style="color:#546e7a">// Stack-Allokation ist VIEL schneller als Heap!</span>
+<span style="color:#546e7a">// Prefer stack when: kleines Objekt, kurze Lebensdauer</span>
+
+<span style="color:#546e7a">// ── CACHE-FREUNDLICHE DATENSTRUKTUREN ────────────────────────────</span>
+<span style="color:#546e7a">// Schlecht: Zeiger-Array (keine Lokalität)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">unique_ptr</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Tier</span>&gt;&gt; schlecht;
+
+<span style="color:#546e7a">// Besser: Objekte direkt im Vector (zusammenhängend)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Tier</span>&gt; besser;
+
+<span style="color:#546e7a">// Noch besser: Struct of Arrays (SoA) statt Array of Structs (AoS)</span>
+<span style="color:#546e7a">// AoS (Standard):</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">TeilchenAoS</span> { <span style="color:#c792ea">float</span> x, y, z, vx, vy, vz; };
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">TeilchenAoS</span>&gt; teilchen_aos;
+
+<span style="color:#546e7a">// SoA (cache-freundlich für Massenoperationen):</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">TeilchenSoA</span> {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">float</span>&gt; x, y, z;
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">float</span>&gt; vx, vy, vz;
+};
+
+<span style="color:#546e7a">// ── MOVE vs COPY PERFORMANCE ─────────────────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt; gross(<span style="color:#f78c6c">1</span><span style="color:#c3e88d">'0</span><span style="color:#f78c6c">00</span><span style="color:#c3e88d">'0</span><span style="color:#f78c6c">00</span>);
+
+<span style="color:#c792ea">auto</span> kopie = gross;               <span style="color:#546e7a">// O(n) – 1M Elemente kopieren</span>
+<span style="color:#c792ea">auto</span> bewegt = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(gross);   <span style="color:#546e7a">// O(1) – nur Zeiger tauschen!</span>
+
+<span style="color:#546e7a">// ── VERMEIDUNG VON HEAP-ALLOKATION ───────────────────────────────</span>
+<span style="color:#546e7a">// std::array statt vector für feste Größe</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">array</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>, <span style="color:#f78c6c">5</span>&gt; arr{<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>};   <span style="color:#546e7a">// Kein Heap!</span>
+
+<span style="color:#546e7a">// Small String Optimization (SSO)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> kurz = <span style="color:#c3e88d">"hi"</span>;    <span style="color:#546e7a">// Kein Heap (SSO)</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> lang(<span style="color:#f78c6c">100</span>, <span style="color:#c3e88d">'x'</span>); <span style="color:#546e7a">// Heap</span>
+
+<span style="color:#546e7a">// ── PLACEMENT NEW ─────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Objekt in bereits alloziertem Speicher konstruieren</span>
+<span style="color:#c792ea">alignas</span>(<span style="color:#4ec9b0">MyType</span>) <span style="color:#c792ea">char</span> buffer[<span style="color:#c792ea">sizeof</span>(<span style="color:#4ec9b0">MyType</span>)];
+<span style="color:#c792ea">auto</span>* obj = <span style="color:#c792ea">new</span>(buffer) <span style="color:#4ec9b0">MyType</span>{<span style="color:#f78c6c">42</span>};  <span style="color:#546e7a">// Kein Heap-Alloc!</span>
+obj<span style="color:#89ddff">-&gt;</span>~<span style="color:#4ec9b0">MyType</span>();                       <span style="color:#546e7a">// Destruktor explizit aufrufen!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mem2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mem2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Concurrency (C++11/17/20)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="concurrency (c++11/17/20)">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Concurrency (C++11/17/20)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;thread&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;mutex&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;atomic&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;future&gt;</span>
+
+<span style="color:#546e7a">// ── std::thread ───────────────────────────────────────────────────</span>
+<span style="color:#c792ea">void</span> arbeit(<span style="color:#c792ea">int</span> id) {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; <span style="color:#c3e88d">"Thread "</span> &lt;&lt; id &lt;&lt; <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">";</span>
+}
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">thread</span> t1{arbeit, <span style="color:#f78c6c">1</span>};
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">thread</span> t2{arbeit, <span style="color:#f78c6c">2</span>};
+t1.join();   <span style="color:#546e7a">// Warten bis fertig</span>
+t2.join();
+
+<span style="color:#546e7a">// Mit Lambda</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">thread</span> t3{[]{
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; <span style="color:#c3e88d">"Lambda-Thread</span>
+<span style="color:#c3e88d">";</span>
+}};
+t3.join();
+
+<span style="color:#546e7a">// ── mutex &amp; lock_guard ────────────────────────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">mutex</span> mtx;
+<span style="color:#c792ea">int</span> zaehler = <span style="color:#f78c6c">0</span>;
+
+<span style="color:#c792ea">void</span> sicher_inkrementieren() {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">lock_guard</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">mutex</span>&gt; lock{mtx};  <span style="color:#546e7a">// RAII-Lock</span>
+    zaehler++;
+    <span style="color:#546e7a">// lock wird am Ende des Scopes automatisch freigegeben</span>
+}
+
+<span style="color:#546e7a">// ── std::atomic – lock-frei ───────────────────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">atomic</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt; atom_zaehler{<span style="color:#f78c6c">0</span>};
+atom_zaehler.fetch_add(<span style="color:#f78c6c">1</span>, <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>memory_order_relaxed);
+atom_zaehler++;   <span style="color:#546e7a">// Äquivalent, aber langsamer</span>
+
+<span style="color:#546e7a">// ── std::async &amp; future ───────────────────────────────────────────</span>
+<span style="color:#c792ea">auto</span> <span style="color:#82aaff">future</span> = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">async</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>launch<span style="color:#89ddff">::</span><span style="color:#82aaff">async</span>, []() {
+    <span style="color:#546e7a">// Läuft in eigenem Thread</span>
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>this_thread<span style="color:#89ddff">::</span>sleep_for(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>chrono<span style="color:#89ddff">::</span>milliseconds{<span style="color:#f78c6c">100</span>});
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">42</span>;
+});
+
+<span style="color:#546e7a">// Anderes Zeug machen...</span>
+<span style="color:#c792ea">int</span> ergebnis = <span style="color:#82aaff">future</span>.<span style="color:#82aaff">get</span>();   <span style="color:#546e7a">// Warte und hole Ergebnis</span>
+
+<span style="color:#546e7a">// Mehrere Futures</span>
+<span style="color:#c792ea">auto</span> f1 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">async</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>launch<span style="color:#89ddff">::</span><span style="color:#82aaff">async</span>, berechneTeil1);
+<span style="color:#c792ea">auto</span> f2 = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">async</span>(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>launch<span style="color:#89ddff">::</span><span style="color:#82aaff">async</span>, berechneTeil2);
+<span style="color:#c792ea">auto</span> r1 = f1.<span style="color:#82aaff">get</span>(), r2 = f2.<span style="color:#82aaff">get</span>();   <span style="color:#546e7a">// Beide abwarten</span>
+
+<span style="color:#546e7a">// ── jthread (C++20) – joinable thread ─────────────────────────────</span>
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>jthread jt{[](<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>stop_token st) {
+    <span style="color:#c792ea">while</span> (!st.stop_requested()) {
+        tu_arbeit();
+    }
+}};
+<span style="color:#546e7a">// jt.request_stop();  // Kooperatives Beenden</span>
+<span style="color:#546e7a">// Automatisches join() im Destruktor – kein join() nötig!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #00599c;color:#00599c;background:rgba(0,89,156,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generischer Stack mit Concepts</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">CRTP – Curiously Recurring Template Pattern</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Ranges Pipeline – Datenverarbeitung</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Visitor Pattern mit std::variant</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;vector&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdexcept&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;concepts&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;format&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;print&gt;</span>
+
+<span style="color:#546e7a">// Concept: T muss kopierbar und ausgabefähig sein</span>
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#c792ea">concept</span> <span style="color:#4ec9b0">Stackable</span> = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>copyable<span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt;;
+
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Stackable</span> <span style="color:#4ec9b0">T</span>&gt;
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Stack</span> {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">T</span>&gt; data_;
+
+<span style="color:#c792ea">public</span>:
+    <span style="color:#546e7a">// Wert pushen (Copy oder Move)</span>
+    <span style="color:#c792ea">void</span> push(<span style="color:#4ec9b0">T</span> value) {
+        data_.push_back(<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(value));
+    }
+
+    <span style="color:#546e7a">// Top-Element holen (Referenz)</span>
+    <span style="color:#4ec9b0">T</span>&amp; top() {
+        <span style="color:#c792ea">if</span> (<span style="color:#82aaff">empty</span>()) <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>underflow_error{<span style="color:#c3e88d">"Stack ist leer"</span>};
+        <span style="color:#c792ea">return</span> data_.back();
+    }
+
+    <span style="color:#c792ea">const</span> <span style="color:#4ec9b0">T</span>&amp; top() <span style="color:#c792ea">const</span> {
+        <span style="color:#c792ea">if</span> (<span style="color:#82aaff">empty</span>()) <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>underflow_error{<span style="color:#c3e88d">"Stack ist leer"</span>};
+        <span style="color:#c792ea">return</span> data_.back();
+    }
+
+    <span style="color:#546e7a">// Pop – gibt Wert zurück (move!)</span>
+    <span style="color:#4ec9b0">T</span> pop() {
+        <span style="color:#c792ea">if</span> (<span style="color:#82aaff">empty</span>()) <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>underflow_error{<span style="color:#c3e88d">"Stack ist leer"</span>};
+        <span style="color:#4ec9b0">T</span> val = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">move</span>(data_.back());
+        data_.pop_back();
+        <span style="color:#c792ea">return</span> val;
+    }
+
+    <span style="color:#c792ea">bool</span>   <span style="color:#82aaff">empty</span>() <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> data_.<span style="color:#82aaff">empty</span>(); }
+    <span style="color:#4ec9b0">size_t</span> <span style="color:#82aaff">size</span>()  <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> data_.<span style="color:#82aaff">size</span>(); }
+
+    <span style="color:#546e7a">// Iteration</span>
+    <span style="color:#c792ea">auto</span> <span style="color:#82aaff">begin</span>() <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> data_.rbegin(); }
+    <span style="color:#c792ea">auto</span> <span style="color:#82aaff">end</span>()   <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> data_.rend(); }
+};
+
+<span style="color:#c792ea">int</span> main() {
+    <span style="color:#4ec9b0">Stack</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">int</span>&gt; s;
+    s.push(<span style="color:#f78c6c">1</span>); s.push(<span style="color:#f78c6c">2</span>); s.push(<span style="color:#f78c6c">3</span>);
+
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Größe: {}"</span>, s.<span style="color:#82aaff">size</span>());   <span style="color:#546e7a">// 3</span>
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Top: {}"</span>,   s.top());    <span style="color:#546e7a">// 3</span>
+
+    <span style="color:#c792ea">while</span> (!s.<span style="color:#82aaff">empty</span>()) {
+        <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"{} "</span>, s.pop());        <span style="color:#546e7a">// 3 2 1</span>
+    }
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>();
+
+    <span style="color:#546e7a">// String-Stack</span>
+    <span style="color:#4ec9b0">Stack</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt; ss;
+    ss.push(<span style="color:#c3e88d">"Hallo"</span>);
+    ss.push(<span style="color:#c3e88d">"Welt"</span>);
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"{}"</span>, ss.pop());   <span style="color:#546e7a">// Welt</span>
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;iostream&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;cmath&gt;</span>
+
+<span style="color:#546e7a">// CRTP: Basisklasse parametrisiert mit abgeleiteter Klasse</span>
+<span style="color:#546e7a">// Ermöglicht statischen Polymorphismus (kein virtual overhead!)</span>
+
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span> <span style="color:#4ec9b0">Derived</span>&gt;
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Form</span> {
+<span style="color:#c792ea">public</span>:
+    <span style="color:#546e7a">// Nicht-virtuelle Methoden rufen Derived-Methoden auf</span>
+    <span style="color:#c792ea">double</span> flaeche() <span style="color:#c792ea">const</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">static_cast</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Derived</span>*&gt;(<span style="color:#c792ea">this</span>)<span style="color:#89ddff">-&gt;</span>flaeche_impl();
+    }
+    <span style="color:#c792ea">double</span> umfang() <span style="color:#c792ea">const</span> {
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">static_cast</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Derived</span>*&gt;(<span style="color:#c792ea">this</span>)<span style="color:#89ddff">-&gt;</span>umfang_impl();
+    }
+
+    <span style="color:#c792ea">void</span> drucke() <span style="color:#c792ea">const</span> {
+        <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">cout</span> &lt;&lt; <span style="color:#c3e88d">"Fläche: "</span> &lt;&lt; flaeche()
+                  &lt;&lt; <span style="color:#c3e88d">" Umfang: "</span> &lt;&lt; umfang() &lt;&lt; <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">";</span>
+    }
+
+    <span style="color:#546e7a">// Gemeinsame Logik</span>
+    <span style="color:#c792ea">bool</span> istGrösserAls(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Form</span>&amp; o) <span style="color:#c792ea">const</span> {
+        <span style="color:#c792ea">return</span> flaeche() &gt; o.flaeche();
+    }
+};
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Kreis</span> : <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Form</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Kreis</span>&gt; {
+    <span style="color:#c792ea">double</span> r_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#c792ea">explicit</span> <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">double</span> r) : r_{r} {}
+    <span style="color:#c792ea">double</span> flaeche_impl() <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">M_PI</span> * r_ * r_; }
+    <span style="color:#c792ea">double</span> umfang_impl()  <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> * <span style="color:#4ec9b0">M_PI</span> * r_; }
+};
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Rechteck</span> : <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Form</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Rechteck</span>&gt; {
+    <span style="color:#c792ea">double</span> b_, h_;
+<span style="color:#c792ea">public</span>:
+    <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">double</span> b, <span style="color:#c792ea">double</span> h) : b_{b}, h_{h} {}
+    <span style="color:#c792ea">double</span> flaeche_impl() <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> b_ * h_; }
+    <span style="color:#c792ea">double</span> umfang_impl()  <span style="color:#c792ea">const</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> * (b_ + h_); }
+};
+
+<span style="color:#c792ea">int</span> main() {
+    <span style="color:#4ec9b0">Kreis</span>     k{<span style="color:#f78c6c">5.0</span>};
+    <span style="color:#4ec9b0">Rechteck</span>  r{<span style="color:#f78c6c">4.0</span>, <span style="color:#f78c6c">6.0</span>};
+
+    k.drucke();   <span style="color:#546e7a">// Fläche: 78.5398 Umfang: 31.4159</span>
+    r.drucke();   <span style="color:#546e7a">// Fläche: 24 Umfang: 20</span>
+
+    <span style="color:#546e7a">// Kein virtual-Overhead! Compile-Zeit-Dispatch.</span>
+}</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;vector&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;ranges&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;algorithm&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;numeric&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;print&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string&gt;</span>
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Mitarbeiter</span> {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> name;
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> abt;
+    <span style="color:#c792ea">double</span>      gehalt;
+    <span style="color:#c792ea">int</span>         alter;
+};
+
+<span style="color:#c792ea">int</span> main() {
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Mitarbeiter</span>&gt; firma{
+        {<span style="color:#c3e88d">"Alice"</span>,  <span style="color:#c3e88d">"IT"</span>,  <span style="color:#f78c6c">85000</span>, <span style="color:#f78c6c">32</span>},
+        {<span style="color:#c3e88d">"Bob"</span>,    <span style="color:#c3e88d">"HR"</span>,  <span style="color:#f78c6c">65000</span>, <span style="color:#f78c6c">28</span>},
+        {<span style="color:#c3e88d">"Carol"</span>,  <span style="color:#c3e88d">"IT"</span>,  <span style="color:#f78c6c">92000</span>, <span style="color:#f78c6c">41</span>},
+        {<span style="color:#c3e88d">"Dave"</span>,   <span style="color:#c3e88d">"IT"</span>,  <span style="color:#f78c6c">78000</span>, <span style="color:#f78c6c">25</span>},
+        {<span style="color:#c3e88d">"Eve"</span>,    <span style="color:#c3e88d">"HR"</span>,  <span style="color:#f78c6c">71000</span>, <span style="color:#f78c6c">35</span>},
+        {<span style="color:#c3e88d">"Frank"</span>,  <span style="color:#c3e88d">"IT"</span>,  <span style="color:#f78c6c">69000</span>, <span style="color:#f78c6c">29</span>},
+    };
+
+    <span style="color:#c792ea">namespace</span> rv = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">views</span>;
+    <span style="color:#c792ea">namespace</span> rg = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">ranges</span>;
+
+    <span style="color:#546e7a">// IT-Mitarbeiter mit Gehalt &gt; 75k, sortiert nach Gehalt</span>
+    <span style="color:#c792ea">auto</span> it_senior = firma
+        | rv<span style="color:#89ddff">::</span>filter([](<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; m) { <span style="color:#c792ea">return</span> m.abt == <span style="color:#c3e88d">"IT"</span>; })
+        | rv<span style="color:#89ddff">::</span>filter([](<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; m) { <span style="color:#c792ea">return</span> m.gehalt &gt; <span style="color:#f78c6c">75000</span>; })
+        | rv<span style="color:#89ddff">::</span><span style="color:#82aaff">transform</span>([](<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; m) { <span style="color:#c792ea">return</span> m.name; });
+
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"IT Senior: "</span>);
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; name : it_senior) {
+        <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"{} "</span>, name);   <span style="color:#546e7a">// Alice Carol</span>
+    }
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>();
+
+    <span style="color:#546e7a">// Durchschnittsgehalt pro Abteilung</span>
+    <span style="color:#c792ea">auto</span> it_gehaelter = firma
+        | rv<span style="color:#89ddff">::</span>filter([](<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; m) { <span style="color:#c792ea">return</span> m.abt == <span style="color:#c3e88d">"IT"</span>; })
+        | rv<span style="color:#89ddff">::</span><span style="color:#82aaff">transform</span>([](<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; m) { <span style="color:#c792ea">return</span> m.gehalt; });
+
+    <span style="color:#c792ea">auto</span> summe  = rg<span style="color:#89ddff">::</span>fold_left(it_gehaelter, <span style="color:#f78c6c">0.0</span>, <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>plus{});
+    <span style="color:#c792ea">auto</span> anzahl = rg<span style="color:#89ddff">::</span>distance(it_gehaelter);
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"IT Durchschnitt: {:.0f}"</span>, summe / anzahl);
+
+    <span style="color:#546e7a">// Alle Namen alphabetisch</span>
+    <span style="color:#c792ea">auto</span> namen = firma | rv<span style="color:#89ddff">::</span><span style="color:#82aaff">transform</span>([](<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; m) { <span style="color:#c792ea">return</span> m.name; });
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">vector</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span>&gt; sortiert(namen.<span style="color:#82aaff">begin</span>(), namen.<span style="color:#82aaff">end</span>());
+    rg<span style="color:#89ddff">::</span><span style="color:#82aaff">sort</span>(sortiert);
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">const</span> <span style="color:#c792ea">auto</span>&amp; n : sortiert) <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"{} "</span>, n);
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>();
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;variant&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;vector&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;print&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;cmath&gt;</span>
+
+<span style="color:#546e7a">// Algebraische Datentypen in C++ via std::variant</span>
+<span style="color:#546e7a">// Kein Heap, kein virtual, vollständig typsicher!</span>
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Zahl</span>     { <span style="color:#c792ea">double</span> wert; };
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Addition</span> { <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Expr</span>* links; <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Expr</span>* rechts; };
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Mul</span>      { <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Expr</span>* links; <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Expr</span>* rechts; };
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Negation</span> { <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Expr</span>* inner; };
+
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">ExprVariant</span> = <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">variant</span><span style="color:#ffcb6b">&lt;</span><span style="color:#4ec9b0">Zahl</span>, <span style="color:#4ec9b0">Addition</span>, <span style="color:#4ec9b0">Mul</span>, <span style="color:#4ec9b0">Negation</span>&gt;;
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Expr</span> {
+    <span style="color:#4ec9b0">ExprVariant</span> data;
+    <span style="color:#4ec9b0">Expr</span>(<span style="color:#c792ea">auto</span> v) : data{v} {}
+};
+
+<span style="color:#546e7a">// Visitor mit overloaded (C++17 Pattern)</span>
+<span style="color:#c792ea">template</span><span style="color:#ffcb6b">&lt;</span><span style="color:#c792ea">typename</span>... <span style="color:#4ec9b0">Ts</span>&gt;
+<span style="color:#c792ea">struct</span> overloaded : <span style="color:#4ec9b0">Ts</span>... { <span style="color:#c792ea">using</span> <span style="color:#4ec9b0">Ts</span><span style="color:#89ddff">::</span><span style="color:#c792ea">operator</span>()...; };
+
+<span style="color:#c792ea">double</span> auswerten(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Expr</span>&amp; e) {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>visit(overloaded{
+        [](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Zahl</span>&amp; z)     { <span style="color:#c792ea">return</span> z.wert; },
+        [&amp;](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Addition</span>&amp; a) {
+            <span style="color:#c792ea">return</span> auswerten(*a.links) + auswerten(*a.rechts);
+        },
+        [&amp;](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Mul</span>&amp; m) {
+            <span style="color:#c792ea">return</span> auswerten(*m.links) * auswerten(*m.rechts);
+        },
+        [&amp;](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Negation</span>&amp; n) {
+            <span style="color:#c792ea">return</span> -auswerten(*n.inner);
+        },
+    }, e.data);
+}
+
+<span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">string</span> stringify(<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Expr</span>&amp; e) {
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span>visit(overloaded{
+        [](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Zahl</span>&amp; z)     { <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"{}"</span>, z.wert); },
+        [&amp;](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Addition</span>&amp; a) {
+            <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"({} + {})"</span>,
+                stringify(*a.links), stringify(*a.rechts));
+        },
+        [&amp;](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Mul</span>&amp; m) {
+            <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"({} * {})"</span>,
+                stringify(*m.links), stringify(*m.rechts));
+        },
+        [&amp;](<span style="color:#c792ea">const</span> <span style="color:#4ec9b0">Negation</span>&amp; n) {
+            <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"(-{})"</span>, stringify(*n.inner));
+        },
+    }, e.data);
+}
+
+<span style="color:#c792ea">int</span> main() {
+    <span style="color:#546e7a">// (3 + 4) * (-2)</span>
+    <span style="color:#c792ea">auto</span> drei  = <span style="color:#4ec9b0">Expr</span>{<span style="color:#4ec9b0">Zahl</span>{<span style="color:#f78c6c">3</span>}};
+    <span style="color:#c792ea">auto</span> vier  = <span style="color:#4ec9b0">Expr</span>{<span style="color:#4ec9b0">Zahl</span>{<span style="color:#f78c6c">4</span>}};
+    <span style="color:#c792ea">auto</span> minus2 = <span style="color:#4ec9b0">Expr</span>{<span style="color:#4ec9b0">Negation</span>{<span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Expr</span>{<span style="color:#4ec9b0">Zahl</span>{<span style="color:#f78c6c">2</span>}}}};
+    <span style="color:#c792ea">auto</span> summe = <span style="color:#4ec9b0">Expr</span>{<span style="color:#4ec9b0">Addition</span>{&amp;drei, &amp;vier}};
+    <span style="color:#c792ea">auto</span> prod  = <span style="color:#4ec9b0">Expr</span>{<span style="color:#4ec9b0">Mul</span>{&amp;summe, &amp;minus2}};
+
+    <span style="color:#4ec9b0">std</span><span style="color:#89ddff">::</span><span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"{} = {}"</span>, stringify(prod), auswerten(prod));
+    <span style="color:#546e7a">// ((3 + 4) * (-2)) = -14</span>
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#00599c0e;border:1px solid #00599c44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#4fc3f7">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S gcc clang cmake ninja gdb valgrind</code><br><code style="color:#ffb347">sudo pacman -S clang-tools-extra  # clang-tidy, clang-format</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #00599c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00599c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00599c">
+      <span style="display:inline-block;width:8px;height:8px;background:#00599c;border-radius:50%;margin-right:2px"></span>⚙ Compiler installieren (Linux)
+    </span>
+    <span class="aa" style="color:#00599c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#00599c">GCC 14</code></td><td style="color:#cdd6f4">g++</td><td style="color:#6c7a8e">sudo pacman -S gcc  # Arch
+sudo apt install g++  # Ubuntu
+g++ --version</td></tr><tr><td style="width:240px"><code style="color:#00599c">Clang 18</code></td><td style="color:#cdd6f4">clang++</td><td style="color:#6c7a8e">sudo pacman -S clang
+clang++ --version</td></tr><tr><td style="width:240px"><code style="color:#00599c">Ninja + CMake</code></td><td style="color:#cdd6f4">cmake ninja</td><td style="color:#6c7a8e">sudo pacman -S cmake ninja
+cmake -G Ninja ..</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Compiler-Flags
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">g++ main.cpp -o main</code></td><td style="color:#cdd6f4">Einfach kompilieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-std=c++23</code></td><td style="color:#cdd6f4">C++23 Standard</td><td style="color:#6c7a8e">Auch: c++20, c++17</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-Wall -Wextra -Wpedantic</code></td><td style="color:#cdd6f4">Alle Warnungen</td><td style="color:#6c7a8e">IMMER verwenden!</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-Werror</code></td><td style="color:#cdd6f4">Warnungen als Fehler</td><td style="color:#6c7a8e">Für CI/CD</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-O0</code></td><td style="color:#cdd6f4">Keine Optimierung (Debug)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-O2 / -O3</code></td><td style="color:#cdd6f4">Optimierung (Produktion)</td><td style="color:#6c7a8e">-O3 kann größer sein</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-g</code></td><td style="color:#cdd6f4">Debug-Symbole</td><td style="color:#6c7a8e">Für GDB/LLDB</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fsanitize=address</code></td><td style="color:#cdd6f4">AddressSanitizer</td><td style="color:#6c7a8e">Memory-Fehler finden</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fsanitize=undefined</code></td><td style="color:#cdd6f4">UBSanitizer</td><td style="color:#6c7a8e">Undefined Behavior</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fsanitize=thread</code></td><td style="color:#cdd6f4">ThreadSanitizer</td><td style="color:#6c7a8e">Race Conditions</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-fno-exceptions</code></td><td style="color:#cdd6f4">Exceptions deaktivieren</td><td style="color:#6c7a8e">Embedded, Performance</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-march=native</code></td><td style="color:#cdd6f4">CPU-spezifische Optimierung</td><td style="color:#6c7a8e">Für lokale Binaries</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-flto</code></td><td style="color:#cdd6f4">Link-Time Optimization</td><td style="color:#6c7a8e">Bessere Optimierung</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-DNDEBUG</code></td><td style="color:#cdd6f4">assert() deaktivieren</td><td style="color:#6c7a8e">In Release-Builds</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-I./include -L./lib -lfoo</code></td><td style="color:#cdd6f4">Include- und Lib-Pfade</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">-std=c++23 -fmodules</code></td><td style="color:#cdd6f4">Module aktivieren (Clang)</td><td style="color:#6c7a8e">experimental</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Build-Systeme
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">CMake</code></td><td style="color:#cdd6f4">cmake</td><td style="color:#6c7a8e">cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Meson</code></td><td style="color:#cdd6f4">meson</td><td style="color:#6c7a8e">meson setup build
+ninja -C build</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">xmake</code></td><td style="color:#cdd6f4">xmake</td><td style="color:#6c7a8e">xmake create -l c++ projekt
+xmake &amp;&amp; xmake run</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Bazel</code></td><td style="color:#cdd6f4">bazel</td><td style="color:#6c7a8e">Für große Projekte (Google-Stil)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">vcpkg</code></td><td style="color:#cdd6f4">vcpkg</td><td style="color:#6c7a8e">vcpkg install boost fmt spdlog
+# Pakete für Windows/Linux/macOS</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Conan</code></td><td style="color:#cdd6f4">pip install conan</td><td style="color:#6c7a8e">conan install . --build=missing
+# Paket-Manager für C++</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Debugging &amp; Analyse
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">gdb ./programm</code></td><td style="color:#cdd6f4">GNU Debugger</td><td style="color:#6c7a8e">run / break main / next / print x / bt</td></tr><tr><td style="width:240px"><code style="color:#c792ea">gdb -tui</code></td><td style="color:#cdd6f4">GDB mit Text-UI</td><td style="color:#6c7a8e">Schön für Einsteiger</td></tr><tr><td style="width:240px"><code style="color:#c792ea">lldb ./programm</code></td><td style="color:#cdd6f4">LLVM Debugger</td><td style="color:#6c7a8e">Ähnlich GDB, bessere Clang-Integration</td></tr><tr><td style="width:240px"><code style="color:#c792ea">valgrind ./prog</code></td><td style="color:#cdd6f4">Memory-Fehler</td><td style="color:#6c7a8e">--leak-check=full</td></tr><tr><td style="width:240px"><code style="color:#c792ea">heaptrack ./prog</code></td><td style="color:#cdd6f4">Heap-Profiling</td><td style="color:#6c7a8e">Visualisierung mit heaptrack_gui</td></tr><tr><td style="width:240px"><code style="color:#c792ea">perf stat ./prog</code></td><td style="color:#cdd6f4">Performance-Counter</td><td style="color:#6c7a8e">Cache-Misses, Branch-Prediction...</td></tr><tr><td style="width:240px"><code style="color:#c792ea">perf record/report</code></td><td style="color:#cdd6f4">Sampling-Profiler</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#c792ea">clang-tidy</code></td><td style="color:#cdd6f4">Statische Analyse</td><td style="color:#6c7a8e">clang-tidy main.cpp -- -std=c++23</td></tr><tr><td style="width:240px"><code style="color:#c792ea">clang-format</code></td><td style="color:#cdd6f4">Auto-Formatierung</td><td style="color:#6c7a8e">clang-format -i -style=Google *.cpp</td></tr><tr><td style="width:240px"><code style="color:#c792ea">cppcheck</code></td><td style="color:#cdd6f4">Weitere Analyse</td><td style="color:#6c7a8e">cppcheck --std=c++23 --enable=all src/</td></tr><tr><td style="width:240px"><code style="color:#c792ea">include-what-you-use</code></td><td style="color:#cdd6f4">Unnötige Includes</td><td style="color:#6c7a8e">Optimiert #include-Struktur</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Bibliotheken
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Flag</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">Boost</code></td><td style="color:#cdd6f4">boost.org</td><td style="color:#6c7a8e">Fast alles: Asio, Beast, Spirit, Math...</td></tr><tr><td style="width:240px"><code style="color:#ffb347">fmtlib</code></td><td style="color:#cdd6f4">fmt</td><td style="color:#6c7a8e">std::format Vorläufer: fmt::print(...)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">spdlog</code></td><td style="color:#cdd6f4">spdlog</td><td style="color:#6c7a8e">Schnelles Logging</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Asio</code></td><td style="color:#cdd6f4">standalone</td><td style="color:#6c7a8e">Async I/O und Networking</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Catch2 / GTest</code></td><td style="color:#cdd6f4">Testing</td><td style="color:#6c7a8e">Unit-Test-Frameworks</td></tr><tr><td style="width:240px"><code style="color:#ffb347">range-v3</code></td><td style="color:#cdd6f4">ericniebler</td><td style="color:#6c7a8e">Ranges für C++17</td></tr><tr><td style="width:240px"><code style="color:#ffb347">nlohmann/json</code></td><td style="color:#cdd6f4">json</td><td style="color:#6c7a8e">JSON: auto j = json::parse(str)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Eigen</code></td><td style="color:#cdd6f4">eigen.tuxfamily.org</td><td style="color:#6c7a8e">Lineare Algebra</td></tr><tr><td style="width:240px"><code style="color:#ffb347">OpenCV</code></td><td style="color:#cdd6f4">opencv.org</td><td style="color:#6c7a8e">Bildverarbeitung</td></tr><tr><td style="width:240px"><code style="color:#ffb347">SFML / SDL2</code></td><td style="color:#cdd6f4">sfml-dev.org</td><td style="color:#6c7a8e">Multimedia und Spieleentwicklung</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-mod"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#00599c';
+      btn.style.color       = '#00599c';
+      btn.style.background  = 'rgba(0, 89, 156, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

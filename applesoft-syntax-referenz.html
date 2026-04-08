@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applesoft BASIC Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #4daa4d;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0a0f0a, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; text-shadow: 0 0 12px rgba(77,170,77,.5); }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(77, 170, 77, .07); text-shadow: 0 0 8px rgba(77,170,77,.4); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(77,170,77,.04); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(77,170,77,.08); padding: 1px 5px; border-radius: 3px; color: #4daa4d; }
+.cd { background: rgba(0,0,0,.7); border: 1px solid rgba(77,170,77,.2); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.7); border: 1px solid rgba(77,170,77,.15); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#4daa4d;font-size:18px">&#x2588;</span>
+      <span style="color:#4daa4d">Applesoft BASIC</span>
+    </div>
+    <div id="hdr-sub">Apple II · 1977–1993 · JCBASIC (Browser-Emulator) · GOTO · POKE · Lo/Hi-Res Grafik</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="variablen">Variablen & Arrays</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="io">Ein-/Ausgabe</button>
+    <button class="tb" data-tab="grafik">Grafik & Sound</button>
+    <button class="tb" data-tab="funktionen">Funktionen</button>
+    <button class="tb" data-tab="poke">PEEK & POKE</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Emulatoren & Info</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#4daa4d0a;border:1px solid #4daa4d44;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#4daa4d;text-shadow:0 0 8px rgba(77,170,77,.4)">Applesoft BASIC (1977) – die Sprache einer ganzen Generation.</strong><br>
+  <span style="color:#cdd6f4">
+    Jede Zeile braucht eine <code>ZEILENNUMMER</code> &nbsp;·&nbsp;
+    <code>:=</code> gibt es nicht – Zuweisung mit <code>=</code> oder <code>LET</code> &nbsp;·&nbsp;
+    Alles in <code>GROSSBUCHSTABEN</code> &nbsp;·&nbsp;
+    Variablennamen max. <code>2 Zeichen</code> &nbsp;·&nbsp;
+    Online ausprobieren: <a href="https://www.calormen.com/jsbasic/" style="color:#d4a017">calormen.com/jsbasic</a>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #4daa4d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4daa4d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4daa4d">
+      <span style="display:inline-block;width:8px;height:8px;background:#4daa4d;border-radius:50%;margin-right:2px"></span>Wie Applesoft BASIC funktioniert
+    </span>
+    <span class="aa" style="color:#4daa4d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="wie applesoft basic funktioniert">
+  <div style="color:#4daa4d;font-weight:700;font-size:12px;margin-bottom:8px">
+    Wie Applesoft BASIC funktioniert
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> APPLESOFT BASIC - APPLE II (1977-1993)</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ----------------------------------------</span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> JEDE ZEILE BRAUCHT EINE ZEILENNUMMER!</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PROGRAMME WERDEN IN GROSSBUCHSTABEN GESCHRIEBEN</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (APPLESOFT IST CASE-INSENSITIV)</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> KONVENTION: ZEILENNUMMERN IN 10er-SCHRITTEN</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> SO KANN MAN ZEILEN DAZWISCHEN EINFÜGEN (15, 25 ...)</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"HALLO, WELT!"</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"ICH BIN EIN APPLE II"</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">END</span>
+
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> --- DIREKTE BEFEHLE (ohne Zeilennummer) ---</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> Diese werden SOFORT ausgeführt:</span>
+
+<span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"TEST"</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Sofortige Ausgabe</span>
+<span style="color:#c792ea">LIST</span>                      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Programm anzeigen</span>
+<span style="color:#c792ea">LIST</span> <span style="color:#f78c6c">100</span><span style="color:#f78c6c">-200</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Nur Zeilen 100-200</span>
+<span style="color:#c792ea">RUN</span>                       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Programm starten</span>
+<span style="color:#c792ea">RUN</span> <span style="color:#f78c6c">50</span>                    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Ab Zeile 50 starten</span>
+<span style="color:#c792ea">NEW</span>                       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Programm löschen</span>
+<span style="color:#c792ea">SAVE</span> <span style="color:#c3e88d">"MEINPROG"</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Auf Diskette speichern</span>
+<span style="color:#c792ea">LOAD</span> <span style="color:#c3e88d">"MEINPROG"</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Von Diskette laden</span>
+<span style="color:#c792ea">CATALOG</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Disketten-Inhalt zeigen</span>
+<span style="color:#4ec9b0">DEL</span> <span style="color:#f78c6c">100</span>,<span style="color:#f78c6c">200</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zeilen 100-200 löschen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Variablen – nur 2 Zeichen!
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen – nur 2 zeichen!">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen – nur 2 Zeichen!
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> VARIABLENTYPEN IN APPLESOFT BASIC</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> NUMERISCH: Maximal 2 Zeichen (A, B9, XY)</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> STRING:    Name + $ (A$, N$, X1$)</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> INTEGER:   Name + % (I%, N%, nicht immer verfügbar)</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">LET</span> <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">42</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> LET ist optional!</span>
+<span style="color:#d4a017">80</span>  <span style="color:#4ec9b0">B</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3.14159</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Funktioniert auch ohne LET</span>
+<span style="color:#d4a017">90</span>  <span style="color:#4ec9b0">N$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"ALICE"</span>          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> String-Variable</span>
+<span style="color:#d4a017">100</span> <span style="color:#4ec9b0">I%</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">100</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Integer-Variable (schneller)</span>
+<span style="color:#d4a017">110</span> <span style="color:#4ec9b0">X1</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> : <span style="color:#4ec9b0">Y1</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Mehrere Anweisungen pro Zeile mit :</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIG: Nur die ersten 2 Zeichen zählen!</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> VARIABLE = VARIAB = VA  (alle identisch!)</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> DAS IST EIN BERÜHMTER APPLESOFT-BUG/FEATURE</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">A</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> 42</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">B</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> 3.14159</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">N$</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> ALICE</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"N$ = "</span>; <span style="color:#4ec9b0">N$</span>     :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> N$ = ALICE</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"A + B = "</span>; <span style="color:#4ec9b0">A</span> + <span style="color:#4ec9b0">B</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> A + B = 45.14159</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ALLE VARIABLEN STARTEN MIT 0 ODER ""</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">X</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> 0 (nicht initialisiert = 0)</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">A$</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> (leer, kein Fehler!)</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Programmstruktur &amp; Kommentare
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="programmstruktur &amp; kommentare">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Programmstruktur &amp; Kommentare
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** TYPISCHE APPLESOFT-PROGRAMMSTRUKTUR ***</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 1. INITIALISIERUNG</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">HOME</span>                  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> BILDSCHIRM LÖSCHEN</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"*** MEIN PROGRAMM ***"</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 2. VARIABLEN INITIALISIEREN</span>
+<span style="color:#d4a017">90</span>  <span style="color:#4ec9b0">S</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> SUMME</span>
+<span style="color:#d4a017">100</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> ZAEHLER</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 3. HAUPTPROGRAMM</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> UNTERPROGRAMM AUFRUFEN</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">2000</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 4. ERGEBNIS AUSGEBEN</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"ERGEBNIS: "</span>; <span style="color:#4ec9b0">S</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">END</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> PROGRAMM BEENDEN</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">1000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** UNTERPROGRAMM 1: EINGABE ***</span>
+<span style="color:#d4a017">1010</span> <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"ZAHL: "</span>; <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">1020</span> <span style="color:#4ec9b0">S</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">S</span> + <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">1030</span> <span style="color:#c792ea">RETURN</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> ZURÜCK ZUM AUFRUFER</span>
+<span style="color:#d4a017">1040</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">2000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** UNTERPROGRAMM 2: AUSGABE ***</span>
+<span style="color:#d4a017">2010</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"SUMME = "</span>; <span style="color:#4ec9b0">S</span>
+<span style="color:#d4a017">2020</span> <span style="color:#c792ea">RETURN</span>
+
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> TIPPS FÜR GUTEN APPLESOFT-CODE:</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Unterprogramme (GOSUB) ab Zeile 1000+</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Hauptprogramm immer mit END abschließen</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - REM-Zeilen für Abschnittstrennungen</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Zeilennummern in 10er-Schritten lassen</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Mehrere Anweisungen pro Zeile mit : trennen</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-variablen" class="tp">
+
+<div class="ac open" id="ac-vr0"
+     style="border:1px solid #4daa4d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('vr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4daa4d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4daa4d">
+      <span style="display:inline-block;width:8px;height:8px;background:#4daa4d;border-radius:50%;margin-right:2px"></span>Arrays mit DIM
+    </span>
+    <span class="aa" style="color:#4daa4d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arrays mit dim">
+  <div style="color:#4daa4d;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arrays mit DIM
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ARRAYS IN APPLESOFT BASIC</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> OHNE DIM: Max 10 Elemente (0..10) automatisch</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> MIT DIM: Beliebige Größe (MUSS vor Benutzung!)</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">DIM</span> <span style="color:#4ec9b0">A</span>(<span style="color:#f78c6c">20</span>)             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> 1D-Array, 21 Elemente (0..20)</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">DIM</span> <span style="color:#4ec9b0">B</span>(<span style="color:#f78c6c">5</span>,<span style="color:#f78c6c">5</span>)            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> 2D-Array, 6x6=36 Elemente</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">DIM</span> <span style="color:#4ec9b0">N$</span>(<span style="color:#f78c6c">10</span>)            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> String-Array</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> BEFÜLLEN</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">20</span>
+<span style="color:#d4a017">120</span>   <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">I</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">I</span> * <span style="color:#4ec9b0">I</span>        :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> A(1)=1, A(2)=4, A(3)=9 ...</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> AUSGEBEN</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10</span>
+<span style="color:#d4a017">170</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">I</span>);<span style="color:#c3e88d">" "</span>;     :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Semikolon = kein Zeilenumbruch</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">PRINT</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zeilenumbruch</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 2D-ARRAY (Multiplikationstabelle)</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">5</span>
+<span style="color:#d4a017">230</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">J</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">5</span>
+<span style="color:#d4a017">240</span>     <span style="color:#4ec9b0">B</span>(<span style="color:#4ec9b0">I</span>,<span style="color:#4ec9b0">J</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">I</span> * <span style="color:#4ec9b0">J</span>
+<span style="color:#d4a017">250</span>   <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">J</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> AUSGABE ALS TABELLE</span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">5</span>
+<span style="color:#d4a017">300</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">J</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">5</span>
+<span style="color:#d4a017">310</span>     <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">B</span>(<span style="color:#4ec9b0">I</span>,<span style="color:#4ec9b0">J</span>);<span style="color:#c792ea">TAB</span>(<span style="color:#4ec9b0">J</span>*<span style="color:#f78c6c">4</span>);
+<span style="color:#d4a017">320</span>   <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">J</span>
+<span style="color:#d4a017">330</span>   <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">340</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">350</span> <span style="color:#c792ea">END</span>
+
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIG:</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Indizes beginnen bei 0 (A(0) ist gültig!)</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - DIM A(10) gibt A(0) bis A(10) = 11 Elemente</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Zu großes Array = ?OUT OF MEMORY ERROR</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Nur 1D und 2D Arrays möglich (kein 3D!)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-vr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('vr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>DATA &amp; READ
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="data &amp; read">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    DATA &amp; READ
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> DATA UND READ - DATEN IM PROGRAMM SPEICHERN</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> DATA: Daten direkt im Code ablegen</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> READ: Nächsten DATA-Wert in Variable lesen</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> RESTORE: READ wieder von vorne starten</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">40</span>, <span style="color:#f78c6c">50</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">60</span>, <span style="color:#f78c6c">70</span>, <span style="color:#f78c6c">80</span>, <span style="color:#f78c6c">90</span>, <span style="color:#f78c6c">100</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> DATA-Zeilen können ÜBERALL im Programm stehen!</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10</span>
+<span style="color:#d4a017">120</span>   <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">130</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">N</span>; <span style="color:#c3e88d">" "</span>;
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">RESTORE</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zeiger zurück zum Anfang</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">A</span> : <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">B</span> : <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">C</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"ERSTE 3: "</span>; <span style="color:#4ec9b0">A</span>; <span style="color:#4ec9b0">B</span>; <span style="color:#4ec9b0">C</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> STRINGS IN DATA</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">DATA</span> <span style="color:#c3e88d">"ALICE"</span>, <span style="color:#c3e88d">"BOB"</span>, <span style="color:#c3e88d">"CAROL"</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">25</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">35</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">DIM</span> <span style="color:#4ec9b0">N$</span>(<span style="color:#f78c6c">3</span>), <span style="color:#4ec9b0">AL</span>(<span style="color:#f78c6c">3</span>)
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">3</span>
+<span style="color:#d4a017">270</span>   <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">N$</span>(<span style="color:#4ec9b0">I</span>)          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> String lesen</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">RESTORE</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zur letzten RESTORE-Position?</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> NEIN! RESTORE geht IMMER zum absoluten Anfang</span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Also ALLE DATA neu lesen:</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10</span> : <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">N2</span> : <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Die 10 Zahlen überspringen</span>
+<span style="color:#d4a017">330</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">3</span>
+<span style="color:#d4a017">340</span>   <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">N$</span>(<span style="color:#4ec9b0">I</span>)
+<span style="color:#d4a017">350</span>   <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">AL</span>(<span style="color:#4ec9b0">I</span>)
+<span style="color:#d4a017">360</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">370</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">3</span>
+<span style="color:#d4a017">380</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">N$</span>(<span style="color:#4ec9b0">I</span>); <span style="color:#c3e88d">" IST "</span>; <span style="color:#4ec9b0">AL</span>(<span style="color:#4ec9b0">I</span>); <span style="color:#c3e88d">" JAHRE ALT"</span>
+<span style="color:#d4a017">390</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">400</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>IF/THEN/ELSE &amp; GOTO
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if/then/else &amp; goto">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    IF/THEN/ELSE &amp; GOTO
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> KONTROLLFLUSS IN APPLESOFT BASIC</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIG: IF hat KEINEN END IF!</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Alles nach THEN ist bis zum Zeilenende oder :</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">60</span>  <span style="color:#4ec9b0">X</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">42</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">X</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">10</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GROSS"</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">X</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">10</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GROSS"</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"UND POSITIV"</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> IF ... THEN ... ELSE (Applesoft hat kein ELSE!)</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Trick mit GOTO:</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">X</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#f78c6c">150</span>     :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Wenn wahr, zu Zeile 150</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"NICHT POSITIV"</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">160</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Überspringe den DANN-Teil</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"POSITIV"</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WEITER</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ON ... GOTO (berechnetes GOTO)</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Wie eine switch/case-Anweisung!</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"WAHL (1-3): "</span>; <span style="color:#4ec9b0">W</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">ON</span> <span style="color:#4ec9b0">W</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">300</span>, <span style="color:#f78c6c">400</span>, <span style="color:#f78c6c">500</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"UNGUELTIGE WAHL"</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">600</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"OPTION 1 GEWAEHLT"</span> : <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">600</span>
+<span style="color:#d4a017">400</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"OPTION 2 GEWAEHLT"</span> : <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">600</span>
+<span style="color:#d4a017">500</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"OPTION 3 GEWAEHLT"</span>
+<span style="color:#d4a017">600</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WEITER</span>
+<span style="color:#d4a017">610</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">620</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ON ... GOSUB (berechnetes GOSUB)</span>
+<span style="color:#d4a017">630</span> <span style="color:#c792ea">ON</span> <span style="color:#4ec9b0">W</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>, <span style="color:#f78c6c">2000</span>, <span style="color:#f78c6c">3000</span>
+<span style="color:#d4a017">640</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">700</span>
+<span style="color:#d4a017">1000</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"SUB 1"</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">2000</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"SUB 2"</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">3000</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"SUB 3"</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">700</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>FOR/NEXT &amp; Schleifen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for/next &amp; schleifen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    FOR/NEXT &amp; Schleifen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> SCHLEIFEN IN APPLESOFT BASIC</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> FOR/NEXT - Zählschleife</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10</span>
+<span style="color:#d4a017">50</span>    <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">I</span>; <span style="color:#c3e88d">" "</span>;
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">PRINT</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 1 2 3 4 5 6 7 8 9 10</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> MIT STEP (Schrittweite)</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">100</span> <span style="color:#c792ea">STEP</span> <span style="color:#f78c6c">10</span>
+<span style="color:#d4a017">110</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">I</span>; <span style="color:#c3e88d">" "</span>;
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">PRINT</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 0 10 20 30 40 50 60 70 80 90 100</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> RÜCKWÄRTS mit negativem STEP</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">10</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">STEP</span> <span style="color:#f78c6c">-1</span>
+<span style="color:#d4a017">170</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">I</span>; <span style="color:#c3e88d">" "</span>;
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">PRINT</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 10 9 8 7 6 5 4 3 2 1</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> VERSCHACHTELTE SCHLEIFEN</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">3</span>
+<span style="color:#d4a017">230</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">J</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">3</span>
+<span style="color:#d4a017">240</span>     <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">I</span> * <span style="color:#4ec9b0">J</span>; <span style="color:#c792ea">TAB</span>(<span style="color:#4ec9b0">J</span> * <span style="color:#f78c6c">5</span>);
+<span style="color:#d4a017">250</span>   <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">J</span>
+<span style="color:#d4a017">260</span>   <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WHILE-Schleife - per GOTO simuliert</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Applesoft hat kein WHILE!)</span>
+<span style="color:#d4a017">310</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">=</span> <span style="color:#f78c6c">100</span> <span style="color:#c792ea">THEN</span> <span style="color:#f78c6c">370</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Abbruchbedingung prüfen</span>
+<span style="color:#d4a017">330</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">N</span> * <span style="color:#f78c6c">2</span>
+<span style="color:#d4a017">340</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">320</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zurück zur Prüfung</span>
+<span style="color:#d4a017">370</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"ERSTES N &gt;= 100: "</span>; <span style="color:#4ec9b0">N</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 128</span>
+<span style="color:#d4a017">380</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">390</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> REPEAT/UNTIL per GOTO</span>
+<span style="color:#d4a017">400</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GIB EINE ZAHL &gt; 0 EIN"</span>
+<span style="color:#d4a017">410</span> <span style="color:#c792ea">INPUT</span> <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">420</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">&lt;</span><span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"NOCHMAL!"</span> : <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">410</span>
+<span style="color:#d4a017">430</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GUT! N = "</span>; <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">440</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>GOSUB &amp; RETURN – Unterprogramme
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="gosub &amp; return – unterprogramme">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    GOSUB &amp; RETURN – Unterprogramme
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> GOSUB/RETURN - DIE EINZIGE FORM VON FUNKTIONEN</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Kein echter Parameter-Stack! Alles via globale Variablen)</span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> KONVENTION: Unterprogramme ab Zeile 1000+</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">HOME</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> UNTERPROGRAMM AUFRUFEN</span>
+<span style="color:#d4a017">80</span>  <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">5</span> : <span style="color:#4ec9b0">B</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span>        :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> "Parameter" setzen</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Sprung zu Zeile 1000</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"5 + 3 = "</span>; <span style="color:#4ec9b0">R</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> R ist das "Ergebnis"</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">120</span> <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">10</span> : <span style="color:#4ec9b0">B</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">7</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"10 + 3 = "</span>; <span style="color:#4ec9b0">R</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> GOSUB DARF VERSCHACHTELT SEIN</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">2000</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">END</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">1000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** ADDIERE A UND B, ERGEBNIS IN R ***</span>
+<span style="color:#d4a017">1010</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">A</span> + <span style="color:#4ec9b0">B</span>
+<span style="color:#d4a017">1020</span> <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1030</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">2000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** ZEIGE MEHRERE BERECHNUNGEN ***</span>
+<span style="color:#d4a017">2010</span> <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> : <span style="color:#4ec9b0">B</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> : <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"FIB: "</span>; <span style="color:#4ec9b0">R</span>
+<span style="color:#d4a017">2020</span> <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">R</span> : <span style="color:#4ec9b0">B</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> : <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"FIB: "</span>; <span style="color:#4ec9b0">R</span>
+<span style="color:#d4a017">2030</span> <span style="color:#c792ea">RETURN</span>
+
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIGE REGELN:</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - RETURN springt zur Zeile NACH dem GOSUB zurück</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Beim END muss kein RETURN ausgeführt sein</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Geschachtelte GOSUBs: Stack-Tiefe begrenzt (~24 Level)</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> - POP löscht letzten GOSUB-Eintrag (für sauberes EXIT)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-io" class="tp">
+
+<div class="ac open" id="ac-io0"
+     style="border:1px solid #4daa4d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('io0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4daa4d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4daa4d">
+      <span style="display:inline-block;width:8px;height:8px;background:#4daa4d;border-radius:50%;margin-right:2px"></span>PRINT – Ausgabe
+    </span>
+    <span class="aa" style="color:#4daa4d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="print – ausgabe">
+  <div style="color:#4daa4d;font-weight:700;font-size:12px;margin-bottom:8px">
+    PRINT – Ausgabe
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PRINT IN APPLESOFT BASIC</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"HALLO"</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zeilenumbruch am Ende</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"A"</span>; <span style="color:#c3e88d">"B"</span>; <span style="color:#c3e88d">"C"</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Semikolon: kein Abstand  =&gt; ABC</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"A"</span>, <span style="color:#c3e88d">"B"</span>, <span style="color:#c3e88d">"C"</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Komma: Tab-Abstand       =&gt; A        B        C</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">PRINT</span>                           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Leere Zeile</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ZAHLENFORMATE</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#f78c6c">42</span>                        :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 42</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">PRINT</span> <span style="color:#f78c6c">3.14159</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 3.14159</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">PRINT</span> <span style="color:#f78c6c">1E-10</span>                     :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 1E-10 (Wissenschaft)</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">PRINT</span> <span style="color:#f78c6c">1</span> + <span style="color:#f78c6c">2</span>                     :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 3 (Ausdruck)</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> TABULATOR</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">TAB</span>(<span style="color:#f78c6c">10</span>); <span style="color:#c3e88d">"SPALTE 10"</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Cursor zu Spalte 10</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">TAB</span>(<span style="color:#f78c6c">1</span>); <span style="color:#c3e88d">"A"</span>; <span style="color:#c792ea">TAB</span>(<span style="color:#f78c6c">10</span>); <span style="color:#c3e88d">"B"</span>; <span style="color:#c792ea">TAB</span>(<span style="color:#f78c6c">20</span>); <span style="color:#c3e88d">"C"</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> =&gt;     A         B                   C</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PRINT AT POSITION</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">HOME</span>                            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Bildschirm löschen</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">VTAB</span> <span style="color:#f78c6c">5</span>                          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Cursor zu Zeile 5</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">HTAB</span> <span style="color:#f78c6c">20</span>                         :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Cursor zu Spalte 20</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"HIER"</span>                    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Mitte des Bildschirms</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> TEXTMODI</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">INVERSE</span>                         :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Invertierter Text (schwarz auf weiß)</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"INVERTIERT"</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">FLASH</span>                           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Blinkender Text</span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"BLINKT!"</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">NORMAL</span>                          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zurück zu normal</span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"NORMAL"</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">330</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PRINT IN DATEI (PR#)</span>
+<span style="color:#d4a017">340</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PR#1 = Drucker (Slot 1)</span>
+<span style="color:#d4a017">350</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PR#3 = 80-Zeichen-Karte</span>
+<span style="color:#d4a017">360</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PR#0 = zurück zu Bildschirm</span>
+<span style="color:#d4a017">370</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-io1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('io1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>INPUT &amp; GET – Eingabe
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="input &amp; get – eingabe">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    INPUT &amp; GET – Eingabe
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> EINGABE IN APPLESOFT BASIC</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> INPUT: Wartet auf Enter-Taste</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">INPUT</span> <span style="color:#4ec9b0">N</span>                         :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Fragt "?" und wartet</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DU HAST EINGEGEBEN: "</span>; <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> INPUT MIT PROMPT</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"DEIN NAME: "</span>; <span style="color:#4ec9b0">N$</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"HALLO, "</span>; <span style="color:#4ec9b0">N$</span>; <span style="color:#c3e88d">"!"</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> MEHRERE WERTE AUF EINMAL</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"X, Y: "</span>; <span style="color:#4ec9b0">X</span>, <span style="color:#4ec9b0">Y</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"PUNKT: ("</span>; <span style="color:#4ec9b0">X</span>; <span style="color:#c3e88d">","</span>; <span style="color:#4ec9b0">Y</span>; <span style="color:#c3e88d">")"</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> VORSICHT: Gibt man zu wenige Werte ein:</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ?EXTRA IGNORED oder nachfragen</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> GET: Ein einzelnes Zeichen (KEIN Enter nötig!)</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DRÜCKE EINE TASTE: "</span>;
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">GET</span> <span style="color:#4ec9b0">K$</span>                          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Wartet auf 1 Taste</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">K$</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> GET FÜR TASTATURABFRAGE</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"WEITER MIT LEERTASTE..."</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">GET</span> <span style="color:#4ec9b0">K$</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">K$</span> <span style="color:#89ddff">&lt;</span><span style="color:#89ddff">&gt;</span> <span style="color:#c3e88d">" "</span> <span style="color:#c792ea">THEN</span> <span style="color:#f78c6c">250</span>          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Nur Leertaste akzeptieren</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"OK, WEITER!"</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PEEK(49152) = NICHT-WARTEND lesen</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Applesoft-Trick für Spiele)</span>
+<span style="color:#d4a017">310</span> <span style="color:#4ec9b0">K</span> <span style="color:#89ddff">=</span> <span style="color:#c792ea">PEEK</span>(<span style="color:#f78c6c">49152</span>)                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Tastatur-Puffer</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">K</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">127</span> <span style="color:#c792ea">THEN</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Taste gedrückt?</span>
+<span style="color:#d4a017">330</span>   <span style="color:#4ec9b0">K$</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">CHR$</span>(<span style="color:#4ec9b0">K</span> - <span style="color:#f78c6c">128</span>)           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Taste umwandeln</span>
+<span style="color:#d4a017">340</span>   <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">49168</span>, <span style="color:#f78c6c">0</span>                 :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Puffer leeren</span>
+<span style="color:#d4a017">350</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-grafik" class="tp">
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #4daa4d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4daa4d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4daa4d">
+      <span style="display:inline-block;width:8px;height:8px;background:#4daa4d;border-radius:50%;margin-right:2px"></span>Low-Resolution Grafik (GR)
+    </span>
+    <span class="aa" style="color:#4daa4d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="low-resolution grafik (gr)">
+  <div style="color:#4daa4d;font-weight:700;font-size:12px;margin-bottom:8px">
+    Low-Resolution Grafik (GR)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> LOW-RES GRAFIK: 40x48 Pixel, 16 Farben</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">GR</span>                    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Grafikmodus (4 Textzeilen unten)</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> FARBEN (0-15):</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 0=Schwarz  1=Magenta    2=Dunkelblau  3=Lila</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 4=Dunkelgrün 5=Dunkelgrau 6=Blau     7=Hellblau</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 8=Braun    9=Orange     10=Grau       11=Pink</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 12=Grün    13=Gelb      14=Aqua       15=Weiß</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">COLOR</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">15</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Weiß</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">PLOT</span> <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">24</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Punkt bei X=20, Y=24</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">COLOR</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">9</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Orange</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">HLIN</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">39</span> <span style="color:#4ec9b0">AT</span> <span style="color:#f78c6c">0</span>       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Horizontale Linie: X=0..39, Y=0</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">HLIN</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">39</span> <span style="color:#4ec9b0">AT</span> <span style="color:#f78c6c">47</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Horizontale Linie: X=0..39, Y=47</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">VLIN</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">47</span> <span style="color:#4ec9b0">AT</span> <span style="color:#f78c6c">0</span>       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Vertikale Linie: X=0, Y=0..47</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">VLIN</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">47</span> <span style="color:#4ec9b0">AT</span> <span style="color:#f78c6c">39</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Vertikale Linie: X=39, Y=0..47</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> =&gt; Rahmen!</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> RECHTECK FÜLLEN</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">COLOR</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">4</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Dunkelgrün</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">Y</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">10</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">20</span>
+<span style="color:#d4a017">230</span>   <span style="color:#c792ea">HLIN</span> <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">30</span> <span style="color:#4ec9b0">AT</span> <span style="color:#4ec9b0">Y</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">Y</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> FARBE AN POSITION LESEN</span>
+<span style="color:#d4a017">270</span> <span style="color:#4ec9b0">F</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">SCRN</span>(<span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">24</span>)      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Farbe bei (20,24)</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">VTAB</span> <span style="color:#f78c6c">22</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"FARBE: "</span>; <span style="color:#4ec9b0">F</span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">300</span> <span style="color:#4ec9b0">TEXT</span>                  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zurück zu Text-Modus</span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>High-Resolution Grafik (HGR)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="high-resolution grafik (hgr)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    High-Resolution Grafik (HGR)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> HIGH-RES GRAFIK: 280x192 Pixel, 6 Farben (+schwarz/weiß)</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">HGR</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> 280x192, 4 Textzeilen unten</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> HGR2              : REM 280x192, KEIN Text (Vollbild)</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> FARBEN:</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 0=Schwarz  1=Grün    2=Lila</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> 3=Weiß     4=Schwarz 5=Orange  6=Blau  7=Weiß</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Farben hängen von X-Position ab – Apple II Eigenheit!)</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">HCOLOR</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Weiß</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Punkt bei (0,0)</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#f78c6c">279</span>, <span style="color:#f78c6c">191</span>        :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Punkt bei (279,191)</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> LINIE ZEICHNEN</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">279</span>, <span style="color:#f78c6c">191</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Diagonale!</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#f78c6c">279</span>, <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">191</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Andere Diagonale</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> MEHRERE VERBUNDENE LINIEN</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">270</span>, <span style="color:#f78c6c">10</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Weiter von letztem Punkt</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">270</span>, <span style="color:#f78c6c">180</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">180</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zurück =&gt; Rechteck!</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> KREIS (per Sinus/Cosinus)</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">HCOLOR</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">5</span>            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Orange</span>
+<span style="color:#d4a017">280</span> <span style="color:#4ec9b0">CX</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">140</span> : <span style="color:#4ec9b0">CY</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">96</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Mittelpunkt</span>
+<span style="color:#d4a017">290</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">60</span>                :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Radius</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">360</span> <span style="color:#c792ea">STEP</span> <span style="color:#f78c6c">2</span>
+<span style="color:#d4a017">310</span>   <span style="color:#4ec9b0">X</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">CX</span> + <span style="color:#4ec9b0">R</span> * <span style="color:#82aaff">COS</span>(<span style="color:#4ec9b0">A</span> * <span style="color:#f78c6c">3.14159</span> / <span style="color:#f78c6c">180</span>)
+<span style="color:#d4a017">320</span>   <span style="color:#4ec9b0">Y</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">CY</span> + <span style="color:#4ec9b0">R</span> * <span style="color:#82aaff">SIN</span>(<span style="color:#4ec9b0">A</span> * <span style="color:#f78c6c">3.14159</span> / <span style="color:#f78c6c">180</span>)
+<span style="color:#d4a017">330</span>   <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#4ec9b0">X</span>, <span style="color:#4ec9b0">Y</span> <span style="color:#c792ea">ELSE</span> <span style="color:#c792ea">HPLOT</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">X</span>, <span style="color:#4ec9b0">Y</span>
+<span style="color:#d4a017">340</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">A</span>
+<span style="color:#d4a017">350</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">360</span> <span style="color:#4ec9b0">TEXT</span> : <span style="color:#c792ea">HOME</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zurück zu Text</span>
+<span style="color:#d4a017">370</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Sound – POKE zum Lautsprecher
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="sound – poke zum lautsprecher">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Sound – POKE zum Lautsprecher
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> SOUND AUF DEM APPLE II</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Der Apple II hat KEINEN echten Sound-Chip!</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Töne werden durch schnelles POKE zum Lautsprecher erzeugt</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> POKE 49200, 0 schaltet Lautsprecher um (Toggle)</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> EINFACHER TON (Frequenz durch Verzögerungsschleife)</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">100</span>
+<span style="color:#d4a017">90</span>    <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">49200</span>, <span style="color:#f78c6c">0</span>       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Lautsprecher togglen</span>
+<span style="color:#d4a017">100</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">J</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">5</span> : <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">J</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Verzögerung = Frequenz</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> TON-UNTERPROGRAMM (VARIABLER TON)</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> MELODIE SPIELEN</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">50</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Frequenz-Daten (Verzögerung)</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">15</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Dauer-Daten</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">7</span>
+<span style="color:#d4a017">200</span>   <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">FR</span> : <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">DU</span>
+<span style="color:#d4a017">210</span>   <span style="color:#4ec9b0">F</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">FR</span> : <span style="color:#4ec9b0">D</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">DU</span>
+<span style="color:#d4a017">220</span>   <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>
+<span style="color:#d4a017">230</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">P</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">500</span> : <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">P</span> :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Pause zwischen Tönen</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">END</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">1000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** TON-UNTERPROGRAMM ***</span>
+<span style="color:#d4a017">1010</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> F = Frequenz (Verzögerung: kleiner = höher)</span>
+<span style="color:#d4a017">1020</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> D = Dauer (Anzahl Wiederholungen)</span>
+<span style="color:#d4a017">1030</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">D</span> * <span style="color:#f78c6c">20</span>
+<span style="color:#d4a017">1040</span>   <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">49200</span>, <span style="color:#f78c6c">0</span>
+<span style="color:#d4a017">1050</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">J</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">F</span> : <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">J</span>
+<span style="color:#d4a017">1060</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">1070</span> <span style="color:#c792ea">RETURN</span>
+
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> MUSIK-TIPP:</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> Frequenz-Wert  Ungefähre Note</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a">     5          C5 (Hoch)</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a">    10          C4 (Mittel)</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a">    20          C3 (Tief)</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Sehr system-abhängig – BASIC-Interpreter-Geschwindigkeit variiert!)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-funktionen" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #4daa4d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4daa4d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4daa4d">
+      <span style="display:inline-block;width:8px;height:8px;background:#4daa4d;border-radius:50%;margin-right:2px"></span>Mathematische Funktionen
+    </span>
+    <span class="aa" style="color:#4daa4d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">INT(X)</code></td><td style="color:#cdd6f4">Abrunden zur nächsten ganzen Zahl</td><td style="color:#6c7a8e">INT(3.7) = 3  INT(-3.7) = -4</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">ABS(X)</code></td><td style="color:#cdd6f4">Absolutwert</td><td style="color:#6c7a8e">ABS(-5) = 5</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">SGN(X)</code></td><td style="color:#cdd6f4">Vorzeichen: -1, 0, oder 1</td><td style="color:#6c7a8e">SGN(-5) = -1  SGN(0) = 0</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">SQR(X)</code></td><td style="color:#cdd6f4">Quadratwurzel</td><td style="color:#6c7a8e">SQR(9) = 3</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">SIN(X)</code></td><td style="color:#cdd6f4">Sinus (Radiant)</td><td style="color:#6c7a8e">SIN(0) = 0</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">COS(X)</code></td><td style="color:#cdd6f4">Kosinus (Radiant)</td><td style="color:#6c7a8e">COS(0) = 1</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">TAN(X)</code></td><td style="color:#cdd6f4">Tangens (Radiant)</td><td style="color:#6c7a8e">TAN(0) = 0</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">ATN(X)</code></td><td style="color:#cdd6f4">Arcustangens (Radiant)</td><td style="color:#6c7a8e">ATN(1) * 4 = PI</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">EXP(X)</code></td><td style="color:#cdd6f4">e hoch X</td><td style="color:#6c7a8e">EXP(1) = 2.71828</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">LOG(X)</code></td><td style="color:#cdd6f4">Natürlicher Logarithmus</td><td style="color:#6c7a8e">LOG(1) = 0</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">RND(1)</code></td><td style="color:#cdd6f4">Zufallszahl 0 &lt;= N &lt; 1</td><td style="color:#6c7a8e">RND(1) = 0.3456... (variiert)</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">RND(-1)</code></td><td style="color:#cdd6f4">Zufallsgenerator zurücksetzen</td><td style="color:#6c7a8e">Immer dieselbe Folge</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">RND(0)</code></td><td style="color:#cdd6f4">Letzte Zufallszahl wiederholen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">DEF FN A(X)</code></td><td style="color:#cdd6f4">Eigene Funktion definieren</td><td style="color:#6c7a8e">DEF FN SQ(X) = X * X</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>String-Funktionen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">LEN(A$)</code></td><td style="color:#cdd6f4">Länge des Strings</td><td style="color:#6c7a8e">LEN("HALLO") = 5</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">LEFT$(A$, N)</code></td><td style="color:#cdd6f4">N Zeichen von links</td><td style="color:#6c7a8e">LEFT$("HALLO", 3) = "HAL"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">RIGHT$(A$, N)</code></td><td style="color:#cdd6f4">N Zeichen von rechts</td><td style="color:#6c7a8e">RIGHT$("HALLO", 3) = "LLO"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">MID$(A$, P, N)</code></td><td style="color:#cdd6f4">N Zeichen ab Position P</td><td style="color:#6c7a8e">MID$("HALLO", 2, 3) = "ALL"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">MID$(A$, P)</code></td><td style="color:#cdd6f4">Ab Position P bis Ende</td><td style="color:#6c7a8e">MID$("HALLO", 3) = "LLO"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">STR$(N)</code></td><td style="color:#cdd6f4">Zahl zu String</td><td style="color:#6c7a8e">STR$(42) = "42"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">VAL(A$)</code></td><td style="color:#cdd6f4">String zu Zahl</td><td style="color:#6c7a8e">VAL("3.14") = 3.14</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">CHR$(N)</code></td><td style="color:#cdd6f4">ASCII-Code zu Zeichen</td><td style="color:#6c7a8e">CHR$(65) = "A"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">ASC(A$)</code></td><td style="color:#cdd6f4">Erstes Zeichen zu ASCII-Code</td><td style="color:#6c7a8e">ASC("A") = 65</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #d4a01744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#d4a0170e">
+    <span style="display:flex;align-items:center;gap:6px;color:#d4a017">
+      <span style="display:inline-block;width:8px;height:8px;background:#d4a017;border-radius:50%;margin-right:2px"></span>DEF FN – eigene Funktionen
+    </span>
+    <span class="aa" style="color:#d4a017;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="def fn – eigene funktionen">
+  <div style="color:#d4a017;font-weight:700;font-size:12px;margin-bottom:8px">
+    DEF FN – eigene Funktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> DEF FN - BENUTZERDEFINIERTE FUNKTIONEN</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> NUR EINZEILIGE AUSDRÜCKE (kein Unterprogramm!)</span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">DEF</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">SQ</span>(<span style="color:#4ec9b0">X</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">X</span> * <span style="color:#4ec9b0">X</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Quadrat</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">DEF</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">CU</span>(<span style="color:#4ec9b0">X</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">X</span> * <span style="color:#4ec9b0">X</span> * <span style="color:#4ec9b0">X</span>          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Kubik</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">DEF</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">AB</span>(<span style="color:#4ec9b0">X</span>) <span style="color:#89ddff">=</span> <span style="color:#82aaff">ABS</span>(<span style="color:#4ec9b0">X</span>)             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Absolutwert (Alias)</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">DEF</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">RD</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">INT</span>(<span style="color:#82aaff">RND</span>(<span style="color:#f78c6c">1</span>) * <span style="color:#f78c6c">6</span>) + <span style="color:#f78c6c">1</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Würfel (kein Parameter!)</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">DEF</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">DG</span>(<span style="color:#4ec9b0">R</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">R</span> * <span style="color:#f78c6c">180</span> / <span style="color:#f78c6c">3.14159</span> :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Rad -&gt; Grad</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">DEF</span> <span style="color:#c792ea">FN</span> <span style="color:#c792ea">GR</span>(<span style="color:#4ec9b0">D</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">D</span> * <span style="color:#f78c6c">3.14159</span> / <span style="color:#f78c6c">180</span> :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Grad -&gt; Rad</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">SQ</span>(<span style="color:#f78c6c">5</span>)                    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 25</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">CU</span>(<span style="color:#f78c6c">3</span>)                    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 27</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">DG</span>(<span style="color:#f78c6c">3.14159</span>)              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 180</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">RD</span>                       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 1-6 (Zufallswürfel)</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> VERSCHACHTELN ERLAUBT</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">SQ</span>(<span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">AB</span>(<span style="color:#f78c6c">-4</span>))            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> =&gt; 16 ((-4)^2)</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> FN IN AUSDRÜCKEN</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">X</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">5</span>
+<span style="color:#d4a017">210</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">X</span>; <span style="color:#c3e88d">"^2 = "</span>; <span style="color:#c792ea">FN</span> <span style="color:#4ec9b0">SQ</span>(<span style="color:#4ec9b0">X</span>)
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">X</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIG:</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> - DEF FN muss VOR der ersten Benutzung stehen</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Nur mathematische Ausdrücke (kein PRINT, kein GOTO)</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> - Parametername ist lokal (nur innerhalb FN gültig)</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-poke" class="tp">
+
+<div class="ac open" id="ac-pk0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>PEEK &amp; POKE – Direkte Speicherzugriffe
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="peek &amp; poke – direkte speicherzugriffe">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    PEEK &amp; POKE – Direkte Speicherzugriffe
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PEEK UND POKE - DAS MÄCHTIGSTE WERKZEUG!</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PEEK(ADRESSE) = Byte an Adresse lesen</span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> POKE ADRESSE, WERT = Byte schreiben</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIGE ADRESSEN (Apple II):</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> --- SYSTEM ---</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> PEEK(65532) = Reset-Vektor Low</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> POKE 768, X = Seite 3 (sicher für Maschinencode)</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> --- BILDSCHIRM ---</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">32</span>,  <span style="color:#f78c6c">0</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Linker Rand (0-39)</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">33</span>, <span style="color:#f78c6c">40</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Rechter Rand (1-40)</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">34</span>,  <span style="color:#f78c6c">0</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Obere Zeile (0-23)</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">35</span>, <span style="color:#f78c6c">24</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Untere Zeile (1-24)</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ZEICHEN DIREKT IN TEXTPUFFER SCHREIBEN</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Textpuffer: $0400-$07FF (Seite 1)</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">39</span>
+<span style="color:#d4a017">200</span>   <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">1024</span> + <span style="color:#4ec9b0">I</span>, <span style="color:#f78c6c">1</span>       :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Schreibe "A" (Code 193 = A+128)</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> =&gt; Erste Zeile voll mit "A"</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> --- LAUTSPRECHER ---</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">49200</span>, <span style="color:#f78c6c">0</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Lautsprecher-Toggle (Sound!)</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> --- TASTATUR ---</span>
+<span style="color:#d4a017">280</span> <span style="color:#4ec9b0">K</span> <span style="color:#89ddff">=</span> <span style="color:#c792ea">PEEK</span>(<span style="color:#f78c6c">49152</span>)           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Tastenstatus</span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">49168</span>, <span style="color:#f78c6c">0</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Tasten-Strobe löschen</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> --- STEUER-PORTS (Joystick) ---</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">49089</span>, <span style="color:#f78c6c">0</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Paddle-Timer starten</span>
+<span style="color:#d4a017">330</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">T</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10000</span>        :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Warte...</span>
+<span style="color:#d4a017">340</span>   <span style="color:#c792ea">IF</span> <span style="color:#c792ea">PEEK</span>(<span style="color:#f78c6c">49089</span>) <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">127</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">P1</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">T</span> : <span style="color:#4ec9b0">T</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">10001</span>
+<span style="color:#d4a017">350</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">T</span>
+<span style="color:#d4a017">360</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"PADDLE 1: "</span>; <span style="color:#4ec9b0">P1</span>
+<span style="color:#d4a017">370</span> <span style="color:#c792ea">END</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pk1"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Wichtige Adressen – Schnellreferenz
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Adresse / Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">PEEK(49152)</code></td><td style="color:#cdd6f4">$C000 – Tastaturpuffer</td><td style="color:#6c7a8e">Taste lesen (&gt; 127 = gedrückt)</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 49168, 0</code></td><td style="color:#cdd6f4">$C010 – Keyboard-Strobe löschen</td><td style="color:#6c7a8e">Nach PEEK(49152)</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 49200, 0</code></td><td style="color:#cdd6f4">$C030 – Lautsprecher Toggle</td><td style="color:#6c7a8e">Sound erzeugen</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">PEEK(49249)</code></td><td style="color:#cdd6f4">$C061 – Button 0 / Apfel-Taste</td><td style="color:#6c7a8e">&gt; 127 = gedrückt</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">PEEK(49250)</code></td><td style="color:#cdd6f4">$C062 – Button 1 / Ctrl-Taste</td><td style="color:#6c7a8e">&gt; 127 = gedrückt</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 49089, 0</code></td><td style="color:#cdd6f4">$C041 – Paddle-Timer starten</td><td style="color:#6c7a8e">Für Joystick-Abfrage</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">PEEK(49089)</code></td><td style="color:#cdd6f4">$C041 – Paddle-Timer lesen</td><td style="color:#6c7a8e">&gt; 127 = Timer abgelaufen</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 16384, X</code></td><td style="color:#cdd6f4">$4000 – HGR Seite 1 Start</td><td style="color:#6c7a8e">Hires-Grafikspeicher direkt</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 8192, X</code></td><td style="color:#cdd6f4">$2000 – HGR Seite 1 (8K)</td><td style="color:#6c7a8e">Direkte Pixel-Manipulation</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 54,  X</code></td><td style="color:#cdd6f4">$36 – HGR Farbe setzen</td><td style="color:#6c7a8e">Wie HCOLOR= aber schneller</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 32,  X</code></td><td style="color:#cdd6f4">$20 – Linker Rand</td><td style="color:#6c7a8e">0-39</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 33,  X</code></td><td style="color:#cdd6f4">$21 – Rechter Rand</td><td style="color:#6c7a8e">1-40</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">POKE 1,   X</code></td><td style="color:#cdd6f4">$01 – Stack Pointer (Vorsicht!)</td><td style="color:#6c7a8e">Nur wenn du weißt was du tust</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">CALL -936</code></td><td style="color:#cdd6f4">$FC58 HOME Routine</td><td style="color:#6c7a8e">CALL -936 = HOME schnell</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">CALL -868</code></td><td style="color:#cdd6f4">$FC9C PRINT X Register</td><td style="color:#6c7a8e">Maschinenprogramm aufrufen</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">USR(X)</code></td><td style="color:#cdd6f4">Maskenprogramm bei USER USR-Adresse</td><td style="color:#6c7a8e">Für ASM-Routinen</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pk2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pk2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>CALL – Maschinensprache aufrufen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="call – maschinensprache aufrufen">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    CALL – Maschinensprache aufrufen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> CALL - MASCHINENSPRACHEPROGRAMM AUFRUFEN</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> CALL ADRESSE ruft Routine bei ADRESSE auf</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> EINGEBAUTE ROM-ROUTINEN:</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">CALL</span> <span style="color:#f78c6c">-936</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> HOME (Bildschirm löschen)</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">CALL</span> <span style="color:#f78c6c">-868</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> BELL (Piepston)</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">CALL</span> <span style="color:#f78c6c">-922</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> CLREOL (Zeile bis Ende löschen)</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">CALL</span> <span style="color:#f78c6c">62450</span>          :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> = CALL $F412 PRBYTE (Hex ausgeben)</span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> EIGENES MASCHINENSPRACHEPROGRAMM:</span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Kleines Beispiel: Gibt "HALLO" aus via ROM-ROUTINE)</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ADRESSE 768 ($300) ist sicher für User-Code</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">9</span>
+<span style="color:#d4a017">160</span>   <span style="color:#c792ea">READ</span> <span style="color:#4ec9b0">B</span>
+<span style="color:#d4a017">170</span>   <span style="color:#c792ea">POKE</span> <span style="color:#f78c6c">768</span> + <span style="color:#4ec9b0">I</span>, <span style="color:#4ec9b0">B</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Maschinencode laden</span>
+<span style="color:#d4a017">180</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">190</span> <span style="color:#c792ea">CALL</span> <span style="color:#f78c6c">768</span>             :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Ausführen!</span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">END</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">169</span>, <span style="color:#f78c6c">72</span>         :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> LDA #'H'</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">32</span>, <span style="color:#f78c6c">237</span>, <span style="color:#f78c6c">253</span>    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> JSR $FDED (COUT)</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">169</span>, <span style="color:#f78c6c">73</span>         :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> LDA #'I'</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">32</span>, <span style="color:#f78c6c">237</span>, <span style="color:#f78c6c">253</span>    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> JSR $FDED</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">DATA</span> <span style="color:#f78c6c">96</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> RTS (Return)</span>
+
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> WICHTIGE ROM-ADRESSEN:</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> $FDED = COUT  - Zeichen ausgeben (A-Register = Zeichen)</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> $FD8E = CROUT - Carriage Return ausgeben</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> $FC58 = HOME  - Bildschirm löschen</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> $F800 = PLOT  - Low-Res Punkt setzen</span>
+<span style="color:#c792ea">REM</span><span style="color:#546e7a"> $F85F = HLINE - Horizontale Low-Res Linie</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #4daa4d;color:#4daa4d;background:rgba(77,170,77,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Zahlenraten-Spiel</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Bubblesort</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Sierpinski-Dreieck (Hi-Res)</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Textadventure</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** ZAHLENRATEN - KLASSISCHES APPLESOFT-SPIEL ***</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">HOME</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"********************************"</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"*    ZAHLENRATEN            *"</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"* RATE DIE ZAHL VON 1-100! *"</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"********************************"</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">100</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ZUFALLSZAHL 1-100</span>
+<span style="color:#d4a017">110</span> <span style="color:#4ec9b0">G</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">INT</span>(<span style="color:#82aaff">RND</span>(<span style="color:#f78c6c">1</span>) * <span style="color:#f78c6c">100</span>) + <span style="color:#f78c6c">1</span>
+<span style="color:#d4a017">120</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> VERSUCHE</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** HAUPTSCHLEIFE ***</span>
+<span style="color:#d4a017">210</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">V</span> + <span style="color:#f78c6c">1</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"DEINE ZAHL: "</span>; <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">G</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">400</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> TREFFER!</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">&lt;</span> <span style="color:#4ec9b0">G</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"ZU KLEIN!   "</span> : <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">300</span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"ZU GROSS!   "</span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">=</span> <span style="color:#f78c6c">7</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">500</span>  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> MAX VERSUCHE</span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">PRINT</span> <span style="color:#f78c6c">7</span> - <span style="color:#4ec9b0">V</span>; <span style="color:#c3e88d">" VERSUCHE NOCH"</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">330</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">210</span>
+<span style="color:#d4a017">400</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** GEWONNEN ***</span>
+<span style="color:#d4a017">410</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">420</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"RICHTIG! DIE ZAHL WAR "</span>; <span style="color:#4ec9b0">G</span>
+<span style="color:#d4a017">430</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DU HAST "</span>; <span style="color:#4ec9b0">V</span>; <span style="color:#c3e88d">" VERSUCHE GEBRAUCHT!"</span>
+<span style="color:#d4a017">440</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"WAHNSINN! BEIM ERSTEN VERSUCH!"</span>
+<span style="color:#d4a017">450</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">&lt;</span><span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"AUSGEZEICHNET!"</span>
+<span style="color:#d4a017">460</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">3</span> <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">V</span> <span style="color:#89ddff">&lt;</span><span style="color:#89ddff">=</span> <span style="color:#f78c6c">5</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GUT GEMACHT!"</span>
+<span style="color:#d4a017">470</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">600</span>
+<span style="color:#d4a017">500</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** VERLOREN ***</span>
+<span style="color:#d4a017">510</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">520</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"LEIDER! DIE ZAHL WAR "</span>; <span style="color:#4ec9b0">G</span>
+<span style="color:#d4a017">530</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"BESSER NAECHSTES MAL!"</span>
+<span style="color:#d4a017">600</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** NOCHMAL? ***</span>
+<span style="color:#d4a017">610</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">620</span> <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"NOCHMAL? (J/N): "</span>; <span style="color:#4ec9b0">A$</span>
+<span style="color:#d4a017">630</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"J"</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">30</span>
+<span style="color:#d4a017">640</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"AUF WIEDERSEHEN!"</span>
+<span style="color:#d4a017">650</span> <span style="color:#c792ea">END</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** BUBBLESORT IN APPLESOFT BASIC ***</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">HOME</span>
+<span style="color:#d4a017">40</span>  <span style="color:#4ec9b0">N</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">10</span>                  :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Anzahl Elemente</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">DIM</span> <span style="color:#4ec9b0">A</span>(<span style="color:#f78c6c">10</span>)
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ZUFAELLIGE ZAHLEN ERZEUGEN</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"VORHER:"</span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">100</span>   <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">I</span>) <span style="color:#89ddff">=</span> <span style="color:#82aaff">INT</span>(<span style="color:#82aaff">RND</span>(<span style="color:#f78c6c">1</span>) * <span style="color:#f78c6c">100</span>) + <span style="color:#f78c6c">1</span>
+<span style="color:#d4a017">110</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">I</span>); <span style="color:#c3e88d">" "</span>;
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">130</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** BUBBLESORT ***</span>
+<span style="color:#d4a017">170</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">N</span> - <span style="color:#f78c6c">1</span>
+<span style="color:#d4a017">180</span>   <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">J</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">N</span> - <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">190</span>     <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">J</span>) <span style="color:#89ddff">&lt;</span><span style="color:#89ddff">=</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">J</span>+<span style="color:#f78c6c">1</span>) <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">230</span>
+<span style="color:#d4a017">200</span>     <span style="color:#4ec9b0">T</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">J</span>)            :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> TAUSCH</span>
+<span style="color:#d4a017">210</span>     <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">J</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">J</span>+<span style="color:#f78c6c">1</span>)
+<span style="color:#d4a017">220</span>     <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">J</span>+<span style="color:#f78c6c">1</span>) <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">T</span>
+<span style="color:#d4a017">230</span>   <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">J</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">250</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">260</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ERGEBNIS AUSGEBEN</span>
+<span style="color:#d4a017">270</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"NACHHER (SORTIERT):"</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#4ec9b0">N</span>
+<span style="color:#d4a017">290</span>   <span style="color:#c792ea">PRINT</span> <span style="color:#4ec9b0">A</span>(<span style="color:#4ec9b0">I</span>); <span style="color:#c3e88d">" "</span>;
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">END</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** SIERPINSKI-DREIECK IN HI-RES GRAFIK ***</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> (Chaos-Spiel Algorithmus)</span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">HGR</span>                     :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Hi-Res Grafik-Modus</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">HCOLOR</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span>              :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Weiss</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> DREI ECKPUNKTE DES DREIECKS</span>
+<span style="color:#d4a017">80</span>  <span style="color:#4ec9b0">X1</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">140</span> : <span style="color:#4ec9b0">Y1</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">5</span>      :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> OBEN</span>
+<span style="color:#d4a017">90</span>  <span style="color:#4ec9b0">X2</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">10</span>  : <span style="color:#4ec9b0">Y2</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">185</span>    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> UNTEN LINKS</span>
+<span style="color:#d4a017">100</span> <span style="color:#4ec9b0">X3</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">270</span> : <span style="color:#4ec9b0">Y3</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">185</span>    :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> UNTEN RECHTS</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">120</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> STARTPUNKT (zufaellig)</span>
+<span style="color:#d4a017">130</span> <span style="color:#4ec9b0">PX</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">140</span> : <span style="color:#4ec9b0">PY</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">96</span>
+<span style="color:#d4a017">140</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">150</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> CHAOS-SPIEL: 10000 PUNKTE</span>
+<span style="color:#d4a017">160</span> <span style="color:#c792ea">FOR</span> <span style="color:#4ec9b0">I</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">TO</span> <span style="color:#f78c6c">10000</span>
+<span style="color:#d4a017">170</span>   <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">INT</span>(<span style="color:#82aaff">RND</span>(<span style="color:#f78c6c">1</span>) * <span style="color:#f78c6c">3</span>) + <span style="color:#f78c6c">1</span>   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Zufaellige Ecke (1,2,3)</span>
+<span style="color:#d4a017">180</span>   <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">190</span>   <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">TX</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">X1</span> : <span style="color:#4ec9b0">TY</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">Y1</span>
+<span style="color:#d4a017">200</span>   <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">2</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">TX</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">X2</span> : <span style="color:#4ec9b0">TY</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">Y2</span>
+<span style="color:#d4a017">210</span>   <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">TX</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">X3</span> : <span style="color:#4ec9b0">TY</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">Y3</span>
+<span style="color:#d4a017">220</span>   <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">230</span>   <span style="color:#c792ea">REM</span><span style="color:#546e7a"> Mittelpunkt zwischen aktuellem Punkt und Ecke</span>
+<span style="color:#d4a017">240</span>   <span style="color:#4ec9b0">PX</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">INT</span>((<span style="color:#4ec9b0">PX</span> + <span style="color:#4ec9b0">TX</span>) / <span style="color:#f78c6c">2</span>)
+<span style="color:#d4a017">250</span>   <span style="color:#4ec9b0">PY</span> <span style="color:#89ddff">=</span> <span style="color:#82aaff">INT</span>((<span style="color:#4ec9b0">PY</span> + <span style="color:#4ec9b0">TY</span>) / <span style="color:#f78c6c">2</span>)
+<span style="color:#d4a017">260</span>   <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">270</span>   <span style="color:#c792ea">HPLOT</span> <span style="color:#4ec9b0">PX</span>, <span style="color:#4ec9b0">PY</span>           :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Punkt zeichnen</span>
+<span style="color:#d4a017">280</span> <span style="color:#c792ea">NEXT</span> <span style="color:#4ec9b0">I</span>
+<span style="color:#d4a017">290</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">300</span> <span style="color:#c792ea">VTAB</span> <span style="color:#f78c6c">22</span>
+<span style="color:#d4a017">310</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"SIERPINSKI-DREIECK - "</span>; <span style="color:#82aaff">CHR$</span>(<span style="color:#f78c6c">13</span>);
+<span style="color:#d4a017">320</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"10000 PUNKTE"</span>
+<span style="color:#d4a017">330</span> <span style="color:#c792ea">GET</span> <span style="color:#4ec9b0">K$</span>                   :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> Warte auf Taste</span>
+<span style="color:#d4a017">340</span> <span style="color:#4ec9b0">TEXT</span> : <span style="color:#c792ea">HOME</span>
+<span style="color:#d4a017">350</span> <span style="color:#c792ea">END</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.85);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre;text-shadow:0 0 8px rgba(77,170,77,.3)"><span style="color:#d4a017">10</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** MINI TEXTADVENTURE ***</span>
+<span style="color:#d4a017">20</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">30</span>  <span style="color:#c792ea">HOME</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"*** DIE DUNKLE HOEHLE ***"</span>
+<span style="color:#d4a017">40</span>  <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">50</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DU STEHST VOR EINER HOEHLE."</span>
+<span style="color:#d4a017">60</span>  <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GOLD GLITZERT IM DUNKEL."</span>
+<span style="color:#d4a017">70</span>  <span style="color:#c792ea">PRINT</span>
+<span style="color:#d4a017">80</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">90</span>  <span style="color:#c792ea">REM</span><span style="color:#546e7a"> ZUSTAND: R = RAUM (1-4), H = HAT FACKEL, G = HAT GOLD</span>
+<span style="color:#d4a017">100</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> : <span style="color:#4ec9b0">H</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> : <span style="color:#4ec9b0">G</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span>
+<span style="color:#d4a017">110</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">200</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** HAUPTSCHLEIFE ***</span>
+<span style="color:#d4a017">210</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1000</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> RAUM BESCHREIBEN</span>
+<span style="color:#d4a017">220</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">2000</span>               :<span style="color:#c792ea"> REM</span><span style="color:#546e7a"> EINGABE VERARBEITEN</span>
+<span style="color:#d4a017">230</span> <span style="color:#c792ea">GOTO</span> <span style="color:#f78c6c">210</span>
+<span style="color:#d4a017">240</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"></span>
+<span style="color:#d4a017">1000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** RAUM-BESCHREIBUNGEN ***</span>
+<span style="color:#d4a017">1010</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1100</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1020</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">2</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1200</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1030</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1300</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1040</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">4</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">GOSUB</span> <span style="color:#f78c6c">1400</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1050</span> <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1100</span> <span style="color:#c792ea">PRINT</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"EINGANG DER HOEHLE"</span>
+<span style="color:#d4a017">1110</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"AUSGAENGE: OST"</span>
+<span style="color:#d4a017">1120</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">H</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"HIER LIEGT EINE FACKEL"</span>
+<span style="color:#d4a017">1130</span> <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1200</span> <span style="color:#c792ea">PRINT</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DUNKLER GANG ("</span>; <span style="color:#82aaff">CHR$</span>(<span style="color:#f78c6c">71</span>+<span style="color:#4ec9b0">H</span>*<span style="color:#f78c6c">10</span>);  <span style="color:#c3e88d">")"</span>
+<span style="color:#d4a017">1210</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"AUSGAENGE: WEST, OST"</span>
+<span style="color:#d4a017">1220</span> <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">1300</span> <span style="color:#c792ea">PRINT</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GROSSE KAMMER"</span>
+<span style="color:#d4a017">1310</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"AUSGAENGE: WEST"</span>
+<span style="color:#d4a017">1320</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">G</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"GOLD LIEGT HIER!"</span>
+<span style="color:#d4a017">1330</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">G</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DU HAST DAS GOLD!"</span>
+<span style="color:#d4a017">1340</span> <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">2000</span> <span style="color:#c792ea">REM</span><span style="color:#546e7a"> *** EINGABE ***</span>
+<span style="color:#d4a017">2010</span> <span style="color:#c792ea">PRINT</span> : <span style="color:#c792ea">INPUT</span> <span style="color:#c3e88d">"WAS TUN: "</span>; <span style="color:#4ec9b0">A$</span>
+<span style="color:#d4a017">2020</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"OST"</span>  <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">&lt;</span> <span style="color:#f78c6c">3</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">R</span> + <span style="color:#f78c6c">1</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">2030</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"WEST"</span> <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#4ec9b0">R</span> - <span style="color:#f78c6c">1</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">2040</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"NIMM"</span> <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">H</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">H</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DU NIMMST DIE FACKEL"</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">2050</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"NIMM"</span> <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">R</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">3</span> <span style="color:#c792ea">AND</span> <span style="color:#4ec9b0">G</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#c792ea">THEN</span> <span style="color:#4ec9b0">G</span> <span style="color:#89ddff">=</span> <span style="color:#f78c6c">1</span> : <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DU NIMMST DAS GOLD!"</span> : <span style="color:#c792ea">RETURN</span>
+<span style="color:#d4a017">2060</span> <span style="color:#c792ea">IF</span> <span style="color:#4ec9b0">A$</span> <span style="color:#89ddff">=</span> <span style="color:#c3e88d">"QUIT"</span> <span style="color:#c792ea">THEN</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"TSCHUESS!"</span> : <span style="color:#c792ea">END</span>
+<span style="color:#d4a017">2070</span> <span style="color:#c792ea">PRINT</span> <span style="color:#c3e88d">"DAS KLAPPT NICHT."</span>
+<span style="color:#d4a017">2080</span> <span style="color:#c792ea">RETURN</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#4daa4d0a;border:1px solid #4daa4d44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#4daa4d">Kein Apple II? Kein Problem!</strong><br>Sofort im Browser: <a href="https://www.calormen.com/jsbasic/" style="color:#d4a017">https://www.calormen.com/jsbasic/</a> &nbsp;–&nbsp;vollständiger Applesoft-Emulator, kein Install nötig!</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #4daa4d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4daa4d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4daa4d">
+      <span style="display:inline-block;width:8px;height:8px;background:#4daa4d;border-radius:50%;margin-right:2px"></span>⚙ Emulatoren (kein Apple II nötig!)
+    </span>
+    <span class="aa" style="color:#4daa4d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Name / Adresse</th><th>Quelle / Befehl</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">jsbasic (Browser)</code></td><td style="color:#cdd6f4">calormen.com</td><td style="color:#6c7a8e">https://www.calormen.com/jsbasic/
+Direkter Applesoft-Emulator im Browser – kein Install!</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">AppleWin</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">github.com/AppleWin/AppleWin
+Bester Apple II Emulator (Windows/Wine)
+WASD als Joystick, Original-ROM</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">MAME</code></td><td style="color:#cdd6f4">mamedev.org</td><td style="color:#6c7a8e">Vollständige Apple II Emulation
+mame apple2e</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">OpenEmulator</code></td><td style="color:#cdd6f4">openemulator.io</td><td style="color:#6c7a8e">macOS: Schönste Apple II Emulation</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">Virtual II (macOS)</code></td><td style="color:#cdd6f4">virtualii.com</td><td style="color:#6c7a8e">Kommerziell, sehr genau</td></tr><tr><td style="width:220px"><code style="color:#4daa4d;font-size:13px">LinApple (Linux)</code></td><td style="color:#cdd6f4">sourceforge</td><td style="color:#6c7a8e">sudo apt install linapple
+LinApple – Apple IIe auf Linux</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Referenz-Ressourcen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Name / Adresse</th><th>Quelle / Befehl</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">Applesoft BASIC Manual</code></td><td style="color:#cdd6f4">archive.org</td><td style="color:#6c7a8e">Originales Manual von 1978 (PDF)
+archive.org/search?query=applesoft+basic+reference</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">Understanding II</code></td><td style="color:#cdd6f4">archive.org</td><td style="color:#6c7a8e">"Understanding the Apple II" – Wirth 1983
+Alles über Speicher-Map, ROM-Routinen</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">Beagle Bros</code></td><td style="color:#cdd6f4">archive.org</td><td style="color:#6c7a8e">BEAGLE BROS – Tipps &amp; Tricks Kalender
+Die besten Applesoft-Hacks</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">Apple II History</code></td><td style="color:#cdd6f4">apple2history.org</td><td style="color:#6c7a8e">apple2history.org – Geschichte des Apple II</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">A2Heaven</code></td><td style="color:#cdd6f4">a2heaven.com</td><td style="color:#6c7a8e">Moderne Apple II Software und Hardware</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">comp.sys.apple2</code></td><td style="color:#cdd6f4">groups.google</td><td style="color:#6c7a8e">Aktive Community noch heute!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Häufige Fehlermeldungen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Name / Adresse</th><th>Quelle / Befehl</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?SYNTAX ERROR</code></td><td style="color:#cdd6f4">Falsche Syntax</td><td style="color:#6c7a8e">Tippfehler, fehlendes END, falscher Befehl</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?UNDEF'D STATEMENT</code></td><td style="color:#cdd6f4">Zeilennummer nicht gefunden</td><td style="color:#6c7a8e">GOTO/GOSUB zu nicht-existierender Zeile</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?NEXT WITHOUT FOR</code></td><td style="color:#cdd6f4">NEXT ohne FOR</td><td style="color:#6c7a8e">FOR und NEXT-Variablen müssen passen</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?OUT OF DATA</code></td><td style="color:#cdd6f4">READ ohne DATA</td><td style="color:#6c7a8e">Mehr READs als DATA-Werte</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?TYPE MISMATCH</code></td><td style="color:#cdd6f4">Falscher Typ</td><td style="color:#6c7a8e">Zahl in String-Variable oder umgekehrt</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?BAD SUBSCRIPT</code></td><td style="color:#cdd6f4">Array-Index außerhalb</td><td style="color:#6c7a8e">Index &gt; DIM-Wert</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?REDIM'D ARRAY</code></td><td style="color:#cdd6f4">DIM nochmal aufgerufen</td><td style="color:#6c7a8e">DIM nur einmal pro Array!</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?OUT OF MEMORY</code></td><td style="color:#cdd6f4">Speicher voll</td><td style="color:#6c7a8e">Zu großes Array, zu tiefe GOSUBs</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?DIVISION BY ZERO</code></td><td style="color:#cdd6f4">Division durch 0</td><td style="color:#6c7a8e">X / 0 oder X MOD 0</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?OVERFLOW</code></td><td style="color:#cdd6f4">Zu große Zahl</td><td style="color:#6c7a8e">Zahl &gt; 1.7E38</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?RETURN WITHOUT GOSUB</code></td><td style="color:#cdd6f4">RETURN ohne GOSUB</td><td style="color:#6c7a8e">RETURN außerhalb eines Unterprogramms</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">?ILLEGAL QUANTITY</code></td><td style="color:#cdd6f4">Ungültiger Parameter</td><td style="color:#6c7a8e">z.B. SQR(-1) oder LOG(0)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Historische Fakten
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Name / Adresse</th><th>Quelle / Befehl</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">1977</code></td><td style="color:#cdd6f4">Apple II erscheint</td><td style="color:#6c7a8e">MOS 6502 CPU, 1 MHz, 4 KB RAM, Integer BASIC</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">1978</code></td><td style="color:#cdd6f4">Apple II+ mit Applesoft BASIC</td><td style="color:#6c7a8e">Applesoft im ROM (16 KB), 48 KB RAM möglich</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">1983</code></td><td style="color:#cdd6f4">Apple IIe erscheint</td><td style="color:#6c7a8e">128 KB RAM, 80 Zeichen, Lowercase</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">1984</code></td><td style="color:#cdd6f4">Apple IIc erscheint</td><td style="color:#6c7a8e">Kompakt, alle Ports integriert</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">1986</code></td><td style="color:#cdd6f4">Apple IIGS erscheint</td><td style="color:#6c7a8e">65816 CPU (16-Bit!), 1 MB RAM, GUI</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">1993</code></td><td style="color:#cdd6f4">Letzter Apple II eingestellt</td><td style="color:#6c7a8e">Apple IIe 16 Jahre lang produziert</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">heute</code></td><td style="color:#cdd6f4">Applesoft lebt weiter!</td><td style="color:#6c7a8e">Aktive Community, neue Hardware, Emulatoren</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">6502</code></td><td style="color:#cdd6f4">MOS 6502 CPU</td><td style="color:#6c7a8e">8-Bit, 56 Opcodes – in Applesoft nie direkt genutzt</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">RAM</code></td><td style="color:#cdd6f4">4 KB bis 128 KB</td><td style="color:#6c7a8e">Ursprünglich 4 KB! BASIC nahm ~8 KB für sich</td></tr><tr><td style="width:220px"><code style="color:#ffb347;font-size:13px">ROM</code></td><td style="color:#cdd6f4">12 KB Applesoft + Monitor</td><td style="color:#6c7a8e">Applesoft ist direkt in ROM eingebrannt</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#4daa4d';
+      btn.style.color       = '#4daa4d';
+      btn.style.background  = 'rgba(77, 170, 77, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

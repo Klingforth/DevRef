@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C# Syntax Referenz</title>
+  <style>:root { --bg:#0a0c0f; --border:#1e2530; --text:#cdd6f4; --dim:#6c7a8e; --accent:#9b4993; }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); color:var(--text); font-family:'Courier New',monospace; line-height:1.5; }
+#hdr { background:linear-gradient(135deg,#0f1217,#0a0c0f); border-bottom:1px solid var(--border); padding:14px 24px 0; position:sticky; top:0; z-index:100; }
+#hdr-top { display:flex; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+#hdr-title { font-size:20px; font-weight:900; }
+#hdr-sub { color:var(--dim); font-size:11px; }
+#tabs { display:flex; overflow-x:auto; scrollbar-width:none; }
+#tabs::-webkit-scrollbar { display:none; }
+.tb { background:transparent; border:none; border-bottom:2px solid transparent; color:var(--dim); padding:9px 13px; cursor:pointer; font-size:12px; font-family:inherit; white-space:nowrap; transition:color .15s; }
+.tb.active { color:var(--accent); border-bottom-color:var(--accent); background:rgba(155,73,147,.07); }
+.con { max-width:1120px; margin:0 auto; padding:20px 22px 60px; }
+.tp { display:none; } .tp.active { display:block; }
+.sb { width:100%; background:rgba(0,0,0,.6); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:var(--text); font-size:13px; font-family:inherit; margin-bottom:12px; outline:none; transition:border-color .2s; }
+.sb:focus { border-color:var(--accent); }
+.ac { border-radius:8px; overflow:hidden; margin-bottom:10px; }
+.ah:hover { filter:brightness(1.2); }
+.ac.open .aa { transform:rotate(180deg) !important; }
+table { width:100%; border-collapse:collapse; }
+th { color:var(--dim); font-size:10px; text-align:left; padding:6px 8px; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--border); font-family:inherit; }
+td { padding:7px 8px; border-bottom:1px solid rgba(30,37,48,.4); font-size:12px; vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,.015); }
+code { font-family:'Courier New',monospace; font-size:12px; background:rgba(255,255,255,.05); padding:1px 5px; border-radius:3px; }
+.cd { background:rgba(0,0,0,.55); border:1px solid var(--border); border-radius:8px; padding:11px 14px; margin-bottom:8px; }
+.tc { background:rgba(0,0,0,.55); border:1px solid var(--border); border-radius:6px; padding:10px 14px; margin-bottom:8px; }
+@media(max-width:720px) { .con { padding:14px 12px 40px; } }</style>
+</head>
+<body>
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title"><span style="color:#9b4993">&#x266F;</span> <span style="color:#9b4993">C#</span> Syntax</div>
+    <div id="hdr-sub">C# 12 · .NET 8 LTS · Records · LINQ · async/await · Pattern Matching</div>
+  </div>
+  <div id="tabs"><button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="oop">OOP & Klassen</button>
+    <button class="tb" data-tab="functional">Funktional & LINQ</button>
+    <button class="tb" data-tab="modern">Modernes C#</button>
+    <button class="tb" data-tab="collections">Collections</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    </div>
+</div>
+<div class="con">
+<div id="tp-grundlagen" class="tp active">
+<div style="background:#9b49930e;border:1px solid #9b499344;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.8">
+<strong style="color:#9b4993">C# 12 / .NET 8 LTS.</strong>
+Aktiviere: <code style="color:#c3e88d">&lt;Nullable&gt;enable&lt;/Nullable&gt;</code> in der .csproj.
+<br><span style="color:#cdd6f4">Bevorzuge: <code style="color:#c3e88d">record</code> fuer Daten &middot;
+<code style="color:#c3e88d">var</code> lokal &middot; <code style="color:#c3e88d">?.  ??  ??=</code> &middot; <code style="color:#c3e88d">async/await</code></span>
+</div>
+<div class="ac open" id="ac-gr0" style="border:1px solid #9b499344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#9b49930e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b4993"><span style="display:inline-block;width:8px;height:8px;background:#9b4993;border-radius:50%;margin-right:2px"></span>Datentypen</span>
+    <span class="aa" style="color:#9b4993;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px"><table><thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:160px"><code style="color:#9b4993">int</code></td><td style="color:#c3e88d;font-size:11px">32 Bit  |  -2.147.483.648 .. 2.147.483.647</td><td style="color:#6c7a8e">Alias fuer System.Int32</td></tr><tr><td style="width:160px"><code style="color:#9b4993">long</code></td><td style="color:#c3e88d;font-size:11px">64 Bit  |  ca. +/-9,2 x 10^18</td><td style="color:#6c7a8e">Literal: 42L</td></tr><tr><td style="width:160px"><code style="color:#9b4993">double</code></td><td style="color:#c3e88d;font-size:11px">64 Bit IEEE 754  |  ~15-17 Dezimalstellen</td><td style="color:#6c7a8e">Standard-Float</td></tr><tr><td style="width:160px"><code style="color:#9b4993">float</code></td><td style="color:#c3e88d;font-size:11px">32 Bit IEEE 754  |  ~6-9 Dezimalstellen</td><td style="color:#6c7a8e">Literal: 3.14f</td></tr><tr><td style="width:160px"><code style="color:#9b4993">decimal</code></td><td style="color:#c3e88d;font-size:11px">128 Bit  |  28-29 Dezimalstellen</td><td style="color:#6c7a8e">Fuer Geldbetraege! Literal: 9.99m</td></tr><tr><td style="width:160px"><code style="color:#9b4993">bool</code></td><td style="color:#c3e88d;font-size:11px">true / false</td><td style="color:#6c7a8e">Kein truthy/falsy</td></tr><tr><td style="width:160px"><code style="color:#9b4993">char</code></td><td style="color:#c3e88d;font-size:11px">16 Bit Unicode  |  U+0000 .. U+FFFF</td><td style="color:#6c7a8e">Einzelnes Zeichen. Literal: 'A'</td></tr><tr><td style="width:160px"><code style="color:#9b4993">string</code></td><td style="color:#c3e88d;font-size:11px">Immutabler Unicode-String</td><td style="color:#6c7a8e">Referenztyp aber unveraenderlich</td></tr><tr><td style="width:160px"><code style="color:#9b4993">object</code></td><td style="color:#c3e88d;font-size:11px">Basis aller Typen</td><td style="color:#6c7a8e">Boxing/Unboxing bei Primitiven</td></tr><tr><td style="width:160px"><code style="color:#9b4993">var</code></td><td style="color:#c3e88d;font-size:11px">var x = 42;  // int inferiert</td><td style="color:#6c7a8e">Lokale Typ-Inferenz (C# 3.0+)</td></tr><tr><td style="width:160px"><code style="color:#9b4993">dynamic</code></td><td style="color:#c3e88d;font-size:11px">dynamic x = "Hallo"; x = 42;</td><td style="color:#6c7a8e">Laufzeit-Typisierung (vermeiden!)</td></tr></tbody></table></div>
+</div>
+<div class="ac" id="ac-gr1" style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0"><span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Variablen, Konstanten &amp; Strings</span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="variablen"><div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">Variablen</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Deklaration</span>
+<span style="color:#c792ea">int</span> x = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">var</span> y = <span style="color:#f78c6c">42</span>;          <span style="color:#546e7a">// Typ-Inferenz: int</span>
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">PI</span> = <span style="color:#f78c6c">3.14159</span>;   <span style="color:#546e7a">// Compile-Zeit-Konstante</span>
+<span style="color:#c792ea">readonly</span> <span style="color:#c792ea">int</span> max;    <span style="color:#546e7a">// Runtime-Konstante (nur in Klassen)</span>
+
+<span style="color:#546e7a">// String-Interpolation – C# spezifisch!</span>
+<span style="color:#c792ea">string</span> name = <span style="color:#c3e88d">"Alice"</span>;
+<span style="color:#c792ea">int</span> alter = <span style="color:#f78c6c">30</span>;
+<span style="color:#c792ea">string</span> gruss = <span style="color:#c3e88d">$"Hallo, {name}! Du bist {alter} Jahre alt."</span>;
+<span style="color:#c792ea">string</span> berechnet = <span style="color:#c3e88d">$"2 + 2 = {2 + 2}"</span>;    <span style="color:#546e7a">// Ausdruecke erlaubt!</span>
+<span style="color:#c792ea">string</span> formatiert = <span style="color:#c3e88d">$"{alter:D4}"</span>;         <span style="color:#546e7a">// "0030"</span>
+
+<span style="color:#546e7a">// Verbatim Strings @"..." – kein Escape noetig</span>
+<span style="color:#c792ea">string</span> pfad = <span style="color:#c3e88d">@"C:\Pfad\zur\datei.txt"</span>;
+<span style="color:#c792ea">string</span> multiline = <span style="color:#c3e88d">@"Zeile 1</span>
+<span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">2</span>
+<span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">3</span><span style="color:#c3e88d">";</span>
+
+<span style="color:#546e7a">// Raw Strings (C# 11+)</span>
+<span style="color:#c792ea">string</span> json = <span style="color:#c3e88d">""</span><span style="color:#c3e88d">"</span>
+    {
+        <span style="color:#c3e88d">"name"</span>: <span style="color:#c3e88d">"Alice"</span>,
+        <span style="color:#c3e88d">"alter"</span>: <span style="color:#f78c6c">30</span>
+    }
+    <span style="color:#c3e88d">""</span><span style="color:#c3e88d">";</span>
+
+<span style="color:#546e7a">// String-Methoden haeufig genutzt</span>
+<span style="color:#c792ea">string</span> s = <span style="color:#c3e88d">"  Hallo, Welt!  "</span>;
+s.<span style="color:#4ec9b0">Trim</span>();                              <span style="color:#546e7a">// "Hallo, Welt!"</span>
+s.<span style="color:#4ec9b0">ToUpper</span>();                           <span style="color:#546e7a">// "  HALLO, WELT!  "</span>
+s.<span style="color:#4ec9b0">Contains</span>(<span style="color:#c3e88d">"Welt"</span>);                    <span style="color:#546e7a">// true</span>
+s.<span style="color:#4ec9b0">Replace</span>(<span style="color:#c3e88d">"Welt"</span>, <span style="color:#c3e88d">"C#"</span>);              <span style="color:#546e7a">// "  Hallo, C#!  "</span>
+s.<span style="color:#4ec9b0">Split</span>(<span style="color:#c3e88d">','</span>);                          <span style="color:#546e7a">// ["  Hallo", " Welt!  "]</span>
+<span style="color:#c792ea">string</span>.<span style="color:#4ec9b0">IsNullOrWhiteSpace</span>(s);          <span style="color:#546e7a">// false</span>
+<span style="color:#c792ea">string</span>.<span style="color:#4ec9b0">Join</span>(<span style="color:#c3e88d">", "</span>, <span style="color:#c792ea">new</span>[] {<span style="color:#c3e88d">"a"</span>,<span style="color:#c3e88d">"b"</span>,<span style="color:#c3e88d">"c"</span>}); <span style="color:#546e7a">// "a, b, c"</span>
+
+<span style="color:#546e7a">// Nullable Value Types  T?</span>
+<span style="color:#c792ea">int</span>? nullableInt = <span style="color:#c792ea">null</span>;
+nullableInt <span style="color:#89ddff">??=</span> <span style="color:#f78c6c">42</span>;      <span style="color:#546e7a">// Setze wenn null: 42</span>
+<span style="color:#c792ea">int</span> wert = nullableInt <span style="color:#89ddff">??</span> <span style="color:#f78c6c">0</span>;  <span style="color:#546e7a">// Default wenn null</span></pre></div></div>
+</div>
+<div class="ac" id="ac-gr2" style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Kontrollfluss</span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="kontrollfluss"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">Kontrollfluss</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// if / else</span>
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">10</span>)
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">"gross"</span>);
+<span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">5</span>)
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">"mittel"</span>);
+<span style="color:#c792ea">else</span>
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">"klein"</span>);
+
+<span style="color:#546e7a">// switch Expression (C# 8+)</span>
+<span style="color:#c792ea">string</span> kategorie = tag <span style="color:#c792ea">switch</span> {
+    <span style="color:#c3e88d">"Mo"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"Di"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"Mi"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"Do"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"Fr"</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Wochentag"</span>,
+    <span style="color:#c3e88d">"Sa"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"So"</span>                           <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Wochenende"</span>,
+    _ <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ArgumentException</span>(<span style="color:#c3e88d">$"Unbekannt: {tag}"</span>)
+};
+
+<span style="color:#546e7a">// Pattern Matching im switch (C# 9+)</span>
+<span style="color:#c792ea">string</span> beschreibe(<span style="color:#c792ea">object</span> obj) <span style="color:#89ddff">=&gt;</span> obj <span style="color:#c792ea">switch</span> {
+    <span style="color:#c792ea">int</span> n <span style="color:#c792ea">when</span> n &lt; <span style="color:#f78c6c">0</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"Negative Zahl: {n}"</span>,
+    <span style="color:#c792ea">int</span> n            <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"Zahl: {n}"</span>,
+    <span style="color:#c792ea">string</span> s         <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"String: '{s}'"</span>,
+    <span style="color:#c792ea">null</span>             <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"null"</span>,
+    _                <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"Typ: {obj.GetType().Name}"</span>
+};
+
+<span style="color:#546e7a">// Schleifen</span>
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">Write</span>(i + <span style="color:#c3e88d">" "</span>);
+<span style="color:#c792ea">foreach</span> (<span style="color:#c792ea">var</span> item <span style="color:#c792ea">in</span> liste) <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(item);
+<span style="color:#c792ea">while</span> (bedingung) { /* ... */ }
+<span style="color:#c792ea">do</span> { /* ... */ } <span style="color:#c792ea">while</span> (bedingung);
+
+<span style="color:#546e7a">// Null-Checks</span>
+<span style="color:#c792ea">string</span>? s = <span style="color:#c792ea">null</span>;
+<span style="color:#c792ea">int</span>? laenge = s<span style="color:#89ddff">?.</span><span style="color:#4ec9b0">Length</span>;           <span style="color:#546e7a">// null statt Exception!</span>
+<span style="color:#c792ea">string</span> ergebnis = s<span style="color:#89ddff">?.</span><span style="color:#4ec9b0">ToUpper</span>() <span style="color:#89ddff">??</span> <span style="color:#c3e88d">"Standard"</span>;
+
+<span style="color:#546e7a">// is mit Pattern (C# 7+)</span>
+<span style="color:#c792ea">if</span> (obj <span style="color:#c792ea">is</span> <span style="color:#c792ea">string</span> str)
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(str.<span style="color:#4ec9b0">ToUpper</span>());
+<span style="color:#c792ea">if</span> (obj <span style="color:#c792ea">is</span> <span style="color:#c792ea">not</span> <span style="color:#c792ea">null</span>) { /* ... */ }</pre></div></div>
+</div></div>
+<div id="tp-oop" class="tp">
+<div class="ac open" id="ac-oop0" style="border:1px solid #9b499344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop0')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#9b49930e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b4993"><span style="display:inline-block;width:8px;height:8px;background:#9b4993;border-radius:50%;margin-right:2px"></span>Klassen, Properties &amp; Konstruktoren</span>
+    <span class="aa" style="color:#9b4993;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px"><div class="cd" data-s="klassen"><div style="color:#9b4993;font-weight:700;font-size:12px;margin-bottom:8px">Klassen</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Person</span>
+{
+    <span style="color:#546e7a">// Auto-Properties (empfohlen!)</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Name</span>    { get; <span style="color:#c792ea">private</span> set; }
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">int</span>    <span style="color:#4ec9b0">Alter</span>   { get; <span style="color:#c792ea">private</span> set; }
+
+    <span style="color:#546e7a">// Computed Property</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">bool</span> <span style="color:#4ec9b0">IstErwachsen</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Alter</span> &gt;= <span style="color:#f78c6c">18</span>;
+
+    <span style="color:#546e7a">// Konstruktor</span>
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c792ea">string</span> name, <span style="color:#c792ea">int</span> alter)
+    {
+        <span style="color:#c792ea">if</span> (<span style="color:#c792ea">string</span>.<span style="color:#4ec9b0">IsNullOrWhiteSpace</span>(name))
+            <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ArgumentException</span>(<span style="color:#c3e88d">"Name darf nicht leer sein"</span>);
+        <span style="color:#4ec9b0">Name</span>  = name;
+        <span style="color:#4ec9b0">Alter</span> = alter;
+    }
+
+    <span style="color:#546e7a">// Statische Fabrik-Methode</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#4ec9b0">Person</span> <span style="color:#4ec9b0">Erstelle</span>(<span style="color:#c792ea">string</span> name, <span style="color:#c792ea">int</span> alter)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(name, alter);
+
+    <span style="color:#546e7a">// Methode</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Vorstellen</span>()
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"Hallo, ich bin {Name} und {Alter} Jahre alt."</span>;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">override</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">ToString</span>() <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"Person({Name}, {Alter})"</span>;
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">var</span> alice = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>);
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(alice.<span style="color:#4ec9b0">Vorstellen</span>());
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(alice.<span style="color:#4ec9b0">IstErwachsen</span>);   <span style="color:#546e7a">// true</span></pre></div></div>
+</div>
+<div class="ac" id="ac-oop1" style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop1')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Records (C# 9+)</span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="records"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">Records</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Record = immutabler Referenztyp (C# 9+)</span>
+<span style="color:#546e7a">// Automatisch: Konstruktor, Getter, Equals, GetHashCode, ToString</span>
+
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Name</span>, <span style="color:#c792ea">int</span> <span style="color:#4ec9b0">Alter</span>);
+
+<span style="color:#c792ea">var</span> alice = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>);
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(alice.<span style="color:#4ec9b0">Name</span>);    <span style="color:#546e7a">// "Alice"</span>
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(alice);         <span style="color:#546e7a">// Person { Name = Alice, Alter = 30 }</span>
+
+<span style="color:#546e7a">// with – Non-destructive Mutation</span>
+<span style="color:#c792ea">var</span> aelter = alice <span style="color:#c792ea">with</span> { <span style="color:#4ec9b0">Alter</span> = <span style="color:#f78c6c">31</span> };
+
+<span style="color:#546e7a">// Value-Equality</span>
+<span style="color:#c792ea">var</span> alice2 = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>);
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(alice == alice2);   <span style="color:#546e7a">// true!</span>
+
+<span style="color:#546e7a">// Record mit Validierung</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Breite</span>, <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Hoehe</span>)
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Flaeche</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Breite</span> * <span style="color:#4ec9b0">Hoehe</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Rechteck</span>
+    {
+        <span style="color:#c792ea">if</span> (<span style="color:#4ec9b0">Breite</span> &lt;= <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ArgumentException</span>(<span style="color:#c3e88d">"Breite &gt; 0"</span>);
+        <span style="color:#c792ea">if</span> (<span style="color:#4ec9b0">Hoehe</span>  &lt;= <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ArgumentException</span>(<span style="color:#c3e88d">"Hoehe &gt; 0"</span>);
+    }
+}
+
+<span style="color:#546e7a">// Record Struct (C# 10+) – Werttyp</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Punkt</span>(<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">X</span>, <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Y</span>);
+
+<span style="color:#546e7a">// required Properties (C# 11+)</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Konfiguration</span>
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">required</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Host</span> { get; <span style="color:#c792ea">init</span>; }
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">int</span> <span style="color:#4ec9b0">Port</span> { get; <span style="color:#c792ea">init</span>; } = <span style="color:#f78c6c">5432</span>;
+}
+
+<span style="color:#c792ea">var</span> config = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Konfiguration</span> { <span style="color:#4ec9b0">Host</span> = <span style="color:#c3e88d">"localhost"</span> };
+<span style="color:#c792ea">var</span> testCfg = config <span style="color:#c792ea">with</span> { <span style="color:#4ec9b0">Host</span> = <span style="color:#c3e88d">"testserver"</span> };</pre></div></div>
+</div>
+<div class="ac" id="ac-oop2" style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop2')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0"><span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Interfaces, Vererbung &amp; Extension Methods</span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="interfaces"><div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">Interfaces</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Interface mit Default-Implementierung (C# 8+)</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">IForm</span>
+{
+    <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Flaeche</span>();
+    <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Umfang</span>();
+
+    <span style="color:#546e7a">// Default-Implementierung</span>
+    <span style="color:#c792ea">void</span> <span style="color:#4ec9b0">Drucke</span>() <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"Flaeche: {Flaeche():F2}"</span>);
+}
+
+<span style="color:#546e7a">// Sealed Class – keine weitere Vererbung</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Kreis</span> : <span style="color:#4ec9b0">IForm</span>
+{
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">readonly</span> <span style="color:#c792ea">double</span> _radius;
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">double</span> radius) <span style="color:#89ddff">=&gt;</span> _radius = radius;
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Flaeche</span>() <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * _radius * _radius;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Umfang</span>()  <span style="color:#89ddff">=&gt;</span> <span style="color:#f78c6c">2</span> * <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * _radius;
+}
+
+<span style="color:#546e7a">// Generische Klasse</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Repository</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#c792ea">where</span> <span style="color:#4ec9b0">T</span> : <span style="color:#c792ea">class</span>
+{
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">readonly</span> <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">T</span>&gt; _items = [];
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">void</span> <span style="color:#4ec9b0">Hinzufuegen</span>(<span style="color:#4ec9b0">T</span> item) <span style="color:#89ddff">=&gt;</span> _items.<span style="color:#4ec9b0">Add</span>(item);
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">IReadOnlyList</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">Alle</span>()   <span style="color:#89ddff">=&gt;</span> _items.<span style="color:#4ec9b0">AsReadOnly</span>();
+}
+
+<span style="color:#546e7a">// Extension Methods</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">StringExtensions</span>
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Capitalize</span>(<span style="color:#c792ea">this</span> <span style="color:#c792ea">string</span> s) <span style="color:#89ddff">=&gt;</span>
+        <span style="color:#c792ea">string</span>.<span style="color:#4ec9b0">IsNullOrEmpty</span>(s) ? s : <span style="color:#c792ea">char</span>.<span style="color:#4ec9b0">ToUpper</span>(s[<span style="color:#f78c6c">0</span>]) + s[<span style="color:#f78c6c">1..</span>];
+}
+<span style="color:#c3e88d">"hallo"</span>.<span style="color:#4ec9b0">Capitalize</span>()    <span style="color:#546e7a">// "Hallo"</span></pre></div></div>
+</div>
+<div class="ac" id="ac-oop3" style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('oop3')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347"><span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Enums, Pattern Matching &amp; Sealed</span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="enums"><div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">Enums</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Enum mit Flags</span>
+<span style="color:#ff9800">[Flags]</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Berechtigung</span>
+{
+    <span style="color:#4ec9b0">Keine</span>     = <span style="color:#f78c6c">0</span>,
+    <span style="color:#4ec9b0">Lesen</span>     = <span style="color:#f78c6c">1</span> &lt;&lt; <span style="color:#f78c6c">0</span>,
+    <span style="color:#4ec9b0">Schreiben</span> = <span style="color:#f78c6c">1</span> &lt;&lt; <span style="color:#f78c6c">1</span>,
+    <span style="color:#4ec9b0">Ausfuehren</span> = <span style="color:#f78c6c">1</span> &lt;&lt; <span style="color:#f78c6c">2</span>,
+    <span style="color:#4ec9b0">Alle</span>      = <span style="color:#4ec9b0">Lesen</span> | <span style="color:#4ec9b0">Schreiben</span> | <span style="color:#4ec9b0">Ausfuehren</span>
+}
+
+<span style="color:#c792ea">var</span> rechte = <span style="color:#4ec9b0">Berechtigung</span>.<span style="color:#4ec9b0">Lesen</span> | <span style="color:#4ec9b0">Berechtigung</span>.<span style="color:#4ec9b0">Schreiben</span>;
+<span style="color:#c792ea">bool</span> kannLesen = rechte.<span style="color:#4ec9b0">HasFlag</span>(<span style="color:#4ec9b0">Berechtigung</span>.<span style="color:#4ec9b0">Lesen</span>);
+
+<span style="color:#546e7a">// Sealed Classes fuer algebraische Typen</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">abstract</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Form</span>;
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Radius</span>)         : <span style="color:#4ec9b0">Form</span>;
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">B</span>, <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">H</span>) : <span style="color:#4ec9b0">Form</span>;
+
+<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Flaeche</span>(<span style="color:#4ec9b0">Form</span> f) <span style="color:#89ddff">=&gt;</span> f <span style="color:#c792ea">switch</span> {
+    <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">var</span> r)          <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * r * r,
+    <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">var</span> b, <span style="color:#c792ea">var</span> h) <span style="color:#89ddff">=&gt;</span> b * h,
+    _ <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Exception</span>()
+};
+
+<span style="color:#546e7a">// Pattern Matching</span>
+<span style="color:#c792ea">var</span> punkt = (<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>);
+<span style="color:#c792ea">string</span> quadrant = punkt <span style="color:#c792ea">switch</span> {
+    (&gt; <span style="color:#f78c6c">0</span>, &gt; <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Quadrant I"</span>,
+    (&lt; <span style="color:#f78c6c">0</span>, &gt; <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Quadrant II"</span>,
+    (&lt; <span style="color:#f78c6c">0</span>, &lt; <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Quadrant III"</span>,
+    (&gt; <span style="color:#f78c6c">0</span>, &lt; <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Quadrant IV"</span>,
+    _           <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">"Auf einer Achse"</span>
+};
+
+<span style="color:#546e7a">// List Pattern (C# 11+)</span>
+<span style="color:#c792ea">int</span>[] zahlen = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>];
+<span style="color:#c792ea">if</span> (zahlen <span style="color:#c792ea">is</span> [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, ..<span style="color:#c792ea">int</span>[] rest])
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"Rest: {rest.Length} Elemente"</span>);</pre></div></div>
+</div></div>
+<div id="tp-functional" class="tp">
+<div class="ac open" id="ac-fn0" style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252"><span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Delegates, Events &amp; Lambda</span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px"><div class="cd" data-s="lambda"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Lambda</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Eingebaute Delegate-Typen</span>
+<span style="color:#4ec9b0">Func</span>&lt;<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>&gt; add      = (a, b) <span style="color:#89ddff">=&gt;</span> a + b;
+<span style="color:#4ec9b0">Action</span>&lt;<span style="color:#c792ea">string</span>&gt;      print    = <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>;
+<span style="color:#4ec9b0">Predicate</span>&lt;<span style="color:#c792ea">int</span>&gt;      gerade   = n <span style="color:#89ddff">=&gt;</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>;
+
+<span style="color:#546e7a">// Lambda-Formen</span>
+<span style="color:#4ec9b0">Func</span>&lt;<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>&gt; f1 = x <span style="color:#89ddff">=&gt;</span> x * <span style="color:#f78c6c">2</span>;              <span style="color:#546e7a">// Expression</span>
+<span style="color:#4ec9b0">Func</span>&lt;<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>&gt; f2 = x <span style="color:#89ddff">=&gt;</span> { <span style="color:#c792ea">return</span> x * <span style="color:#f78c6c">2</span>; };  <span style="color:#546e7a">// Block</span>
+<span style="color:#c792ea">static</span> <span style="color:#4ec9b0">Func</span>&lt;<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>&gt; f3 = x <span style="color:#89ddff">=&gt;</span> x * <span style="color:#f78c6c">2</span>;       <span style="color:#546e7a">// Static (kein Capture)</span>
+
+<span style="color:#546e7a">// Events</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Button</span>
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">event</span> <span style="color:#4ec9b0">EventHandler</span>&lt;<span style="color:#c792ea">string</span>&gt;? <span style="color:#4ec9b0">Clicked</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">void</span> <span style="color:#4ec9b0">Click</span>(<span style="color:#c792ea">string</span> text) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Clicked</span><span style="color:#89ddff">?.</span><span style="color:#4ec9b0">Invoke</span>(<span style="color:#c792ea">this</span>, text);
+}
+
+<span style="color:#c792ea">var</span> btn = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Button</span>();
+btn.<span style="color:#4ec9b0">Clicked</span> += (sender, text) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"Geklickt: {text}"</span>);
+btn.<span style="color:#4ec9b0">Clicked</span> += (sender, text) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">LogService</span>.<span style="color:#4ec9b0">Log</span>(text);
+btn.<span style="color:#4ec9b0">Click</span>(<span style="color:#c3e88d">"Test"</span>);
+
+<span style="color:#546e7a">// Closures – Vorsicht mit Referenz!</span>
+<span style="color:#c792ea">int</span> multiplikator = <span style="color:#f78c6c">3</span>;
+<span style="color:#4ec9b0">Func</span>&lt;<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>&gt; mal = x <span style="color:#89ddff">=&gt;</span> x * multiplikator;
+multiplikator = <span style="color:#f78c6c">10</span>;
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(mal(<span style="color:#f78c6c">5</span>));   <span style="color:#546e7a">// 50 (nicht 15!)</span></pre></div></div>
+</div>
+<div class="ac" id="ac-fn1" style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>LINQ</span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="linq"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">LINQ</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Linq</span>;
+
+<span style="color:#c792ea">var</span> zahlen = <span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>};
+<span style="color:#c792ea">var</span> namen  = <span style="color:#c792ea">new</span>[] {<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Bob"</span>, <span style="color:#c3e88d">"Carol"</span>, <span style="color:#c3e88d">"Dave"</span>, <span style="color:#c3e88d">"Eve"</span>};
+
+<span style="color:#546e7a">// Method Syntax (empfohlen)</span>
+<span style="color:#c792ea">var</span> result = zahlen
+    .<span style="color:#4ec9b0">Where</span>(n <span style="color:#89ddff">=&gt;</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>)
+    .<span style="color:#4ec9b0">Select</span>(n <span style="color:#89ddff">=&gt;</span> n * n)
+    .<span style="color:#4ec9b0">ToList</span>();   <span style="color:#546e7a">// [4, 16, 36, 64, 100]</span>
+
+<span style="color:#546e7a">// Haeufige LINQ-Methoden</span>
+zahlen.<span style="color:#4ec9b0">Where</span>(n <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">5</span>);
+zahlen.<span style="color:#4ec9b0">Select</span>(n <span style="color:#89ddff">=&gt;</span> n * n);
+zahlen.<span style="color:#4ec9b0">OrderBy</span>(n <span style="color:#89ddff">=&gt;</span> n);
+zahlen.<span style="color:#4ec9b0">OrderByDescending</span>(n <span style="color:#89ddff">=&gt;</span> n);
+zahlen.<span style="color:#4ec9b0">Take</span>(<span style="color:#f78c6c">3</span>);
+zahlen.<span style="color:#4ec9b0">Skip</span>(<span style="color:#f78c6c">3</span>);
+zahlen.<span style="color:#4ec9b0">First</span>();
+zahlen.<span style="color:#4ec9b0">FirstOrDefault</span>();
+zahlen.<span style="color:#4ec9b0">FirstOrDefault</span>(n <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">5</span>);
+zahlen.<span style="color:#4ec9b0">Single</span>(n <span style="color:#89ddff">=&gt;</span> n == <span style="color:#f78c6c">5</span>);
+zahlen.<span style="color:#4ec9b0">Any</span>(n <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">8</span>);
+zahlen.<span style="color:#4ec9b0">All</span>(n <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">0</span>);
+zahlen.<span style="color:#4ec9b0">Count</span>(n <span style="color:#89ddff">=&gt;</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>);
+zahlen.<span style="color:#4ec9b0">Sum</span>();
+zahlen.<span style="color:#4ec9b0">Average</span>();
+zahlen.<span style="color:#4ec9b0">Min</span>() /* / */ zahlen.<span style="color:#4ec9b0">Max</span>();
+zahlen.<span style="color:#4ec9b0">Aggregate</span>((acc, n) <span style="color:#89ddff">=&gt;</span> acc + n);
+
+<span style="color:#546e7a">// Gruppieren</span>
+namen.<span style="color:#4ec9b0">GroupBy</span>(n <span style="color:#89ddff">=&gt;</span> n.<span style="color:#4ec9b0">Length</span>)
+    .<span style="color:#4ec9b0">Select</span>(g <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">$"Laenge {g.Key}: {string.Join("</span>, <span style="color:#c3e88d">", g)}"</span>)
+    .<span style="color:#4ec9b0">ToList</span>();
+
+<span style="color:#546e7a">// Distinct, Union, Intersect, Except</span>
+<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">3</span>}.<span style="color:#4ec9b0">Distinct</span>();
+<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>}.<span style="color:#4ec9b0">Union</span>(<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">5</span>});
+<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>}.<span style="color:#4ec9b0">Intersect</span>(<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>});
+<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>}.<span style="color:#4ec9b0">Except</span>(<span style="color:#c792ea">new</span>[] {<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>});
+
+<span style="color:#546e7a">// Lazy Evaluation!</span>
+<span style="color:#c792ea">var</span> query = zahlen.<span style="color:#4ec9b0">Where</span>(n <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">5</span>);  <span style="color:#546e7a">// KEIN Durchlauf!</span>
+<span style="color:#c792ea">var</span> liste  = query.<span style="color:#4ec9b0">ToList</span>();           <span style="color:#546e7a">// Jetzt wird ausgefuehrt</span></pre></div></div>
+</div>
+<div class="ac" id="ac-fn2" style="border:1px solid #9b499344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#9b49930e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b4993"><span style="display:inline-block;width:8px;height:8px;background:#9b4993;border-radius:50%;margin-right:2px"></span>async / await</span>
+    <span class="aa" style="color:#9b4993;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="async"><div style="color:#9b4993;font-weight:700;font-size:12px;margin-bottom:8px">async</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Async Methode – immer Task oder Task&lt;T&gt;</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#c792ea">string</span>&gt; <span style="color:#4ec9b0">HoleDaten</span>(<span style="color:#c792ea">string</span> url)
+{
+    <span style="color:#c792ea">using</span> <span style="color:#c792ea">var</span> client = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">HttpClient</span>();
+    <span style="color:#c792ea">string</span> inhalt = <span style="color:#c792ea">await</span> client.<span style="color:#4ec9b0">GetStringAsync</span>(url);
+    <span style="color:#c792ea">return</span> inhalt.<span style="color:#4ec9b0">ToUpper</span>();
+}
+
+<span style="color:#546e7a">// Mehrere Tasks parallel</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span>&lt;(<span style="color:#4ec9b0">User</span>, <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">Bestellung</span>&gt;)&gt; <span style="color:#4ec9b0">LadeAlles</span>(<span style="color:#c792ea">int</span> userId)
+{
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">User</span>&gt;             userTask  = <span style="color:#4ec9b0">HoleUser</span>(userId);
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">Bestellung</span>&gt;&gt; orderTask = <span style="color:#4ec9b0">HoleBestellungen</span>(userId);
+
+    <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">Task</span>.<span style="color:#4ec9b0">WhenAll</span>(userTask, orderTask);
+    <span style="color:#c792ea">return</span> (userTask.<span style="color:#4ec9b0">Result</span>, orderTask.<span style="color:#4ec9b0">Result</span>);
+}
+
+<span style="color:#546e7a">// CancellationToken</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span> <span style="color:#4ec9b0">LangeOperation</span>(<span style="color:#4ec9b0">CancellationToken</span> ct = <span style="color:#c792ea">default</span>)
+{
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">100</span>; i++)
+    {
+        ct.<span style="color:#4ec9b0">ThrowIfCancellationRequested</span>();
+        <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">Task</span>.<span style="color:#4ec9b0">Delay</span>(<span style="color:#f78c6c">100</span>, ct);
+        <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"Schritt {i}"</span>);
+    }
+}
+
+<span style="color:#c792ea">using</span> <span style="color:#c792ea">var</span> cts = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">CancellationTokenSource</span>(<span style="color:#4ec9b0">TimeSpan</span>.<span style="color:#4ec9b0">FromSeconds</span>(<span style="color:#f78c6c">5</span>));
+<span style="color:#c792ea">await</span> <span style="color:#4ec9b0">LangeOperation</span>(cts.<span style="color:#4ec9b0">Token</span>);
+
+<span style="color:#546e7a">// ValueTask – vermeidet Allokation</span>
+<span style="color:#c792ea">public</span> <span style="color:#4ec9b0">ValueTask</span>&lt;<span style="color:#c792ea">int</span>&gt; <span style="color:#4ec9b0">HoleCache</span>(<span style="color:#c792ea">string</span> key)
+{
+    <span style="color:#c792ea">if</span> (_cache.<span style="color:#4ec9b0">TryGetValue</span>(key, <span style="color:#c792ea">out</span> <span style="color:#c792ea">int</span> val))
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">ValueTask</span>.<span style="color:#4ec9b0">FromResult</span>(val);
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ValueTask</span>&lt;<span style="color:#c792ea">int</span>&gt;(<span style="color:#4ec9b0">HoleVonDb</span>(key));
+}
+
+<span style="color:#546e7a">// async Main (C# 7.1+)</span>
+<span style="color:#c792ea">static</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span> <span style="color:#4ec9b0">Main</span>(<span style="color:#c792ea">string</span>[] args)
+{
+    <span style="color:#c792ea">var</span> daten = <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">HoleDaten</span>(<span style="color:#c3e88d">"https://api.example.com"</span>);
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(daten);
+}</pre></div></div>
+</div></div>
+<div id="tp-modern" class="tp"><input class="sb" id="ctrl-s" type="text" placeholder="Feature suchen...">
+<div class="ac open" id="ac-mod0" style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252"><span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Records &amp; Primary Constructors (C# 9-12)</span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px"><div class="cd" data-s="modern1"><div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">Modern1</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// PRIMARY CONSTRUCTORS (C# 12)</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">PersonService</span>(<span style="color:#4ec9b0">IUserRepository</span> repo, <span style="color:#4ec9b0">ILogger</span> logger)
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">Person</span>?&gt; <span style="color:#4ec9b0">HolePerson</span>(<span style="color:#c792ea">int</span> id)
+    {
+        logger.<span style="color:#4ec9b0">LogInformation</span>(<span style="color:#c3e88d">"Hole Person {Id}"</span>, id);
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">await</span> repo.<span style="color:#4ec9b0">FindByIdAsync</span>(id);
+    }
+}
+
+<span style="color:#546e7a">// RECORD HIERARCHIE</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">abstract</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Form</span>;
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Radius</span>)         : <span style="color:#4ec9b0">Form</span>;
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">B</span>, <span style="color:#c792ea">double</span> <span style="color:#4ec9b0">H</span>) : <span style="color:#4ec9b0">Form</span>;
+
+<span style="color:#c792ea">double</span> <span style="color:#4ec9b0">Flaeche</span>(<span style="color:#4ec9b0">Form</span> f) <span style="color:#89ddff">=&gt;</span> f <span style="color:#c792ea">switch</span> {
+    <span style="color:#4ec9b0">Kreis</span>(<span style="color:#c792ea">var</span> r)           <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * r * r,
+    <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#c792ea">var</span> b, <span style="color:#c792ea">var</span> h) <span style="color:#89ddff">=&gt;</span> b * h,
+    _ <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Exception</span>()
+};
+
+<span style="color:#546e7a">// INIT-ONLY &amp; required</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Options</span>
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">required</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Host</span> { get; <span style="color:#c792ea">init</span>; }   <span style="color:#546e7a">// Pflicht</span>
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">int</span> <span style="color:#4ec9b0">Port</span> { get; <span style="color:#c792ea">init</span>; } = <span style="color:#f78c6c">5432</span>;
+}
+
+<span style="color:#c792ea">var</span> opts = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Options</span> { <span style="color:#4ec9b0">Host</span> = <span style="color:#c3e88d">"localhost"</span> };
+<span style="color:#546e7a">// opts.Host = "other"; // Compile-Fehler!</span></pre></div></div>
+</div>
+<div class="ac" id="ac-mod1" style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Collection Expressions &amp; Span (C# 12)</span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="modern2"><div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">Modern2</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// COLLECTION EXPRESSIONS (C# 12)</span>
+<span style="color:#c792ea">int</span>[]          arr  = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>];
+<span style="color:#4ec9b0">List</span>&lt;<span style="color:#c792ea">int</span>&gt;      list = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>];
+<span style="color:#4ec9b0">Span</span>&lt;<span style="color:#c792ea">int</span>&gt;      span = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>];    <span style="color:#546e7a">// Stack-alloziert!</span>
+
+<span style="color:#546e7a">// Spread-Operator ..</span>
+<span style="color:#c792ea">var</span> a = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>];
+<span style="color:#c792ea">var</span> b = [<span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>];
+<span style="color:#c792ea">var</span> c = [..a, ..b];     <span style="color:#546e7a">// [1, 2, 3, 4, 5, 6]</span>
+
+<span style="color:#546e7a">// RANGES UND INDIZES (C# 8+)</span>
+<span style="color:#c792ea">var</span> arr2 = <span style="color:#c792ea">new</span>[] {<span style="color:#c3e88d">"a"</span>, <span style="color:#c3e88d">"b"</span>, <span style="color:#c3e88d">"c"</span>, <span style="color:#c3e88d">"d"</span>, <span style="color:#c3e88d">"e"</span>};
+arr2[^<span style="color:#f78c6c">1</span>]      <span style="color:#546e7a">// "e"   (letztes)</span>
+arr2[^<span style="color:#f78c6c">2</span>]      <span style="color:#546e7a">// "d"   (vorletztes)</span>
+arr2[<span style="color:#f78c6c">1..3</span>]    <span style="color:#546e7a">// ["b", "c"]</span>
+arr2[<span style="color:#f78c6c">1..</span>^<span style="color:#f78c6c">1</span>]   <span style="color:#546e7a">// ["b", "c", "d"]</span>
+arr2[.<span style="color:#f78c6c">.3</span>]     <span style="color:#546e7a">// ["a", "b", "c"]</span>
+arr2[<span style="color:#f78c6c">2..</span>]     <span style="color:#546e7a">// ["c", "d", "e"]</span>
+
+<span style="color:#546e7a">// SPAN&lt;T&gt; – zero-copy Performance</span>
+<span style="color:#4ec9b0">ReadOnlySpan</span>&lt;<span style="color:#c792ea">char</span>&gt; text = <span style="color:#c3e88d">"Hallo, Welt!"</span>.<span style="color:#4ec9b0">AsSpan</span>();
+<span style="color:#4ec9b0">ReadOnlySpan</span>&lt;<span style="color:#c792ea">char</span>&gt; teil = text[<span style="color:#f78c6c">7..12</span>];   <span style="color:#546e7a">// "Welt!" – kein Kopieren!</span>
+
+<span style="color:#4ec9b0">Span</span>&lt;<span style="color:#c792ea">int</span>&gt; zahlen = <span style="color:#c792ea">stackalloc</span> <span style="color:#c792ea">int</span>[<span style="color:#f78c6c">10</span>];   <span style="color:#546e7a">// Stack!</span>
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; zahlen.<span style="color:#4ec9b0">Length</span>; i++)
+    zahlen<span style="color:#ff9800">[i]</span> = i * i;
+
+<span style="color:#546e7a">// Memory&lt;T&gt; fuer async</span>
+<span style="color:#4ec9b0">Memory</span>&lt;<span style="color:#c792ea">byte</span>&gt; buffer = <span style="color:#c792ea">new</span> <span style="color:#c792ea">byte</span>[<span style="color:#f78c6c">1024</span>];
+<span style="color:#c792ea">await</span> stream.<span style="color:#4ec9b0">ReadAsync</span>(buffer);</pre></div></div>
+</div>
+<div class="ac" id="ac-mod2" style="border:1px solid #9b499344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod2')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#9b49930e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b4993"><span style="display:inline-block;width:8px;height:8px;background:#9b4993;border-radius:50%;margin-right:2px"></span>Nullable Reference Types (C# 8+)</span>
+    <span class="aa" style="color:#9b4993;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="modern3"><div style="color:#9b4993;font-weight:700;font-size:12px;margin-bottom:8px">Modern3</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Nullable Reference Types aktivieren:</span>
+<span style="color:#546e7a">// &lt;Nullable&gt;enable&lt;/Nullable&gt; in .csproj</span>
+
+<span style="color:#c792ea">string</span>  nichtNull = <span style="color:#c3e88d">"Hallo"</span>;   <span style="color:#546e7a">// niemals null</span>
+<span style="color:#c792ea">string</span>? nullable  = <span style="color:#c792ea">null</span>;      <span style="color:#546e7a">// kann null sein</span>
+
+<span style="color:#c792ea">void</span> <span style="color:#4ec9b0">Verarbeite</span>(<span style="color:#c792ea">string</span>? s)
+{
+    <span style="color:#546e7a">// s.Length  // Warnung! s koennte null sein</span>
+
+    <span style="color:#c792ea">if</span> (s <span style="color:#c792ea">is</span> <span style="color:#c792ea">not</span> <span style="color:#c792ea">null</span>)
+        <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(s.<span style="color:#4ec9b0">Length</span>);   <span style="color:#546e7a">// OK</span>
+
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(s<span style="color:#89ddff">?.</span><span style="color:#4ec9b0">Length</span>);      <span style="color:#546e7a">// OK</span>
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(s<span style="color:#89ddff">?.</span><span style="color:#4ec9b0">Length</span> <span style="color:#89ddff">??</span> <span style="color:#f78c6c">0</span>); <span style="color:#546e7a">// OK</span>
+}
+
+<span style="color:#546e7a">// Null-Forgiving ! (sparsam!)</span>
+<span style="color:#c792ea">string</span> sicher = nullable!;
+
+<span style="color:#546e7a">// ArgumentNullException.ThrowIfNull (C# 10+)</span>
+<span style="color:#4ec9b0">ArgumentNullException</span>.<span style="color:#4ec9b0">ThrowIfNull</span>(s);
+
+<span style="color:#546e7a">// Nullable-Analyse bei Generics</span>
+<span style="color:#c792ea">public</span> <span style="color:#4ec9b0">T</span>? <span style="color:#4ec9b0">FindeErste</span>&lt;<span style="color:#4ec9b0">T</span>&gt;(<span style="color:#4ec9b0">IEnumerable</span>&lt;<span style="color:#4ec9b0">T</span>&gt; items, <span style="color:#4ec9b0">Func</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#c792ea">bool</span>&gt; pred)
+    <span style="color:#89ddff">=&gt;</span> items.<span style="color:#4ec9b0">FirstOrDefault</span>(pred);</pre></div></div>
+</div>
+<div class="ac" id="ac-mod3" style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod3')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0"><span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>IDisposable &amp; using</span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><div class="cd" data-s="modern4"><div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">Modern4</div><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// using statement – automatisches Dispose</span>
+<span style="color:#c792ea">using</span> (<span style="color:#c792ea">var</span> reader = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">StreamReader</span>(<span style="color:#c3e88d">"datei.txt"</span>))
+{
+    <span style="color:#c792ea">string</span> inhalt = reader.<span style="color:#4ec9b0">ReadToEnd</span>();
+}   <span style="color:#546e7a">// reader.Dispose() – auch bei Exception!</span>
+
+<span style="color:#546e7a">// using declaration (C# 8+) – bis Ende des Scopes</span>
+<span style="color:#c792ea">using</span> <span style="color:#c792ea">var</span> writer = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">StreamWriter</span>(<span style="color:#c3e88d">"aus.txt"</span>);
+writer.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">"Hallo!"</span>);
+
+<span style="color:#546e7a">// Eigenes IDisposable</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">MeinService</span> : <span style="color:#4ec9b0">IDisposable</span>, <span style="color:#4ec9b0">IAsyncDisposable</span>
+{
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">bool</span> _disposed = <span style="color:#c792ea">false</span>;
+
+    <span style="color:#c792ea">protected</span> <span style="color:#c792ea">virtual</span> <span style="color:#c792ea">void</span> <span style="color:#4ec9b0">Dispose</span>(<span style="color:#c792ea">bool</span> disposing)
+    {
+        <span style="color:#c792ea">if</span> (!_disposed)
+        {
+            <span style="color:#c792ea">if</span> (disposing)
+                _httpClient.<span style="color:#4ec9b0">Dispose</span>();
+            _disposed = <span style="color:#c792ea">true</span>;
+        }
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">void</span> <span style="color:#4ec9b0">Dispose</span>()
+    {
+        <span style="color:#4ec9b0">Dispose</span>(<span style="color:#c792ea">true</span>);
+        <span style="color:#4ec9b0">GC</span>.<span style="color:#4ec9b0">SuppressFinalize</span>(<span style="color:#c792ea">this</span>);
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">ValueTask</span> <span style="color:#4ec9b0">DisposeAsync</span>()
+    {
+        <span style="color:#c792ea">await</span> _connection.<span style="color:#4ec9b0">CloseAsync</span>();
+        <span style="color:#4ec9b0">Dispose</span>(<span style="color:#c792ea">false</span>);
+        <span style="color:#4ec9b0">GC</span>.<span style="color:#4ec9b0">SuppressFinalize</span>(<span style="color:#c792ea">this</span>);
+    }
+}
+
+<span style="color:#c792ea">await</span> <span style="color:#c792ea">using</span> <span style="color:#c792ea">var</span> service = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">MeinService</span>();</pre></div></div>
+</div></div>
+<div id="tp-collections" class="tp">
+<div class="ac open" id="ac-col0" style="border:1px solid #9b499344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('col0')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#9b49930e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b4993"><span style="display:inline-block;width:8px;height:8px;background:#9b4993;border-radius:50%;margin-right:2px"></span>List&lt;T&gt;</span>
+    <span class="aa" style="color:#9b4993;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px"><input class="sb" id="coll-s-0" type="text" placeholder="suchen..." style="margin-top:4px"><table><thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr class="cr" data-m="new list&lt;t&gt;()" data-d="mutablel, dynamisch wachsend"><td style="width:220px"><code style="color:#9b4993">new List&lt;T&gt;()</code></td><td style="color:#6c7a8e">Mutablel, dynamisch wachsend</td><td style="color:#c3e88d;font-size:11px"></td></tr><tr class="cr" data-m="[1,2,3] (c# 12)" data-d="collection expression"><td style="width:220px"><code style="color:#9b4993">[1,2,3] (C# 12)</code></td><td style="color:#6c7a8e">Collection Expression</td><td style="color:#c3e88d;font-size:11px">var l = [1,2,3];</td></tr><tr class="cr" data-m="add(item)" data-d="element anfuegen"><td style="width:220px"><code style="color:#9b4993">Add(item)</code></td><td style="color:#6c7a8e">Element anfuegen</td><td style="color:#c3e88d;font-size:11px">list.Add(42)</td></tr><tr class="cr" data-m="addrange(items)" data-d="mehrere elemente"><td style="width:220px"><code style="color:#9b4993">AddRange(items)</code></td><td style="color:#6c7a8e">Mehrere Elemente</td><td style="color:#c3e88d;font-size:11px">list.AddRange(andere)</td></tr><tr class="cr" data-m="remove(item)" data-d="erstes vorkommen entfernen"><td style="width:220px"><code style="color:#9b4993">Remove(item)</code></td><td style="color:#6c7a8e">Erstes Vorkommen entfernen</td><td style="color:#c3e88d;font-size:11px">list.Remove("Alice")</td></tr><tr class="cr" data-m="removeat(i)" data-d="an position entfernen"><td style="width:220px"><code style="color:#9b4993">RemoveAt(i)</code></td><td style="color:#6c7a8e">An Position entfernen</td><td style="color:#c3e88d;font-size:11px">list.RemoveAt(0)</td></tr><tr class="cr" data-m="removeall(pred)" data-d="alle die bedingung erfuellen"><td style="width:220px"><code style="color:#9b4993">RemoveAll(pred)</code></td><td style="color:#6c7a8e">Alle die Bedingung erfuellen</td><td style="color:#c3e88d;font-size:11px">list.RemoveAll(x =&gt; x &lt; 0)</td></tr><tr class="cr" data-m="[i]" data-d="zugriff per index"><td style="width:220px"><code style="color:#9b4993">[i]</code></td><td style="color:#6c7a8e">Zugriff per Index</td><td style="color:#c3e88d;font-size:11px">list[0]</td></tr><tr class="cr" data-m="count" data-d="anzahl elemente"><td style="width:220px"><code style="color:#9b4993">Count</code></td><td style="color:#6c7a8e">Anzahl Elemente</td><td style="color:#c3e88d;font-size:11px">list.Count</td></tr><tr class="cr" data-m="contains(item)" data-d="enthaelt?"><td style="width:220px"><code style="color:#9b4993">Contains(item)</code></td><td style="color:#6c7a8e">Enthaelt?</td><td style="color:#c3e88d;font-size:11px">list.Contains("Alice")</td></tr><tr class="cr" data-m="indexof(item)" data-d="index des ersten treffers"><td style="width:220px"><code style="color:#9b4993">IndexOf(item)</code></td><td style="color:#6c7a8e">Index des ersten Treffers</td><td style="color:#c3e88d;font-size:11px">list.IndexOf("Alice")</td></tr><tr class="cr" data-m="sort()" data-d="in-place sortieren"><td style="width:220px"><code style="color:#9b4993">Sort()</code></td><td style="color:#6c7a8e">In-place sortieren</td><td style="color:#c3e88d;font-size:11px">list.Sort()</td></tr><tr class="cr" data-m="find(pred)" data-d="erstes passendes element"><td style="width:220px"><code style="color:#9b4993">Find(pred)</code></td><td style="color:#6c7a8e">Erstes passendes Element</td><td style="color:#c3e88d;font-size:11px">list.Find(x =&gt; x &gt; 5)</td></tr><tr class="cr" data-m="findall(pred)" data-d="alle passenden elemente"><td style="width:220px"><code style="color:#9b4993">FindAll(pred)</code></td><td style="color:#6c7a8e">Alle passenden Elemente</td><td style="color:#c3e88d;font-size:11px">list.FindAll(x =&gt; x &gt; 5)</td></tr><tr class="cr" data-m="foreach(action)" data-d="aktion auf alle anwenden"><td style="width:220px"><code style="color:#9b4993">ForEach(action)</code></td><td style="color:#6c7a8e">Aktion auf alle anwenden</td><td style="color:#c3e88d;font-size:11px">list.ForEach(Console.WriteLine)</td></tr><tr class="cr" data-m="toarray()" data-d="in array umwandeln"><td style="width:220px"><code style="color:#9b4993">ToArray()</code></td><td style="color:#6c7a8e">In Array umwandeln</td><td style="color:#c3e88d;font-size:11px">list.ToArray()</td></tr></tbody></table></div>
+</div>
+<div class="ac" id="ac-col1" style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('col1')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Dictionary&lt;K,V&gt;</span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><input class="sb" id="coll-s-1" type="text" placeholder="suchen..." style="margin-top:4px"><table><thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr class="cr" data-m="new dictionary&lt;k,v&gt;()" data-d="mutablel hash-map"><td style="width:220px"><code style="color:#4fc3f7">new Dictionary&lt;K,V&gt;()</code></td><td style="color:#6c7a8e">Mutablel Hash-Map</td><td style="color:#c3e88d;font-size:11px"></td></tr><tr class="cr" data-m="[key] = value" data-d="setzen oder ueberschreiben"><td style="width:220px"><code style="color:#4fc3f7">[key] = value</code></td><td style="color:#6c7a8e">Setzen oder ueberschreiben</td><td style="color:#c3e88d;font-size:11px">d["a"] = 1</td></tr><tr class="cr" data-m="[key]" data-d="holen (exception wenn fehlt)"><td style="width:220px"><code style="color:#4fc3f7">[key]</code></td><td style="color:#6c7a8e">Holen (Exception wenn fehlt)</td><td style="color:#c3e88d;font-size:11px">d["a"]</td></tr><tr class="cr" data-m="trygetvalue(k, out v)" data-d="sicher holen"><td style="width:220px"><code style="color:#4fc3f7">TryGetValue(k, out v)</code></td><td style="color:#6c7a8e">Sicher holen</td><td style="color:#c3e88d;font-size:11px">if (d.TryGetValue(k, out var v))</td></tr><tr class="cr" data-m="getvalueordefault(k,d)" data-d="holen mit default"><td style="width:220px"><code style="color:#4fc3f7">GetValueOrDefault(k,d)</code></td><td style="color:#6c7a8e">Holen mit Default</td><td style="color:#c3e88d;font-size:11px">d.GetValueOrDefault("a", 0)</td></tr><tr class="cr" data-m="containskey(k)" data-d="key vorhanden?"><td style="width:220px"><code style="color:#4fc3f7">ContainsKey(k)</code></td><td style="color:#6c7a8e">Key vorhanden?</td><td style="color:#c3e88d;font-size:11px">d.ContainsKey("a")</td></tr><tr class="cr" data-m="tryadd(k, v)" data-d="hinzufuegen wenn nicht vorhanden"><td style="width:220px"><code style="color:#4fc3f7">TryAdd(k, v)</code></td><td style="color:#6c7a8e">Hinzufuegen wenn nicht vorhanden</td><td style="color:#c3e88d;font-size:11px">d.TryAdd("a", 1)</td></tr><tr class="cr" data-m="remove(k)" data-d="eintrag loeschen"><td style="width:220px"><code style="color:#4fc3f7">Remove(k)</code></td><td style="color:#6c7a8e">Eintrag loeschen</td><td style="color:#c3e88d;font-size:11px">d.Remove("a")</td></tr><tr class="cr" data-m="count" data-d="anzahl eintraege"><td style="width:220px"><code style="color:#4fc3f7">Count</code></td><td style="color:#6c7a8e">Anzahl Eintraege</td><td style="color:#c3e88d;font-size:11px">d.Count</td></tr><tr class="cr" data-m="keys / values" data-d="alle keys / values"><td style="width:220px"><code style="color:#4fc3f7">Keys / Values</code></td><td style="color:#6c7a8e">Alle Keys / Values</td><td style="color:#c3e88d;font-size:11px">foreach (var k in d.Keys)</td></tr></tbody></table></div>
+</div>
+<div class="ac" id="ac-col2" style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('col2')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0"><span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>String-Methoden</span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><input class="sb" id="coll-s-2" type="text" placeholder="suchen..." style="margin-top:4px"><table><thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr class="cr" data-m="length" data-d="anzahl zeichen"><td style="width:220px"><code style="color:#4ec9b0">Length</code></td><td style="color:#6c7a8e">Anzahl Zeichen</td><td style="color:#c3e88d;font-size:11px">"Hallo".Length -&gt; 5</td></tr><tr class="cr" data-m="toupper() / tolower()" data-d="gross-/kleinschreibung"><td style="width:220px"><code style="color:#4ec9b0">ToUpper() / ToLower()</code></td><td style="color:#6c7a8e">Gross-/Kleinschreibung</td><td style="color:#c3e88d;font-size:11px">"hallo".ToUpper() -&gt; "HALLO"</td></tr><tr class="cr" data-m="trim()" data-d="whitespace entfernen"><td style="width:220px"><code style="color:#4ec9b0">Trim()</code></td><td style="color:#6c7a8e">Whitespace entfernen</td><td style="color:#c3e88d;font-size:11px">"  hi  ".Trim() -&gt; "hi"</td></tr><tr class="cr" data-m="contains(s)" data-d="enthaelt?"><td style="width:220px"><code style="color:#4ec9b0">Contains(s)</code></td><td style="color:#6c7a8e">Enthaelt?</td><td style="color:#c3e88d;font-size:11px">"Hallo".Contains("all") -&gt; true</td></tr><tr class="cr" data-m="startswith(s)" data-d="beginnt mit?"><td style="width:220px"><code style="color:#4ec9b0">StartsWith(s)</code></td><td style="color:#6c7a8e">Beginnt mit?</td><td style="color:#c3e88d;font-size:11px">"Hallo".StartsWith("Ha") -&gt; true</td></tr><tr class="cr" data-m="indexof(s)" data-d="position (-1 wenn nicht gefunden)"><td style="width:220px"><code style="color:#4ec9b0">IndexOf(s)</code></td><td style="color:#6c7a8e">Position (-1 wenn nicht gefunden)</td><td style="color:#c3e88d;font-size:11px">"abcabc".IndexOf("b") -&gt; 1</td></tr><tr class="cr" data-m="substring(start, len)" data-d="teilstring"><td style="width:220px"><code style="color:#4ec9b0">Substring(start, len)</code></td><td style="color:#6c7a8e">Teilstring</td><td style="color:#c3e88d;font-size:11px">"Hallo".Substring(1, 3) -&gt; "all"</td></tr><tr class="cr" data-m="s[1..4]" data-d="range-syntax (c# 8+)"><td style="width:220px"><code style="color:#4ec9b0">s[1..4]</code></td><td style="color:#6c7a8e">Range-Syntax (C# 8+)</td><td style="color:#c3e88d;font-size:11px">"Hallo"[1..4] -&gt; "all"</td></tr><tr class="cr" data-m="replace(old, new)" data-d="ersetzen"><td style="width:220px"><code style="color:#4ec9b0">Replace(old, new)</code></td><td style="color:#6c7a8e">Ersetzen</td><td style="color:#c3e88d;font-size:11px">"aaa".Replace("a","b") -&gt; "bbb"</td></tr><tr class="cr" data-m="split(sep)" data-d="aufteilen -&gt; string[]"><td style="width:220px"><code style="color:#4ec9b0">Split(sep)</code></td><td style="color:#6c7a8e">Aufteilen -&gt; string[]</td><td style="color:#c3e88d;font-size:11px">"a,b".Split(",") -&gt; ["a","b"]</td></tr><tr class="cr" data-m="join(sep, items)" data-d="verbinden"><td style="width:220px"><code style="color:#4ec9b0">Join(sep, items)</code></td><td style="color:#6c7a8e">Verbinden</td><td style="color:#c3e88d;font-size:11px">string.Join(",","a","b") -&gt; "a,b"</td></tr><tr class="cr" data-m="isnullorempty(s)" data-d="null oder leer?"><td style="width:220px"><code style="color:#4ec9b0">IsNullOrEmpty(s)</code></td><td style="color:#6c7a8e">Null oder leer?</td><td style="color:#c3e88d;font-size:11px">string.IsNullOrEmpty("") -&gt; true</td></tr><tr class="cr" data-m="isnullorwhitespace(s)" data-d="null oder nur whitespace?"><td style="width:220px"><code style="color:#4ec9b0">IsNullOrWhiteSpace(s)</code></td><td style="color:#6c7a8e">Null oder nur Whitespace?</td><td style="color:#c3e88d;font-size:11px"></td></tr><tr class="cr" data-m="padleft(n)" data-d="links auffullen"><td style="width:220px"><code style="color:#4ec9b0">PadLeft(n)</code></td><td style="color:#6c7a8e">Links auffullen</td><td style="color:#c3e88d;font-size:11px">"42".PadLeft(5,"0") -&gt; "00042"</td></tr><tr class="cr" data-m="asspan()" data-d="zu span&lt;char&gt; fuer performance"><td style="width:220px"><code style="color:#4ec9b0">AsSpan()</code></td><td style="color:#6c7a8e">Zu Span&lt;char&gt; fuer Performance</td><td style="color:#c3e88d;font-size:11px">Kein Heap-Alloc</td></tr></tbody></table></div>
+</div></div>
+<div id="tp-examples" class="tp"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #9b4993;color:#9b4993;background:rgba(155,73,147,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Builder Pattern</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">LINQ Datenanalyse</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generics &amp; Repository</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">ASP.NET Core Minimal API</button>
+  </div><div id="exp0" style=""><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>;
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Collections</span>.<span style="color:#4ec9b0">Generic</span>;
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Text</span>;
+
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">QueryBuilder</span>
+{
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">string</span>?      _tabelle;
+    <span style="color:#c792ea">private</span> <span style="color:#4ec9b0">List</span>&lt;<span style="color:#c792ea">string</span>&gt; _felder    = [];
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">string</span>?      _bedingung;
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">string</span>?      _orderBy;
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">int</span>?         _limit;
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">int</span>?         _offset;
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">QueryBuilder</span> <span style="color:#4ec9b0">Von</span>(<span style="color:#c792ea">string</span> tabelle)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Mutiere</span>(b <span style="color:#89ddff">=&gt;</span> b._tabelle = tabelle);
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">QueryBuilder</span> <span style="color:#4ec9b0">Feld</span>(<span style="color:#c792ea">params</span> <span style="color:#c792ea">string</span>[] felder)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Mutiere</span>(b <span style="color:#89ddff">=&gt;</span> b._felder.<span style="color:#4ec9b0">AddRange</span>(felder));
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">QueryBuilder</span> <span style="color:#4ec9b0">Wo</span>(<span style="color:#c792ea">string</span> bedingung)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Mutiere</span>(b <span style="color:#89ddff">=&gt;</span> b._bedingung = bedingung);
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">QueryBuilder</span> <span style="color:#4ec9b0">NachOben</span>(<span style="color:#c792ea">string</span> spalte, <span style="color:#c792ea">bool</span> asc = <span style="color:#c792ea">true</span>)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Mutiere</span>(b <span style="color:#89ddff">=&gt;</span> b._orderBy = <span style="color:#c3e88d">$"{spalte} {(asc ? "</span><span style="color:#4ec9b0">ASC</span><span style="color:#c3e88d">" : "</span><span style="color:#4ec9b0">DESC</span><span style="color:#c3e88d">")}"</span>);
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">QueryBuilder</span> <span style="color:#4ec9b0">Begrenzen</span>(<span style="color:#c792ea">int</span> limit, <span style="color:#c792ea">int</span> offset = <span style="color:#f78c6c">0</span>)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Mutiere</span>(b <span style="color:#89ddff">=&gt;</span> { b._limit = limit; b._offset = offset; });
+
+    <span style="color:#c792ea">private</span> <span style="color:#4ec9b0">QueryBuilder</span> <span style="color:#4ec9b0">Mutiere</span>(<span style="color:#4ec9b0">Action</span>&lt;<span style="color:#4ec9b0">QueryBuilder</span>&gt; aktion)
+        { aktion(<span style="color:#c792ea">this</span>); <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>; }
+
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Baue</span>()
+    {
+        <span style="color:#c792ea">if</span> (_tabelle <span style="color:#c792ea">is</span> <span style="color:#c792ea">null</span>)
+            <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">InvalidOperationException</span>(<span style="color:#c3e88d">"Tabelle fehlt"</span>);
+        <span style="color:#c792ea">var</span> sb = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">StringBuilder</span>(<span style="color:#c3e88d">"SELECT "</span>);
+        sb.<span style="color:#4ec9b0">Append</span>(_felder.<span style="color:#4ec9b0">Count</span> &gt; <span style="color:#f78c6c">0</span> ? <span style="color:#c792ea">string</span>.<span style="color:#4ec9b0">Join</span>(<span style="color:#c3e88d">", "</span>, _felder) : <span style="color:#c3e88d">"*"</span>);
+        sb.<span style="color:#4ec9b0">Append</span>(<span style="color:#c3e88d">$" FROM {_tabelle}"</span>);
+        <span style="color:#c792ea">if</span> (_bedingung <span style="color:#c792ea">is</span> <span style="color:#c792ea">not</span> <span style="color:#c792ea">null</span>) sb.<span style="color:#4ec9b0">Append</span>(<span style="color:#c3e88d">$" WHERE {_bedingung}"</span>);
+        <span style="color:#c792ea">if</span> (_orderBy   <span style="color:#c792ea">is</span> <span style="color:#c792ea">not</span> <span style="color:#c792ea">null</span>) sb.<span style="color:#4ec9b0">Append</span>(<span style="color:#c3e88d">$" ORDER BY {_orderBy}"</span>);
+        <span style="color:#c792ea">if</span> (_limit     <span style="color:#c792ea">is</span> <span style="color:#c792ea">not</span> <span style="color:#c792ea">null</span>) sb.<span style="color:#4ec9b0">Append</span>(<span style="color:#c3e88d">$" LIMIT {_limit}"</span>);
+        <span style="color:#c792ea">if</span> (_offset <span style="color:#c792ea">is</span> &gt; <span style="color:#f78c6c">0</span>)         sb.<span style="color:#4ec9b0">Append</span>(<span style="color:#c3e88d">$" OFFSET {_offset}"</span>);
+        <span style="color:#c792ea">return</span> sb.<span style="color:#4ec9b0">ToString</span>();
+    }
+}
+
+<span style="color:#c792ea">string</span> sql = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">QueryBuilder</span>()
+    .<span style="color:#4ec9b0">Von</span>(<span style="color:#c3e88d">"Benutzer"</span>)
+    .<span style="color:#4ec9b0">Feld</span>(<span style="color:#c3e88d">"id"</span>, <span style="color:#c3e88d">"name"</span>, <span style="color:#c3e88d">"email"</span>)
+    .<span style="color:#4ec9b0">Wo</span>(<span style="color:#c3e88d">"aktiv = true"</span>)
+    .<span style="color:#4ec9b0">NachOben</span>(<span style="color:#c3e88d">"name"</span>)
+    .<span style="color:#4ec9b0">Begrenzen</span>(<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>)
+    .<span style="color:#4ec9b0">Baue</span>();
+
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(sql);
+<span style="color:#546e7a">// SELECT id, name, email FROM Benutzer WHERE aktiv = true ORDER BY name ASC LIMIT 10 OFFSET 20</span></pre></div>
+<div id="exp1" style="display:none"><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>;
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Linq</span>;
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Collections</span>.<span style="color:#4ec9b0">Generic</span>;
+
+<span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Bestellung</span>(<span style="color:#c792ea">int</span> <span style="color:#4ec9b0">Id</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Kunde</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Produkt</span>,
+                  <span style="color:#c792ea">decimal</span> <span style="color:#4ec9b0">Betrag</span>, <span style="color:#c792ea">bool</span> <span style="color:#4ec9b0">Bezahlt</span>, <span style="color:#4ec9b0">DateTime</span> <span style="color:#4ec9b0">Datum</span>);
+
+<span style="color:#c792ea">var</span> bestellungen = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">Bestellung</span>&gt; {
+    <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">1</span>, <span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Laptop"</span>,   <span style="color:#f78c6c">999.99m</span>, <span style="color:#c792ea">true</span>,  <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2024</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">15</span>)),
+    <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2</span>, <span style="color:#c3e88d">"Bob"</span>,   <span style="color:#c3e88d">"Maus"</span>,      <span style="color:#f78c6c">29.99m</span>, <span style="color:#c792ea">true</span>,  <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2024</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">20</span>)),
+    <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">3</span>, <span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Tastatur"</span>,  <span style="color:#f78c6c">59.99m</span>, <span style="color:#c792ea">false</span>, <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2024</span>, <span style="color:#f78c6c">2</span>,  <span style="color:#f78c6c">1</span>)),
+    <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">4</span>, <span style="color:#c3e88d">"Carol"</span>, <span style="color:#c3e88d">"Monitor"</span>,  <span style="color:#f78c6c">399.00m</span>, <span style="color:#c792ea">true</span>,  <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2024</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">10</span>)),
+    <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">5</span>, <span style="color:#c3e88d">"Bob"</span>,   <span style="color:#c3e88d">"Kabel"</span>,      <span style="color:#f78c6c">9.99m</span>, <span style="color:#c792ea">true</span>,  <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2024</span>, <span style="color:#f78c6c">3</span>,  <span style="color:#f78c6c">1</span>)),
+    <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">6</span>, <span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Laptop"</span>,   <span style="color:#f78c6c">999.99m</span>, <span style="color:#c792ea">true</span>,  <span style="color:#c792ea">new</span>(<span style="color:#f78c6c">2024</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">15</span>)),
+};
+
+<span style="color:#546e7a">// Gesamtumsatz bezahlter Bestellungen</span>
+<span style="color:#c792ea">decimal</span> umsatz = bestellungen
+    .<span style="color:#4ec9b0">Where</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Bezahlt</span>)
+    .<span style="color:#4ec9b0">Sum</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Betrag</span>);
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"Umsatz: {umsatz:C}"</span>);
+
+<span style="color:#546e7a">// Pro Kunde: Umsatz und Anzahl</span>
+<span style="color:#c792ea">var</span> proKunde = bestellungen
+    .<span style="color:#4ec9b0">Where</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Bezahlt</span>)
+    .<span style="color:#4ec9b0">GroupBy</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Kunde</span>)
+    .<span style="color:#4ec9b0">Select</span>(g <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">new</span> {
+        <span style="color:#4ec9b0">Kunde</span>  = g.<span style="color:#4ec9b0">Key</span>,
+        <span style="color:#4ec9b0">Anzahl</span> = g.<span style="color:#4ec9b0">Count</span>(),
+        <span style="color:#4ec9b0">Gesamt</span> = g.<span style="color:#4ec9b0">Sum</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Betrag</span>)
+    })
+    .<span style="color:#4ec9b0">OrderByDescending</span>(x <span style="color:#89ddff">=&gt;</span> x.<span style="color:#4ec9b0">Gesamt</span>);
+
+<span style="color:#c792ea">foreach</span> (<span style="color:#c792ea">var</span> k <span style="color:#c792ea">in</span> proKunde)
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"  {k.Kunde,-10} {k.Anzahl} Bestellungen, {k.Gesamt:C}"</span>);
+
+<span style="color:#546e7a">// Top-Produkte</span>
+<span style="color:#c792ea">var</span> topProdukte = bestellungen
+    .<span style="color:#4ec9b0">GroupBy</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Produkt</span>)
+    .<span style="color:#4ec9b0">Select</span>(g <span style="color:#89ddff">=&gt;</span> (<span style="color:#4ec9b0">Produkt</span>: g.<span style="color:#4ec9b0">Key</span>, <span style="color:#4ec9b0">Umsatz</span>: g.<span style="color:#4ec9b0">Sum</span>(b <span style="color:#89ddff">=&gt;</span> b.<span style="color:#4ec9b0">Betrag</span>)))
+    .<span style="color:#4ec9b0">OrderByDescending</span>(x <span style="color:#89ddff">=&gt;</span> x.<span style="color:#4ec9b0">Umsatz</span>)
+    .<span style="color:#4ec9b0">Take</span>(<span style="color:#f78c6c">3</span>);
+
+<span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">"Top-Produkte:"</span>);
+<span style="color:#c792ea">foreach</span> (<span style="color:#c792ea">var</span> p <span style="color:#c792ea">in</span> topProdukte)
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(<span style="color:#c3e88d">$"  {p.Produkt,-12} {p.Umsatz:C}"</span>);</pre></div>
+<div id="exp2" style="display:none"><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>;
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Collections</span>.<span style="color:#4ec9b0">Generic</span>;
+<span style="color:#c792ea">using</span> <span style="color:#4ec9b0">System</span>.<span style="color:#4ec9b0">Threading</span>.<span style="color:#4ec9b0">Tasks</span>;
+
+<span style="color:#546e7a">// Generisches Repository-Pattern</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">IRepository</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">TId</span>&gt;
+{
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">T</span>?&gt; <span style="color:#4ec9b0">FindByIdAsync</span>(<span style="color:#4ec9b0">TId</span> id);
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">IReadOnlyList</span>&lt;<span style="color:#4ec9b0">T</span>&gt;&gt; <span style="color:#4ec9b0">FindAllAsync</span>();
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">AddAsync</span>(<span style="color:#4ec9b0">T</span> entity);
+    <span style="color:#4ec9b0">Task</span> <span style="color:#4ec9b0">DeleteAsync</span>(<span style="color:#4ec9b0">TId</span> id);
+}
+
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">abstract</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">RepositoryBase</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">TId</span>&gt; : <span style="color:#4ec9b0">IRepository</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">TId</span>&gt;
+    <span style="color:#c792ea">where</span> <span style="color:#4ec9b0">T</span> : <span style="color:#c792ea">class</span>
+{
+    <span style="color:#c792ea">protected</span> <span style="color:#c792ea">readonly</span> <span style="color:#4ec9b0">Dictionary</span>&lt;<span style="color:#4ec9b0">TId</span>, <span style="color:#4ec9b0">T</span>&gt; _store = <span style="color:#c792ea">new</span>();
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">T</span>?&gt; <span style="color:#4ec9b0">FindByIdAsync</span>(<span style="color:#4ec9b0">TId</span> id)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Task</span>.<span style="color:#4ec9b0">FromResult</span>(_store.<span style="color:#4ec9b0">GetValueOrDefault</span>(id));
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">IReadOnlyList</span>&lt;<span style="color:#4ec9b0">T</span>&gt;&gt; <span style="color:#4ec9b0">FindAllAsync</span>()
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Task</span>.<span style="color:#4ec9b0">FromResult</span>&lt;<span style="color:#4ec9b0">IReadOnlyList</span>&lt;<span style="color:#4ec9b0">T</span>&gt;&gt;([.. _store.<span style="color:#4ec9b0">Values</span>]);
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">AddAsync</span>(<span style="color:#4ec9b0">T</span> entity)
+    {
+        _store<span style="color:#ff9800">[GetId(entity)]</span> = entity;
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Task</span>.<span style="color:#4ec9b0">FromResult</span>(entity);
+    }
+
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Task</span> <span style="color:#4ec9b0">DeleteAsync</span>(<span style="color:#4ec9b0">TId</span> id)
+    {
+        _store.<span style="color:#4ec9b0">Remove</span>(id);
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Task</span>.<span style="color:#4ec9b0">CompletedTask</span>;
+    }
+
+    <span style="color:#c792ea">protected</span> <span style="color:#c792ea">abstract</span> <span style="color:#4ec9b0">TId</span> <span style="color:#4ec9b0">GetId</span>(<span style="color:#4ec9b0">T</span> entity);
+}
+
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">User</span>(<span style="color:#c792ea">int</span> <span style="color:#4ec9b0">Id</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Name</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Email</span>);
+
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">UserRepository</span> : <span style="color:#4ec9b0">RepositoryBase</span>&lt;<span style="color:#4ec9b0">User</span>, <span style="color:#c792ea">int</span>&gt;
+{
+    <span style="color:#c792ea">protected</span> <span style="color:#c792ea">override</span> <span style="color:#c792ea">int</span> <span style="color:#4ec9b0">GetId</span>(<span style="color:#4ec9b0">User</span> u) <span style="color:#89ddff">=&gt;</span> u.<span style="color:#4ec9b0">Id</span>;
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">User</span>?&gt; <span style="color:#4ec9b0">FindByEmailAsync</span>(<span style="color:#c792ea">string</span> email)
+        <span style="color:#89ddff">=&gt;</span> (<span style="color:#c792ea">await</span> <span style="color:#4ec9b0">FindAllAsync</span>()).<span style="color:#4ec9b0">FirstOrDefault</span>(u <span style="color:#89ddff">=&gt;</span> u.<span style="color:#4ec9b0">Email</span> == email);
+}
+
+<span style="color:#546e7a">// Generischer Result-Typ</span>
+<span style="color:#c792ea">public</span> <span style="color:#c792ea">record</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>&gt;
+{
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">bool</span>    <span style="color:#4ec9b0">IsSuccess</span> { get; }
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">T</span>?      <span style="color:#4ec9b0">Value</span>     { get; }
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">string</span>? <span style="color:#4ec9b0">Error</span>     { get; }
+    <span style="color:#c792ea">private</span> <span style="color:#4ec9b0">Result</span>(<span style="color:#c792ea">bool</span> ok, <span style="color:#4ec9b0">T</span>? val, <span style="color:#c792ea">string</span>? err)
+        <span style="color:#89ddff">=&gt;</span> (<span style="color:#4ec9b0">IsSuccess</span>, <span style="color:#4ec9b0">Value</span>, <span style="color:#4ec9b0">Error</span>) = (ok, val, err);
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">Ok</span>(<span style="color:#4ec9b0">T</span> val)       <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">new</span>(<span style="color:#c792ea">true</span>,  val, <span style="color:#c792ea">null</span>);
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">static</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">Fail</span>(<span style="color:#c792ea">string</span> err) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">new</span>(<span style="color:#c792ea">false</span>, <span style="color:#c792ea">default</span>, err);
+    <span style="color:#c792ea">public</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">U</span>&gt; <span style="color:#4ec9b0">Map</span>&lt;<span style="color:#4ec9b0">U</span>&gt;(<span style="color:#4ec9b0">Func</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">U</span>&gt; f)
+        <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">IsSuccess</span> ? <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">U</span>&gt;.<span style="color:#4ec9b0">Ok</span>(f(<span style="color:#4ec9b0">Value</span>!)) : <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">U</span>&gt;.<span style="color:#4ec9b0">Fail</span>(<span style="color:#4ec9b0">Error</span>!);
+}
+
+<span style="color:#c792ea">async</span> <span style="color:#4ec9b0">Task</span> <span style="color:#4ec9b0">Demo</span>()
+{
+    <span style="color:#c792ea">var</span> repo = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">UserRepository</span>();
+    <span style="color:#c792ea">await</span> repo.<span style="color:#4ec9b0">AddAsync</span>(<span style="color:#c792ea">new</span> <span style="color:#4ec9b0">User</span>(<span style="color:#f78c6c">1</span>, <span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"alice@example.com"</span>));
+    <span style="color:#c792ea">var</span> user = <span style="color:#c792ea">await</span> repo.<span style="color:#4ec9b0">FindByIdAsync</span>(<span style="color:#f78c6c">1</span>);
+    <span style="color:#4ec9b0">Console</span>.<span style="color:#4ec9b0">WriteLine</span>(user<span style="color:#89ddff">?.</span><span style="color:#4ec9b0">Name</span>);   <span style="color:#546e7a">// "Alice"</span>
+}</pre></div>
+<div id="exp3" style="display:none"><pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ASP.NET Core 8 Minimal API</span>
+<span style="color:#c792ea">var</span> builder = <span style="color:#4ec9b0">WebApplication</span>.<span style="color:#4ec9b0">CreateBuilder</span>(args);
+builder.<span style="color:#4ec9b0">Services</span>.<span style="color:#4ec9b0">AddSingleton</span>&lt;<span style="color:#4ec9b0">IUserService</span>, <span style="color:#4ec9b0">UserService</span>&gt;();
+<span style="color:#c792ea">var</span> app = builder.<span style="color:#4ec9b0">Build</span>();
+
+app.<span style="color:#4ec9b0">MapGet</span>(<span style="color:#c3e88d">"/api/users"</span>, <span style="color:#c792ea">async</span> (<span style="color:#4ec9b0">IUserService</span> svc) <span style="color:#89ddff">=&gt;</span>
+    <span style="color:#c792ea">await</span> svc.<span style="color:#4ec9b0">GetAllAsync</span>());
+
+app.<span style="color:#4ec9b0">MapGet</span>(<span style="color:#c3e88d">"/api/users/{id:int}"</span>, <span style="color:#c792ea">async</span> (<span style="color:#c792ea">int</span> id, <span style="color:#4ec9b0">IUserService</span> svc) <span style="color:#89ddff">=&gt;</span>
+{
+    <span style="color:#c792ea">var</span> user = <span style="color:#c792ea">await</span> svc.<span style="color:#4ec9b0">GetByIdAsync</span>(id);
+    <span style="color:#c792ea">return</span> user <span style="color:#c792ea">is</span> <span style="color:#c792ea">not</span> <span style="color:#c792ea">null</span>
+        ? <span style="color:#4ec9b0">Results</span>.<span style="color:#4ec9b0">Ok</span>(user)
+        : <span style="color:#4ec9b0">Results</span>.<span style="color:#4ec9b0">NotFound</span>(<span style="color:#c3e88d">$"User {id} nicht gefunden"</span>);
+});
+
+app.<span style="color:#4ec9b0">MapPost</span>(<span style="color:#c3e88d">"/api/users"</span>, <span style="color:#c792ea">async</span> (<span style="color:#4ec9b0">CreateUserRequest</span> req, <span style="color:#4ec9b0">IUserService</span> svc) <span style="color:#89ddff">=&gt;</span>
+{
+    <span style="color:#c792ea">if</span> (<span style="color:#c792ea">string</span>.<span style="color:#4ec9b0">IsNullOrWhiteSpace</span>(req.<span style="color:#4ec9b0">Name</span>))
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Results</span>.<span style="color:#4ec9b0">BadRequest</span>(<span style="color:#c3e88d">"Name ist erforderlich"</span>);
+    <span style="color:#c792ea">var</span> user = <span style="color:#c792ea">await</span> svc.<span style="color:#4ec9b0">CreateAsync</span>(req.<span style="color:#4ec9b0">Name</span>, req.<span style="color:#4ec9b0">Email</span>);
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Results</span>.<span style="color:#4ec9b0">Created</span>(<span style="color:#c3e88d">$"/api/users/{user.Id}"</span>, user);
+});
+
+app.<span style="color:#4ec9b0">MapDelete</span>(<span style="color:#c3e88d">"/api/users/{id:int}"</span>, <span style="color:#c792ea">async</span> (<span style="color:#c792ea">int</span> id, <span style="color:#4ec9b0">IUserService</span> svc) <span style="color:#89ddff">=&gt;</span>
+{
+    <span style="color:#c792ea">var</span> ok = <span style="color:#c792ea">await</span> svc.<span style="color:#4ec9b0">DeleteAsync</span>(id);
+    <span style="color:#c792ea">return</span> ok ? <span style="color:#4ec9b0">Results</span>.<span style="color:#4ec9b0">NoContent</span>() : <span style="color:#4ec9b0">Results</span>.<span style="color:#4ec9b0">NotFound</span>();
+});
+
+app.<span style="color:#4ec9b0">Run</span>();
+
+<span style="color:#c792ea">record</span> <span style="color:#4ec9b0">User</span>(<span style="color:#c792ea">int</span> <span style="color:#4ec9b0">Id</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Name</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Email</span>);
+<span style="color:#c792ea">record</span> <span style="color:#4ec9b0">CreateUserRequest</span>(<span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Name</span>, <span style="color:#c792ea">string</span> <span style="color:#4ec9b0">Email</span>);
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">IUserService</span> {
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">User</span>&gt;&gt; <span style="color:#4ec9b0">GetAllAsync</span>();
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">User</span>?&gt; <span style="color:#4ec9b0">GetByIdAsync</span>(<span style="color:#c792ea">int</span> id);
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#4ec9b0">User</span>&gt; <span style="color:#4ec9b0">CreateAsync</span>(<span style="color:#c792ea">string</span> name, <span style="color:#c792ea">string</span> email);
+    <span style="color:#4ec9b0">Task</span>&lt;<span style="color:#c792ea">bool</span>&gt; <span style="color:#4ec9b0">DeleteAsync</span>(<span style="color:#c792ea">int</span> id);
+}</pre></div>
+</div>
+<div id="tp-tools" class="tp"><div style="background:#9b49930e;border:1px solid #9b499344;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#9b4993">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S dotnet-sdk</code><br><code style="color:#ffb347">dotnet new webapi -n MeineApi && cd MeineApi && dotnet watch run</code></div>
+<div class="ac open" id="ac-tl0" style="border:1px solid #9b499344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#9b49930e">
+    <span style="display:flex;align-items:center;gap:6px;color:#9b4993"><span style="display:inline-block;width:8px;height:8px;background:#9b4993;border-radius:50%;margin-right:2px"></span>Installation</span>
+    <span class="aa" style="color:#9b4993;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px"><table><thead><tr><th>System</th><th>Paket</th><th>Befehl</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#9b4993">.NET 8 (Arch/CachyOS)</code></td><td style="color:#cdd6f4">dotnet-sdk</td><td style="color:#6c7a8e">sudo pacman -S dotnet-sdk
+dotnet --version</td></tr><tr><td style="width:240px"><code style="color:#9b4993">.NET 8 (Ubuntu)</code></td><td style="color:#cdd6f4">dotnet-sdk</td><td style="color:#6c7a8e">wget https://dot.net/v1/dotnet-install.sh
+bash dotnet-install.sh --version latest</td></tr><tr><td style="width:240px"><code style="color:#9b4993">.NET 8 (Fedora)</code></td><td style="color:#cdd6f4">dotnet</td><td style="color:#6c7a8e">sudo dnf install dotnet-sdk-8.0</td></tr></tbody></table></div>
+</div>
+<div class="ac" id="ac-tl1" style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7"><span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>dotnet CLI</span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><table><thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet new console</code></td><td style="color:#cdd6f4">Konsolen-App erstellen</td><td style="color:#6c7a8e">dotnet new console -n MeinProjekt</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet new webapi</code></td><td style="color:#cdd6f4">ASP.NET Core API</td><td style="color:#6c7a8e">dotnet new webapi -n MeineApi</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet run</code></td><td style="color:#cdd6f4">Ausfuehren</td><td style="color:#6c7a8e">dotnet run --project ./Projekt</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet build</code></td><td style="color:#cdd6f4">Kompilieren</td><td style="color:#6c7a8e">dotnet build -c Release</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet test</code></td><td style="color:#cdd6f4">Tests ausfuehren</td><td style="color:#6c7a8e">dotnet test --logger trx</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet publish</code></td><td style="color:#cdd6f4">Veroeffentlichen</td><td style="color:#6c7a8e">dotnet publish -c Release -r linux-x64</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet add package</code></td><td style="color:#cdd6f4">NuGet-Paket hinzufuegen</td><td style="color:#6c7a8e">dotnet add package Newtonsoft.Json</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet watch run</code></td><td style="color:#cdd6f4">Hot-Reload Entwicklung</td><td style="color:#6c7a8e">Neustart bei Codeaenderung</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet format</code></td><td style="color:#cdd6f4">Code formatieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">dotnet tool install</code></td><td style="color:#cdd6f4">Globales Tool</td><td style="color:#6c7a8e">dotnet tool install -g dotnet-ef</td></tr></tbody></table></div>
+</div>
+<div class="ac" id="ac-tl2" style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')" style="width:100%;text-align:left;border:none;padding:11px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0"><span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>NuGet-Packages</span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px"><table><thead><tr><th>Paket</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">Newtonsoft.Json</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">JsonConvert.SerializeObject(obj)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">System.Text.Json</code></td><td style="color:#cdd6f4">.NET</td><td style="color:#6c7a8e">JsonSerializer.Serialize(obj)  – eingebaut</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Entity Framework Core</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">Code-First ORM: dotnet add package Microsoft.EntityFrameworkCore</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Dapper</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">Micro-ORM: db.Query&lt;User&gt;("SELECT ...")</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Serilog</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">Log.Information("Hallo {Name}", name)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">MediatR</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">CQRS: mediator.Send(new MyCommand())</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">AutoMapper</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">mapper.Map&lt;DTO&gt;(entity)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">FluentValidation</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">RuleFor(x =&gt; x.Name).NotEmpty()</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">xUnit / NUnit</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">[Fact] public void Test() {...}</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Moq</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">var mock = new Mock&lt;IService&gt;()</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Polly</code></td><td style="color:#cdd6f4">NuGet</td><td style="color:#6c7a8e">Resilience: Retry, Circuit Breaker</td></tr></tbody></table></div>
+</div></div>
+</div>
+<script>function tA(id){var el=document.getElementById('ac-'+id);var body=el.querySelector('.ab');var open=el.classList.toggle('open');body.style.display=open?'block':'none';}
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.tb[data-tab]').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('active');});btn.classList.add('active');document.getElementById('tp-'+btn.dataset.tab).classList.add('active');});});
+var cs=document.getElementById('ctrl-s');if(cs){cs.addEventListener('input',function(){var q=this.value.toLowerCase();document.querySelectorAll('.cd[data-s]').forEach(function(c){c.style.display=!q||c.dataset.s.includes(q)?'':'none';});if(q)document.querySelectorAll('[id^="ac-mod"]').forEach(function(a){a.classList.add('open');a.querySelector('.ab').style.display='block';});});}
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input){input.addEventListener('input',function(){var q=this.value.toLowerCase();var tbody=this.parentElement.querySelector('tbody');tbody.querySelectorAll('tr.cr').forEach(function(row){row.style.display=!q||row.dataset.m.includes(q)||row.dataset.d.includes(q)?'':'none';});});});
+function switchEx(index){document.querySelectorAll('[id^="exp"]').forEach(function(p,j){p.style.display=j===index?'':'none';});document.querySelectorAll('[id^="exb"]').forEach(function(b,j){if(j===index){b.style.borderColor='#9b4993';b.style.color='#9b4993';b.style.background='rgba(155,73,147,.1)';}else{b.style.borderColor='#1e2530';b.style.color='#6c7a8e';b.style.background='transparent';}});}</script>
+</body>
+</html>

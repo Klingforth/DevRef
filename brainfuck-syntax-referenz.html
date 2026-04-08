@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainfuck Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #e91e8c;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f0a10, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(233,30,140,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(233,30,140,.03); }
+
+code { font-family: 'Courier New', monospace; font-size: 13px; background: rgba(233,30,140,.08); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.65); border: 1px solid rgba(233,30,140,.15); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+.befehl-karte {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; border-radius: 10px;
+  font-size: 28px; font-weight: 900; font-family: 'Courier New', monospace;
+  background: rgba(0,0,0,.6); border: 2px solid;
+  margin: 4px; cursor: default;
+  transition: transform .1s;
+}
+.befehl-karte:hover { transform: scale(1.15); }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#c792ea">[</span><span style="color:#e91e8c">BF</span><span style="color:#e05252">]</span>
+      <span style="color:#e91e8c">Brainfuck</span>
+    </div>
+    <div id="hdr-sub">Urban Müller · 1993 · 8 Befehle · Turing-vollständig · &gt; &lt; + - . , [ ]</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="befehle">Die 8 Befehle</button>
+    <button class="tb" data-tab="idiome">Idiome & Muster</button>
+    <button class="tb" data-tab="interpreter">Interpreter</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#e91e8c0a;border:1px solid #e91e8c44;border-radius:8px;
+            padding:16px;margin-bottom:14px;text-align:center">
+  <div style="font-size:11px;color:var(--dim);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">
+    Die vollständige Syntax – 8 Befehle
+  </div>
+  <div class="befehl-karte" style="color:#4fc3f7;border-color:#4fc3f744" title="Zeiger nach rechts (increment pointer)">&gt;</div><div class="befehl-karte" style="color:#82aaff;border-color:#82aaff44" title="Zeiger nach links (decrement pointer)">&lt;</div><div class="befehl-karte" style="color:#c3e88d;border-color:#c3e88d44" title="Zelle erhöhen (increment byte)">+</div><div class="befehl-karte" style="color:#f78c6c;border-color:#f78c6c44" title="Zelle verringern (decrement byte)">-</div><div class="befehl-karte" style="color:#ffcb6b;border-color:#ffcb6b44" title="Zelle ausgeben (output byte)">.</div><div class="befehl-karte" style="color:#ff9800;border-color:#ff980044" title="Byte einlesen (input byte)">,</div><div class="befehl-karte" style="color:#c792ea;border-color:#c792ea44" title="Schleifenanfang (jump if zero)">[</div><div class="befehl-karte" style="color:#e05252;border-color:#e0525244" title="Schleifenende (jump unless zero)">]</div>
+  <div style="font-size:11px;color:var(--dim);margin-top:12px">
+    Alles andere im Code ist ein Kommentar.
+  </div>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #e91e8c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e91e8c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e91e8c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e91e8c;border-radius:50%;margin-right:2px"></span>Brainfuck – 8 Befehle, unendliche Möglichkeiten
+    </span>
+    <span class="aa" style="color:#e91e8c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd">
+  <div style="color:#e91e8c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Brainfuck – 8 Befehle, unendliche Möglichkeiten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">Brainfuck von Urban Müller (1993) – ursprüngliches Ziel:</span>
+<span style="color:#546e7a">kleinster Amiga Compiler (Original: 240 Bytes!)</span>
+<span style="color:#546e7a">Alles was kein Befehl ist (</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> </span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">) ist ein Kommentar</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Das Speichermodell:</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> 0 | 0 | 0 | 0 | 0 | 0 | </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">  30</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">000</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> Byte</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zellen</span>
+<span style="color:#546e7a">        ^</span>
+<span style="color:#546e7a">        Zeiger (startet hier)</span>
+
+<span style="color:#546e7a">Jede Zelle enthält einen Byte</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Wert (0–255)</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Überlauf: 255 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> 1 = 0  (wraparound!)</span>
+<span style="color:#546e7a">           0 </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> 1 = 255  (wraparound!)</span>
+
+<span style="color:#546e7a">Das erste BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Programm:</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Schritt 1: </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">   → Zelle 0 = 1</span>
+<span style="color:#546e7a">Schritt 2: </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">   → Zelle 0 = 2</span>
+<span style="color:#546e7a">Schritt 3: </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">   → Zelle 0 = 3</span>
+<span style="color:#546e7a">Schritt 4: </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">   → Ausgabe: ASCII 3 (kein druckbares Zeichen)</span>
+
+<span style="color:#546e7a">Besser: ASCII 65 = 'A'</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Lies: Zelle 0 = 8</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> dann Schleife: 8 mal (Zelle 1 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 8</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Zelle 0 </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">= 1)</span>
+<span style="color:#546e7a">Ergebnis: Zelle 1 = 64</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> dann </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">1 = 65 = 'A'</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> dann ausgeben!</span>
+
+<span style="color:#546e7a">Äquivalentes C:</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">int ptr = 0</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">30000</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = {0};</span>
+<span style="color:#546e7a">mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">0</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = 8;</span>
+<span style="color:#546e7a">while (mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">0</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">) { mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">1</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 8; mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">0</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">; }</span>
+<span style="color:#546e7a">ptr = 1;</span>
+<span style="color:#546e7a">mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">1</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">;</span>
+<span style="color:#546e7a">putchar(mem</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">1</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">);</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Das Speichermodell visualisiert
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Das Speichermodell visualisiert
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">Startzustand:</span>
+<span style="color:#546e7a">  Zellen: </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> 0  | 0  | 0  | 0  | 0  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">            ^</span>
+<span style="color:#546e7a">          Zeiger (ptr = 0)</span>
+
+<span style="color:#546e7a">Nach "</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">  Befehl: </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span>
+<span style="color:#546e7a">  Zellen: </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> 2  | 3  | 1  | 0  | 0  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">                       ^</span>
+<span style="color:#546e7a">                     Zeiger (ptr = 2)</span>
+
+<span style="color:#546e7a">Nach "</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">  Befehl: </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a">  </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Zeiger geht zu Zelle 1 (Wert=3)</span>
+<span style="color:#546e7a">  Ausgabe: ASCII 3 (ETX – kein druckbares Zeichen)</span>
+
+<span style="color:#546e7a">Um 'A' (ASCII 65) auszugeben:</span>
+<span style="color:#546e7a">  Brauche ich 65 × '</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">' oder besser: Multiplikation!</span>
+
+<span style="color:#546e7a">Schleifen erklären:</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">  </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  ↑         ↑</span>
+<span style="color:#546e7a">  Wenn aktuell == 0: SPRINGE zu </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">             Wenn aktuell != 0: SPRINGE zu </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span>
+
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> Inhalt </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">  =  while (*ptr != 0) { Inhalt }</span>
+
+<span style="color:#546e7a">Verschachtelung ist erlaubt:</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> äußere </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> innere </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> Schleife </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  Klammern müssen IMMER ausbalanciert sein!</span>
+
+<span style="color:#546e7a">Alle anderen Zeichen (Buchstaben</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Zahlen</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Leerzeichen</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Newlines):</span>
+<span style="color:#546e7a">  Werden KOMPLETT IGNORIERT</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Das macht Kommentare einfach: einfach hinschreiben!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-befehle" class="tp">
+  
+<div class="ac open" id="ac-bf0"
+     style="border:1px solid #e91e8c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('bf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e91e8c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e91e8c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e91e8c;border-radius:50%;margin-right:2px"></span>Die 8 Befehle
+    </span>
+    <span class="aa" style="color:#e91e8c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#4fc3f7;
+                 text-shadow:0 0 12px #4fc3f766">&gt;</span>
+  </div>
+  <div>
+    <div style="color:#4fc3f7;font-weight:700;font-size:13px;margin-bottom:4px">Zeiger nach rechts (increment pointer)</div>
+    <div style="color:#6c7a8e;font-size:11px">Nächste Speicherzelle</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#4fc3f7;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">ptr++</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#82aaff;
+                 text-shadow:0 0 12px #82aaff66">&lt;</span>
+  </div>
+  <div>
+    <div style="color:#82aaff;font-weight:700;font-size:13px;margin-bottom:4px">Zeiger nach links (decrement pointer)</div>
+    <div style="color:#6c7a8e;font-size:11px">Vorherige Speicherzelle</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#82aaff;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">ptr--</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#c3e88d;
+                 text-shadow:0 0 12px #c3e88d66">+</span>
+  </div>
+  <div>
+    <div style="color:#c3e88d;font-weight:700;font-size:13px;margin-bottom:4px">Zelle erhöhen (increment byte)</div>
+    <div style="color:#6c7a8e;font-size:11px">Wert der aktuellen Zelle +1 (mod 256)</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#c3e88d;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">*ptr++</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#f78c6c;
+                 text-shadow:0 0 12px #f78c6c66">-</span>
+  </div>
+  <div>
+    <div style="color:#f78c6c;font-weight:700;font-size:13px;margin-bottom:4px">Zelle verringern (decrement byte)</div>
+    <div style="color:#6c7a8e;font-size:11px">Wert der aktuellen Zelle -1 (mod 256, wrap!)</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#f78c6c;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">*ptr--</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#ffcb6b;
+                 text-shadow:0 0 12px #ffcb6b66">.</span>
+  </div>
+  <div>
+    <div style="color:#ffcb6b;font-weight:700;font-size:13px;margin-bottom:4px">Zelle ausgeben (output byte)</div>
+    <div style="color:#6c7a8e;font-size:11px">ASCII-Wert der aktuellen Zelle ausgeben</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#ffcb6b;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">putchar(*ptr)</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#ff9800;
+                 text-shadow:0 0 12px #ff980066">,</span>
+  </div>
+  <div>
+    <div style="color:#ff9800;font-weight:700;font-size:13px;margin-bottom:4px">Byte einlesen (input byte)</div>
+    <div style="color:#6c7a8e;font-size:11px">Ein ASCII-Zeichen von Eingabe lesen</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#ff9800;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">*ptr = getchar()</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#c792ea;
+                 text-shadow:0 0 12px #c792ea66">[</span>
+  </div>
+  <div>
+    <div style="color:#c792ea;font-weight:700;font-size:13px;margin-bottom:4px">Schleifenanfang (jump if zero)</div>
+    <div style="color:#6c7a8e;font-size:11px">Wenn Zelle 0: springe zum passenden ]</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#c792ea;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">while(*ptr) {</code>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:80px 1fr 180px;gap:16px;align-items:center;
+            border-bottom:1px solid #1e2530;padding:14px 8px">
+  <div style="text-align:center">
+    <span style="font-size:40px;font-weight:900;color:#e05252;
+                 text-shadow:0 0 12px #e0525266">]</span>
+  </div>
+  <div>
+    <div style="color:#e05252;font-weight:700;font-size:13px;margin-bottom:4px">Schleifenende (jump unless zero)</div>
+    <div style="color:#6c7a8e;font-size:11px">Wenn Zelle != 0: springe zum passenden [</div>
+  </div>
+  <div>
+    <code style="font-size:12px;color:#e05252;background:rgba(0,0,0,.5);
+                 padding:4px 8px;border-radius:4px">}</code>
+  </div>
+</div></div>
+<div style="background:#ffcb6b0a;border:1px solid #ffcb6b44;border-radius:8px;
+            padding:12px 14px;margin-top:14px;font-size:12px;line-height:1.8">
+  <strong style="color:#ffcb6b">Wichtige Details:</strong><br>
+  <code style="color:#c3e88d">+</code> auf 255 → wird zu 0 (Überlauf/Wraparound)<br>
+  <code style="color:#f78c6c">-</code> auf 0 → wird zu 255 (Unterlauf/Wraparound)<br>
+  <code style="color:#c792ea">[</code> und <code style="color:#e05252">]</code> müssen immer ausgeglichen sein (wie Klammern)<br>
+  <code style="color:#ff9800">,</code> bei EOF: implementierungsabhängig (0, -1 oder keine Änderung)<br>
+  Zeiger <code style="color:#4fc3f7">&gt;</code> oder <code style="color:#82aaff">&lt;</code> über Grenzen: implementierungsabhängig (Wrap oder Fehler)
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-idiome" class="tp">
+
+<div class="ac open" id="ac-id0"
+     style="border:1px solid #e91e8c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e91e8c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e91e8c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e91e8c;border-radius:50%;margin-right:2px"></span>Grundlegende Schritte
+    </span>
+    <span class="aa" style="color:#e91e8c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span></code>
+  <span style="color:#a0aec0;font-size:12px">Zelle 0 = 3  (drei mal +1)</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span></code>
+  <span style="color:#a0aec0;font-size:12px">Zelle 0 = 7  (sieben mal +1)</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span></code>
+  <span style="color:#a0aec0;font-size:12px">Zeiger zu Zelle 1, Zelle 1 = 2</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span></code>
+  <span style="color:#a0aec0;font-size:12px">Zeiger zurück zu Zelle 0</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Zelle auf 0 setzen (Schleife bis Null)</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Wert von Zelle 0 zu Zelle 1 addieren</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span></code>
+  <span style="color:#a0aec0;font-size:12px">ASCII-Wert der aktuellen Zelle ausgeben</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#ff9800;font-weight:900;font-size:15px">,</span></code>
+  <span style="color:#a0aec0;font-size:12px">Ein Zeichen von Stdin lesen</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Zeichen lesen und ausgeben bis EOF (cat-Programm!)</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Idiom: Zelle auf 0 setzen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Schleife: -1 bis Null → garantiert Zelle = 0</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Alternative (über 256 wrappen) – langsamer</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Idiom: Wert kopieren (A → B, A=0)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Von Zelle A nach B: A mal: A-1, B+1</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Kopieren nach B UND C (A wird dabei zu 0)</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id3"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Idiom: Wert WIRKLICH kopieren (ohne A zu löschen)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">A nach B und C kopieren (A wird 0)</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">C zurück nach A (B enthält Kopie, A wiederhergestellt)</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id4"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Idiom: If A != 0: Aktion ausführen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">Aktion</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Führe Aktion aus wenn A != 0, dann A auf 0 setzen</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">Aktion</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Alternative Formulierung</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id5"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id5')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Idiom: Zwei Zellen addieren (A + B → B, A=0)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">Standard: A in B addieren, A leeren</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id6"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id6')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Idiom: Zwei Zellen addieren (A + B → C)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span></code>
+  <span style="color:#a0aec0;font-size:12px">A nach B&amp;C, dann C nach A → A unverändert, B = A+B</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id7"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id7')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Idiom: Konstante setzen (z.B. 65 = "A")
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span></code>
+  <span style="color:#a0aec0;font-size:12px">8 × 8 = 64, dann +1 = 65 = "A"</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span></code>
+  <span style="color:#a0aec0;font-size:12px">10 × 7 = 70... Multiplikation für effiziente Konstanten</span>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-id8"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('id8')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Idiom: Ausgabe eines Leerzeichens (ASCII 32)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div style="padding:4px 0">
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> </span></code>
+  <span style="color:#a0aec0;font-size:12px">32 mal + dann . (naiv)</span>
+</div>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:12px;
+            border-bottom:1px solid #1e2530;padding:6px 0;align-items:center">
+  <code style="font-size:14px;background:rgba(0,0,0,.5);
+               padding:4px 8px;border-radius:4px;letter-spacing:2px"><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span></code>
+  <span style="color:#a0aec0;font-size:12px">Besser: 4×8=32 via Schleife</span>
+</div></div>
+  </div>
+</div>
+</div>
+  <div id="tp-interpreter" class="tp">
+
+<div class="ac open" id="ac-ip0"
+     style="border:1px solid #e91e8c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ip0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e91e8c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e91e8c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e91e8c;border-radius:50%;margin-right:2px"></span>Brainfuck-Interpreter in Python
+    </span>
+    <span class="aa" style="color:#e91e8c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd">
+  <div style="color:#e91e8c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Brainfuck-Interpreter in Python
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Einen vollstaendigen BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Interpreter in Python schreiben</span>
+<span style="color:#546e7a"># Zeigt wie simpel BF wirklich ist!</span>
+
+<span style="color:#546e7a">def brainfuck(code</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> eingabe=""):</span>
+<span style="color:#546e7a">    """Fuehrt Brainfuck</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Code aus</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">"""</span>
+<span style="color:#546e7a">    # Nur gueltige BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zeichen behalten</span>
+<span style="color:#546e7a">    code = </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">c for c in code if c in "</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">"</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">    # Speicher und Zeiger initialisieren</span>
+<span style="color:#546e7a">    zellen = </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">0</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> * 30000</span>
+<span style="color:#546e7a">    ptr = 0          # Zellen</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zeiger</span>
+<span style="color:#546e7a">    ip  = 0          # Instruction Pointer</span>
+<span style="color:#546e7a">    eingabe_pos = 0  # Position in Eingabe</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">String</span>
+
+<span style="color:#546e7a">    # Klammer</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Mapping vorberechnen (effizient!)</span>
+<span style="color:#546e7a">    klammern = {}</span>
+<span style="color:#546e7a">    stack = </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">    for i</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> c in enumerate(code):</span>
+<span style="color:#546e7a">        if c == "</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            stack</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">append(i)</span>
+<span style="color:#546e7a">        elif c == "</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            j = stack</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">pop()</span>
+<span style="color:#546e7a">            klammern</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">j</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = i   # </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">            klammern</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">i</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = j   # </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span>
+
+<span style="color:#546e7a">    ausgabe = </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">    while ip </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a"> len(code):</span>
+<span style="color:#546e7a">        befehl = code</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ip</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">        if   befehl == "</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            ptr = (ptr </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> 1) % 30000    # Zeiger rechts</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            ptr = (ptr </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> 1) % 30000    # Zeiger links</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = (zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> 1) % 256   # </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">1</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> wrap</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = (zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> 1) % 256   # </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">1</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> wrap</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            ausgabe</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">append(chr(zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">))         # Ausgabe</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            if eingabe_pos </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a"> len(eingabe):</span>
+<span style="color:#546e7a">                zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = ord(eingabe</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">eingabe_pos</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">)</span>
+<span style="color:#546e7a">                eingabe_pos </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 1</span>
+<span style="color:#546e7a">            else:</span>
+<span style="color:#546e7a">                zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> = 0   # EOF = 0</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            if zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> == 0:</span>
+<span style="color:#546e7a">                ip = klammern</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ip</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">   # Springe zu </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">        elif befehl == "</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">":</span>
+<span style="color:#546e7a">            if zellen</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ptr</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> != 0:</span>
+<span style="color:#546e7a">                ip = klammern</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">ip</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">   # Springe zu </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span>
+
+<span style="color:#546e7a">        ip </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 1</span>
+
+<span style="color:#546e7a">    return ""</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">join(ausgabe)</span>
+
+<span style="color:#546e7a"># Testen!</span>
+<span style="color:#546e7a">hallo = "</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">"</span>
+<span style="color:#546e7a">print(brainfuck(hallo))       # Hello World!</span>
+
+<span style="color:#546e7a">echo = "</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">"</span>
+<span style="color:#546e7a">print(brainfuck(echo</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> "A"))   # A</span>
+
+<span style="color:#546e7a"># Wahrheit: 7 Zeilen fuer einen vollstaendigen Interpreter</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a"># Das macht Brainfuck so faszinierend!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ip1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ip1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Brainfuck-Interpreter in Brainfuck
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Brainfuck-Interpreter in Brainfuck
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">Ja</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> das existiert wirklich</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Ein Brainfuck</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Interpreter geschrieben in Brainfuck</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Das Programm ist lang (~500 Zeichen)</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> aber es funktioniert</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Konzeptionell (wie es funktioniert):</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> Der BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Code wird als ASCII</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zeichen eingelesen</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> Eine BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Implementierung verarbeitet den eingelesenen Code</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> Das ist ein QUINE</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">aehnliches Konzept (Selbstbezug)</span>
+
+<span style="color:#546e7a">Warum ist das moeglich?</span>
+<span style="color:#546e7a">Weil BF Turing</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">vollstaendig ist</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> und eine Turing</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Maschine</span>
+<span style="color:#546e7a">kann jeden anderen Berechner simulieren </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> einschliesslich</span>
+<span style="color:#546e7a">sich selbst</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Das nennt man einen "Universal Interpreter" </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span>
+<span style="color:#546e7a">ein Programm das andere Programme derselben Sprache ausfuehrt</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Die eigentliche Frage die BF aufwirft:</span>
+<span style="color:#546e7a">Welches ist das MINIMALE System das noch Turing</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">vollstaendig ist?</span>
+
+<span style="color:#546e7a">Antwort: Noch kleiner als BF!</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> BCT (Binary Cyclic Tag) </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> reicht</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> Zeckendorf Representation</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> Rule 110 Zellularautomat (auch Turing</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">vollstaendig!)</span>
+
+<span style="color:#546e7a">BF ist also nicht minimal </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> aber der kleinste PRAKTISCHE</span>
+<span style="color:#546e7a">esoterische Sprache</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Designpunkt</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #e91e8c;color:#e91e8c;background:rgba(233,30,140,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Hello, World! – vollständig erklärt</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Addieren &amp; Multiplizieren</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Cat, ROT13 &amp; Fibonacci</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Brainfuck-Varianten &amp; Verwandte</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">Das beruhmteste BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Programm Schritt fuer Schritt:</span>
+
+<span style="color:#546e7a">Ziel: "Hello</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> World!</span>
+<span style="color:#546e7a">" ausgeben</span>
+<span style="color:#546e7a">      H=72 e=101 l=108 l=108 o=111 </span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">=44 " "=32 W=87 o=111 r=114 l=108 d=100 !=33 </span>
+<span style="color:#546e7a">=10</span>
+
+<span style="color:#546e7a">PROGRAMME (kompakt</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> klassisch):</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">SCHRITT FUER SCHRITT:</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">               p0 = 8  (aeusserer Zaehler)</span>
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                      Schleife 8 mal:</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                  p1 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 4</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                      Innere Schleife 4 mal:</span>
+<span style="color:#546e7a">    </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                    p2 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 2   (wird 64 = 8*4*2)</span>
+<span style="color:#546e7a">    </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                   p3 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 3   (wird 96 = 8*4*3)</span>
+<span style="color:#546e7a">    </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                   p4 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 3   (wird 96 = 8*4*3)</span>
+<span style="color:#546e7a">    </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                     p5 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">= 1   (wird 32 = 8*4*1)</span>
+<span style="color:#546e7a">    </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">                  p1 </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">= 1</span>
+<span style="color:#546e7a">  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                     p2</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> 72 = H</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                     p3</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> 101 = e</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">                     p4</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> 108 = l (96</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">12</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">8</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> komplex)</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                    p6 = 1  (Newline</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Hilfszelle)</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">                    gehe zur ersten Null</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zelle</span>
+<span style="color:#546e7a">  </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">                     p0 </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">= 1</span>
+<span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">Danach: Verschiedene Zellen enthalten die ASCII</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Werte</span>
+<span style="color:#546e7a">        H(72) e(101) l(108) l(108) o(111) und Sonderzeichen</span>
+
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">          Zeiger zu p2 (=72)</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> ausgeben: H</span>
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">        p3 </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> 3 = 98</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> warte</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> das ist 'b'?</span>
+<span style="color:#546e7a">             Nein! Der Anfangswert muss vorher stimmen</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">Ehrlich: Korrektes Hello World ist SEHR muehsam manuell zu verfolgen</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Das zeigt: BF ist leicht ZU LESEN aber schwer ZU SCHREIBEN!</span>
+
+<span style="color:#546e7a">Einfachstes moegliches "A" ausgeben:</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">(8 * 8 = 64</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">1 = 65 = 'A')</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">ZWEI ZAHLEN ADDIEREN: p0 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> p1 </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> p1 (p0 wird 0)</span>
+
+<span style="color:#546e7a">Beispiel: 3 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> 4 = 7</span>
+
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">          p0 = 3  (erste Zahl)</span>
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a">            gehe zu p1</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">         p1 = 4  (zweite Zahl)</span>
+<span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a">            zurueck zu p0</span>
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">       Schleife: p0 mal (p0</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> p1</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">)</span>
+<span style="color:#546e7a">             Ergebnis: p0 = 0</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> p1 = 7</span>
+
+<span style="color:#546e7a">Als Ausgabe:</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  p0=3</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> p1=4</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> addiere </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> p1=7</span>
+<span style="color:#546e7a">  dann p1 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> 48 </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> 1 = 56</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Moment</span>
+
+<span style="color:#546e7a">EINFACHER: Zahlen als ASCII</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zeichen lesen</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> addieren</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> ausgeben</span>
+
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">           lese '3' (ASCII 51) in p0</span>
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a">           zu p1</span>
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">           lese '4' (ASCII 52) in p1</span>
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">      addiere p1 zu p0 (p0 = 103 = 'g'</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> das ist falsch)</span>
+
+<span style="color:#546e7a">Das Problem: ASCII</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Ziffern addieren ist nicht trivial in BF!</span>
+<span style="color:#546e7a">'3' = 51</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> '4' = 52</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> 51</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">52 = 103 != '7' (55)</span>
+<span style="color:#546e7a">Man muesste 48 ('0') abziehen</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> addieren</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> dann 48 wieder addieren</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">MULTIPLIKATION: 3 × 4 = 12 in p2</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">          p0 = 3  (Zaehler)</span>
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">        p1 = 4  (Multiplikator)</span>
+<span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a">            zurueck zu p0</span>
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">            Schleife (3 mal):</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a">          zu p1</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">          Schleife (4 mal):</span>
+<span style="color:#546e7a">    </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a">   p1</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> p2</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> p3</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a"> (p3 als Temp)</span>
+<span style="color:#546e7a">    </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span>
+<span style="color:#546e7a">  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a"> p3 zurueck zu p1 wiederherstellen</span>
+<span style="color:#546e7a">  </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a">         zurueck zu p0</span>
+<span style="color:#546e7a">  </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">          p0</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span>
+<span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> p2 enthaelt nun 12 (3*4)</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">PROGRAMME DIE WIRKLICH NUETZLICH SIND:</span>
+
+<span style="color:#546e7a">CAT</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">PROGRAMM (liest und gibt alles aus):</span>
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">Erklaerung:</span>
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">      Lese ein Zeichen</span>
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">      Solange nicht EOF (0):</span>
+<span style="color:#546e7a">  </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">      Ausgeben</span>
+<span style="color:#546e7a">  </span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">      Naechstes Zeichen lesen</span>
+<span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">ZEICHEN ZAEHLEN:</span>
+<span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Zaehlt wie viele Zeichen eingegeben wurden (max 255!)</span>
+
+<span style="color:#546e7a">ROT13 (Buchstaben um 13 rotieren):</span>
+<span style="color:#546e7a">Einer der komplexesten Standard</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Programme</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Zeigt: Bedingte Logik in BF ist MUEHSAM</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a">                       Zeichen lesen</span>
+<span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                       Solange nicht EOF</span>
+<span style="color:#546e7a">  </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">                     </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">1 (wird brauchen)</span>
+<span style="color:#546e7a">  </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">  </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">20 = </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">21 gesamt: teste ob </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a"> 'A' (65)</span>
+<span style="color:#546e7a">  </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                     Wenn Reste != 0: kein Buchstabe</span>
+<span style="color:#546e7a">    </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">                   Rueckgaengig machen</span>
+<span style="color:#546e7a">    </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span>
+<span style="color:#546e7a">    </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                   Teste ob </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a"> 'N' (78)</span>
+<span style="color:#546e7a">      </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">    </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">Vollstaendiges ROT13 (122 Zeichen</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> sehr kompakt!):</span>
+<span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                         Zeichen lesen</span>
+<span style="color:#546e7a">  </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                   Wenn A</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">M oder a</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">m: </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#546e7a">13</span>
+<span style="color:#546e7a">    </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span>
+<span style="color:#546e7a">      </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">    </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a">                                  Wenn N</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Z oder n</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">z: </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">13</span>
+<span style="color:#546e7a">    </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span>
+<span style="color:#546e7a">  </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+<span style="color:#546e7a">  </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">                              Ausgeben</span>
+<span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">Fibonacci</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Folge (erste N Terme):</span>
+<span style="color:#546e7a">Sehr komplex </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a"> benoetigt Division um Zahlen als Ziffern auszugeben</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">Ein BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Fibonacci</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Programm ist meist ueber 100 Zeichen lang</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">EINFACHSTES "Counting": zaehlt von 0 bis wo Zelle ueberlaeuft (0</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">255</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> 0</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">)</span>
+<span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span><span style="color:#e05252;font-weight:900;font-size:15px">]</span><span style="color:#546e7a">       gibt alle 256 ASCII</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Zeichen aus (inkl</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Steuerzeichen!)</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.8);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a">ESOTERISCHE SPRACHEN DIE AUF BF BASIEREN:</span>
+
+<span style="color:#546e7a">OOK! (Duck</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Variante von BF)</span>
+<span style="color:#546e7a">  Jeder Befehl besteht aus zwei "Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a">"/"Ook?"/"Ook!" Tokens:</span>
+<span style="color:#546e7a">  Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? = </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span>
+<span style="color:#546e7a">  Ook? Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> = </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span>
+<span style="color:#546e7a">  Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> = </span><span style="color:#c3e88d;font-weight:900;font-size:15px">+</span>
+<span style="color:#546e7a">  Ook! Ook! = </span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span>
+<span style="color:#546e7a">  Ook! Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> = </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook! = </span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span>
+<span style="color:#546e7a">  Ook! Ook? = </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span>
+<span style="color:#546e7a">  Ook? Ook! = </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">  Hello World in Ook:</span>
+<span style="color:#546e7a">  Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? Ook</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Ook? </span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  (Sehr viel laenger als BF)</span>
+
+<span style="color:#546e7a">WHITESPACE</span>
+<span style="color:#546e7a">  Programm besteht NUR aus Leerzeichen</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Tabs und Newlines</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Alle anderen Zeichen sind Kommentare</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Sieht wie eine leere Datei aus!</span>
+
+<span style="color:#546e7a">MALBOLGE (1998</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Ben Olmstead)</span>
+<span style="color:#546e7a">  Bewusst so schwer wie moeglich designt</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Kein einziges Programm wurde im ersten Jahr geschrieben</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Das erste Hello World wurde durch Suche gefunden (nicht manuell!)</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Gilt als haerteste Programmiersprache der Welt</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">PIET (David Morgan</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Mar)</span>
+<span style="color:#546e7a">  Bilder als Quellcode! Pixel</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Farben = Befehle</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Laeuft "durch" das Bild wie ein Flussdiagramm</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Man kann buchstaeblich ein Mondrian</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Gemaelds als Programm ausfuehren</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">BEFUNGE (Chris Pressey</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> 1993)</span>
+<span style="color:#546e7a">  Zweidimensionaler Coderaum</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span><span style="color:#546e7a"> Steuerung laeuft in alle 4 Richtungen</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  </span><span style="color:#82aaff;font-weight:900;font-size:15px">&lt;</span><span style="color:#546e7a"> </span><span style="color:#4fc3f7;font-weight:900;font-size:15px">&gt;</span><span style="color:#546e7a"> ^ v = Richtungsbefehle</span>
+<span style="color:#546e7a">  @ = Ende</span>
+<span style="color:#546e7a">  Ermoeglicht unendliche Schleifen ohne </span><span style="color:#c792ea;font-weight:900;font-size:15px">[</span><span style="color:#546e7a"> </span><span style="color:#e05252;font-weight:900;font-size:15px">]</span>
+
+<span style="color:#546e7a">COW</span>
+<span style="color:#546e7a">  12 Befehle</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> alle klingen wie Kuh</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Moegen:</span>
+<span style="color:#546e7a">  moo MoO moO mOo MOO OOO MMM OOM oom</span>
+<span style="color:#546e7a">  Jeder Befehl hat eine andere BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">entsprechung</span>
+
+<span style="color:#546e7a">CHEF (David Morgan</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Mar)</span>
+<span style="color:#546e7a">  Rezepte als Quellcode!</span>
+<span style="color:#546e7a">  "Cake" ist ein echtes laufendes Programm</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Stacks heissen "mixing bowls"</span><span style="color:#ff9800;font-weight:900;font-size:15px">,</span><span style="color:#546e7a"> Ausgabe ist "baking dish"</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+
+<span style="color:#546e7a">BF KUNST:</span>
+<span style="color:#546e7a">  Manche BF</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Programme sehen aus wie ASCII</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Kunst</span>
+<span style="color:#546e7a">  oder enthalten versteckte Nachrichten in den Kommentaren</span><span style="color:#ffcb6b;font-weight:900;font-size:15px">.</span>
+<span style="color:#546e7a">  Die Brainfuck</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Community liebt kreative Code</span><span style="color:#f78c6c;font-weight:900;font-size:15px">-</span><span style="color:#546e7a">Praesentation!</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#e91e8c0a;border:1px solid #e91e8c44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#e91e8c">Sofort ausprobieren:</strong> <a href="https://copy.sh/brainfuck/" style="color:#d4a017">copy.sh/brainfuck</a> – Online-Interpreter mit Speicher-Visualisierung<br>Oder: <a href="https://tio.run/#brainfuck" style="color:#d4a017">tio.run</a> – Try It Online mit hunderten Sprachen</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e91e8c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e91e8c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e91e8c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e91e8c;border-radius:50%;margin-right:2px"></span>⚙ Online-Interpreter
+    </span>
+    <span class="aa" style="color:#e91e8c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#e91e8c;font-size:22px;font-weight:900">copy.sh/brainfuck</code></td><td style="color:#cdd6f4">copy.sh/brainfuck</td><td style="color:#6c7a8e">Schnell, klar, zeigt Speicher-Visualisierung</td></tr>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Lokale Interpreter installieren
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4fc3f7;font-size:22px;font-weight:900">bf (Paketmanager)</code></td><td style="color:#cdd6f4">Arch/CachyOS AUR</td><td style="color:#6c7a8e">yay -S brainfuck
+bf programm.bf</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4fc3f7;font-size:22px;font-weight:900">bfc (C-Compiler)</code></td><td style="color:#cdd6f4">github.com/matslina</td><td style="color:#6c7a8e">Kompiliert BF zu C – sehr schnell</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4fc3f7;font-size:22px;font-weight:900">tritium</code></td><td style="color:#cdd6f4">github.com/nicowillis</td><td style="color:#6c7a8e">BF-Interpreter in Rust, mit Debugger</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4fc3f7;font-size:22px;font-weight:900">brainfuck-visualizer</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">Zeigt Speicher und Zeiger animiert</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4fc3f7;font-size:22px;font-weight:900">Python selbst schreiben</code></td><td style="color:#cdd6f4">(s. Beispiele)</td><td style="color:#6c7a8e">7 Zeilen reichen fuer einen vollstaendigen Interpreter!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ BF-Code generieren &amp; verstehen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#c792ea;font-size:22px;font-weight:900">brainfuck-generator</code></td><td style="color:#cdd6f4">Online-Tools</td><td style="color:#6c7a8e">Konvertiert Text zu BF-Hello-World-Programm</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#c792ea;font-size:22px;font-weight:900">ascii.cl</code></td><td style="color:#cdd6f4">ascii.cl</td><td style="color:#6c7a8e">ASCII-Tabelle – unverzichtbar fuer BF!</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#c792ea;font-size:22px;font-weight:900">esolangs.org/wiki/Brainfuck</code></td><td style="color:#cdd6f4">esolangs.org</td><td style="color:#6c7a8e">Vollstaendiges Wiki, viele Implementierungen</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#c792ea;font-size:22px;font-weight:900">codegolf.stackexchange.com</code></td><td style="color:#cdd6f4">Code Golf</td><td style="color:#6c7a8e">BF glaenzt bei Code-Golf Challenges</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#c792ea;font-size:22px;font-weight:900">Brainfuck Golf</code></td><td style="color:#cdd6f4">Versuche BF zu kuerzen</td><td style="color:#6c7a8e">Kein +++ wenn [&gt;+&lt;-] kuerzer ist</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Verwandte esoterische Sprachen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">Malbolge</code></td><td style="color:#cdd6f4">Die haerteste</td><td style="color:#6c7a8e">Kein Mensch schreibt Malbolge manuell</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">Piet</code></td><td style="color:#cdd6f4">Bilder als Code</td><td style="color:#6c7a8e">Morgan-Mar, 2001</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">Befunge</code></td><td style="color:#cdd6f4">2D-Programmierfluss</td><td style="color:#6c7a8e">Chris Pressey, 1993</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">Whitespace</code></td><td style="color:#cdd6f4">Unsichtbarer Code</td><td style="color:#6c7a8e">Nur Leerzeichen/Tab/Newline</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">Ook!</code></td><td style="color:#cdd6f4">Enten-Sprache</td><td style="color:#6c7a8e">BF mit Enten-Lauten</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">INTERCAL</code></td><td style="color:#cdd6f4">Aelteste Esosprache</td><td style="color:#6c7a8e">Don Woods &amp; James Lyon, 1972</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#4ec9b0;font-size:22px;font-weight:900">esolangs.org</code></td><td style="color:#cdd6f4">Alle esoterischen Sprachen</td><td style="color:#6c7a8e">Tausende Eintraege!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Warum Brainfuck lernen?
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#ffb347;font-size:22px;font-weight:900">Turing-Vollstaendigkeit verstehen</code></td><td style="color:#cdd6f4">Minimales Beispiel</td><td style="color:#6c7a8e">Was braucht man wirklich um alles berechnen zu koennen?</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#ffb347;font-size:22px;font-weight:900">Compiler-Theorie</code></td><td style="color:#cdd6f4">Einfachster Compiler</td><td style="color:#6c7a8e">BF-Compiler in 10 Minuten schreiben – perfekter Einstieg</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#ffb347;font-size:22px;font-weight:900">Stack-Maschinen</code></td><td style="color:#cdd6f4">Manuelles Stack-Management</td><td style="color:#6c7a8e">Wie Computerspeicher wirklich funktioniert</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#ffb347;font-size:22px;font-weight:900">Kreativitaet</code></td><td style="color:#cdd6f4">Kein Komfort</td><td style="color:#6c7a8e">Loest Aufgaben auf Wegen die man nicht erwartet</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#ffb347;font-size:22px;font-weight:900">Community</code></td><td style="color:#cdd6f4">Code-Golf</td><td style="color:#6c7a8e">BF ist Standard bei Herausforderungen und Golf</td></tr><tr><td style="width:60px;text-align:center;background:rgba(0,0,0,.4);border-radius:4px"><code style="color:#ffb347;font-size:22px;font-weight:900">Spass</code></td><td style="color:#cdd6f4">Punkt.</td><td style="color:#6c7a8e">Es ist einfach irrsinnig befriedigend wenn es funktioniert!</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#e91e8c';
+      btn.style.color       = '#e91e8c';
+      btn.style.background  = 'rgba(233,30,140,.08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

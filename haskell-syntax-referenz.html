@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haskell Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #5e5086;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(94, 80, 134, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#5e5086">&#x03BB;</span>
+      <span style="color:#5e5086">Haskell</span> Syntax
+    </div>
+    <div id="hdr-sub">Rein funktional · Lazy · Typklassen · Monaden · GHC 9.x</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="types">Typen & ADTs</button>
+    <button class="tb" data-tab="patterns">Pattern Matching</button>
+    <button class="tb" data-tab="higher_order">Höhere Funktionen</button>
+    <button class="tb" data-tab="monads">Monaden & IO</button>
+    <button class="tb" data-tab="typclasses">Typklassen</button>
+    <button class="tb" data-tab="stdlib">Stdlib & Packages</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#5e50860e;border:1px solid #5e508644;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#5e5086">Haskell ist anders.</strong>
+  Wenn du eine andere Sprache aus diesem DevRef kennst, vergiss die meisten Annahmen.<br>
+  <span style="color:#cdd6f4">
+    Keine Schleifen → <code style="color:#c3e88d">Rekursion</code> &amp;
+    <code style="color:#c3e88d">map/filter/fold</code> &nbsp;·&nbsp;
+    Keine Variablen → <code style="color:#c3e88d">Werte</code> &nbsp;·&nbsp;
+    Keine null → <code style="color:#c3e88d">Maybe</code> &nbsp;·&nbsp;
+    Kein try/catch → <code style="color:#c3e88d">Either</code>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #5e508644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5e50860e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5e5086">
+      <span style="display:inline-block;width:8px;height:8px;background:#5e5086;border-radius:50%;margin-right:2px"></span>Haskell denken – die wichtigsten Konzepte
+    </span>
+    <span class="aa" style="color:#5e5086;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="haskell denken – die wichtigsten konzepte">
+  <div style="color:#5e5086;font-weight:700;font-size:12px;margin-bottom:8px">
+    Haskell denken – die wichtigsten Konzepte
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Haskell ist ANDERS als alle anderen Sprachen im DevRef:</span>
+<span style="color:#546e7a">--</span>
+<span style="color:#546e7a">-- 1. PURE: Funktionen haben keine Seiteneffekte</span>
+<span style="color:#546e7a">--    f(x) gibt IMMER denselben Wert zurück – garantiert</span>
+<span style="color:#546e7a">--</span>
+<span style="color:#546e7a">-- 2. LAZY: Werte werden erst berechnet wenn nötig</span>
+<span style="color:#546e7a">--    Unendliche Listen sind möglich!</span>
+<span style="color:#546e7a">--</span>
+<span style="color:#546e7a">-- 3. STARK TYPISIERT: Der Compiler kennt jeden Typ</span>
+<span style="color:#546e7a">--    Wenn es kompiliert, hat es oft keine Laufzeitfehler</span>
+<span style="color:#546e7a">--</span>
+<span style="color:#546e7a">-- 4. FUNKTIONEN SIND WERTE</span>
+<span style="color:#546e7a">--    Funktionen können übergeben, zurückgegeben, kombiniert werden</span>
+<span style="color:#546e7a">--</span>
+<span style="color:#546e7a">-- 5. KEINE STATEMENTS – nur Ausdrücke</span>
+<span style="color:#546e7a">--    Kein "x = 5; x = 6;" – Variablen sind unveränderlich!</span>
+
+<span style="color:#546e7a">-- Grundstruktur einer Haskell-Datei</span>
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Main</span> <span style="color:#c792ea">where</span>         <span style="color:#546e7a">-- Modulname</span>
+
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">List</span> (sort)   <span style="color:#546e7a">-- Import</span>
+<span style="color:#c792ea">import</span> <span style="color:#c792ea">qualified</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">Map</span> <span style="color:#c792ea">as</span> <span style="color:#ffcb6b">Map</span>  <span style="color:#546e7a">-- Qualifizierter Import</span>
+
+<span style="color:#546e7a">-- Typ-Annotation (optional, aber empfohlen)</span>
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#82aaff">putStrLn</span> <span style="color:#c3e88d">"Hallo, Welt!"</span>
+
+<span style="color:#546e7a">-- Funktion definieren</span>
+quadrat <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>    <span style="color:#546e7a">-- Typ-Signatur</span>
+quadrat x = x * x        <span style="color:#546e7a">-- Definition</span>
+
+<span style="color:#546e7a">-- Mehrere Parameter</span>
+addiere <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>   <span style="color:#546e7a">-- Currying! Nicht (Int, Int) -&gt; Int</span>
+addiere x y = x + y
+
+<span style="color:#546e7a">-- Aufruf</span>
+ergebnis = quadrat <span style="color:#f78c6c">5</span>            <span style="color:#546e7a">-- 25  (keine Klammern nötig!)</span>
+summe    = addiere <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span>          <span style="color:#546e7a">-- 7</span>
+<span style="color:#546e7a">-- Klammern nur für Gruppierung:</span>
+verschachtelt = quadrat (addiere <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>)  <span style="color:#546e7a">-- 25</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Typen &amp; Typ-Signaturen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="typen &amp; typ-signaturen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Typen &amp; Typ-Signaturen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Haskell ist statisch typisiert – Compiler prüft alles</span>
+<span style="color:#546e7a">-- Groß = Typ oder Typkonstruktor, Klein = Wert oder Typvariable</span>
+
+<span style="color:#546e7a">-- Primitive Typen</span>
+x <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>        <span style="color:#546e7a">-- Feste Größe (meist 64-bit)</span>
+y <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Integer</span>    <span style="color:#546e7a">-- Beliebig groß (kein Overflow!)</span>
+z <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Double</span>     <span style="color:#546e7a">-- 64-bit Gleitkomma</span>
+b <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Bool</span>       <span style="color:#546e7a">-- True oder False</span>
+c <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Char</span>       <span style="color:#546e7a">-- Unicode-Zeichen 'a', '</span>
+<span style="color:#c3e88d">',</span> <span style="color:#c3e88d">'♠'</span>
+s <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span>     <span style="color:#546e7a">-- = [Char] – Liste von Zeichen!</span>
+
+<span style="color:#546e7a">-- Typ-Inferenz – Compiler kann Typen meistens selbst bestimmen</span>
+n = <span style="color:#f78c6c">42</span>          <span style="color:#546e7a">-- n :: Integer  (inferiert)</span>
+pi' = <span style="color:#f78c6c">3.14159</span>   <span style="color:#546e7a">-- pi' :: Double</span>
+
+<span style="color:#546e7a">-- Polymorphe Typen – Typvariablen (Klein geschrieben)</span>
+<span style="color:#546e7a">-- id :: a -&gt; a          -- nimmt irgendetwas, gibt dasselbe zurück</span>
+<span style="color:#546e7a">-- const :: a -&gt; b -&gt; a  -- nimmt zwei Dinge, gibt das erste zurück</span>
+<span style="color:#546e7a">-- map :: (a -&gt; b) -&gt; [a] -&gt; [b]  -- sehr generisch!</span>
+
+<span style="color:#546e7a">-- Typ-Aliase</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Name</span>    = <span style="color:#ffcb6b">String</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Alter</span>   = <span style="color:#ffcb6b">Int</span>
+<span style="color:#c792ea">type</span> <span style="color:#ffcb6b">Koordinate</span> = (<span style="color:#ffcb6b">Double</span>, <span style="color:#ffcb6b">Double</span>)   <span style="color:#546e7a">-- Tupel</span>
+
+<span style="color:#546e7a">-- Newtype – sicherer Alias (kein Overhead)</span>
+<span style="color:#c792ea">newtype</span> <span style="color:#ffcb6b">UserId</span> = <span style="color:#ffcb6b">UserId</span> <span style="color:#ffcb6b">Int</span>
+<span style="color:#c792ea">newtype</span> <span style="color:#ffcb6b">Email</span>  = <span style="color:#ffcb6b">Email</span> <span style="color:#ffcb6b">String</span>
+
+<span style="color:#546e7a">-- Verwendung:</span>
+getId <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">UserId</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+getId (<span style="color:#ffcb6b">UserId</span> n) = n</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Variablen &amp; let / where
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen &amp; let / where">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen &amp; let / where
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- In Haskell sind "Variablen" eigentlich Konstanten!</span>
+<span style="color:#546e7a">-- Einmal definiert, nie geändert.</span>
+
+<span style="color:#546e7a">-- let ... in (Ausdrucks-Kontext)</span>
+volumen <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+volumen l b h =
+    <span style="color:#c792ea">let</span> grundflaeche = l * b
+        ergebnis     = grundflaeche * h
+    <span style="color:#c792ea">in</span>  ergebnis
+
+<span style="color:#546e7a">-- where (Definition nach der Formel)</span>
+kreisFlaeche <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+kreisFlaeche r = <span style="color:#82aaff">pi</span> * r * r
+  <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">pi</span> = <span style="color:#f78c6c">3.14159265358979</span>
+
+<span style="color:#546e7a">-- Mehrere where-Definitionen</span>
+bmi <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+bmi gewicht groesse
+    | wert &lt; <span style="color:#f78c6c">18.5</span> = <span style="color:#c3e88d">"Untergewicht"</span>
+    | wert &lt; <span style="color:#f78c6c">25.0</span> = <span style="color:#c3e88d">"Normal"</span>
+    | wert &lt; <span style="color:#f78c6c">30.0</span> = <span style="color:#c3e88d">"Übergewicht"</span>
+    | <span style="color:#82aaff">otherwise</span>   = <span style="color:#c3e88d">"Adipositas"</span>
+  <span style="color:#c792ea">where</span>
+    wert = gewicht / groesse ^ <span style="color:#f78c6c">2</span>
+
+<span style="color:#546e7a">-- let in do-Blöcken (kein "in" nötig)</span>
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">let</span> name = <span style="color:#c3e88d">"Alice"</span>
+        alter = <span style="color:#f78c6c">30</span>
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Hallo "</span> ++ name ++ <span style="color:#c3e88d">", du bist "</span> ++ <span style="color:#82aaff">show</span> alter ++ <span style="color:#c3e88d">" Jahre alt."</span>
+
+<span style="color:#546e7a">-- $ ist Funktionsanwendung mit niedrigster Präzedenz</span>
+<span style="color:#546e7a">-- f $ g $ x  =  f (g x)  – spart Klammern!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-types" class="tp">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #5e508644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5e50860e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5e5086">
+      <span style="display:inline-block;width:8px;height:8px;background:#5e5086;border-radius:50%;margin-right:2px"></span>Algebraische Datentypen (ADT)
+    </span>
+    <span class="aa" style="color:#5e5086;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="algebraische datentypen (adt)">
+  <div style="color:#5e5086;font-weight:700;font-size:12px;margin-bottom:8px">
+    Algebraische Datentypen (ADT)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- data = neuer Typ mit Konstruktoren</span>
+
+<span style="color:#546e7a">-- Aufzählung (wie enum)</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Farbe</span> = <span style="color:#ffcb6b">Rot</span> | <span style="color:#ffcb6b">Grün</span> | <span style="color:#ffcb6b">Blau</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Wochentag</span> = <span style="color:#ffcb6b">Mo</span> | <span style="color:#ffcb6b">Di</span> | <span style="color:#ffcb6b">Mi</span> | <span style="color:#ffcb6b">Do</span> | <span style="color:#ffcb6b">Fr</span> | <span style="color:#ffcb6b">Sa</span> | <span style="color:#ffcb6b">So</span>
+
+<span style="color:#546e7a">-- Mit Daten</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Form</span>
+    = <span style="color:#ffcb6b">Kreis</span>    <span style="color:#ffcb6b">Double</span>           <span style="color:#546e7a">-- Radius</span>
+    | <span style="color:#ffcb6b">Rechteck</span> <span style="color:#ffcb6b">Double</span> <span style="color:#ffcb6b">Double</span>    <span style="color:#546e7a">-- Breite Höhe</span>
+    | <span style="color:#ffcb6b">Dreieck</span>  <span style="color:#ffcb6b">Double</span> <span style="color:#ffcb6b">Double</span> <span style="color:#ffcb6b">Double</span>
+
+<span style="color:#546e7a">-- Record-Syntax (empfohlen für mehrere Felder)</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Person</span> = <span style="color:#ffcb6b">Person</span>
+    { name  <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span>
+    , alter <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>
+    , email <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span>
+    } <span style="color:#c792ea">deriving</span> (<span style="color:#ffcb6b">Show</span>, <span style="color:#ffcb6b">Eq</span>)
+
+<span style="color:#546e7a">-- Erstellen</span>
+alice <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Person</span>
+alice = <span style="color:#ffcb6b">Person</span> { name = <span style="color:#c3e88d">"Alice"</span>, alter = <span style="color:#f78c6c">30</span>, email = <span style="color:#c3e88d">"alice@example.com"</span> }
+
+<span style="color:#546e7a">-- Zugriff</span>
+n = name alice      <span style="color:#546e7a">-- "Alice"</span>
+a = alter alice     <span style="color:#546e7a">-- 30</span>
+
+<span style="color:#546e7a">-- Record Update (erstellt neuen Wert!)</span>
+älter = alice { alter = <span style="color:#f78c6c">31</span> }
+
+<span style="color:#546e7a">-- Rekursive Typen</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Baum</span> a = <span style="color:#ffcb6b">Blatt</span> | <span style="color:#ffcb6b">Knoten</span> a (<span style="color:#ffcb6b">Baum</span> a) (<span style="color:#ffcb6b">Baum</span> a)
+
+<span style="color:#546e7a">-- Beispiel-Baum</span>
+meinBaum <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Baum</span> <span style="color:#ffcb6b">Int</span>
+meinBaum = <span style="color:#ffcb6b">Knoten</span> <span style="color:#f78c6c">5</span>
+               (<span style="color:#ffcb6b">Knoten</span> <span style="color:#f78c6c">3</span> <span style="color:#ffcb6b">Blatt</span> <span style="color:#ffcb6b">Blatt</span>)
+               (<span style="color:#ffcb6b">Knoten</span> <span style="color:#f78c6c">7</span> <span style="color:#ffcb6b">Blatt</span> <span style="color:#ffcb6b">Blatt</span>)
+
+<span style="color:#546e7a">-- Tiefe berechnen</span>
+tiefe <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Baum</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+tiefe <span style="color:#ffcb6b">Blatt</span>         = <span style="color:#f78c6c">0</span>
+tiefe (<span style="color:#ffcb6b">Knoten</span> _ l r) = <span style="color:#f78c6c">1</span> + max (tiefe l) (tiefe r)
+
+<span style="color:#546e7a">-- Maybe – sicheres Null (kein NullPointerException!)</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Maybe</span> a = <span style="color:#ffcb6b">Nothing</span> | <span style="color:#ffcb6b">Just</span> a
+
+findeUser <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">Person</span>
+findeUser <span style="color:#f78c6c">1</span> = <span style="color:#ffcb6b">Just</span> alice
+findeUser _ = <span style="color:#ffcb6b">Nothing</span>
+
+<span style="color:#546e7a">-- Either – Erfolg oder Fehler mit Info</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Either</span> a b = <span style="color:#ffcb6b">Left</span> a | <span style="color:#ffcb6b">Right</span> b
+
+divisionSicher <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Either</span> <span style="color:#ffcb6b">String</span> <span style="color:#ffcb6b">Int</span>
+divisionSicher _ <span style="color:#f78c6c">0</span> = <span style="color:#ffcb6b">Left</span> <span style="color:#c3e88d">"Division durch Null!"</span>
+divisionSicher a b = <span style="color:#ffcb6b">Right</span> (a <span style="color:#89ddff">`div`</span> b)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Typklassen – wie Interfaces aber mächtiger
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="typklassen – wie interfaces aber mächtiger">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Typklassen – wie Interfaces aber mächtiger
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Typklassen definieren VERHALTEN für Typen</span>
+
+<span style="color:#546e7a">-- Wichtige eingebaute Typklassen:</span>
+<span style="color:#546e7a">--   Eq       – Gleichheit (==, /=)</span>
+<span style="color:#546e7a">--   Ord      – Ordnung (&lt;, &gt;, compare)</span>
+<span style="color:#546e7a">--   Show     – zu String konvertieren (show)</span>
+<span style="color:#546e7a">--   Read     – aus String lesen (read)</span>
+<span style="color:#546e7a">--   Num      – Zahlen (+, -, *, abs)</span>
+<span style="color:#546e7a">--   Functor  – fmap (über Kontext mappen)</span>
+<span style="color:#546e7a">--   Monad    – &gt;&gt;= (sequenziell verketten)</span>
+
+<span style="color:#546e7a">-- Deriving: automatische Implementierung</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Punkt</span> = <span style="color:#ffcb6b">Punkt</span> <span style="color:#ffcb6b">Double</span> <span style="color:#ffcb6b">Double</span>
+    <span style="color:#c792ea">deriving</span> (<span style="color:#ffcb6b">Show</span>, <span style="color:#ffcb6b">Eq</span>, <span style="color:#ffcb6b">Ord</span>)
+
+<span style="color:#546e7a">-- Eigene Typklasse definieren</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Beschreibbar</span> a <span style="color:#c792ea">where</span>
+    beschreibe <span style="color:#89ddff">::</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+
+<span style="color:#546e7a">-- Instanz für Form</span>
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">Beschreibbar</span> <span style="color:#ffcb6b">Form</span> <span style="color:#c792ea">where</span>
+    beschreibe (<span style="color:#ffcb6b">Kreis</span> r)       = <span style="color:#c3e88d">"Kreis mit Radius "</span> ++ <span style="color:#82aaff">show</span> r
+    beschreibe (<span style="color:#ffcb6b">Rechteck</span> b h)  = <span style="color:#82aaff">show</span> b ++ <span style="color:#c3e88d">"x"</span> ++ <span style="color:#82aaff">show</span> h ++ <span style="color:#c3e88d">" Rechteck"</span>
+    beschreibe (<span style="color:#ffcb6b">Dreieck</span> a b c) = <span style="color:#c3e88d">"Dreieck"</span>
+
+<span style="color:#546e7a">-- Functor – über Kontexte mappen</span>
+<span style="color:#546e7a">-- fmap f (Just x)  = Just (f x)</span>
+<span style="color:#546e7a">-- fmap f Nothing   = Nothing</span>
+<span style="color:#546e7a">-- fmap f [1,2,3]   = [f 1, f 2, f 3]</span>
+
+verdoppeln <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Functor</span> f <span style="color:#89ddff">=&gt;</span> f <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> f <span style="color:#ffcb6b">Int</span>
+verdoppeln = <span style="color:#82aaff">fmap</span> (* <span style="color:#f78c6c">2</span>)
+
+verdoppeln (<span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">5</span>)    <span style="color:#546e7a">-- Just 10</span>
+verdoppeln <span style="color:#ffcb6b">Nothing</span>     <span style="color:#546e7a">-- Nothing</span>
+verdoppeln [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]     <span style="color:#546e7a">-- [2,4,6]</span>
+
+<span style="color:#546e7a">-- Constraint: Typ muss Typklasse implementieren</span>
+maximum' <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> a <span style="color:#89ddff">=&gt;</span> [a] <span style="color:#89ddff">-&gt;</span> a
+maximum' [x]    = x
+maximum' (x:xs) = max x (maximum' xs)
+
+<span style="color:#546e7a">-- Mehrere Constraints</span>
+zeigeUndVergleiche <span style="color:#89ddff">::</span> (<span style="color:#ffcb6b">Show</span> a, <span style="color:#ffcb6b">Eq</span> a) <span style="color:#89ddff">=&gt;</span> a <span style="color:#89ddff">-&gt;</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+zeigeUndVergleiche x y
+    | x == y    = <span style="color:#82aaff">show</span> x ++ <span style="color:#c3e88d">" ist gleich"</span>
+    | <span style="color:#82aaff">otherwise</span> = <span style="color:#82aaff">show</span> x ++ <span style="color:#c3e88d">" ≠ "</span> ++ <span style="color:#82aaff">show</span> y</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Listen &amp; Tupel
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="listen &amp; tupel">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Listen &amp; Tupel
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Listen in Haskell = verkettete Listen</span>
+<span style="color:#546e7a">-- [1, 2, 3]  =  1 : 2 : 3 : []</span>
+
+<span style="color:#546e7a">-- Konstruktoren</span>
+leer    = []
+einzel  = [<span style="color:#f78c6c">42</span>]
+zahlen  = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]
+chars   = [<span style="color:#c3e88d">'H'</span>, <span style="color:#c3e88d">'a'</span>, <span style="color:#c3e88d">'l'</span>, <span style="color:#c3e88d">'l'</span>, <span style="color:#c3e88d">'o'</span>]
+string  = <span style="color:#c3e88d">"Hallo"</span>          <span style="color:#546e7a">-- = ['H','a','l','l','o']</span>
+
+<span style="color:#546e7a">-- : (Cons) – vorne anhängen</span>
+neue_liste = <span style="color:#f78c6c">0</span> : zahlen    <span style="color:#546e7a">-- [0,1,2,3,4,5]</span>
+auch_so    = <span style="color:#f78c6c">1</span> : <span style="color:#f78c6c">2</span> : []    <span style="color:#546e7a">-- [1,2]</span>
+
+<span style="color:#546e7a">-- ++ – Verketten (O(n)!)</span>
+zusammen = [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>] ++ [<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">5</span>,<span style="color:#f78c6c">6</span>]   <span style="color:#546e7a">-- [1,2,3,4,5,6]</span>
+
+<span style="color:#546e7a">-- List Comprehension</span>
+quadrate   = [x^<span style="color:#f78c6c">2</span> | x <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..10</span>]]
+gerade_q   = [x^<span style="color:#f78c6c">2</span> | x <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..10</span>], <span style="color:#82aaff">even</span> x]
+paare      = [(x,y) | x <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..3</span>], y <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..3</span>], x /= y]
+
+<span style="color:#546e7a">-- Ranges</span>
+von_bis    = [<span style="color:#f78c6c">1..10</span>]          <span style="color:#546e7a">-- [1,2,3,4,5,6,7,8,9,10]</span>
+schritte   = [<span style="color:#f78c6c">0</span>,<span style="color:#f78c6c">2..10</span>]        <span style="color:#546e7a">-- [0,2,4,6,8,10]</span>
+absteigend = [<span style="color:#f78c6c">10</span>,<span style="color:#f78c6c">8..1</span>]        <span style="color:#546e7a">-- [10,8,6,4,2]</span>
+buchstaben = [<span style="color:#c3e88d">'a'</span><span style="color:#89ddff">.</span><span style="color:#89ddff">.</span><span style="color:#c3e88d">'z'</span>]       <span style="color:#546e7a">-- alle Kleinbuchstaben</span>
+unendlich  = [<span style="color:#f78c6c">1..</span>]            <span style="color:#546e7a">-- [1,2,3,...] (lazy!)</span>
+
+<span style="color:#546e7a">-- Wichtige Listen-Funktionen</span>
+kopf    = <span style="color:#82aaff">head</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]           <span style="color:#546e7a">-- 1</span>
+rest    = <span style="color:#82aaff">tail</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]           <span style="color:#546e7a">-- [2,3]</span>
+letzter = <span style="color:#82aaff">last</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]           <span style="color:#546e7a">-- 3</span>
+initia  = <span style="color:#82aaff">init</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]           <span style="color:#546e7a">-- [1,2]</span>
+laenge  = <span style="color:#82aaff">length</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]         <span style="color:#546e7a">-- 3</span>
+umkehr  = <span style="color:#82aaff">reverse</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]        <span style="color:#546e7a">-- [3,2,1]</span>
+nehmen  = <span style="color:#82aaff">take</span> <span style="color:#f78c6c">3</span> [<span style="color:#f78c6c">1..10</span>]         <span style="color:#546e7a">-- [1,2,3]</span>
+fallen  = <span style="color:#82aaff">drop</span> <span style="color:#f78c6c">3</span> [<span style="color:#f78c6c">1..10</span>]         <span style="color:#546e7a">-- [4,5,6,7,8,9,10]</span>
+
+<span style="color:#546e7a">-- Tupel – feste Anzahl verschiedener Typen</span>
+paar    <span style="color:#89ddff">::</span> (<span style="color:#ffcb6b">Int</span>, <span style="color:#ffcb6b">String</span>)
+paar    = (<span style="color:#f78c6c">42</span>, <span style="color:#c3e88d">"Hallo"</span>)
+triple  <span style="color:#89ddff">::</span> (<span style="color:#ffcb6b">Int</span>, <span style="color:#ffcb6b">Bool</span>, <span style="color:#ffcb6b">Char</span>)
+triple  = (<span style="color:#f78c6c">1</span>, <span style="color:#c792ea">True</span>, <span style="color:#c3e88d">'x'</span>)
+
+<span style="color:#82aaff">fst</span> paar    <span style="color:#546e7a">-- 42</span>
+<span style="color:#82aaff">snd</span> paar    <span style="color:#546e7a">-- "Hallo"</span>
+
+<span style="color:#546e7a">-- Tupel in Pattern Matching</span>
+summeZweier <span style="color:#89ddff">::</span> (<span style="color:#ffcb6b">Int</span>, <span style="color:#ffcb6b">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+summeZweier (a, b) = a + b</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Operatoren &amp; Funktionsanwendung
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Operator / Syntax</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">f x</code></td><td style="color:#cdd6f4">Funktionsanwendung – höchste Priorität</td><td style="color:#6c7a8e">f 3  =  f(3)</td></tr><tr><td style="width:220px"><code style="color:#ffb347">f $ g x</code></td><td style="color:#cdd6f4">$ = Anwendung mit niedrigster Priorität</td><td style="color:#6c7a8e">f $ g x  =  f (g x)</td></tr><tr><td style="width:220px"><code style="color:#ffb347">f . g</code></td><td style="color:#cdd6f4">. = Funktionskomposition</td><td style="color:#6c7a8e">(f . g) x  =  f (g x)</td></tr><tr><td style="width:220px"><code style="color:#ffb347">x : xs</code></td><td style="color:#cdd6f4">: = Cons (vorne anhängen)</td><td style="color:#6c7a8e">1 : [2,3]  =  [1,2,3]</td></tr><tr><td style="width:220px"><code style="color:#ffb347">xs ++ ys</code></td><td style="color:#cdd6f4">++ = Listen verketten</td><td style="color:#6c7a8e">[1,2] ++ [3,4]  =  [1,2,3,4]</td></tr><tr><td style="width:220px"><code style="color:#ffb347">x `div` y</code></td><td style="color:#cdd6f4">Backtick = Infix-Anwendung</td><td style="color:#6c7a8e">10 `div` 3  =  3</td></tr><tr><td style="width:220px"><code style="color:#ffb347">(+) 3 4</code></td><td style="color:#cdd6f4">Operator als Funktion (Klammern)</td><td style="color:#6c7a8e">(+) 3 4  =  7</td></tr><tr><td style="width:220px"><code style="color:#ffb347">(+3)</code></td><td style="color:#cdd6f4">Operator-Sektion (partial application)</td><td style="color:#6c7a8e">map (+3) [1,2,3]  =  [4,5,6]</td></tr><tr><td style="width:220px"><code style="color:#ffb347">(3*)</code></td><td style="color:#cdd6f4">Linke Sektion</td><td style="color:#6c7a8e">map (3*) [1,2,3]  =  [3,6,9]</td></tr><tr><td style="width:220px"><code style="color:#ffb347">==  /=</code></td><td style="color:#cdd6f4">Gleichheit / Ungleichheit</td><td style="color:#6c7a8e">Eq Typklasse</td></tr><tr><td style="width:220px"><code style="color:#ffb347">&lt;  &gt;  &lt;=  &gt;=</code></td><td style="color:#cdd6f4">Vergleich</td><td style="color:#6c7a8e">Ord Typklasse</td></tr><tr><td style="width:220px"><code style="color:#ffb347">&amp;&amp;  ||  not</code></td><td style="color:#cdd6f4">Logisch</td><td style="color:#6c7a8e">nur für Bool</td></tr><tr><td style="width:220px"><code style="color:#ffb347">^  **  ^^ </code></td><td style="color:#cdd6f4">Potenz: Int, Float, Frac</td><td style="color:#6c7a8e">2^10  =  1024</td></tr><tr><td style="width:220px"><code style="color:#ffb347">div  mod</code></td><td style="color:#cdd6f4">Ganzzahldivision / Modulo</td><td style="color:#6c7a8e">10 `div` 3  =  3</td></tr><tr><td style="width:220px"><code style="color:#ffb347">quot  rem</code></td><td style="color:#cdd6f4">Wie div/mod aber andere Vorzeichen-Semantik</td><td style="color:#6c7a8e">(-7) `quot` 2  =  -3</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-patterns" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-pm0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pm0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Pattern Matching – das Herzstück
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="pattern matching – das herzstück">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Pattern Matching – das Herzstück
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Pattern Matching in Haskell ist ÜBERALL möglich</span>
+<span style="color:#546e7a">-- und ist erschöpfend (Compiler warnt wenn nicht alle Fälle abgedeckt)</span>
+
+<span style="color:#546e7a">-- Auf Werten</span>
+beschreibe <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+beschreibe <span style="color:#f78c6c">0</span> = <span style="color:#c3e88d">"Null"</span>
+beschreibe <span style="color:#f78c6c">1</span> = <span style="color:#c3e88d">"Eins"</span>
+beschreibe n = <span style="color:#c3e88d">"Irgendwas: "</span> ++ <span style="color:#82aaff">show</span> n    <span style="color:#546e7a">-- Catch-all</span>
+
+<span style="color:#546e7a">-- Auf Listen</span>
+summe <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Int</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+summe []     = <span style="color:#f78c6c">0</span>                    <span style="color:#546e7a">-- leere Liste</span>
+summe (x:xs) = x + summe xs        <span style="color:#546e7a">-- Kopf : Rest</span>
+
+<span style="color:#546e7a">-- Auf Tupeln</span>
+addVektoren <span style="color:#89ddff">::</span> (<span style="color:#ffcb6b">Double</span>, <span style="color:#ffcb6b">Double</span>) <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">Double</span>, <span style="color:#ffcb6b">Double</span>) <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">Double</span>, <span style="color:#ffcb6b">Double</span>)
+addVektoren (x1, y1) (x2, y2) = (x1+x2, y1+y2)
+
+<span style="color:#546e7a">-- Auf eigenen Typen</span>
+flaeche <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Form</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+flaeche (<span style="color:#ffcb6b">Kreis</span> r)       = <span style="color:#82aaff">pi</span> * r * r
+flaeche (<span style="color:#ffcb6b">Rechteck</span> b h)  = b * h
+flaeche (<span style="color:#ffcb6b">Dreieck</span> a b c) = <span style="color:#c792ea">let</span> s = (a+b+c)/<span style="color:#f78c6c">2</span>
+                            <span style="color:#c792ea">in</span> <span style="color:#82aaff">sqrt</span> (s*(s-a)*(s-b)*(s-c))
+
+<span style="color:#546e7a">-- Auf Maybe</span>
+zeige <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+zeige <span style="color:#ffcb6b">Nothing</span>  = <span style="color:#c3e88d">"Kein Wert"</span>
+zeige (<span style="color:#ffcb6b">Just</span> s) = <span style="color:#c3e88d">"Wert: "</span> ++ s
+
+<span style="color:#546e7a">-- Wildcards _ (ignoriere diesen Wert)</span>
+erstes <span style="color:#89ddff">::</span> (a, b, c) <span style="color:#89ddff">-&gt;</span> a
+erstes (x, _, _) = x
+
+<span style="color:#546e7a">-- Guards in Pattern Matching</span>
+klassifiziere <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+klassifiziere n
+    | n &lt; <span style="color:#f78c6c">0</span>     = <span style="color:#c3e88d">"Negativ"</span>
+    | n == <span style="color:#f78c6c">0</span>    = <span style="color:#c3e88d">"Null"</span>
+    | n &lt; <span style="color:#f78c6c">10</span>    = <span style="color:#c3e88d">"Klein"</span>
+    | n &lt; <span style="color:#f78c6c">100</span>   = <span style="color:#c3e88d">"Mittel"</span>
+    | <span style="color:#82aaff">otherwise</span> = <span style="color:#c3e88d">"Groß"</span>
+
+<span style="color:#546e7a">-- as-Patterns: @</span>
+kopfUndGanz <span style="color:#89ddff">::</span> [a] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+kopfUndGanz []         = <span style="color:#c3e88d">"Leer"</span>
+kopfUndGanz alle@(x:_) = <span style="color:#c3e88d">"Erstes: "</span> ++ <span style="color:#82aaff">show</span> (<span style="color:#82aaff">length</span> alle) ++ <span style="color:#c3e88d">" Elemente"</span>
+
+<span style="color:#546e7a">-- case ... of</span>
+beschreibeZahl <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+beschreibeZahl n = <span style="color:#c792ea">case</span> n <span style="color:#c792ea">of</span>
+    <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Null"</span>
+    <span style="color:#f78c6c">1</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Eins"</span>
+    _ <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Anderes: "</span> ++ <span style="color:#82aaff">show</span> n</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pm1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pm1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Guards &amp; Muster kombiniert
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="guards &amp; muster kombiniert">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Guards &amp; Muster kombiniert
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Guards: | bedingung = ausdruck</span>
+bmi <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+bmi gewicht groesse
+    | bmi_wert &lt;= <span style="color:#f78c6c">18.5</span> = <span style="color:#c3e88d">"Untergewicht"</span>
+    | bmi_wert &lt;= <span style="color:#f78c6c">25.0</span> = <span style="color:#c3e88d">"Normalgewicht"</span>
+    | bmi_wert &lt;= <span style="color:#f78c6c">30.0</span> = <span style="color:#c3e88d">"Übergewicht"</span>
+    | <span style="color:#82aaff">otherwise</span>        = <span style="color:#c3e88d">"Adipositas"</span>
+  <span style="color:#c792ea">where</span>
+    bmi_wert = gewicht / groesse ^ <span style="color:#f78c6c">2</span>
+
+<span style="color:#546e7a">-- Kombination aus Pattern und Guards</span>
+kopf_check <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Int</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+kopf_check []     = <span style="color:#c3e88d">"Leere Liste"</span>
+kopf_check (x:_)
+    | x &gt; <span style="color:#f78c6c">0</span>     = <span style="color:#c3e88d">"Positiver Kopf: "</span> ++ <span style="color:#82aaff">show</span> x
+    | x == <span style="color:#f78c6c">0</span>    = <span style="color:#c3e88d">"Kopf ist Null"</span>
+    | <span style="color:#82aaff">otherwise</span> = <span style="color:#c3e88d">"Negativer Kopf: "</span> ++ <span style="color:#82aaff">show</span> x
+
+<span style="color:#546e7a">-- Multi-Way If (GHC Extension)</span>
+<span style="color:#546e7a">-- {-# LANGUAGE MultiWayIf #-}</span>
+<span style="color:#546e7a">-- classify x = if</span>
+<span style="color:#546e7a">--     | x &lt; 0    -&gt; "neg"</span>
+<span style="color:#546e7a">--     | x == 0   -&gt; "zero"</span>
+<span style="color:#546e7a">--     | otherwise -&gt; "pos"</span>
+
+<span style="color:#546e7a">-- Irrefutable Patterns ~</span>
+<span style="color:#546e7a">-- Werden immer erfolgreich gematcht (lazy)</span>
+erstes_lazy <span style="color:#89ddff">::</span> (a, b) <span style="color:#89ddff">-&gt;</span> a
+erstes_lazy ~(x, _) = x   <span style="color:#546e7a">-- kein Fehler bei bottom</span>
+
+<span style="color:#546e7a">-- let mit Pattern</span>
+<span style="color:#c792ea">let</span> (a, b) = (<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>)
+
+<span style="color:#546e7a">-- do-Notation mit Pattern</span>
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#c792ea">do</span>
+    (first:rest) <span style="color:#89ddff">&lt;-</span> <span style="color:#82aaff">getLine</span>   <span style="color:#546e7a">-- Muster direkt auf IO-Wert</span>
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Erster Buchstabe: "</span> ++ [first]</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-higher_order" class="tp">
+
+<div class="ac open" id="ac-ho0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ho0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>map, filter, fold – die Heilige Dreifaltigkeit
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="map, filter, fold – die heilige dreifaltigkeit">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    map, filter, fold – die Heilige Dreifaltigkeit
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- map :: (a -&gt; b) -&gt; [a] -&gt; [b]</span>
+<span style="color:#546e7a">-- Wendet eine Funktion auf jedes Element an</span>
+quadrate    = <span style="color:#82aaff">map</span> (^<span style="color:#f78c6c">2</span>) [<span style="color:#f78c6c">1..5</span>]          <span style="color:#546e7a">-- [1,4,9,16,25]</span>
+großBuchst  = <span style="color:#82aaff">map</span> toUpper <span style="color:#c3e88d">"hallo"</span>      <span style="color:#546e7a">-- "HALLO"</span>
+längen      = <span style="color:#82aaff">map</span> <span style="color:#82aaff">length</span> [<span style="color:#c3e88d">"hi"</span>, <span style="color:#c3e88d">"welt"</span>, <span style="color:#c3e88d">"!"</span>]  <span style="color:#546e7a">-- [2,4,1]</span>
+
+<span style="color:#546e7a">-- filter :: (a -&gt; Bool) -&gt; [a] -&gt; [a]</span>
+<span style="color:#546e7a">-- Behält nur Elemente, die das Prädikat erfüllen</span>
+gerade      = <span style="color:#82aaff">filter</span> <span style="color:#82aaff">even</span> [<span style="color:#f78c6c">1..10</span>]     <span style="color:#546e7a">-- [2,4,6,8,10]</span>
+langeWörter = <span style="color:#82aaff">filter</span> (λw <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">length</span> w &gt; <span style="color:#f78c6c">4</span>) [<span style="color:#c3e88d">"Hallo"</span>, <span style="color:#c3e88d">"Welt"</span>, <span style="color:#c3e88d">"Programm"</span>]
+<span style="color:#546e7a">-- ["Programm"]</span>
+
+<span style="color:#546e7a">-- foldr :: (a -&gt; b -&gt; b) -&gt; b -&gt; [a] -&gt; b</span>
+<span style="color:#546e7a">-- Von rechts akkumulieren</span>
+summe       = <span style="color:#82aaff">foldr</span> (+) <span style="color:#f78c6c">0</span> [<span style="color:#f78c6c">1..5</span>]      <span style="color:#546e7a">-- 15</span>
+produkt     = <span style="color:#82aaff">foldr</span> (*) <span style="color:#f78c6c">1</span> [<span style="color:#f78c6c">1..5</span>]      <span style="color:#546e7a">-- 120</span>
+meinConcat  = <span style="color:#82aaff">foldr</span> (:) [] [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]    <span style="color:#546e7a">-- [1,2,3]</span>
+
+<span style="color:#546e7a">-- foldl' :: (b -&gt; a -&gt; b) -&gt; b -&gt; [a] -&gt; b</span>
+<span style="color:#546e7a">-- Von links (strikt – bevorzugen!)</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">List</span> (<span style="color:#82aaff">foldl'</span>)
+summeLinks = <span style="color:#82aaff">foldl'</span> (+) <span style="color:#f78c6c">0</span> [<span style="color:#f78c6c">1..5</span>]     <span style="color:#546e7a">-- 15</span>
+
+<span style="color:#546e7a">-- Kombination für echte Probleme</span>
+<span style="color:#546e7a">-- Summe der Quadrate aller geraden Zahlen bis 100:</span>
+ergebnis = <span style="color:#82aaff">foldl'</span> (+) <span style="color:#f78c6c">0</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">map</span> (^<span style="color:#f78c6c">2</span>) <span style="color:#89ddff">$</span> <span style="color:#82aaff">filter</span> <span style="color:#82aaff">even</span> [<span style="color:#f78c6c">1..100</span>]
+<span style="color:#546e7a">-- oder mit List Comprehension:</span>
+ergebnis' = <span style="color:#82aaff">sum</span> [x^<span style="color:#f78c6c">2</span> | x <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..100</span>], <span style="color:#82aaff">even</span> x]
+<span style="color:#546e7a">-- Beide: 10100</span>
+
+<span style="color:#546e7a">-- zipWith :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]</span>
+summen     = <span style="color:#82aaff">zipWith</span> (+) [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>] [<span style="color:#f78c6c">10</span>,<span style="color:#f78c6c">20</span>,<span style="color:#f78c6c">30</span>]   <span style="color:#546e7a">-- [11,22,33]</span>
+paare      = <span style="color:#82aaff">zip</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>] [<span style="color:#c3e88d">"a"</span>,<span style="color:#c3e88d">"b"</span>,<span style="color:#c3e88d">"c"</span>]         <span style="color:#546e7a">-- [(1,"a"),(2,"b"),(3,"c")]</span>
+unpaare    = <span style="color:#82aaff">unzip</span> [(<span style="color:#f78c6c">1</span>,<span style="color:#c3e88d">"a"</span>),(<span style="color:#f78c6c">2</span>,<span style="color:#c3e88d">"b"</span>)]           <span style="color:#546e7a">-- ([1,2],["a","b"])</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ho1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ho1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Currying &amp; Partial Application
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="currying &amp; partial application">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Currying &amp; Partial Application
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- In Haskell nimmt JEDE Funktion genau EIN Argument!</span>
+<span style="color:#546e7a">-- addiere :: Int -&gt; Int -&gt; Int</span>
+<span style="color:#546e7a">-- ist eigentlich: Int -&gt; (Int -&gt; Int)</span>
+<span style="color:#546e7a">-- = Funktion die Int nimmt und eine (Int -&gt; Int) zurückgibt</span>
+
+<span style="color:#546e7a">-- Partial Application: Argumente nach und nach anwenden</span>
+addiere <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+addiere x y = x + y
+
+addiere5 <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+addiere5 = addiere <span style="color:#f78c6c">5</span>    <span style="color:#546e7a">-- eine Funktion, die 5 addiert!</span>
+
+ergebnis = addiere5 <span style="color:#f78c6c">3</span>   <span style="color:#546e7a">-- 8</span>
+ergebnis2 = addiere5 <span style="color:#f78c6c">10</span> <span style="color:#546e7a">-- 15</span>
+
+<span style="color:#546e7a">-- flip :: (a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</span>
+<span style="color:#546e7a">-- Vertauscht die Argumente</span>
+substrahieren  = (-) <span style="color:#f78c6c">10</span> <span style="color:#f78c6c">3</span>    <span style="color:#546e7a">-- 7  (10 - 3)</span>
+subtr_flip     = <span style="color:#82aaff">flip</span> (-) <span style="color:#f78c6c">10</span> <span style="color:#f78c6c">3</span>  <span style="color:#546e7a">-- -7  (3 - 10)</span>
+
+vonZehn = <span style="color:#82aaff">flip</span> (-) <span style="color:#f78c6c">10</span>   <span style="color:#546e7a">-- x -&gt; x - 10 ... warte</span>
+<span style="color:#546e7a">-- flip f x y = f y x</span>
+<span style="color:#546e7a">-- flip (-) 10 3 = (-) 3 10 = 3 - 10 = -7</span>
+
+<span style="color:#546e7a">-- Punkt-freier Stil (point-free / eta reduction)</span>
+<span style="color:#546e7a">-- Statt: summe xs = foldr (+) 0 xs</span>
+summe <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Int</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+summe = <span style="color:#82aaff">foldr</span> (+) <span style="color:#f78c6c">0</span>    <span style="color:#546e7a">-- xs weggelassen!</span>
+
+<span style="color:#546e7a">-- Statt: zeigen n = show n</span>
+zeigen <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+zeigen = <span style="color:#82aaff">show</span>
+
+<span style="color:#546e7a">-- Funktionskomposition mit .</span>
+verdoppelnDannQuadrat <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+verdoppelnDannQuadrat = (^<span style="color:#f78c6c">2</span>) <span style="color:#89ddff">.</span> (*<span style="color:#f78c6c">2</span>)
+<span style="color:#546e7a">-- verdoppelnDannQuadrat 3 = (3*2)^2 = 36</span>
+
+bearbeite <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Int</span>] <span style="color:#89ddff">-&gt;</span> [<span style="color:#ffcb6b">Int</span>]
+bearbeite = <span style="color:#82aaff">filter</span> <span style="color:#82aaff">even</span> <span style="color:#89ddff">.</span> <span style="color:#82aaff">map</span> (+<span style="color:#f78c6c">1</span>) <span style="color:#89ddff">.</span> <span style="color:#82aaff">reverse</span>
+<span style="color:#546e7a">-- Erst reverse, dann +1 auf alle, dann filter gerade</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ho2"
+     style="border:1px solid #5e508644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ho2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5e50860e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5e5086">
+      <span style="display:inline-block;width:8px;height:8px;background:#5e5086;border-radius:50%;margin-right:2px"></span>Lambda-Ausdrücke &amp; Closures
+    </span>
+    <span class="aa" style="color:#5e5086;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="lambda-ausdrücke &amp; closures">
+  <div style="color:#5e5086;font-weight:700;font-size:12px;margin-bottom:8px">
+    Lambda-Ausdrücke &amp; Closures
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- In Haskell ist der Backslash das Lambda-Symbol: λ ist wie λx</span>
+<span style="color:#546e7a">-- Lambdas haben die Form: \parameter -&gt; ausdruck</span>
+
+<span style="color:#546e7a">-- Einfache Lambdas</span>
+verdoppeln = λ <span style="color:#89ddff">-&gt;</span> x * <span style="color:#f78c6c">2</span>
+addiere    = λ y <span style="color:#89ddff">-&gt;</span> x + y    <span style="color:#546e7a">-- mehrere Parameter</span>
+
+<span style="color:#546e7a">-- Verwendung</span>
+<span style="color:#82aaff">map</span> (λ <span style="color:#89ddff">-&gt;</span> x^<span style="color:#f78c6c">2</span> + <span style="color:#f78c6c">1</span>) [<span style="color:#f78c6c">1..5</span>]    <span style="color:#546e7a">-- [2,5,10,17,26]</span>
+
+<span style="color:#546e7a">-- Closure – Funktion schliesst ueber Variablen</span>
+macheMaltipl <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> (<span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>)
+macheMaltipl n = λ <span style="color:#89ddff">-&gt;</span> x * n   <span style="color:#546e7a">-- n wird gecaptured</span>
+
+mal3  = macheMaltipl <span style="color:#f78c6c">3</span>
+mal10 = macheMaltipl <span style="color:#f78c6c">10</span>
+
+mal3 <span style="color:#f78c6c">7</span>    <span style="color:#546e7a">-- 21</span>
+mal10 <span style="color:#f78c6c">7</span>   <span style="color:#546e7a">-- 70</span>
+
+<span style="color:#546e7a">-- Funktionen als Argumente und Rueckgabewerte</span>
+anwende <span style="color:#89ddff">::</span> (a <span style="color:#89ddff">-&gt;</span> b) <span style="color:#89ddff">-&gt;</span> a <span style="color:#89ddff">-&gt;</span> b
+anwende f x = f x   <span style="color:#546e7a">-- = ($) !</span>
+
+anwende_zweimal <span style="color:#89ddff">::</span> (a <span style="color:#89ddff">-&gt;</span> a) <span style="color:#89ddff">-&gt;</span> a <span style="color:#89ddff">-&gt;</span> a
+anwende_zweimal f x = f (f x)
+
+anwende_zweimal (*<span style="color:#f78c6c">2</span>) <span style="color:#f78c6c">3</span>   <span style="color:#546e7a">-- 12</span>
+
+<span style="color:#546e7a">-- Memoization-aehnlich mit Data.Function.fix</span>
+<span style="color:#546e7a">-- (in der Praxis: Data.Map fuer Caching)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-monads" class="tp">
+
+<div class="ac open" id="ac-mo0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mo0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>IO-Monad – die Außenwelt betreten
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="io-monad – die außenwelt betreten">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    IO-Monad – die Außenwelt betreten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Haskell ist PURE – aber Programme brauchen I/O!</span>
+<span style="color:#546e7a">-- Lösung: IO ist ein Typ der "Aktion in der Außenwelt" beschreibt</span>
+<span style="color:#546e7a">-- IO a = "eine IO-Aktion die einen Wert vom Typ a produziert"</span>
+
+<span style="color:#546e7a">-- do-Notation – sequenzielle IO-Aktionen</span>
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">putStr</span> <span style="color:#c3e88d">"Dein Name: "</span>
+    name <span style="color:#89ddff">&lt;-</span> <span style="color:#82aaff">getLine</span>          <span style="color:#546e7a">-- &lt;- extrahiert Wert aus IO String</span>
+    <span style="color:#c792ea">let</span> gruss = <span style="color:#c3e88d">"Hallo, "</span> ++ name ++ <span style="color:#c3e88d">"!"</span>   <span style="color:#546e7a">-- let ohne IO</span>
+    <span style="color:#82aaff">putStrLn</span> gruss
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Länge: "</span> ++ <span style="color:#82aaff">show</span> (<span style="color:#82aaff">length</span> name)
+
+<span style="color:#546e7a">-- IO-Funktionen</span>
+putChar   <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Char</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> ()
+<span style="color:#82aaff">putStr</span>    <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> ()
+<span style="color:#82aaff">putStrLn</span>  <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> ()
+<span style="color:#82aaff">print</span>     <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Show</span> a <span style="color:#89ddff">=&gt;</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> ()    <span style="color:#546e7a">-- = putStrLn . show</span>
+
+getChar   <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> <span style="color:#ffcb6b">Char</span>
+<span style="color:#82aaff">getLine</span>   <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> <span style="color:#ffcb6b">String</span>
+<span style="color:#82aaff">getContents</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> <span style="color:#ffcb6b">String</span>
+
+<span style="color:#82aaff">readFile</span>  <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">FilePath</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> <span style="color:#ffcb6b">String</span>
+<span style="color:#82aaff">writeFile</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">FilePath</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> ()
+<span style="color:#82aaff">appendFile</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">FilePath</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span> ()
+
+<span style="color:#546e7a">-- Fehlerbehandlung in IO</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Control</span>.<span style="color:#ffcb6b">Exception</span>
+
+main2 <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main2 = <span style="color:#c792ea">do</span>
+    result <span style="color:#89ddff">&lt;-</span> try (<span style="color:#82aaff">readFile</span> <span style="color:#c3e88d">"datei.txt"</span>) <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> (<span style="color:#ffcb6b">Either</span> <span style="color:#ffcb6b">IOError</span> <span style="color:#ffcb6b">String</span>)
+    <span style="color:#c792ea">case</span> result <span style="color:#c792ea">of</span>
+        <span style="color:#ffcb6b">Left</span>  err     <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Fehler: "</span> ++ <span style="color:#82aaff">show</span> err
+        <span style="color:#ffcb6b">Right</span> inhalt  <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">putStrLn</span> inhalt
+
+<span style="color:#546e7a">-- IORef – veränderliche Variable in IO</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">IORef</span>
+
+main3 <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main3 = <span style="color:#c792ea">do</span>
+    ref <span style="color:#89ddff">&lt;-</span> newIORef <span style="color:#f78c6c">0</span>                    <span style="color:#546e7a">-- IORef Int erstellen</span>
+    writeIORef ref <span style="color:#f78c6c">42</span>                    <span style="color:#546e7a">-- Wert setzen</span>
+    modifyIORef ref (+<span style="color:#f78c6c">1</span>)                 <span style="color:#546e7a">-- Modifizieren</span>
+    wert <span style="color:#89ddff">&lt;-</span> readIORef ref                <span style="color:#546e7a">-- Wert lesen</span>
+    <span style="color:#82aaff">print</span> wert                           <span style="color:#546e7a">-- 43</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mo1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mo1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Maybe-Monad – sicheres Null-Handling
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="maybe-monad – sicheres null-handling">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Maybe-Monad – sicheres Null-Handling
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Maybe als Monad: Fehler propagieren ohne if/null-Checks</span>
+
+<span style="color:#546e7a">-- Das Problem ohne Monad:</span>
+lookupUser1 <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">String</span>
+lookupUser1 <span style="color:#f78c6c">1</span> = <span style="color:#ffcb6b">Just</span> <span style="color:#c3e88d">"Alice"</span>
+lookupUser1 _ = <span style="color:#ffcb6b">Nothing</span>
+
+lookupEmail1 <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">String</span>
+lookupEmail1 <span style="color:#c3e88d">"Alice"</span> = <span style="color:#ffcb6b">Just</span> <span style="color:#c3e88d">"alice@example.com"</span>
+lookupEmail1 _       = <span style="color:#ffcb6b">Nothing</span>
+
+<span style="color:#546e7a">-- Ohne Monad: nervige Verschachtelung</span>
+getUserEmail_manuell <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">String</span>
+getUserEmail_manuell uid =
+    <span style="color:#c792ea">case</span> lookupUser1 uid <span style="color:#c792ea">of</span>
+        <span style="color:#ffcb6b">Nothing</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+        <span style="color:#ffcb6b">Just</span> name <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">case</span> lookupEmail1 name <span style="color:#c792ea">of</span>
+            <span style="color:#ffcb6b">Nothing</span>    <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+            <span style="color:#ffcb6b">Just</span> email <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Just</span> email
+
+<span style="color:#546e7a">-- Mit Monad (&gt;&gt;= = bind):</span>
+getUserEmail_bind <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">String</span>
+getUserEmail_bind uid = lookupUser1 uid &gt;&gt;= lookupEmail1
+
+<span style="color:#546e7a">-- Mit do-Notation (sieht aus wie imperativer Code!):</span>
+getUserEmail <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">String</span>
+getUserEmail uid = <span style="color:#c792ea">do</span>
+    name  <span style="color:#89ddff">&lt;-</span> lookupUser1 uid    <span style="color:#546e7a">-- wenn Nothing: ganzer Ausdruck Nothing</span>
+    email <span style="color:#89ddff">&lt;-</span> lookupEmail1 name  <span style="color:#546e7a">-- wenn Nothing: ganzer Ausdruck Nothing</span>
+    <span style="color:#c792ea">return</span> email                 <span style="color:#546e7a">-- = Just email</span>
+
+getUserEmail <span style="color:#f78c6c">1</span>    <span style="color:#546e7a">-- Just "alice@example.com"</span>
+getUserEmail <span style="color:#f78c6c">99</span>   <span style="color:#546e7a">-- Nothing</span>
+
+<span style="color:#546e7a">-- fromMaybe – Standardwert wenn Nothing</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">Maybe</span> (<span style="color:#82aaff">fromMaybe</span>)
+emailOderDefault uid = <span style="color:#82aaff">fromMaybe</span> <span style="color:#c3e88d">"unbekannt@example.com"</span> (getUserEmail uid)
+
+<span style="color:#546e7a">-- maybe – Funktion oder Default</span>
+<span style="color:#82aaff">maybe</span> <span style="color:#c3e88d">"?"</span> <span style="color:#82aaff">show</span> (<span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">42</span>)    <span style="color:#546e7a">-- "42"</span>
+<span style="color:#82aaff">maybe</span> <span style="color:#c3e88d">"?"</span> <span style="color:#82aaff">show</span> <span style="color:#ffcb6b">Nothing</span>      <span style="color:#546e7a">-- "?"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mo2"
+     style="border:1px solid #5e508644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mo2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5e50860e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5e5086">
+      <span style="display:inline-block;width:8px;height:8px;background:#5e5086;border-radius:50%;margin-right:2px"></span>List-Monad – nicht-deterministische Berechnung
+    </span>
+    <span class="aa" style="color:#5e5086;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="list-monad – nicht-deterministische berechnung">
+  <div style="color:#5e5086;font-weight:700;font-size:12px;margin-bottom:8px">
+    List-Monad – nicht-deterministische Berechnung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Die Listen-Monad ermöglicht nicht-deterministische Berechnungen</span>
+<span style="color:#546e7a">-- = alle möglichen Kombinationen auf einmal!</span>
+
+<span style="color:#546e7a">-- &gt;&gt;= für Listen: wende Funktion auf ALLE Elemente an, konkateniere</span>
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>] &gt;&gt;= λx <span style="color:#89ddff">-&gt;</span> [x, x*<span style="color:#f78c6c">2</span>]
+<span style="color:#546e7a">-- [1,2,2,4,3,6]</span>
+
+<span style="color:#546e7a">-- do-Notation für Listen (= Listenverständnis!)</span>
+pythagoreisch <span style="color:#89ddff">::</span> [(<span style="color:#ffcb6b">Int</span>, <span style="color:#ffcb6b">Int</span>, <span style="color:#ffcb6b">Int</span>)]
+pythagoreisch = <span style="color:#c792ea">do</span>
+    c <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..20</span>]
+    b <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..c</span>]
+    a <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..b</span>]
+    <span style="color:#c792ea">if</span> a^<span style="color:#f78c6c">2</span> + b^<span style="color:#f78c6c">2</span> == c^<span style="color:#f78c6c">2</span>     <span style="color:#546e7a">-- guard</span>
+        <span style="color:#c792ea">then</span> <span style="color:#c792ea">return</span> (a,b,c)
+        <span style="color:#c792ea">else</span> []
+
+<span style="color:#546e7a">-- Identisch mit List Comprehension:</span>
+pythagoreisch' =
+    [ (a,b,c)
+    | c <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..20</span>]
+    , b <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..c</span>]
+    , a <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..b</span>]
+    , a^<span style="color:#f78c6c">2</span> + b^<span style="color:#f78c6c">2</span> == c^<span style="color:#f78c6c">2</span>
+    ]
+
+<span style="color:#546e7a">-- guard aus Control.Monad</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Control</span>.<span style="color:#ffcb6b">Monad</span> (<span style="color:#c792ea">guard</span>)
+pythagoreisch'' = <span style="color:#c792ea">do</span>
+    c <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..20</span>]; b <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..c</span>]; a <span style="color:#89ddff">&lt;-</span> [<span style="color:#f78c6c">1..b</span>]
+    <span style="color:#c792ea">guard</span> (a^<span style="color:#f78c6c">2</span> + b^<span style="color:#f78c6c">2</span> == c^<span style="color:#f78c6c">2</span>)
+    <span style="color:#c792ea">return</span> (a,b,c)
+
+<span style="color:#546e7a">-- Alle drei Varianten sind identisch!</span>
+<span style="color:#546e7a">-- Ergebnis: [(3,4,5),(6,8,10),(5,12,13),(8,15,17),(9,12,15),(12,16,20)]</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mo3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mo3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>State-Monad &amp; andere nützliche Monaden
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="state-monad &amp; andere nützliche monaden">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    State-Monad &amp; andere nützliche Monaden
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- State-Monad: Zustand mitschleifen ohne globale Variable</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Control</span>.<span style="color:#ffcb6b">Monad</span>.<span style="color:#ffcb6b">State</span>
+
+<span style="color:#546e7a">-- Zustand ist implizit – sieht aus wie veränderlicher Code!</span>
+zaehler <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">State</span> <span style="color:#ffcb6b">Int</span> ()
+zaehler = <span style="color:#c792ea">do</span>
+    n <span style="color:#89ddff">&lt;-</span> get            <span style="color:#546e7a">-- Aktuellen Zustand lesen</span>
+    put (n + <span style="color:#f78c6c">1</span>)         <span style="color:#546e7a">-- Neuen Zustand setzen</span>
+    modify (+<span style="color:#f78c6c">1</span>)         <span style="color:#546e7a">-- Oder: modifizieren</span>
+
+ausführen <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>
+ausführen = execState (<span style="color:#c792ea">do</span>
+    modify (+<span style="color:#f78c6c">1</span>)
+    modify (*<span style="color:#f78c6c">2</span>)
+    modify (+<span style="color:#f78c6c">10</span>)
+    ) <span style="color:#f78c6c">0</span>                 <span style="color:#546e7a">-- Startzustand: 0</span>
+<span style="color:#546e7a">-- Ergebnis: (0+1)*2+10 = 12</span>
+
+runState (<span style="color:#c792ea">do</span> { modify (+<span style="color:#f78c6c">1</span>); get }) <span style="color:#f78c6c">5</span>
+<span style="color:#546e7a">-- (6, 6)  -- (Rückgabewert, Endzustand)</span>
+
+<span style="color:#546e7a">-- Writer-Monad: Logging akkumulieren</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Control</span>.<span style="color:#ffcb6b">Monad</span>.<span style="color:#ffcb6b">Writer</span>
+
+berechneMitLog <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Writer</span> [<span style="color:#ffcb6b">String</span>] <span style="color:#ffcb6b">Int</span>
+berechneMitLog n = <span style="color:#c792ea">do</span>
+    tell [<span style="color:#c3e88d">"Starte mit "</span> ++ <span style="color:#82aaff">show</span> n]
+    <span style="color:#c792ea">let</span> doppelt = n * <span style="color:#f78c6c">2</span>
+    tell [<span style="color:#c3e88d">"Verdoppelt: "</span> ++ <span style="color:#82aaff">show</span> doppelt]
+    <span style="color:#c792ea">let</span> quadrat = doppelt ^ <span style="color:#f78c6c">2</span>
+    tell [<span style="color:#c3e88d">"Quadriert: "</span> ++ <span style="color:#82aaff">show</span> quadrat]
+    <span style="color:#c792ea">return</span> quadrat
+
+runWriter (berechneMitLog <span style="color:#f78c6c">3</span>)
+<span style="color:#546e7a">-- (36, ["Starte mit 3","Verdoppelt: 6","Quadriert: 36"])</span>
+
+<span style="color:#546e7a">-- Reader-Monad: geteilte Konfiguration</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Control</span>.<span style="color:#ffcb6b">Monad</span>.<span style="color:#ffcb6b">Reader</span>
+
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Config</span> = <span style="color:#ffcb6b">Config</span> { debug <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Bool</span>, prefix <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> }
+
+logge <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Reader</span> <span style="color:#ffcb6b">Config</span> ()
+logge msg = <span style="color:#c792ea">do</span>
+    cfg <span style="color:#89ddff">&lt;-</span> ask
+    <span style="color:#82aaff">when</span> (debug cfg) <span style="color:#89ddff">$</span>
+        trace (prefix cfg ++ <span style="color:#c3e88d">": "</span> ++ msg) (<span style="color:#c792ea">return</span> ())</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-typclasses" class="tp">
+
+<div class="ac open" id="ac-tc0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tc0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Functor, Applicative, Monad
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="functor, applicative, monad">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Functor, Applicative, Monad
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Die Hierarchie:</span>
+<span style="color:#546e7a">-- Functor &lt; Applicative &lt; Monad</span>
+
+<span style="color:#546e7a">-- FUNCTOR: über einen Kontext mappen</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Functor</span> f <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">fmap</span> <span style="color:#89ddff">::</span> (a <span style="color:#89ddff">-&gt;</span> b) <span style="color:#89ddff">-&gt;</span> f a <span style="color:#89ddff">-&gt;</span> f b
+
+<span style="color:#546e7a">-- &lt;$&gt; ist infix-fmap</span>
+(+<span style="color:#f78c6c">1</span>) <span style="color:#89ddff">&lt;$&gt;</span> <span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">5</span>         <span style="color:#546e7a">-- Just 6</span>
+(+<span style="color:#f78c6c">1</span>) <span style="color:#89ddff">&lt;$&gt;</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>]        <span style="color:#546e7a">-- [2,3,4]</span>
+(+<span style="color:#f78c6c">1</span>) <span style="color:#89ddff">&lt;$&gt;</span> <span style="color:#ffcb6b">Right</span> <span style="color:#f78c6c">5</span>        <span style="color:#546e7a">-- Right 6</span>
+(+<span style="color:#f78c6c">1</span>) <span style="color:#89ddff">&lt;$&gt;</span> <span style="color:#ffcb6b">Left</span> <span style="color:#c3e88d">"Fehler"</span>  <span style="color:#546e7a">-- Left "Fehler"</span>
+
+<span style="color:#546e7a">-- APPLICATIVE: Funktion IM Kontext anwenden</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Functor</span> f <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">Applicative</span> f <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">pure</span>  <span style="color:#89ddff">::</span> a <span style="color:#89ddff">-&gt;</span> f a
+    (<span style="color:#89ddff">&lt;*&gt;</span>) <span style="color:#89ddff">::</span> f (a <span style="color:#89ddff">-&gt;</span> b) <span style="color:#89ddff">-&gt;</span> f a <span style="color:#89ddff">-&gt;</span> f b
+
+<span style="color:#546e7a">-- &lt;*&gt; = Funktion und Argument beide im Kontext</span>
+<span style="color:#ffcb6b">Just</span> (+<span style="color:#f78c6c">3</span>) <span style="color:#89ddff">&lt;*&gt;</span> <span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">5</span>         <span style="color:#546e7a">-- Just 8</span>
+<span style="color:#ffcb6b">Nothing</span>   <span style="color:#89ddff">&lt;*&gt;</span> <span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">5</span>         <span style="color:#546e7a">-- Nothing</span>
+[(+<span style="color:#f78c6c">1</span>),(+<span style="color:#f78c6c">2</span>)] <span style="color:#89ddff">&lt;*&gt;</span> [<span style="color:#f78c6c">10</span>,<span style="color:#f78c6c">20</span>]      <span style="color:#546e7a">-- [11,21,12,22]</span>
+<span style="color:#82aaff">pure</span> (+) <span style="color:#89ddff">&lt;*&gt;</span> <span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">3</span> <span style="color:#89ddff">&lt;*&gt;</span> <span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">4</span>  <span style="color:#546e7a">-- Just 7</span>
+
+<span style="color:#546e7a">-- liftA2 (nützliche Abkürzung)</span>
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Control</span>.<span style="color:#ffcb6b">Applicative</span> (liftA2)
+liftA2 (+) (<span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">3</span>) (<span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">4</span>)    <span style="color:#546e7a">-- Just 7</span>
+liftA2 (+) [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>]   [<span style="color:#f78c6c">10</span>,<span style="color:#f78c6c">100</span>]     <span style="color:#546e7a">-- [11,101,12,102]</span>
+
+<span style="color:#546e7a">-- MONAD: Sequenzieren mit Kontext</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Applicative</span> m <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">Monad</span> m <span style="color:#c792ea">where</span>
+    <span style="color:#c792ea">return</span> <span style="color:#89ddff">::</span> a <span style="color:#89ddff">-&gt;</span> m a      <span style="color:#546e7a">-- = pure</span>
+    (&gt;&gt;=)  <span style="color:#89ddff">::</span> m a <span style="color:#89ddff">-&gt;</span> (a <span style="color:#89ddff">-&gt;</span> m b) <span style="color:#89ddff">-&gt;</span> m b
+
+<span style="color:#546e7a">-- Warum Monad statt Applicative?</span>
+<span style="color:#546e7a">-- Wenn das nächste Ergebnis vom vorherigen ABHÄNGT:</span>
+<span style="color:#546e7a">-- m &gt;&gt;= λ -&gt; f x    -- x kommt aus m!</span>
+
+<span style="color:#546e7a">-- sequenz_ für Seiteneffekte ohne Rückgabewert</span>
+<span style="color:#82aaff">mapM_</span> <span style="color:#82aaff">print</span> [<span style="color:#f78c6c">1..5</span>]   <span style="color:#546e7a">-- gibt 1,2,3,4,5 aus, gibt IO () zurück</span>
+<span style="color:#82aaff">forM_</span> [<span style="color:#f78c6c">1..5</span>] <span style="color:#82aaff">print</span>   <span style="color:#546e7a">-- gleich, andere Reihenfolge der Argumente</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tc1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tc1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Semigroup, Monoid, Foldable
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="semigroup, monoid, foldable">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Semigroup, Monoid, Foldable
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- SEMIGROUP: kann kombiniert werden mit &lt;&gt;</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Semigroup</span> a <span style="color:#c792ea">where</span>
+    (<span style="color:#89ddff">&lt;&gt;</span>) <span style="color:#89ddff">::</span> a <span style="color:#89ddff">-&gt;</span> a <span style="color:#89ddff">-&gt;</span> a
+
+<span style="color:#c3e88d">"Hallo"</span> <span style="color:#89ddff">&lt;&gt;</span> <span style="color:#c3e88d">" "</span> <span style="color:#89ddff">&lt;&gt;</span> <span style="color:#c3e88d">"Welt"</span>   <span style="color:#546e7a">-- "Hallo Welt"</span>
+[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>] <span style="color:#89ddff">&lt;&gt;</span> [<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>]              <span style="color:#546e7a">-- [1,2,3,4]</span>
+<span style="color:#ffcb6b">Just</span> [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>] <span style="color:#89ddff">&lt;&gt;</span> <span style="color:#ffcb6b">Just</span> [<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>]    <span style="color:#546e7a">-- Just [1,2,3,4]</span>
+
+<span style="color:#546e7a">-- MONOID: Semigroup mit neutralem Element</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Semigroup</span> a <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">Monoid</span> a <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">mempty</span> <span style="color:#89ddff">::</span> a    <span style="color:#546e7a">-- neutrales Element</span>
+
+<span style="color:#82aaff">mempty</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span>   <span style="color:#546e7a">-- ""</span>
+<span style="color:#82aaff">mempty</span> <span style="color:#89ddff">::</span> [a]      <span style="color:#546e7a">-- []</span>
+<span style="color:#82aaff">mempty</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Sum</span> <span style="color:#ffcb6b">Int</span>  <span style="color:#546e7a">-- Sum 0</span>
+
+<span style="color:#82aaff">mconcat</span> [<span style="color:#c3e88d">"a"</span>,<span style="color:#c3e88d">"b"</span>,<span style="color:#c3e88d">"c"</span>]     <span style="color:#546e7a">-- "abc"</span>
+<span style="color:#82aaff">mconcat</span> [[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>],[<span style="color:#f78c6c">3</span>],[<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">5</span>]] <span style="color:#546e7a">-- [1,2,3,4,5]</span>
+
+<span style="color:#546e7a">-- FOLDABLE: kann "gefaltet" werden</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Foldable</span> t <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">foldr</span>    <span style="color:#89ddff">::</span> (a <span style="color:#89ddff">-&gt;</span> b <span style="color:#89ddff">-&gt;</span> b) <span style="color:#89ddff">-&gt;</span> b <span style="color:#89ddff">-&gt;</span> t a <span style="color:#89ddff">-&gt;</span> b
+    <span style="color:#82aaff">foldl'</span>   <span style="color:#89ddff">::</span> (b <span style="color:#89ddff">-&gt;</span> a) <span style="color:#89ddff">-&gt;</span> <span style="color:#89ddff">.</span><span style="color:#89ddff">.</span><span style="color:#89ddff">.</span>
+    toList   <span style="color:#89ddff">::</span> t a <span style="color:#89ddff">-&gt;</span> [a]
+    <span style="color:#82aaff">length</span>   <span style="color:#89ddff">::</span> t a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+    <span style="color:#82aaff">null</span>     <span style="color:#89ddff">::</span> t a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Bool</span>
+    <span style="color:#82aaff">elem</span>     <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Eq</span> a <span style="color:#89ddff">=&gt;</span> a <span style="color:#89ddff">-&gt;</span> t a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Bool</span>
+    <span style="color:#82aaff">maximum</span>  <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> a <span style="color:#89ddff">=&gt;</span> t a <span style="color:#89ddff">-&gt;</span> a
+    <span style="color:#82aaff">sum</span>      <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Num</span> a <span style="color:#89ddff">=&gt;</span> t a <span style="color:#89ddff">-&gt;</span> a
+
+<span style="color:#546e7a">-- Funktioniert auf allem was Foldable ist:</span>
+<span style="color:#82aaff">sum</span>    (<span style="color:#ffcb6b">Just</span> <span style="color:#f78c6c">5</span>)        <span style="color:#546e7a">-- 5</span>
+<span style="color:#82aaff">sum</span>    [<span style="color:#f78c6c">1..10</span>]         <span style="color:#546e7a">-- 55</span>
+<span style="color:#82aaff">length</span> (<span style="color:#ffcb6b">Just</span> <span style="color:#c3e88d">"hi"</span>)     <span style="color:#546e7a">-- 1</span>
+<span style="color:#82aaff">null</span>   <span style="color:#ffcb6b">Nothing</span>         <span style="color:#546e7a">-- True</span>
+
+<span style="color:#546e7a">-- Eigener Foldable:</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Baum</span> a = <span style="color:#ffcb6b">Blatt</span> | <span style="color:#ffcb6b">Knoten</span> a (<span style="color:#ffcb6b">Baum</span> a) (<span style="color:#ffcb6b">Baum</span> a)
+
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">Foldable</span> <span style="color:#ffcb6b">Baum</span> <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">foldr</span> f z <span style="color:#ffcb6b">Blatt</span>           = z
+    <span style="color:#82aaff">foldr</span> f z (<span style="color:#ffcb6b">Knoten</span> x l r)  = <span style="color:#82aaff">foldr</span> f (f x (<span style="color:#82aaff">foldr</span> f z r)) l
+
+<span style="color:#82aaff">sum</span> (<span style="color:#ffcb6b">Knoten</span> <span style="color:#f78c6c">5</span> (<span style="color:#ffcb6b">Knoten</span> <span style="color:#f78c6c">3</span> <span style="color:#ffcb6b">Blatt</span> <span style="color:#ffcb6b">Blatt</span>) (<span style="color:#ffcb6b">Knoten</span> <span style="color:#f78c6c">7</span> <span style="color:#ffcb6b">Blatt</span> <span style="color:#ffcb6b">Blatt</span>))   <span style="color:#546e7a">-- 15</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tc2"
+     style="border:1px solid #5e508644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tc2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5e50860e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5e5086">
+      <span style="display:inline-block;width:8px;height:8px;background:#5e5086;border-radius:50%;margin-right:2px"></span>Eigene Typklassen &amp; Instanzen
+    </span>
+    <span class="aa" style="color:#5e5086;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="eigene typklassen &amp; instanzen">
+  <div style="color:#5e5086;font-weight:700;font-size:12px;margin-bottom:8px">
+    Eigene Typklassen &amp; Instanzen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#546e7a">-- Typklasse für serialisierbare Typen</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">ToJSON</span> a <span style="color:#c792ea">where</span>
+    toJSON <span style="color:#89ddff">::</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">FromJSON</span> a <span style="color:#c792ea">where</span>
+    fromJSON <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> a
+
+<span style="color:#546e7a">-- Instanzen</span>
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">ToJSON</span> <span style="color:#ffcb6b">Int</span> <span style="color:#c792ea">where</span>
+    toJSON n = <span style="color:#82aaff">show</span> n
+
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">ToJSON</span> <span style="color:#ffcb6b">Bool</span> <span style="color:#c792ea">where</span>
+    toJSON <span style="color:#c792ea">True</span>  = <span style="color:#c3e88d">"true"</span>
+    toJSON <span style="color:#c792ea">False</span> = <span style="color:#c3e88d">"false"</span>
+
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">ToJSON</span> a <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">ToJSON</span> [a] <span style="color:#c792ea">where</span>
+    toJSON xs = <span style="color:#c3e88d">"["</span> ++ intercalate <span style="color:#c3e88d">","</span> (<span style="color:#82aaff">map</span> toJSON xs) ++ <span style="color:#c3e88d">"]"</span>
+  <span style="color:#c792ea">where</span> intercalate sep [] = <span style="color:#c3e88d">""</span>
+        intercalate sep [x] = x
+        intercalate sep (x:xs) = x ++ sep ++ intercalate sep xs
+
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">ToJSON</span> a <span style="color:#89ddff">=&gt;</span> <span style="color:#ffcb6b">ToJSON</span> (<span style="color:#ffcb6b">Maybe</span> a) <span style="color:#c792ea">where</span>
+    toJSON <span style="color:#ffcb6b">Nothing</span>  = <span style="color:#c3e88d">"null"</span>
+    toJSON (<span style="color:#ffcb6b">Just</span> x) = toJSON x
+
+<span style="color:#546e7a">-- Verwendung:</span>
+toJSON (<span style="color:#f78c6c">42</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>)         <span style="color:#546e7a">-- "42"</span>
+toJSON <span style="color:#c792ea">True</span>                 <span style="color:#546e7a">-- "true"</span>
+toJSON [<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>]      <span style="color:#546e7a">-- "[1,2,3]"</span>
+toJSON (<span style="color:#ffcb6b">Just</span> (<span style="color:#f78c6c">42</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>))  <span style="color:#546e7a">-- "42"</span>
+toJSON (<span style="color:#ffcb6b">Nothing</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Maybe</span> <span style="color:#ffcb6b">Int</span>)  <span style="color:#546e7a">-- "null"</span>
+
+<span style="color:#546e7a">-- Default-Implementierungen</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Container</span> f <span style="color:#c792ea">where</span>
+    empty  <span style="color:#89ddff">::</span> f a
+    insert <span style="color:#89ddff">::</span> a <span style="color:#89ddff">-&gt;</span> f a <span style="color:#89ddff">-&gt;</span> f a
+    toList <span style="color:#89ddff">::</span> f a <span style="color:#89ddff">-&gt;</span> [a]
+
+    <span style="color:#546e7a">-- Default-Implementierung</span>
+    size <span style="color:#89ddff">::</span> f a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Int</span>
+    size = <span style="color:#82aaff">length</span> <span style="color:#89ddff">.</span> toList   <span style="color:#546e7a">-- automatisch falls toList definiert</span>
+
+    member <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Eq</span> a <span style="color:#89ddff">=&gt;</span> a <span style="color:#89ddff">-&gt;</span> f a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Bool</span>
+    member x c = x <span style="color:#89ddff">`elem`</span> toList c   <span style="color:#546e7a">-- default über toList</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Data.List
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="sort xs" data-d="sortieren (ord nötig)">
+      <td style="width:200px"><code style="color:#4fc3f7">sort xs</code></td>
+      <td style="color:#6c7a8e">Sortieren (Ord nötig)</td>
+      <td style="color:#c3e88d;font-size:11px">sort [3,1,2]  →  [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m="nub xs" data-d="duplikate entfernen">
+      <td style="width:200px"><code style="color:#4fc3f7">nub xs</code></td>
+      <td style="color:#6c7a8e">Duplikate entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">nub [1,2,1,3]  →  [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m="group xs" data-d="gleiche elemente gruppieren">
+      <td style="width:200px"><code style="color:#4fc3f7">group xs</code></td>
+      <td style="color:#6c7a8e">Gleiche Elemente gruppieren</td>
+      <td style="color:#c3e88d;font-size:11px">group [1,1,2,3,3]  →  [[1,1],[2],[3,3]]</td>
+    </tr>
+    <tr class="cr" data-m="sortby f xs" data-d="mit eigener vergleichsfunktion">
+      <td style="width:200px"><code style="color:#4fc3f7">sortBy f xs</code></td>
+      <td style="color:#6c7a8e">Mit eigener Vergleichsfunktion</td>
+      <td style="color:#c3e88d;font-size:11px">sortBy (comparing snd) paare</td>
+    </tr>
+    <tr class="cr" data-m="groupby p xs" data-d="mit eigenem prädikat">
+      <td style="width:200px"><code style="color:#4fc3f7">groupBy p xs</code></td>
+      <td style="color:#6c7a8e">Mit eigenem Prädikat</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="intercalate sep xss" data-d="zusammenfügen mit trenner">
+      <td style="width:200px"><code style="color:#4fc3f7">intercalate sep xss</code></td>
+      <td style="color:#6c7a8e">Zusammenfügen mit Trenner</td>
+      <td style="color:#c3e88d;font-size:11px">intercalate "," ["a","b"]  →  "a,b"</td>
+    </tr>
+    <tr class="cr" data-m="intersperse x xs" data-d="element zwischen alle einfügen">
+      <td style="width:200px"><code style="color:#4fc3f7">intersperse x xs</code></td>
+      <td style="color:#6c7a8e">Element zwischen alle einfügen</td>
+      <td style="color:#c3e88d;font-size:11px">intersperse 0 [1,2,3]  →  [1,0,2,0,3]</td>
+    </tr>
+    <tr class="cr" data-m="transpose xss" data-d="matrix transponieren">
+      <td style="width:200px"><code style="color:#4fc3f7">transpose xss</code></td>
+      <td style="color:#6c7a8e">Matrix transponieren</td>
+      <td style="color:#c3e88d;font-size:11px">transpose [[1,2],[3,4]]  →  [[1,3],[2,4]]</td>
+    </tr>
+    <tr class="cr" data-m="isprefixof" data-d="beginnt mit?">
+      <td style="width:200px"><code style="color:#4fc3f7">isPrefixOf</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"he" `isPrefixOf` "hello"  →  True</td>
+    </tr>
+    <tr class="cr" data-m="issuffixof" data-d="endet mit?">
+      <td style="width:200px"><code style="color:#4fc3f7">isSuffixOf</code></td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"lo" `isSuffixOf` "hello"  →  True</td>
+    </tr>
+    <tr class="cr" data-m="isinfixof" data-d="enthält?">
+      <td style="width:200px"><code style="color:#4fc3f7">isInfixOf</code></td>
+      <td style="color:#6c7a8e">Enthält?</td>
+      <td style="color:#c3e88d;font-size:11px">"ell" `isInfixOf` "hello"  →  True</td>
+    </tr>
+    <tr class="cr" data-m="find p xs" data-d="erstes passendes element">
+      <td style="width:200px"><code style="color:#4fc3f7">find p xs</code></td>
+      <td style="color:#6c7a8e">Erstes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px">find even [1,3,4,5]  →  Just 4</td>
+    </tr>
+    <tr class="cr" data-m="partition p xs" data-d="aufteilen nach prädikat">
+      <td style="width:200px"><code style="color:#4fc3f7">partition p xs</code></td>
+      <td style="color:#6c7a8e">Aufteilen nach Prädikat</td>
+      <td style="color:#c3e88d;font-size:11px">partition even [1..6]  →  ([2,4,6],[1,3,5])</td>
+    </tr>
+    <tr class="cr" data-m="splitat n xs" data-d="bei index aufteilen">
+      <td style="width:200px"><code style="color:#4fc3f7">splitAt n xs</code></td>
+      <td style="color:#6c7a8e">Bei Index aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px">splitAt 3 [1..5]  →  ([1,2,3],[4,5])</td>
+    </tr>
+    <tr class="cr" data-m="unfoldr f b" data-d="liste aus saat generieren">
+      <td style="width:200px"><code style="color:#4fc3f7">unfoldr f b</code></td>
+      <td style="color:#6c7a8e">Liste aus Saat generieren</td>
+      <td style="color:#c3e88d;font-size:11px">unfoldr (\n -&gt; if n==0 then Nothing else Just (n,n-1)) 5</td>
+    </tr>
+    <tr class="cr" data-m="maximumby f" data-d="maximum mit eigener funktion">
+      <td style="width:200px"><code style="color:#4fc3f7">maximumBy f</code></td>
+      <td style="color:#6c7a8e">Maximum mit eigener Funktion</td>
+      <td style="color:#c3e88d;font-size:11px">maximumBy (comparing length) ["ab","c","def"]</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Data.Map (strict)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="map.empty" data-d="leere map">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.empty</code></td>
+      <td style="color:#6c7a8e">Leere Map</td>
+      <td style="color:#c3e88d;font-size:11px">Map.empty :: Map k v</td>
+    </tr>
+    <tr class="cr" data-m="map.singleton k v" data-d="map mit einem eintrag">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.singleton k v</code></td>
+      <td style="color:#6c7a8e">Map mit einem Eintrag</td>
+      <td style="color:#c3e88d;font-size:11px">Map.singleton "a" 1</td>
+    </tr>
+    <tr class="cr" data-m="map.fromlist [(k,v)]" data-d="aus liste erstellen">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.fromList [(k,v)]</code></td>
+      <td style="color:#6c7a8e">Aus Liste erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">Map.fromList [("a",1),("b",2)]</td>
+    </tr>
+    <tr class="cr" data-m="map.tolist m" data-d="als liste">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.toList m</code></td>
+      <td style="color:#6c7a8e">Als Liste</td>
+      <td style="color:#c3e88d;font-size:11px">Map.toList m  →  [(k,v)...]</td>
+    </tr>
+    <tr class="cr" data-m="map.insert k v m" data-d="eintrag hinzufügen">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.insert k v m</code></td>
+      <td style="color:#6c7a8e">Eintrag hinzufügen</td>
+      <td style="color:#c3e88d;font-size:11px">neueMap = Map.insert "c" 3 m</td>
+    </tr>
+    <tr class="cr" data-m="map.delete k m" data-d="eintrag löschen">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.delete k m</code></td>
+      <td style="color:#6c7a8e">Eintrag löschen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="map.lookup k m" data-d="wert finden → maybe v">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.lookup k m</code></td>
+      <td style="color:#6c7a8e">Wert finden → Maybe v</td>
+      <td style="color:#c3e88d;font-size:11px">Map.lookup "a" m  →  Just 1</td>
+    </tr>
+    <tr class="cr" data-m="map.member k m" data-d="key vorhanden?">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.member k m</code></td>
+      <td style="color:#6c7a8e">Key vorhanden?</td>
+      <td style="color:#c3e88d;font-size:11px">Map.member "a" m  →  True</td>
+    </tr>
+    <tr class="cr" data-m="map.map f m" data-d="alle werte transformieren">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.map f m</code></td>
+      <td style="color:#6c7a8e">Alle Werte transformieren</td>
+      <td style="color:#c3e88d;font-size:11px">Map.map (*2) m</td>
+    </tr>
+    <tr class="cr" data-m="map.filter p m" data-d="einträge filtern">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.filter p m</code></td>
+      <td style="color:#6c7a8e">Einträge filtern</td>
+      <td style="color:#c3e88d;font-size:11px">Map.filter (&gt;1) m</td>
+    </tr>
+    <tr class="cr" data-m="map.unionwith f m1 m2" data-d="vereinigen mit konflikt-fn">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.unionWith f m1 m2</code></td>
+      <td style="color:#6c7a8e">Vereinigen mit Konflikt-Fn</td>
+      <td style="color:#c3e88d;font-size:11px">Map.unionWith (+) m1 m2</td>
+    </tr>
+    <tr class="cr" data-m="map.intersectionwith f m1 m2" data-d="schnittmenge">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.intersectionWith f m1 m2</code></td>
+      <td style="color:#6c7a8e">Schnittmenge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="map.foldlwithkey' f z m" data-d="akkumulieren mit keys">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.foldlWithKey' f z m</code></td>
+      <td style="color:#6c7a8e">Akkumulieren mit Keys</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="map.size m" data-d="anzahl einträge">
+      <td style="width:200px"><code style="color:#4ec9b0">Map.size m</code></td>
+      <td style="color:#6c7a8e">Anzahl Einträge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Data.Text (unicode-sicher)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="t.pack "string"" data-d="string → text">
+      <td style="width:200px"><code style="color:#ffb347">T.pack "string"</code></td>
+      <td style="color:#6c7a8e">String → Text</td>
+      <td style="color:#c3e88d;font-size:11px">T ist Alias für Data.Text</td>
+    </tr>
+    <tr class="cr" data-m="t.unpack t" data-d="text → string">
+      <td style="width:200px"><code style="color:#ffb347">T.unpack t</code></td>
+      <td style="color:#6c7a8e">Text → String</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="t.length t" data-d="länge in unicode-codepoints">
+      <td style="width:200px"><code style="color:#ffb347">T.length t</code></td>
+      <td style="color:#6c7a8e">Länge in Unicode-Codepoints</td>
+      <td style="color:#c3e88d;font-size:11px">Korrekt für Unicode!</td>
+    </tr>
+    <tr class="cr" data-m="t.concat ts" data-d="texte zusammenfügen">
+      <td style="width:200px"><code style="color:#ffb347">T.concat ts</code></td>
+      <td style="color:#6c7a8e">Texte zusammenfügen</td>
+      <td style="color:#c3e88d;font-size:11px">T.concat [t1,t2,t3]</td>
+    </tr>
+    <tr class="cr" data-m="t.intercalate sep ts" data-d="mit trenner">
+      <td style="width:200px"><code style="color:#ffb347">T.intercalate sep ts</code></td>
+      <td style="color:#6c7a8e">Mit Trenner</td>
+      <td style="color:#c3e88d;font-size:11px">T.intercalate ", " ts</td>
+    </tr>
+    <tr class="cr" data-m="t.split p t" data-d="nach prädikat aufteilen">
+      <td style="width:200px"><code style="color:#ffb347">T.split p t</code></td>
+      <td style="color:#6c7a8e">Nach Prädikat aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px">T.split (==',') t</td>
+    </tr>
+    <tr class="cr" data-m="t.isprefixof" data-d="beginnt mit?">
+      <td style="width:200px"><code style="color:#ffb347">T.isPrefixOf</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="t.tolower / toupper" data-d="groß-/kleinschreibung">
+      <td style="width:200px"><code style="color:#ffb347">T.toLower / toUpper</code></td>
+      <td style="color:#6c7a8e">Groß-/Kleinschreibung</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="t.strip t" data-d="whitespace trimmen">
+      <td style="width:200px"><code style="color:#ffb347">T.strip t</code></td>
+      <td style="color:#6c7a8e">Whitespace trimmen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="t.replace old new t" data-d="ersetzen">
+      <td style="width:200px"><code style="color:#ffb347">T.replace old new t</code></td>
+      <td style="color:#6c7a8e">Ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="t.lines / t.words" data-d="aufteilen">
+      <td style="width:200px"><code style="color:#ffb347">T.lines / T.words</code></td>
+      <td style="color:#6c7a8e">Aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="t.encodeutf8" data-d="text → bytestring (utf-8)">
+      <td style="width:200px"><code style="color:#ffb347">T.encodeUtf8</code></td>
+      <td style="color:#6c7a8e">Text → ByteString (UTF-8)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #5e5086;color:#5e5086;background:rgba(94,80,134,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Fibonacci – verschiedene Stile</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Parser Combinator (mini)</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Datenverarbeitung &amp; Statistik</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">QuickSort &amp; Sortieralgorithmen</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Main</span> <span style="color:#c792ea">where</span>
+
+<span style="color:#546e7a">-- NAIV (exponentiell O(2^n) – nur für Verständnis)</span>
+fib_naiv <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Integer</span>
+fib_naiv <span style="color:#f78c6c">0</span> = <span style="color:#f78c6c">0</span>
+fib_naiv <span style="color:#f78c6c">1</span> = <span style="color:#f78c6c">1</span>
+fib_naiv n = fib_naiv (n-<span style="color:#f78c6c">1</span>) + fib_naiv (n-<span style="color:#f78c6c">2</span>)
+
+<span style="color:#546e7a">-- LAZY LISTE – unendliche Sequenz!</span>
+fibs <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Integer</span>]
+fibs = <span style="color:#f78c6c">0</span> : <span style="color:#f78c6c">1</span> : <span style="color:#82aaff">zipWith</span> (+) fibs (<span style="color:#82aaff">tail</span> fibs)
+<span style="color:#546e7a">-- fibs = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...]</span>
+
+fib <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Integer</span>
+fib n = fibs !! n    <span style="color:#546e7a">-- O(n), durch Laziness gecacht!</span>
+
+<span style="color:#546e7a">-- Erste 20 Fibonacci-Zahlen</span>
+erste20 <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Integer</span>]
+erste20 = <span style="color:#82aaff">take</span> <span style="color:#f78c6c">20</span> fibs
+<span style="color:#546e7a">-- [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181]</span>
+
+<span style="color:#546e7a">-- Alle Fibonacci-Zahlen unter 1000</span>
+unterTausend <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Integer</span>]
+unterTausend = <span style="color:#82aaff">takeWhile</span> (&lt; <span style="color:#f78c6c">1000</span>) fibs
+<span style="color:#546e7a">-- [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987]</span>
+
+<span style="color:#546e7a">-- Erste Fibonacci-Zahl die durch 7 teilbar und &gt; 100 ist</span>
+spezial <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Integer</span>
+spezial = <span style="color:#82aaff">head</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">dropWhile</span> (&lt;= <span style="color:#f78c6c">100</span>) <span style="color:#89ddff">$</span> <span style="color:#82aaff">filter</span> (<span style="color:#89ddff">`mod`</span> <span style="color:#f78c6c">7</span> == <span style="color:#f78c6c">0</span>) fibs
+<span style="color:#546e7a">-- 987</span>
+
+<span style="color:#546e7a">-- Gerade Fibonacci-Zahlen bis 4 Millionen (Project Euler #2)</span>
+eulerZwei <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Integer</span>
+eulerZwei = <span style="color:#82aaff">sum</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">filter</span> <span style="color:#82aaff">even</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">takeWhile</span> (&lt;= <span style="color:#f78c6c">4000000</span>) fibs
+<span style="color:#546e7a">-- 4613732</span>
+
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#c3e88d">"Erste 20 Fibonacci-Zahlen:"</span>
+    <span style="color:#82aaff">print</span> erste20
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"fib(50) = "</span> ++ <span style="color:#82aaff">show</span> (fib <span style="color:#f78c6c">50</span>)
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Gerade unter 100: "</span> ++ <span style="color:#82aaff">show</span> (<span style="color:#82aaff">filter</span> <span style="color:#82aaff">even</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">takeWhile</span> (&lt;<span style="color:#f78c6c">100</span>) fibs)</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#c792ea">where</span>
+
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">Char</span> (isDigit, isAlpha, isSpace)
+
+<span style="color:#546e7a">-- Ein Parser ist eine Funktion die einen String nimmt</span>
+<span style="color:#546e7a">-- und entweder (Wert, Rest) oder Fehler zurückgibt</span>
+<span style="color:#c792ea">newtype</span> <span style="color:#ffcb6b">Parser</span> a = <span style="color:#ffcb6b">Parser</span> { runParser <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Maybe</span> (a, <span style="color:#ffcb6b">String</span>) }
+
+<span style="color:#546e7a">-- Functor: Ergebnis transformieren</span>
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">Functor</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">fmap</span> f (<span style="color:#ffcb6b">Parser</span> p) = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> input <span style="color:#89ddff">-&gt;</span>
+        <span style="color:#c792ea">case</span> p input <span style="color:#c792ea">of</span>
+            <span style="color:#ffcb6b">Nothing</span>        <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+            <span style="color:#ffcb6b">Just</span> (x, rest) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Just</span> (f x, rest)
+
+<span style="color:#546e7a">-- Applicative: Parser sequenzieren</span>
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">Applicative</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#c792ea">where</span>
+    <span style="color:#82aaff">pure</span> x = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> input <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Just</span> (x, input)
+    (<span style="color:#ffcb6b">Parser</span> pf) <span style="color:#89ddff">&lt;*&gt;</span> (<span style="color:#ffcb6b">Parser</span> pa) = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> input <span style="color:#89ddff">-&gt;</span>
+        <span style="color:#c792ea">case</span> pf input <span style="color:#c792ea">of</span>
+            <span style="color:#ffcb6b">Nothing</span>       <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+            <span style="color:#ffcb6b">Just</span> (f, rest) <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">case</span> pa rest <span style="color:#c792ea">of</span>
+                <span style="color:#ffcb6b">Nothing</span>        <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+                <span style="color:#ffcb6b">Just</span> (x, rest') <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Just</span> (f x, rest')
+
+<span style="color:#546e7a">-- Monad: Parser abhängig voneinander</span>
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">Monad</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#c792ea">where</span>
+    <span style="color:#c792ea">return</span> = <span style="color:#82aaff">pure</span>
+    (<span style="color:#ffcb6b">Parser</span> p) &gt;&gt;= f = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> input <span style="color:#89ddff">-&gt;</span>
+        <span style="color:#c792ea">case</span> p input <span style="color:#c792ea">of</span>
+            <span style="color:#ffcb6b">Nothing</span>       <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+            <span style="color:#ffcb6b">Just</span> (x, rest) <span style="color:#89ddff">-&gt;</span> runParser (f x) rest
+
+<span style="color:#546e7a">-- Alternative: erstes oder zweites versuchen</span>
+<span style="color:#c792ea">instance</span> <span style="color:#ffcb6b">Alternative</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#c792ea">where</span>
+    empty = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">const</span> <span style="color:#ffcb6b">Nothing</span>
+    (<span style="color:#ffcb6b">Parser</span> p1) <span style="color:#89ddff">&lt;|&gt;</span> (<span style="color:#ffcb6b">Parser</span> p2) = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> input <span style="color:#89ddff">-&gt;</span>
+        p1 input <span style="color:#89ddff">&lt;|&gt;</span> p2 input
+
+<span style="color:#546e7a">-- Primitiver Parser: ein Zeichen</span>
+item <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#ffcb6b">Char</span>
+item = <span style="color:#ffcb6b">Parser</span> <span style="color:#89ddff">$</span> <span style="color:#c792ea">case</span>
+    []     <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Nothing</span>
+    (c:cs) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Just</span> (c, cs)
+
+<span style="color:#546e7a">-- Prüfe Bedingung</span>
+satisfy <span style="color:#89ddff">::</span> (<span style="color:#ffcb6b">Char</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Bool</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#ffcb6b">Char</span>
+satisfy pred = <span style="color:#c792ea">do</span>
+    c <span style="color:#89ddff">&lt;-</span> item
+    <span style="color:#c792ea">if</span> pred c <span style="color:#c792ea">then</span> <span style="color:#c792ea">return</span> c <span style="color:#c792ea">else</span> empty
+
+<span style="color:#546e7a">-- Konkrete Parser</span>
+digit <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#ffcb6b">Char</span>
+digit = satisfy isDigit
+
+letter <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#ffcb6b">Char</span>
+letter = satisfy isAlpha
+
+space <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#ffcb6b">Char</span>
+space = satisfy isSpace
+
+<span style="color:#546e7a">-- Kombinatoren</span>
+many <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Parser</span> [a]
+many p = some p <span style="color:#89ddff">&lt;|&gt;</span> <span style="color:#82aaff">pure</span> []
+
+some <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> a <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Parser</span> [a]
+some p = (:) <span style="color:#89ddff">&lt;$&gt;</span> p <span style="color:#89ddff">&lt;*&gt;</span> many p
+
+<span style="color:#546e7a">-- Zahl parsen</span>
+natural <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#ffcb6b">Int</span>
+natural = <span style="color:#82aaff">read</span> <span style="color:#89ddff">&lt;$&gt;</span> some digit
+
+<span style="color:#546e7a">-- Verwendung</span>
+runParser natural <span style="color:#c3e88d">"123abc"</span>    <span style="color:#546e7a">-- Just (123, "abc")</span>
+runParser natural <span style="color:#c3e88d">"abc"</span>       <span style="color:#546e7a">-- Nothing</span>
+runParser (some letter) <span style="color:#c3e88d">"hello world"</span>  <span style="color:#546e7a">-- Just ("hello", " world")</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Statistik</span> <span style="color:#c792ea">where</span>
+
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">List</span> (sort, group, sortBy, maximumBy)
+<span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Data</span>.<span style="color:#ffcb6b">Ord</span>  (comparing, <span style="color:#ffcb6b">Down</span>(<span style="color:#89ddff">.</span><span style="color:#89ddff">.</span>))
+
+<span style="color:#546e7a">-- Eigener Datentyp</span>
+<span style="color:#c792ea">data</span> <span style="color:#ffcb6b">Messung</span> = <span style="color:#ffcb6b">Messung</span>
+    { wert    <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Double</span>
+    , label   <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">String</span>
+    } <span style="color:#c792ea">deriving</span> (<span style="color:#ffcb6b">Show</span>, <span style="color:#ffcb6b">Eq</span>, <span style="color:#ffcb6b">Ord</span>)
+
+<span style="color:#546e7a">-- Statistik-Funktionen (alle pure!)</span>
+mittelwert <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Double</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+mittelwert [] = <span style="color:#82aaff">error</span> <span style="color:#c3e88d">"Leere Liste"</span>
+mittelwert xs = <span style="color:#82aaff">sum</span> xs / <span style="color:#82aaff">fromIntegral</span> (<span style="color:#82aaff">length</span> xs)
+
+varianz <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Double</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+varianz xs = mittelwert (<span style="color:#82aaff">map</span> (λ <span style="color:#89ddff">-&gt;</span> (x - mw)^<span style="color:#f78c6c">2</span>) xs)
+  <span style="color:#c792ea">where</span> mw = mittelwert xs
+
+standardAbweichung <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Double</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+standardAbweichung = <span style="color:#82aaff">sqrt</span> <span style="color:#89ddff">.</span> varianz
+
+median <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Double</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Double</span>
+median [] = <span style="color:#82aaff">error</span> <span style="color:#c3e88d">"Leere Liste"</span>
+median xs
+    | gerade    = (sorted !! halbe + sorted !! (halbe-<span style="color:#f78c6c">1</span>)) / <span style="color:#f78c6c">2</span>
+    | <span style="color:#82aaff">otherwise</span> = sorted !! halbe
+  <span style="color:#c792ea">where</span>
+    sorted = sort xs
+    n      = <span style="color:#82aaff">length</span> xs
+    halbe  = n <span style="color:#89ddff">`div`</span> <span style="color:#f78c6c">2</span>
+    gerade = <span style="color:#82aaff">even</span> n
+
+<span style="color:#546e7a">-- Häufigkeitsverteilung</span>
+häufigkeit <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> a <span style="color:#89ddff">=&gt;</span> [a] <span style="color:#89ddff">-&gt;</span> [(a, <span style="color:#ffcb6b">Int</span>)]
+häufigkeit = sortBy (comparing (<span style="color:#ffcb6b">Down</span> <span style="color:#89ddff">.</span> <span style="color:#82aaff">snd</span>))
+           <span style="color:#89ddff">.</span> <span style="color:#82aaff">map</span> (g <span style="color:#89ddff">-&gt;</span> (<span style="color:#82aaff">head</span> g, <span style="color:#82aaff">length</span> g))
+           <span style="color:#89ddff">.</span> group
+           <span style="color:#89ddff">.</span> sort
+
+<span style="color:#546e7a">-- Pipeline: Messwerte analysieren</span>
+analysiere <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Double</span>] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">String</span>
+analysiere xs = <span style="color:#82aaff">unlines</span>
+    [ <span style="color:#c3e88d">"Anzahl:    "</span> ++ <span style="color:#82aaff">show</span> n
+    , <span style="color:#c3e88d">"Summe:     "</span> ++ <span style="color:#82aaff">show</span> (<span style="color:#82aaff">sum</span> xs)
+    , <span style="color:#c3e88d">"Min:       "</span> ++ <span style="color:#82aaff">show</span> (<span style="color:#82aaff">minimum</span> xs)
+    , <span style="color:#c3e88d">"Max:       "</span> ++ <span style="color:#82aaff">show</span> (<span style="color:#82aaff">maximum</span> xs)
+    , <span style="color:#c3e88d">"Mittelw.:  "</span> ++ <span style="color:#82aaff">show</span> (mittelwert xs)
+    , <span style="color:#c3e88d">"Median:    "</span> ++ <span style="color:#82aaff">show</span> (median xs)
+    , <span style="color:#c3e88d">"Std.-Abw.: "</span> ++ <span style="color:#82aaff">show</span> (standardAbweichung xs)
+    ]
+  <span style="color:#c792ea">where</span> n = <span style="color:#82aaff">length</span> xs
+
+<span style="color:#546e7a">-- Beispieldaten</span>
+messungen <span style="color:#89ddff">::</span> [<span style="color:#ffcb6b">Double</span>]
+messungen = [<span style="color:#f78c6c">23.5</span>, <span style="color:#f78c6c">19.2</span>, <span style="color:#f78c6c">31.4</span>, <span style="color:#f78c6c">25.1</span>, <span style="color:#f78c6c">18.7</span>, <span style="color:#f78c6c">29.8</span>, <span style="color:#f78c6c">22.3</span>, <span style="color:#f78c6c">26.6</span>, <span style="color:#f78c6c">21.9</span>, <span style="color:#f78c6c">24.8</span>]
+
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">putStr</span> <span style="color:#89ddff">$</span> analysiere messungen
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#c3e88d">"</span>
+<span style="color:#ffcb6b">Häufigste</span> <span style="color:#ffcb6b">Zehner</span>-<span style="color:#ffcb6b">Bereiche</span>:<span style="color:#c3e88d">"</span>
+    <span style="color:#c792ea">let</span> bereiche = <span style="color:#82aaff">map</span> (λ <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">floor</span> (x/<span style="color:#f78c6c">10</span>) * <span style="color:#f78c6c">10</span> <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Int</span>) messungen
+    <span style="color:#82aaff">mapM_</span> <span style="color:#82aaff">print</span> <span style="color:#89ddff">$</span> <span style="color:#82aaff">take</span> <span style="color:#f78c6c">5</span> <span style="color:#89ddff">$</span> häufigkeit bereiche</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Sortieren</span> <span style="color:#c792ea">where</span>
+
+<span style="color:#546e7a">-- QuickSort – der klassische Haskell-Einzeiler</span>
+quicksort <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> a <span style="color:#89ddff">=&gt;</span> [a] <span style="color:#89ddff">-&gt;</span> [a]
+quicksort []     = []
+quicksort (x:xs) = quicksort kleiner ++ [x] ++ quicksort grösser
+  <span style="color:#c792ea">where</span>
+    kleiner = <span style="color:#82aaff">filter</span> (&lt;  x) xs
+    grösser = <span style="color:#82aaff">filter</span> (&gt;= x) xs
+
+<span style="color:#546e7a">-- Merge Sort</span>
+mergesort <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> a <span style="color:#89ddff">=&gt;</span> [a] <span style="color:#89ddff">-&gt;</span> [a]
+mergesort []  = []
+mergesort [x] = [x]
+mergesort xs  = merge (mergesort links) (mergesort rechts)
+  <span style="color:#c792ea">where</span>
+    (links, rechts) = <span style="color:#82aaff">splitAt</span> (<span style="color:#82aaff">length</span> xs <span style="color:#89ddff">`div`</span> <span style="color:#f78c6c">2</span>) xs
+    merge [] ys = ys
+    merge xs [] = xs
+    merge (x:xs) (y:ys)
+        | x &lt;= y    = x : merge xs (y:ys)
+        | <span style="color:#82aaff">otherwise</span> = y : merge (x:xs) ys
+
+<span style="color:#546e7a">-- Insertion Sort</span>
+insertionsort <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> a <span style="color:#89ddff">=&gt;</span> [a] <span style="color:#89ddff">-&gt;</span> [a]
+insertionsort = <span style="color:#82aaff">foldr</span> einfügen []
+  <span style="color:#c792ea">where</span>
+    einfügen x [] = [x]
+    einfügen x (y:ys)
+        | x &lt;= y    = x : y : ys
+        | <span style="color:#82aaff">otherwise</span> = y : einfügen x ys
+
+<span style="color:#546e7a">-- Sortieren mit Schlüssel</span>
+sortierNach <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">Ord</span> b <span style="color:#89ddff">=&gt;</span> (a <span style="color:#89ddff">-&gt;</span> b) <span style="color:#89ddff">-&gt;</span> [a] <span style="color:#89ddff">-&gt;</span> [a]
+sortierNach f []     = []
+sortierNach f (x:xs) = sortierNach f kleiner ++ [x] ++ sortierNach f grösser
+  <span style="color:#c792ea">where</span>
+    kleiner = <span style="color:#82aaff">filter</span> (y <span style="color:#89ddff">-&gt;</span> f y &lt;  f x) xs
+    grösser = <span style="color:#82aaff">filter</span> (y <span style="color:#89ddff">-&gt;</span> f y &gt;= f x) xs
+
+<span style="color:#546e7a">-- Testen</span>
+main <span style="color:#89ddff">::</span> <span style="color:#ffcb6b">IO</span> ()
+main = <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">let</span> zahlen = [<span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">6</span>]
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Original:    "</span> ++ <span style="color:#82aaff">show</span> zahlen
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Quicksort:   "</span> ++ <span style="color:#82aaff">show</span> (quicksort zahlen)
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Mergesort:   "</span> ++ <span style="color:#82aaff">show</span> (mergesort zahlen)
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Insertionsort: "</span> ++ <span style="color:#82aaff">show</span> (insertionsort zahlen)
+
+    <span style="color:#546e7a">-- Nach Länge sortieren</span>
+    <span style="color:#c792ea">let</span> wörter = [<span style="color:#c3e88d">"Haskell"</span>, <span style="color:#c3e88d">"ist"</span>, <span style="color:#c3e88d">"wunderschön"</span>, <span style="color:#c3e88d">"und"</span>, <span style="color:#c3e88d">"mächtig"</span>]
+    <span style="color:#82aaff">putStrLn</span> <span style="color:#89ddff">$</span> <span style="color:#c3e88d">"Nach Länge:  "</span> ++ <span style="color:#82aaff">show</span> (sortierNach <span style="color:#82aaff">length</span> wörter)</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#5e50860e;border:1px solid #5e508644;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#5e5086">Empfohlen:</strong> GHCup installiert GHC, Cabal, Stack und HLS in einem Schritt.<br><code style="color:#ffb347">curl --proto "=https" --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #5e508644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5e50860e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5e5086">
+      <span style="display:inline-block;width:8px;height:8px;background:#5e5086;border-radius:50%;margin-right:2px"></span>⚙ GHC &amp; GHCup installieren (Linux)
+    </span>
+    <span class="aa" style="color:#5e5086;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Befehl</th><th>Paket / System</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#5e5086">GHCup</code></td><td style="color:#cdd6f4">ghcup.haskell.org</td><td style="color:#6c7a8e">curl --proto "=https" --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+# Installiert GHC, Cabal, Stack, HLS in ~/.ghcup</td></tr><tr><td style="width:220px"><code style="color:#5e5086">Arch/CachyOS</code></td><td style="color:#cdd6f4">AUR</td><td style="color:#6c7a8e">yay -S ghcup-hs-bin
+ghcup install ghc
+ghcup install cabal
+ghcup install hls</td></tr><tr><td style="width:220px"><code style="color:#5e5086">Stack</code></td><td style="color:#cdd6f4">ghcup</td><td style="color:#6c7a8e">ghcup install stack
+stack new mein-projekt
+stack run</td></tr><tr><td style="width:220px"><code style="color:#5e5086">Cabal</code></td><td style="color:#cdd6f4">ghcup</td><td style="color:#6c7a8e">cabal init
+cabal run
+cabal build</td></tr><tr><td style="width:220px"><code style="color:#5e5086">Prüfen</code></td><td style="color:#cdd6f4">ghc</td><td style="color:#6c7a8e">ghc --version  |  cabal --version  |  stack --version</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ GHC &amp; GHCi – REPL
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Befehl</th><th>Paket / System</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4fc3f7">ghci</code></td><td style="color:#cdd6f4">GHC</td><td style="color:#6c7a8e">Interaktive Shell starten</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:type ausdruck</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">:t (+)  →  Num a =&gt; a -&gt; a -&gt; a</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:info Typklasse</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">:i Functor  →  Alle Instanzen anzeigen</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:kind Typkonstruktor</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">:k Maybe  →  Maybe :: * -&gt; *</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:load Datei.hs</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">:l Main.hs  →  Datei laden</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:reload</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">:r  →  Neu laden</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:set +s</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">Ausführungszeit anzeigen</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">:set +t</code></td><td style="color:#cdd6f4">GHCi</td><td style="color:#6c7a8e">Typen nach jeder Auswertung anzeigen</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">ghc -O2 Main.hs</code></td><td style="color:#cdd6f4">GHC</td><td style="color:#6c7a8e">Mit Optimierung kompilieren</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">runghc Main.hs</code></td><td style="color:#cdd6f4">GHC</td><td style="color:#6c7a8e">Ohne Kompilieren ausführen (wie Script)</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">runhaskell Main.hs</code></td><td style="color:#cdd6f4">GHC</td><td style="color:#6c7a8e">Alias für runghc</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Cabal &amp; Stack – Projekte
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Befehl</th><th>Paket / System</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4ec9b0">cabal init</code></td><td style="color:#cdd6f4">Cabal</td><td style="color:#6c7a8e">Neues Projekt erstellen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">cabal build</code></td><td style="color:#cdd6f4">Cabal</td><td style="color:#6c7a8e">Bauen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">cabal run</code></td><td style="color:#cdd6f4">Cabal</td><td style="color:#6c7a8e">Ausführen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">cabal test</code></td><td style="color:#cdd6f4">Cabal</td><td style="color:#6c7a8e">Tests ausführen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">cabal install pkg</code></td><td style="color:#cdd6f4">Cabal</td><td style="color:#6c7a8e">Paket installieren</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">cabal update</code></td><td style="color:#cdd6f4">Cabal</td><td style="color:#6c7a8e">Paket-Index aktualisieren</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">stack new proj</code></td><td style="color:#cdd6f4">Stack</td><td style="color:#6c7a8e">Neues Projekt mit Template</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">stack build</code></td><td style="color:#cdd6f4">Stack</td><td style="color:#6c7a8e">Bauen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">stack run</code></td><td style="color:#cdd6f4">Stack</td><td style="color:#6c7a8e">Ausführen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">stack test</code></td><td style="color:#cdd6f4">Stack</td><td style="color:#6c7a8e">Tests ausführen</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">stack ghci</code></td><td style="color:#cdd6f4">Stack</td><td style="color:#6c7a8e">REPL mit Projekt-Abhängigkeiten</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Packages
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Befehl</th><th>Paket / System</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">text</code></td><td style="color:#cdd6f4">text</td><td style="color:#6c7a8e">Data.Text für Unicode-sichere Strings</td></tr><tr><td style="width:220px"><code style="color:#ffb347">bytestring</code></td><td style="color:#cdd6f4">bytestring</td><td style="color:#6c7a8e">Effiziente Byte-Buffer</td></tr><tr><td style="width:220px"><code style="color:#ffb347">aeson</code></td><td style="color:#cdd6f4">aeson</td><td style="color:#6c7a8e">JSON Parsing/Serialisierung</td></tr><tr><td style="width:220px"><code style="color:#ffb347">containers</code></td><td style="color:#cdd6f4">containers</td><td style="color:#6c7a8e">Data.Map, Data.Set, Data.Sequence</td></tr><tr><td style="width:220px"><code style="color:#ffb347">mtl</code></td><td style="color:#cdd6f4">mtl</td><td style="color:#6c7a8e">Monad-Transformer: State, Reader, Writer</td></tr><tr><td style="width:220px"><code style="color:#ffb347">transformers</code></td><td style="color:#cdd6f4">transformers</td><td style="color:#6c7a8e">Grundlegende Monad-Transformer</td></tr><tr><td style="width:220px"><code style="color:#ffb347">lens</code></td><td style="color:#cdd6f4">lens</td><td style="color:#6c7a8e">Getter/Setter/Lenses für verschachtelte Daten</td></tr><tr><td style="width:220px"><code style="color:#ffb347">servant</code></td><td style="color:#cdd6f4">servant</td><td style="color:#6c7a8e">Type-Safe HTTP API Framework</td></tr><tr><td style="width:220px"><code style="color:#ffb347">persistent</code></td><td style="color:#cdd6f4">persistent</td><td style="color:#6c7a8e">Datenbank-ORM</td></tr><tr><td style="width:220px"><code style="color:#ffb347">QuickCheck</code></td><td style="color:#cdd6f4">QuickCheck</td><td style="color:#6c7a8e">Property-Based Testing</td></tr><tr><td style="width:220px"><code style="color:#ffb347">hspec</code></td><td style="color:#cdd6f4">hspec</td><td style="color:#6c7a8e">BDD-Test Framework</td></tr><tr><td style="width:220px"><code style="color:#ffb347">tasty</code></td><td style="color:#cdd6f4">tasty</td><td style="color:#6c7a8e">Test Framework</td></tr><tr><td style="width:220px"><code style="color:#ffb347">optparse-applicative</code></td><td style="color:#cdd6f4">optparse-applicative</td><td style="color:#6c7a8e">CLI Argument Parsing</td></tr><tr><td style="width:220px"><code style="color:#ffb347">rio</code></td><td style="color:#cdd6f4">rio</td><td style="color:#6c7a8e">Standard Library Ersatz (weniger Footguns)</td></tr><tr><td style="width:220px"><code style="color:#ffb347">polysemy</code></td><td style="color:#cdd6f4">polysemy</td><td style="color:#6c7a8e">Algebraic Effects (modern, typsicher)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>⚙ GHC Language Extensions
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Befehl</th><th>Paket / System</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE OverloadedStrings #-}</code></td><td style="color:#cdd6f4">String-Literale für Text, ByteString etc.</td><td style="color:#6c7a8e">Fast immer nötig</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE TupleSections #-}</code></td><td style="color:#cdd6f4">Tupel-Sektionen: (,3) = λ -&gt; (x,3)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE LambdaCase #-}</code></td><td style="color:#cdd6f4">\case x -&gt; ...</td><td style="color:#6c7a8e">Kürzer als λ -&gt; case x of</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE ScopedTypeVariables #-}</code></td><td style="color:#cdd6f4">Typvariablen in where-Klauseln nutzen</td><td style="color:#6c7a8e">Sehr häufig gebraucht</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE RecordWildCards #-}</code></td><td style="color:#cdd6f4">Record-Felder direkt in Scope bringen</td><td style="color:#6c7a8e">Person{..} in Patterns</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE DerivingStrategies #-}</code></td><td style="color:#cdd6f4">Explizit welche deriving-Strategie</td><td style="color:#6c7a8e">deriving stock / newtype / anyclass</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE TypeApplications #-}</code></td><td style="color:#cdd6f4">Typen explizit angeben: read @Int "42"</td><td style="color:#6c7a8e">Sehr nützlich</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE DataKinds #-}</code></td><td style="color:#cdd6f4">Typen auf Kind-Ebene heben</td><td style="color:#6c7a8e">Für Type-Level Programming</td></tr><tr><td style="width:220px"><code style="color:#4caf50">{-# LANGUAGE GADTs #-}</code></td><td style="color:#cdd6f4">Generalized Algebraic Data Types</td><td style="color:#6c7a8e">Mächtige Typ-Einschränkungen</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-pm"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#5e5086';
+      btn.style.color       = '#5e5086';
+      btn.style.background  = 'rgba(94, 80, 134, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

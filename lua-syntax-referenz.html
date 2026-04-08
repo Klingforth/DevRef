@@ -1,0 +1,2851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lua Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #6c9fe8;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+/* ── Tabs ── */
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(108, 159, 232, .07);
+}
+
+/* ── Content ── */
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+/* ── Search ── */
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+/* ── Accordion ── */
+.ac   { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+/* ── Tables ── */
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Cards ── */
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 720px) {
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#6c9fe8">&#x1F319;</span>
+      <span style="color:#6c9fe8">Lua</span> Syntax
+    </div>
+    <div id="hdr-sub">Interaktive Referenz — Arch Linux / CachyOS</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="operators">Operatoren</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="tables">Tabellen & OOP</button>
+    <button class="tb" data-tab="stdlib">Standardbibliothek</button>
+    <button class="tb" data-tab="coroutines">Coroutines</button>
+    <button class="tb" data-tab="modules">Module & Fehler</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<!-- ═══════════ INHALT ═══════════ -->
+<div class="con">
+
+  <div id="tp-types" class="tp active">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>Die 8 grundlegenden Typen
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">nil</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">nil</td>
+      <td style="color:#6c7a8e">Kein Wert – der Standard-Wert jeder nicht gesetzten Variable</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">boolean</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Falsy: nur nil und false. Alles andere ist truthy (auch 0 und "")!</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">number</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">42  |  3.14  |  0xFF  |  1e10  |  0b1010 (5.3+)</td>
+      <td style="color:#6c7a8e">Lua 5.3+: integer und float intern unterschieden</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">string</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  'Welt'  |  [[mehrzeilig]]</td>
+      <td style="color:#6c7a8e">Immutabler UTF-8 String. Intern gecacht und gehasht</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">table</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{1,2,3}  |  {key="val"}  |  {}</td>
+      <td style="color:#6c7a8e">Der einzige Datenstruktur-Typ: Array, Dict, Objekt – alles</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">function</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">function(x) return x*2 end  |  math.sin</td>
+      <td style="color:#6c7a8e">First-Class – speicherbar in Variablen, Tabellen, übergebar</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">userdata</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">io.stdin  |  coroutine.create()</td>
+      <td style="color:#6c7a8e">Zeiger auf C-Daten – von der Host-Anwendung erstellt</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#6c9fe8">thread</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">coroutine.create(fn)</td>
+      <td style="color:#6c7a8e">Coroutine-Handle – kein echter OS-Thread!</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #c3e88d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c3e88d0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c3e88d">
+      <span style="display:inline-block;width:8px;height:8px;background:#c3e88d;border-radius:50%;margin-right:2px"></span>Strings im Detail
+    </span>
+    <span class="aa" style="color:#c3e88d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">Einfach</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  'Welt'</td>
+      <td style="color:#6c7a8e">Beide identisch – wähle je nach enthaltenen Quotes</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">Escape</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"\n  \t  \\"  |  "\65"  (A)  |  "\x41"</td>
+      <td style="color:#6c7a8e">\n \t \r \\ \" \' \NNN \xNN \u{NNNN}</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">Long String</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[[mehrzeilig
+kein Escape nötig]]</td>
+      <td style="color:#6c7a8e">[[ ]] oder [=[ ]=] – Ebenen mit = vermeiden Konflikte</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">Konkatenation</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo" .. " " .. "Welt"</td>
+      <td style="color:#6c7a8e">.. ist der Concat-Operator – konvertiert Zahlen automatisch</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">#</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">#"Hallo"  →  5  |  #"" → 0</td>
+      <td style="color:#6c7a8e">Länge-Operator – für Strings (Bytes) und Arrays (Sequenzen)</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">tostring</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">tostring(42)  |  tostring(true)  |  tostring(nil)</td>
+      <td style="color:#6c7a8e">Jeder Wert kann zu String konvertiert werden</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#c3e88d">tonumber</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">tonumber("42")  |  tonumber("0xFF")  |  tonumber("3.14")</td>
+      <td style="color:#6c7a8e">Gibt nil zurück wenn Konvertierung fehlschlägt</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Tabellen als Array &amp; Dict
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#ffb347">Array</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{10, 20, 30}  – Index beginnt bei 1!</td>
+      <td style="color:#6c7a8e">t[1]=10, t[2]=20, t[3]=30. KEIN t[0]!</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#ffb347">Dict</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{name="Alice", alter=30}  |  {["key with space"]=1}</td>
+      <td style="color:#6c7a8e">String-Keys ohne Sonderzeichen: t.key. Sonst: t["key"]</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#ffb347">Gemischt</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{10, name="Alice", 20}  – Array-Teil: {10,20}</td>
+      <td style="color:#6c7a8e">Array-Teil und Hash-Teil koexistieren intern</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#ffb347">Zugriff</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">t.key  |  t["key"]  |  t[1]  |  t[func()]</td>
+      <td style="color:#6c7a8e">Punkt-Syntax nur für valide Bezeichner als Keys</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#ffb347">Schreiben</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">t.x = 10  |  t[1] = "neu"  |  t.neu = {}</td>
+      <td style="color:#6c7a8e">Neues Key setzen oder vorhandenes überschreiben</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#ffb347">Entfernen</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">t.x = nil  – setzt auf nil = entfernt den Eintrag</td>
+      <td style="color:#6c7a8e">Es gibt kein delete-Keyword</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>Variablen &amp; Scope
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#00ff88">Global</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">x = 42  – ohne local</td>
+      <td style="color:#6c7a8e">Landet in der globalen Umgebung _G – meide dies!</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#00ff88">Local</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">local x = 42  |  local a, b, c = 1, 2, 3</td>
+      <td style="color:#6c7a8e">Bevorzuge immer local – schneller und sicherer</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#00ff88">Multiple</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">local a, b = 1, 2  |  a, b = b, a  (Tausch)</td>
+      <td style="color:#6c7a8e">Mehrfach-Zuweisung: rechts wird vor links ausgewertet</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#00ff88">Nil-Default</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">local x  →  x ist nil</td>
+      <td style="color:#6c7a8e">Nicht initialisierte locals sind nil</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#00ff88">_ENV</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">_ENV ist die Tabelle aller globalen Variablen</td>
+      <td style="color:#6c7a8e">local _ENV = {}  begrenzt den globalen Scope</td>
+    </tr>
+    <tr>
+      <td style="width:130px">
+        <code style="color:#00ff88">type()</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">type(x) → "nil"  "boolean"  "number"  "string"  "table"  "function"</td>
+      <td style="color:#6c7a8e">Einzige Möglichkeit den Typ zur Laufzeit zu bestimmen</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-operators" class="tp">
+
+<div class="ac open" id="ac-op0"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>Arithmetik
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#6c9fe8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">+  -  *  /</code></div>
+  <div style="color:#6c7a8e;font-size:12px">/ gibt immer float: 7/2 → 3.5</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#6c9fe8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">//</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Integer-Division (Lua 5.3+): 7//2 → 3  |  7.0//2 → 3.0</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#6c9fe8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">%</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Modulo: 10%3 → 1  (Vorzeichen des Divisors)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#6c9fe8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">^</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Potenz: 2^10 → 1024.0  (gibt immer float zurück!)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#6c9fe8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">-</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Unäres Minus: -x</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#6c9fe8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&amp;  |  ~  &gt;&gt;  &lt;&lt;</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Bitweise (Lua 5.3+) – nur für integers</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op1"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Vergleich &amp; Logik
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">==  ~=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">== Gleichheit / ~= Ungleichheit (nicht !=!)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&lt;  &gt;  &lt;=  &gt;=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Nur für gleiche Typen – sonst Laufzeitfehler</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">and</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Short-circuit: gibt linken Operand wenn falsy, sonst rechten
+  nil and "a"  →  nil  |  false and "a"  →  false  |  1 and "a"  →  "a"</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">or</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Short-circuit: gibt linken Operand wenn truthy, sonst rechten
+  nil or "a"   →  "a"  |  1 or "a"     →  1</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">not</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Gibt true/false: not nil → true  |  not 0 → false (0 ist truthy!)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">x or default</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Idiom für Default-Wert: local n = x or 0</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>String &amp; Länge
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">..</code></div>
+  <div style="color:#6c7a8e;font-size:12px">String-Konkatenation: "Hallo" .. " " .. "Welt"</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">#</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Länge: #"hallo" → 5  |  #{1,2,3} → 3  (nur Sequenzen!)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">tostring()</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Implizite Konvertierung bei .. : 42 .. "" → "42"</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op3"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>Typische Lua-Idiome
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00ff88;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">x = x or default</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Default-Wert wenn x nil oder false</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00ff88;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">t and t.key</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Sicherer Zugriff: nil wenn t nil</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00ff88;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">a, b = b, a</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Tauschen ohne Temp-Variable</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00ff88;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">fn = fn or function() end</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Optional-Callback Muster</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00ff88;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">"string"[1]</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Geht NICHT – string.sub("string",1,1) stattdessen</div>
+</div></div>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-ct0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / elseif / else
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / elseif / else">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / elseif / else
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Kein ( ) um die Bedingung nötig – end schließt den Block</span>
+<span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">10</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"groß"</span>)
+<span style="color:#c792ea">elseif</span> x &gt; <span style="color:#f78c6c">5</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"mittel"</span>)
+<span style="color:#c792ea">else</span>
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"klein"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Einzeiler (selten schön, aber möglich)</span>
+<span style="color:#c792ea">if</span> fertig <span style="color:#c792ea">then</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Ternäres Idiom (kein ?: in Lua!)</span>
+<span style="color:#c792ea">local</span> ergebnis = x &gt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">and</span> <span style="color:#c3e88d">"positiv"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"negativ"</span>
+<span style="color:#546e7a">-- Achtung: funktioniert nur wenn "positiv" niemals falsy ist!</span>
+
+<span style="color:#546e7a">-- Typ-Check vor Zugriff</span>
+<span style="color:#c792ea">if</span> <span style="color:#82aaff">type</span>(wert) == <span style="color:#c3e88d">"number"</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">print</span>(wert * <span style="color:#f78c6c">2</span>)
+<span style="color:#c792ea">elseif</span> <span style="color:#82aaff">type</span>(wert) == <span style="color:#c3e88d">"string"</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">print</span>(wert:upper())
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct1"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>while / repeat until
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="while / repeat until">
+  <div style="color:#6c9fe8;font-weight:700;font-size:12px;margin-bottom:8px">
+    while / repeat until
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- while: Bedingung wird VOR jeder Iteration geprüft</span>
+<span style="color:#c792ea">local</span> i = <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">while</span> i <span style="color:#89ddff">&lt;=</span> <span style="color:#f78c6c">10</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">io</span>.write(i <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" "</span>)
+    i = i + <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- repeat...until: Bedingung wird NACH jeder Iteration geprüft</span>
+<span style="color:#546e7a">-- (wie do...while in C/Java)</span>
+<span style="color:#c792ea">local</span> eingabe
+<span style="color:#c792ea">repeat</span>
+    <span style="color:#82aaff">io</span>.write(<span style="color:#c3e88d">"Gib eine Zahl ein: "</span>)
+    eingabe = <span style="color:#82aaff">tonumber</span>(<span style="color:#82aaff">io</span>.read())
+<span style="color:#c792ea">until</span> eingabe <span style="color:#89ddff">~=</span> <span style="color:#c792ea">nil</span>   <span style="color:#546e7a">-- mindestens einmal ausgeführt!</span>
+
+<span style="color:#546e7a">-- break verlässt die innerste Schleife</span>
+<span style="color:#c792ea">while</span> <span style="color:#c792ea">true</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">local</span> zeile = <span style="color:#82aaff">io</span>.read()
+    <span style="color:#c792ea">if</span> zeile == <span style="color:#c792ea">nil</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">break</span> <span style="color:#c792ea">end</span>
+    <span style="color:#82aaff">print</span>(zeile)
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>for – numerisch &amp; generisch
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for – numerisch &amp; generisch">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    for – numerisch &amp; generisch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Numerisches for: for var = start, stop [, step] do</span>
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span> <span style="color:#c792ea">do</span>          <span style="color:#546e7a">-- 1, 2, ..., 10</span>
+    <span style="color:#82aaff">io</span>.write(i <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" "</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">1</span>, -<span style="color:#f78c6c">1</span> <span style="color:#c792ea">do</span>      <span style="color:#546e7a">-- 10, 9, ..., 1 (negativer Step)</span>
+    <span style="color:#82aaff">io</span>.write(i <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" "</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">0.25</span> <span style="color:#c792ea">do</span>     <span style="color:#546e7a">-- 0, 0.25, 0.5, 0.75, 1.0</span>
+    <span style="color:#82aaff">io</span>.write(i <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" "</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Generisches for: for k, v in iterator do</span>
+<span style="color:#546e7a">-- pairs() – alle Einträge (zufällige Reihenfolge!)</span>
+<span style="color:#c792ea">local</span> t = {name = <span style="color:#c3e88d">"Alice"</span>, alter = <span style="color:#f78c6c">30</span>, stadt = <span style="color:#c3e88d">"Berlin"</span>}
+<span style="color:#c792ea">for</span> schluessel, wert <span style="color:#c792ea">in</span> <span style="color:#82aaff">pairs</span>(t) <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">print</span>(schluessel <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" = "</span> <span style="color:#89ddff">..</span> <span style="color:#82aaff">tostring</span>(wert))
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- ipairs() – nur Array-Teil, in Reihenfolge, stoppt bei nil!</span>
+<span style="color:#c792ea">local</span> farben = {<span style="color:#c3e88d">"rot"</span>, <span style="color:#c3e88d">"gruen"</span>, <span style="color:#c3e88d">"blau"</span>}
+<span style="color:#c792ea">for</span> index, farbe <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(farben) <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">print</span>(index, farbe)   <span style="color:#546e7a">-- 1  rot / 2  gruen / 3  blau</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- next() – manuelle Iteration wie pairs()</span>
+<span style="color:#c792ea">local</span> k, v = <span style="color:#82aaff">next</span>(t)
+<span style="color:#c792ea">while</span> k <span style="color:#89ddff">~=</span> <span style="color:#c792ea">nil</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">print</span>(k, v)
+    k, v = <span style="color:#82aaff">next</span>(t, k)
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>goto &amp; Labels (Lua 5.2+)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="goto &amp; labels (lua 5.2+)">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    goto &amp; Labels (Lua 5.2+)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- goto springt zu einem Label im gleichen Block</span>
+<span style="color:#546e7a">-- Nützlich für continue-Idiom (Lua hat kein continue!)</span>
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">if</span> i % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">goto</span> weiter <span style="color:#c792ea">end</span>   <span style="color:#546e7a">-- "continue"</span>
+    <span style="color:#82aaff">print</span>(i)                              <span style="color:#546e7a">-- nur ungerade</span>
+    ::weiter::                            <span style="color:#546e7a">-- Label-Syntax: ::name::</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Verschachtelte Schleifen verlassen</span>
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">for</span> j = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span> <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">if</span> i * j &gt; <span style="color:#f78c6c">10</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">goto</span> fertig <span style="color:#c792ea">end</span>
+        <span style="color:#82aaff">io</span>.write(i*j <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" "</span>)
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+::fertig::
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"\nDone"</span>)
+
+<span style="color:#546e7a">-- Hinweis: goto kann nicht in einen inneren Block oder</span>
+<span style="color:#546e7a">-- über eine lokale Variablen-Deklaration springen</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Funktionen definieren
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen definieren">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen definieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Langform</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> addiere(a, b)
+    <span style="color:#c792ea">return</span> a + b
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Kurzform (äquivalent)</span>
+<span style="color:#c792ea">local</span> addiere = <span style="color:#c792ea">function</span>(a, b)
+    <span style="color:#c792ea">return</span> a + b
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Mehrere Rückgabewerte</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> min_max(t)
+    <span style="color:#c792ea">local</span> min, max = t[<span style="color:#f78c6c">1</span>], t[<span style="color:#f78c6c">1</span>]
+    <span style="color:#c792ea">for</span> _, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(t) <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">if</span> v &lt; min <span style="color:#c792ea">then</span> min = v <span style="color:#c792ea">end</span>
+        <span style="color:#c792ea">if</span> v &gt; max <span style="color:#c792ea">then</span> max = v <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> min, max
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> lo, hi = min_max({<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">9</span>})
+<span style="color:#82aaff">print</span>(lo, hi)   <span style="color:#546e7a">-- 1  9</span>
+
+<span style="color:#546e7a">-- Rückgabewerte können ignoriert werden</span>
+<span style="color:#c792ea">local</span> lo_only = min_max({<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>})   <span style="color:#546e7a">-- hi wird verworfen</span>
+
+<span style="color:#546e7a">-- Keine Rückgabe = gibt nil zurück</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> tue_nichts() <span style="color:#c792ea">end</span>
+<span style="color:#82aaff">print</span>(tue_nichts())   <span style="color:#546e7a">-- (keine Ausgabe)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>Varargs &amp; Mehrfach-Returns
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="varargs &amp; mehrfach-returns">
+  <div style="color:#6c9fe8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Varargs &amp; Mehrfach-Returns
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Vararg-Funktion mit  ...</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> summe(<span style="color:#89ddff">...</span>)
+    <span style="color:#c792ea">local</span> args = {<span style="color:#89ddff">...</span>}      <span style="color:#546e7a">-- ... in Tabelle verpacken</span>
+    <span style="color:#c792ea">local</span> total = <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">for</span> _, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(args) <span style="color:#c792ea">do</span> total = total + v <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> total
+<span style="color:#c792ea">end</span>
+<span style="color:#82aaff">print</span>(summe(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>))   <span style="color:#546e7a">-- 15</span>
+
+<span style="color:#546e7a">-- select() arbeitet mit Varargs</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> info(<span style="color:#89ddff">...</span>)
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Anzahl:"</span>, <span style="color:#82aaff">select</span>(<span style="color:#c3e88d">"#"</span>, <span style="color:#89ddff">...</span>))
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Ab 2:"</span>,   <span style="color:#82aaff">select</span>(<span style="color:#f78c6c">2</span>, <span style="color:#89ddff">...</span>))
+<span style="color:#c792ea">end</span>
+info(<span style="color:#c3e88d">"a"</span>, <span style="color:#c3e88d">"b"</span>, <span style="color:#c3e88d">"c"</span>)   <span style="color:#546e7a">-- Anzahl: 3 / Ab 2: b  c</span>
+
+<span style="color:#546e7a">-- Mehrfach-Returns nur am ENDE eines Ausdrucks expandiert!</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> drei() <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span> <span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> a, b, c = drei()       <span style="color:#546e7a">-- a=1, b=2, c=3</span>
+<span style="color:#c792ea">local</span> x = drei()             <span style="color:#546e7a">-- x=1, Rest verworfen</span>
+<span style="color:#c792ea">local</span> t = {drei()}           <span style="color:#546e7a">-- t = {1, 2, 3}</span>
+<span style="color:#c792ea">local</span> u = {drei(), <span style="color:#c3e88d">"x"</span>}      <span style="color:#546e7a">-- u = {1, "x"}  (nur erster Wert!)</span>
+<span style="color:#82aaff">print</span>(drei())                <span style="color:#546e7a">-- gibt 1  2  3 aus</span>
+<span style="color:#82aaff">print</span>(drei(), <span style="color:#c3e88d">"x"</span>)           <span style="color:#546e7a">-- gibt 1  x  aus (truncated!)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Closures &amp; Upvalues
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="closures &amp; upvalues">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Closures &amp; Upvalues
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Funktionen "schließen" über lokale Variablen ihres äußeren Scopes</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> mache_zaehler(start)
+    <span style="color:#c792ea">local</span> n = start <span style="color:#c792ea">or</span> <span style="color:#f78c6c">0</span>   <span style="color:#546e7a">-- Upvalue – lebt so lange wie die Closure</span>
+    <span style="color:#c792ea">return</span> {
+        inc  = <span style="color:#c792ea">function</span>() n = n + <span style="color:#f78c6c">1</span> <span style="color:#c792ea">end</span>,
+        dec  = <span style="color:#c792ea">function</span>() n = n - <span style="color:#f78c6c">1</span> <span style="color:#c792ea">end</span>,
+        wert = <span style="color:#c792ea">function</span>() <span style="color:#c792ea">return</span> n <span style="color:#c792ea">end</span>,
+    }
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> zaehler = mache_zaehler(<span style="color:#f78c6c">10</span>)
+zaehler.inc()
+zaehler.inc()
+<span style="color:#82aaff">print</span>(zaehler.wert())   <span style="color:#546e7a">-- 12</span>
+
+<span style="color:#546e7a">-- Alle Closures teilen denselben Upvalue!</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> mache_addierer(n)
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">function</span>(x) <span style="color:#c792ea">return</span> x + n <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+<span style="color:#c792ea">local</span> plus5  = mache_addierer(<span style="color:#f78c6c">5</span>)
+<span style="color:#c792ea">local</span> plus10 = mache_addierer(<span style="color:#f78c6c">10</span>)
+<span style="color:#82aaff">print</span>(plus5(<span style="color:#f78c6c">3</span>))    <span style="color:#546e7a">-- 8</span>
+<span style="color:#82aaff">print</span>(plus10(<span style="color:#f78c6c">3</span>))   <span style="color:#546e7a">-- 13</span>
+
+<span style="color:#546e7a">-- Memo-Muster mit Closures</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> memoize(fn)
+    <span style="color:#c792ea">local</span> cache = {}
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">function</span>(x)
+        <span style="color:#c792ea">if</span> cache[x] == <span style="color:#c792ea">nil</span> <span style="color:#c792ea">then</span>
+            cache[x] = fn(x)
+        <span style="color:#c792ea">end</span>
+        <span style="color:#c792ea">return</span> cache[x]
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> fib_memo = memoize(<span style="color:#c792ea">function</span>(n)
+    <span style="color:#c792ea">if</span> n &lt; <span style="color:#f78c6c">2</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">return</span> n <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> fib_memo(n-<span style="color:#f78c6c">1</span>) + fib_memo(n-<span style="color:#f78c6c">2</span>)
+<span style="color:#c792ea">end</span>)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Methoden &amp; Colon-Syntax
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="methoden &amp; colon-syntax">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Methoden &amp; Colon-Syntax
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Tabellen können Funktionen als Felder enthalten</span>
+<span style="color:#c792ea">local</span> hund = {
+    name  = <span style="color:#c3e88d">"Rex"</span>,
+    alter = <span style="color:#f78c6c">3</span>,
+}
+
+<span style="color:#546e7a">-- Methode: explizit self übergeben (Punkt-Syntax)</span>
+<span style="color:#c792ea">function</span> hund.bellen(self)
+    <span style="color:#82aaff">print</span>(self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" sagt: Wuff!"</span>)
+<span style="color:#c792ea">end</span>
+hund.bellen(hund)   <span style="color:#546e7a">-- expliziter Aufruf</span>
+
+<span style="color:#546e7a">-- Methode: Colon-Syntax = Syntactic Sugar für self</span>
+<span style="color:#c792ea">function</span> hund:bellen()          <span style="color:#546e7a">-- self wird implizit hinzugefügt</span>
+    <span style="color:#82aaff">print</span>(self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" sagt: Wuff!"</span>)
+<span style="color:#c792ea">end</span>
+hund:bellen()       <span style="color:#546e7a">-- self = hund wird automatisch übergeben</span>
+
+<span style="color:#546e7a">-- Äquivalenz:</span>
+<span style="color:#546e7a">-- hund:bellen()       ≡   hund.bellen(hund)</span>
+<span style="color:#546e7a">-- function t:f() ...  ≡   function t.f(self) ...</span>
+
+<span style="color:#546e7a">-- Wichtig: Konsistenz!</span>
+<span style="color:#546e7a">-- Definiert mit :  → aufrufen mit :</span>
+<span style="color:#546e7a">-- Definiert mit .  → aufrufen mit . und explizitem self</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-tables" class="tp">
+
+<div class="ac open" id="ac-tbl0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tbl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Tabellen als Datenstrukturen
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="tabellen als datenstrukturen">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Tabellen als Datenstrukturen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Array (1-basiert!)</span>
+<span style="color:#c792ea">local</span> farben = {<span style="color:#c3e88d">"rot"</span>, <span style="color:#c3e88d">"gruen"</span>, <span style="color:#c3e88d">"blau"</span>}
+<span style="color:#82aaff">print</span>(farben[<span style="color:#f78c6c">1</span>])       <span style="color:#546e7a">-- "rot"  (NICHT farben[0]!)</span>
+<span style="color:#82aaff">print</span>(#farben)         <span style="color:#546e7a">-- 3</span>
+
+<span style="color:#546e7a">-- Dictionary</span>
+<span style="color:#c792ea">local</span> person = {
+    name   = <span style="color:#c3e88d">"Alice"</span>,
+    alter  = <span style="color:#f78c6c">30</span>,
+    aktiv  = <span style="color:#c792ea">true</span>,
+}
+<span style="color:#82aaff">print</span>(person.name)         <span style="color:#546e7a">-- "Alice"</span>
+<span style="color:#82aaff">print</span>(person[<span style="color:#c3e88d">"alter"</span>])     <span style="color:#546e7a">-- 30</span>
+
+<span style="color:#546e7a">-- Verschachtelt</span>
+<span style="color:#c792ea">local</span> config = {
+    server = {
+        host = <span style="color:#c3e88d">"localhost"</span>,
+        port = <span style="color:#f78c6c">8080</span>,
+    },
+    <span style="color:#82aaff">debug</span> = <span style="color:#c792ea">false</span>,
+}
+<span style="color:#82aaff">print</span>(config.server.port)   <span style="color:#546e7a">-- 8080</span>
+
+<span style="color:#546e7a">-- Tabelle als Set</span>
+<span style="color:#c792ea">local</span> set = {}
+set[<span style="color:#c3e88d">"apfel"</span>]  = <span style="color:#c792ea">true</span>
+set[<span style="color:#c3e88d">"banane"</span>] = <span style="color:#c792ea">true</span>
+<span style="color:#c792ea">if</span> set[<span style="color:#c3e88d">"apfel"</span>] <span style="color:#c792ea">then</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"apfel vorhanden"</span>) <span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Tabelle kopieren (KEINE echte Deep Copy!)</span>
+<span style="color:#c792ea">local</span> original = {<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>}
+<span style="color:#c792ea">local</span> kopie    = {}
+<span style="color:#c792ea">for</span> k, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">pairs</span>(original) <span style="color:#c792ea">do</span> kopie[k] = v <span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tbl1"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tbl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>Metatables &amp; Metamethoden
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="metatables &amp; metamethoden">
+  <div style="color:#6c9fe8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Metatables &amp; Metamethoden
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Metatables bestimmen das Verhalten einer Tabelle</span>
+<span style="color:#546e7a">-- bei bestimmten Operationen (wie __index, __add, etc.)</span>
+
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">Vektor</span> = {}
+<span style="color:#ffcb6b">Vektor</span>.__index = <span style="color:#ffcb6b">Vektor</span>   <span style="color:#546e7a">-- Methoden-Lookup</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Vektor</span>.neu(x, y)
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">setmetatable</span>({x = x, y = y}, <span style="color:#ffcb6b">Vektor</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Vektor</span>:laenge()
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">math</span>.sqrt(self.x^<span style="color:#f78c6c">2</span> + self.y^<span style="color:#f78c6c">2</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Vektor</span>:__tostring()
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">string</span>.format(<span style="color:#c3e88d">"(%g, %g)"</span>, self.x, self.y)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Arithmetik-Metamethoden</span>
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Vektor</span>:__add(andere)
+    <span style="color:#c792ea">return</span> <span style="color:#ffcb6b">Vektor</span>.neu(self.x + andere.x, self.y + andere.y)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Vektor</span>:__eq(andere)
+    <span style="color:#c792ea">return</span> self.x == andere.x <span style="color:#c792ea">and</span> self.y == andere.y
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> v1 = <span style="color:#ffcb6b">Vektor</span>.neu(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)
+<span style="color:#c792ea">local</span> v2 = <span style="color:#ffcb6b">Vektor</span>.neu(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>)
+<span style="color:#c792ea">local</span> v3 = v1 + v2              <span style="color:#546e7a">-- __add wird aufgerufen</span>
+<span style="color:#82aaff">print</span>(v1:laenge())              <span style="color:#546e7a">-- 5.0</span>
+<span style="color:#82aaff">print</span>(<span style="color:#82aaff">tostring</span>(v1))             <span style="color:#546e7a">-- (3, 4)  via __tostring</span>
+
+<span style="color:#546e7a">-- Alle wichtigen Metamethoden:</span>
+<span style="color:#546e7a">-- __index     Feldlookup wenn Key fehlt (Tabelle oder Funktion)</span>
+<span style="color:#546e7a">-- __newindex  Feldzuweisung wenn Key neu</span>
+<span style="color:#546e7a">-- __call      Tabelle wie Funktion aufrufen: t(args)</span>
+<span style="color:#546e7a">-- __len       # Operator</span>
+<span style="color:#546e7a">-- __tostring  tostring()  und  print()</span>
+<span style="color:#546e7a">-- __add  __sub  __mul  __div  __mod  __pow  __unm</span>
+<span style="color:#546e7a">-- __eq  __lt  __le  __concat  __gc  (Finalizer)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tbl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tbl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>OOP mit Metatables
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="oop mit metatables">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    OOP mit Metatables
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Klassen-Muster (häufigstes Lua-OOP-Idiom)</span>
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">Tier</span> = {}
+<span style="color:#ffcb6b">Tier</span>.__index = <span style="color:#ffcb6b">Tier</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Tier</span>:neu(name, sound)
+    <span style="color:#c792ea">local</span> instanz = <span style="color:#82aaff">setmetatable</span>({}, self)
+    instanz.name  = name
+    instanz.sound = sound
+    <span style="color:#c792ea">return</span> instanz
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Tier</span>:spreche()
+    <span style="color:#82aaff">print</span>(self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" sagt: "</span> <span style="color:#89ddff">..</span> self.sound)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Tier</span>:__tostring()
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Tier("</span> <span style="color:#89ddff">..</span> self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">")"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Vererbung</span>
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">Hund</span> = <span style="color:#82aaff">setmetatable</span>({}, {__index = <span style="color:#ffcb6b">Tier</span>})
+<span style="color:#ffcb6b">Hund</span>.__index = <span style="color:#ffcb6b">Hund</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Hund</span>:neu(name)
+    <span style="color:#c792ea">local</span> instanz = <span style="color:#ffcb6b">Tier</span>.neu(self, name, <span style="color:#c3e88d">"Wuff"</span>)
+    instanz.tricks = {}
+    <span style="color:#c792ea">return</span> instanz
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Hund</span>:lerne(trick)
+    <span style="color:#82aaff">table</span>.insert(self.tricks, trick)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Hund</span>:zeige_tricks()
+    <span style="color:#82aaff">print</span>(self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" kann: "</span> <span style="color:#89ddff">..</span> <span style="color:#82aaff">table</span>.concat(self.tricks, <span style="color:#c3e88d">", "</span>))
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Nutzung</span>
+<span style="color:#c792ea">local</span> katze = <span style="color:#ffcb6b">Tier</span>:neu(<span style="color:#c3e88d">"Minka"</span>, <span style="color:#c3e88d">"Miau"</span>)
+<span style="color:#c792ea">local</span> rex   = <span style="color:#ffcb6b">Hund</span>:neu(<span style="color:#c3e88d">"Rex"</span>)
+katze:spreche()    <span style="color:#546e7a">-- Minka sagt: Miau</span>
+rex:spreche()      <span style="color:#546e7a">-- Rex sagt: Wuff  (geerbt!)</span>
+rex:lerne(<span style="color:#c3e88d">"Sitz"</span>)
+rex:lerne(<span style="color:#c3e88d">"Platz"</span>)
+rex:zeige_tricks() <span style="color:#546e7a">-- Rex kann: Sitz, Platz</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tbl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tbl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>__index als Funktion &amp; Proxy
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="__index als funktion &amp; proxy">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    __index als Funktion &amp; Proxy
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- __index als Funktion: wird bei fehlendem Key aufgerufen</span>
+<span style="color:#c792ea">local</span> defaults = {
+    farbe  = <span style="color:#c3e88d">"rot"</span>,
+    groesse = <span style="color:#f78c6c">10</span>,
+    sichtbar = <span style="color:#c792ea">true</span>,
+}
+
+<span style="color:#c792ea">local</span> objekt = <span style="color:#82aaff">setmetatable</span>({farbe = <span style="color:#c3e88d">"blau"</span>}, {
+    __index = <span style="color:#c792ea">function</span>(tabelle, schluessel)
+        <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Fehlender Key: "</span> <span style="color:#89ddff">..</span> schluessel)
+        <span style="color:#c792ea">return</span> defaults[schluessel]   <span style="color:#546e7a">-- Fallback auf defaults</span>
+    <span style="color:#c792ea">end</span>
+})
+
+<span style="color:#82aaff">print</span>(objekt.farbe)     <span style="color:#546e7a">-- "blau"    (direkt vorhanden)</span>
+<span style="color:#82aaff">print</span>(objekt.groesse)   <span style="color:#546e7a">-- "Fehlender Key: groesse" + 10</span>
+
+<span style="color:#546e7a">-- Read-only Tabelle via __newindex</span>
+<span style="color:#c792ea">local</span> readonly = <span style="color:#82aaff">setmetatable</span>({}, {
+    __newindex = <span style="color:#c792ea">function</span>(t, k, v)
+        <span style="color:#82aaff">error</span>(<span style="color:#c3e88d">"Schreibzugriff verweigert: "</span> <span style="color:#89ddff">..</span> <span style="color:#82aaff">tostring</span>(k))
+    <span style="color:#c792ea">end</span>,
+    __index = {x = <span style="color:#f78c6c">1</span>, y = <span style="color:#f78c6c">2</span>},
+})
+
+<span style="color:#82aaff">print</span>(readonly.x)   <span style="color:#546e7a">-- 1</span>
+<span style="color:#546e7a">-- readonly.x = 5   -- würde error() auslösen</span>
+
+<span style="color:#546e7a">-- Callable Table via __call</span>
+<span style="color:#c792ea">local</span> multiplikator = <span style="color:#82aaff">setmetatable</span>({faktor = <span style="color:#f78c6c">3</span>}, {
+    __call = <span style="color:#c792ea">function</span>(self, wert)
+        <span style="color:#c792ea">return</span> wert * self.faktor
+    <span style="color:#c792ea">end</span>
+})
+<span style="color:#82aaff">print</span>(multiplikator(<span style="color:#f78c6c">7</span>))   <span style="color:#546e7a">-- 21</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>string – String-Funktionen
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<input class="sb" id="lib-s-0" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead>
+    <tr>
+      <th>Funktion</th>
+      <th>Beschreibung</th>
+      <th>Beispiel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cr"
+        data-m="string.len(s)"
+        data-d="länge in bytes (wie #s)">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.len(s)</code>
+      </td>
+      <td style="color:#6c7a8e">Länge in Bytes (wie #s)</td>
+      <td style="color:#c3e88d;font-size:11px">#"hallo" → 5</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.upper(s)"
+        data-d="in großbuchstaben">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.upper(s)</code>
+      </td>
+      <td style="color:#6c7a8e">In Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">string.upper("hallo") → "HALLO"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.lower(s)"
+        data-d="in kleinbuchstaben">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.lower(s)</code>
+      </td>
+      <td style="color:#6c7a8e">In Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">string.lower("HALLO") → "hallo"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.rep(s,n,sep)"
+        data-d="n-mal wiederholen">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.rep(s,n,sep)</code>
+      </td>
+      <td style="color:#6c7a8e">n-mal wiederholen</td>
+      <td style="color:#c3e88d;font-size:11px">string.rep("ab",3,"-") → "ab-ab-ab"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.reverse(s)"
+        data-d="umkehren">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.reverse(s)</code>
+      </td>
+      <td style="color:#6c7a8e">Umkehren</td>
+      <td style="color:#c3e88d;font-size:11px">string.reverse("hallo") → "ollah"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.sub(s,i,j)"
+        data-d="substring (1-basiert, -1=ende)">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.sub(s,i,j)</code>
+      </td>
+      <td style="color:#6c7a8e">Substring (1-basiert, -1=Ende)</td>
+      <td style="color:#c3e88d;font-size:11px">string.sub("hallo",2,4) → "all"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.byte(s,i)"
+        data-d="codepoint an position i">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.byte(s,i)</code>
+      </td>
+      <td style="color:#6c7a8e">Codepoint an Position i</td>
+      <td style="color:#c3e88d;font-size:11px">string.byte("A") → 65</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.char(...)"
+        data-d="codepoints zu string">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.char(...)</code>
+      </td>
+      <td style="color:#6c7a8e">Codepoints zu String</td>
+      <td style="color:#c3e88d;font-size:11px">string.char(72,105) → "Hi"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.format(fmt,...)"
+        data-d="printf-style formatierung">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.format(fmt,...)</code>
+      </td>
+      <td style="color:#6c7a8e">printf-Style Formatierung</td>
+      <td style="color:#c3e88d;font-size:11px">string.format("%05.2f",3.1) → "03.10"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.find(s,pat,i,plain)"
+        data-d="suchen: gibt start,end zurück">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.find(s,pat,i,plain)</code>
+      </td>
+      <td style="color:#6c7a8e">Suchen: gibt start,end zurück</td>
+      <td style="color:#c3e88d;font-size:11px">string.find("hello","ll") → 3,4</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.match(s,pat,i)"
+        data-d="ersten treffer zurückgeben">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.match(s,pat,i)</code>
+      </td>
+      <td style="color:#6c7a8e">Ersten Treffer zurückgeben</td>
+      <td style="color:#c3e88d;font-size:11px">string.match("abc123","(%d+)") → "123"</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.gmatch(s,pat)"
+        data-d="iterator über alle treffer">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.gmatch(s,pat)</code>
+      </td>
+      <td style="color:#6c7a8e">Iterator über alle Treffer</td>
+      <td style="color:#c3e88d;font-size:11px">for w in string.gmatch(s,"%w+") do</td>
+    </tr>
+    <tr class="cr"
+        data-m="string.gsub(s,pat,repl,n)"
+        data-d="ersetzen, optional max n mal">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">string.gsub(s,pat,repl,n)</code>
+      </td>
+      <td style="color:#6c7a8e">Ersetzen, optional max n Mal</td>
+      <td style="color:#c3e88d;font-size:11px">string.gsub("aaa","a","b",2) → "bba",2</td>
+    </tr>
+    <tr class="cr"
+        data-m="s:methode()"
+        data-d="methoden-syntax auf strings">
+      <td style="width:180px">
+        <code style="color:#6c9fe8">s:methode()</code>
+      </td>
+      <td style="color:#6c7a8e">Methoden-Syntax auf Strings</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo":upper() → "HALLO"</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>table – Tabellen-Funktionen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="lib-s-1" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead>
+    <tr>
+      <th>Funktion</th>
+      <th>Beschreibung</th>
+      <th>Beispiel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cr"
+        data-m="table.insert(t,val)"
+        data-d="ans ende einfügen">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.insert(t,val)</code>
+      </td>
+      <td style="color:#6c7a8e">Ans Ende einfügen</td>
+      <td style="color:#c3e88d;font-size:11px">table.insert(t, "x")</td>
+    </tr>
+    <tr class="cr"
+        data-m="table.insert(t,pos,val)"
+        data-d="an position einfügen">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.insert(t,pos,val)</code>
+      </td>
+      <td style="color:#6c7a8e">An Position einfügen</td>
+      <td style="color:#c3e88d;font-size:11px">table.insert(t, 1, "vorne")</td>
+    </tr>
+    <tr class="cr"
+        data-m="table.remove(t,pos)"
+        data-d="an position entfernen und zurückgeben">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.remove(t,pos)</code>
+      </td>
+      <td style="color:#6c7a8e">An Position entfernen und zurückgeben</td>
+      <td style="color:#c3e88d;font-size:11px">table.remove(t,1) → "vorne"</td>
+    </tr>
+    <tr class="cr"
+        data-m="table.concat(t,sep,i,j)"
+        data-d="array zu string verbinden">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.concat(t,sep,i,j)</code>
+      </td>
+      <td style="color:#6c7a8e">Array zu String verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">table.concat({"a","b","c"},",") → "a,b,c"</td>
+    </tr>
+    <tr class="cr"
+        data-m="table.sort(t,comp)"
+        data-d="in-place sortieren">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.sort(t,comp)</code>
+      </td>
+      <td style="color:#6c7a8e">In-Place sortieren</td>
+      <td style="color:#c3e88d;font-size:11px">table.sort(t)  |  table.sort(t, function(a,b) return a&gt;b end)</td>
+    </tr>
+    <tr class="cr"
+        data-m="table.unpack(t,i,j)"
+        data-d="tabelle zu mehrfach-rückgabe">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.unpack(t,i,j)</code>
+      </td>
+      <td style="color:#6c7a8e">Tabelle zu Mehrfach-Rückgabe</td>
+      <td style="color:#c3e88d;font-size:11px">table.unpack({10,20,30}) → 10,20,30</td>
+    </tr>
+    <tr class="cr"
+        data-m="table.move(a1,f,e,t,a2)"
+        data-d="elemente kopieren/verschieben">
+      <td style="width:180px">
+        <code style="color:#c792ea">table.move(a1,f,e,t,a2)</code>
+      </td>
+      <td style="color:#6c7a8e">Elemente kopieren/verschieben</td>
+      <td style="color:#c3e88d;font-size:11px">table.move(src,1,3,1,dst)</td>
+    </tr>
+    <tr class="cr"
+        data-m="#t"
+        data-d="länge des sequenz-teils">
+      <td style="width:180px">
+        <code style="color:#c792ea">#t</code>
+      </td>
+      <td style="color:#6c7a8e">Länge des Sequenz-Teils</td>
+      <td style="color:#c3e88d;font-size:11px">#{"a","b","c"} → 3</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>math – Mathematik
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="lib-s-2" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead>
+    <tr>
+      <th>Funktion</th>
+      <th>Beschreibung</th>
+      <th>Beispiel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cr"
+        data-m="math.abs(x)"
+        data-d="absolutwert">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.abs(x)</code>
+      </td>
+      <td style="color:#6c7a8e">Absolutwert</td>
+      <td style="color:#c3e88d;font-size:11px">math.abs(-5) → 5</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.ceil(x) / floor(x)"
+        data-d="aufrunden / abrunden">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.ceil(x) / floor(x)</code>
+      </td>
+      <td style="color:#6c7a8e">Aufrunden / Abrunden</td>
+      <td style="color:#c3e88d;font-size:11px">math.ceil(1.2) → 2</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.sqrt(x)"
+        data-d="quadratwurzel">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.sqrt(x)</code>
+      </td>
+      <td style="color:#6c7a8e">Quadratwurzel</td>
+      <td style="color:#c3e88d;font-size:11px">math.sqrt(16) → 4.0</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.max(x,...) / min(x,...)"
+        data-d="maximum / minimum">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.max(x,...) / min(x,...)</code>
+      </td>
+      <td style="color:#6c7a8e">Maximum / Minimum</td>
+      <td style="color:#c3e88d;font-size:11px">math.max(1,5,3) → 5</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.random(m,n)"
+        data-d="zufallszahl [m,n]  (oder [0,1))">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.random(m,n)</code>
+      </td>
+      <td style="color:#6c7a8e">Zufallszahl [m,n]  (oder [0,1))</td>
+      <td style="color:#c3e88d;font-size:11px">math.random(1,6) → Würfelwurf</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.randomseed(n)"
+        data-d="seed setzen">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.randomseed(n)</code>
+      </td>
+      <td style="color:#6c7a8e">Seed setzen</td>
+      <td style="color:#c3e88d;font-size:11px">math.randomseed(os.time())</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.sin/cos/tan(x)"
+        data-d="trigonometrie (x in radiant)">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.sin/cos/tan(x)</code>
+      </td>
+      <td style="color:#6c7a8e">Trigonometrie (x in Radiant)</td>
+      <td style="color:#c3e88d;font-size:11px">math.sin(math.pi/2) → 1.0</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.exp(x)"
+        data-d="e^x">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.exp(x)</code>
+      </td>
+      <td style="color:#6c7a8e">e^x</td>
+      <td style="color:#c3e88d;font-size:11px">math.exp(1) → 2.718...</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.log(x,base)"
+        data-d="logarithmus (base optional, std: e)">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.log(x,base)</code>
+      </td>
+      <td style="color:#6c7a8e">Logarithmus (base optional, Std: e)</td>
+      <td style="color:#c3e88d;font-size:11px">math.log(100,10) → 2.0</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.pi"
+        data-d="π ≈ 3.14159...">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.pi</code>
+      </td>
+      <td style="color:#6c7a8e">π ≈ 3.14159...</td>
+      <td style="color:#c3e88d;font-size:11px">Konstante</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.huge"
+        data-d="unendlich">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.huge</code>
+      </td>
+      <td style="color:#6c7a8e">Unendlich</td>
+      <td style="color:#c3e88d;font-size:11px">math.huge &gt; 1e308</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.type(x)"
+        data-d=""integer" / "float" / false (5.3+)">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.type(x)</code>
+      </td>
+      <td style="color:#6c7a8e">"integer" / "float" / false (5.3+)</td>
+      <td style="color:#c3e88d;font-size:11px">math.type(1) → "integer"</td>
+    </tr>
+    <tr class="cr"
+        data-m="math.tointeger(x)"
+        data-d="float→integer wenn exakt möglich">
+      <td style="width:180px">
+        <code style="color:#ffb347">math.tointeger(x)</code>
+      </td>
+      <td style="color:#6c7a8e">float→integer wenn exakt möglich</td>
+      <td style="color:#c3e88d;font-size:11px">math.tointeger(3.0) → 3</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib3"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('lib3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>io &amp; os – Ein-/Ausgabe
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="lib-s-3" type="text" placeholder="🔍 Funktion suchen…" style="margin-top:4px">
+<table>
+  <thead>
+    <tr>
+      <th>Funktion</th>
+      <th>Beschreibung</th>
+      <th>Beispiel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cr"
+        data-m="io.write(s,...)"
+        data-d="ohne newline ausgeben">
+      <td style="width:180px">
+        <code style="color:#00ff88">io.write(s,...)</code>
+      </td>
+      <td style="color:#6c7a8e">Ohne Newline ausgeben</td>
+      <td style="color:#c3e88d;font-size:11px">io.write("Hallo ", "Welt")</td>
+    </tr>
+    <tr class="cr"
+        data-m="io.read(fmt)"
+        data-d="lesen: "*l"=zeile "*n"=zahl "*a"=alles">
+      <td style="width:180px">
+        <code style="color:#00ff88">io.read(fmt)</code>
+      </td>
+      <td style="color:#6c7a8e">Lesen: "*l"=Zeile "*n"=Zahl "*a"=alles</td>
+      <td style="color:#c3e88d;font-size:11px">io.read("*l") → Zeile ohne \n</td>
+    </tr>
+    <tr class="cr"
+        data-m="io.open(path,mode)"
+        data-d="datei öffnen → file handle">
+      <td style="width:180px">
+        <code style="color:#00ff88">io.open(path,mode)</code>
+      </td>
+      <td style="color:#6c7a8e">Datei öffnen → file handle</td>
+      <td style="color:#c3e88d;font-size:11px">local f = io.open("a.txt","r")</td>
+    </tr>
+    <tr class="cr"
+        data-m="f:read(fmt)"
+        data-d="aus handle lesen">
+      <td style="width:180px">
+        <code style="color:#00ff88">f:read(fmt)</code>
+      </td>
+      <td style="color:#6c7a8e">Aus handle lesen</td>
+      <td style="color:#c3e88d;font-size:11px">f:read("*a") → ganzer Inhalt</td>
+    </tr>
+    <tr class="cr"
+        data-m="f:write(s,...)"
+        data-d="in handle schreiben">
+      <td style="width:180px">
+        <code style="color:#00ff88">f:write(s,...)</code>
+      </td>
+      <td style="color:#6c7a8e">In handle schreiben</td>
+      <td style="color:#c3e88d;font-size:11px">f:write("Zeile\n")</td>
+    </tr>
+    <tr class="cr"
+        data-m="f:lines()"
+        data-d="iterator über zeilen">
+      <td style="width:180px">
+        <code style="color:#00ff88">f:lines()</code>
+      </td>
+      <td style="color:#6c7a8e">Iterator über Zeilen</td>
+      <td style="color:#c3e88d;font-size:11px">for z in f:lines() do</td>
+    </tr>
+    <tr class="cr"
+        data-m="f:close()"
+        data-d="datei schließen">
+      <td style="width:180px">
+        <code style="color:#00ff88">f:close()</code>
+      </td>
+      <td style="color:#6c7a8e">Datei schließen</td>
+      <td style="color:#c3e88d;font-size:11px">f:close()</td>
+    </tr>
+    <tr class="cr"
+        data-m="os.time()"
+        data-d="unix-timestamp">
+      <td style="width:180px">
+        <code style="color:#00ff88">os.time()</code>
+      </td>
+      <td style="color:#6c7a8e">Unix-Timestamp</td>
+      <td style="color:#c3e88d;font-size:11px">os.time() → 1710000000</td>
+    </tr>
+    <tr class="cr"
+        data-m="os.date(fmt,time)"
+        data-d="datum formatieren">
+      <td style="width:180px">
+        <code style="color:#00ff88">os.date(fmt,time)</code>
+      </td>
+      <td style="color:#6c7a8e">Datum formatieren</td>
+      <td style="color:#c3e88d;font-size:11px">os.date("%Y-%m-%d") → "2024-01-15"</td>
+    </tr>
+    <tr class="cr"
+        data-m="os.clock()"
+        data-d="cpu-zeit in sekunden">
+      <td style="width:180px">
+        <code style="color:#00ff88">os.clock()</code>
+      </td>
+      <td style="color:#6c7a8e">CPU-Zeit in Sekunden</td>
+      <td style="color:#c3e88d;font-size:11px">Für Performance-Messungen</td>
+    </tr>
+    <tr class="cr"
+        data-m="os.exit(code)"
+        data-d="programm beenden">
+      <td style="width:180px">
+        <code style="color:#00ff88">os.exit(code)</code>
+      </td>
+      <td style="color:#6c7a8e">Programm beenden</td>
+      <td style="color:#c3e88d;font-size:11px">os.exit(0)</td>
+    </tr>
+    <tr class="cr"
+        data-m="os.getenv(name)"
+        data-d="umgebungsvariable lesen">
+      <td style="width:180px">
+        <code style="color:#00ff88">os.getenv(name)</code>
+      </td>
+      <td style="color:#6c7a8e">Umgebungsvariable lesen</td>
+      <td style="color:#c3e88d;font-size:11px">os.getenv("HOME")</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-coroutines" class="tp">
+
+<div class="ac open" id="ac-co0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('co0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Coroutine-Grundlagen
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="coroutine-grundlagen">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Coroutine-Grundlagen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Coroutines sind kooperative Threads – kein echtes Multithreading!</span>
+<span style="color:#546e7a">-- Status: suspended → running → suspended → dead</span>
+
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> produzent()
+    <span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span> <span style="color:#c792ea">do</span>
+        <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Produziere: "</span> <span style="color:#89ddff">..</span> i)
+        <span style="color:#82aaff">coroutine</span>.yield(i)      <span style="color:#546e7a">-- Pause, gibt Wert zurück</span>
+    <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"fertig"</span>             <span style="color:#546e7a">-- letzter Rückgabewert</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> co = <span style="color:#82aaff">coroutine</span>.create(produzent)
+
+<span style="color:#546e7a">-- coroutine.resume: startet/setzt fort, gibt true + Yield-Wert zurück</span>
+<span style="color:#c792ea">local</span> ok, wert = <span style="color:#82aaff">coroutine</span>.resume(co)   <span style="color:#546e7a">-- true, 1</span>
+<span style="color:#82aaff">print</span>(ok, wert)
+<span style="color:#c792ea">local</span> ok, wert = <span style="color:#82aaff">coroutine</span>.resume(co)   <span style="color:#546e7a">-- true, 2</span>
+<span style="color:#82aaff">print</span>(ok, wert)
+
+<span style="color:#546e7a">-- Coroutine-Status abfragen</span>
+<span style="color:#82aaff">print</span>(<span style="color:#82aaff">coroutine</span>.status(co))   <span style="color:#546e7a">-- "suspended"</span>
+
+<span style="color:#546e7a">-- Bis zum Ende laufen lassen</span>
+<span style="color:#c792ea">while</span> <span style="color:#82aaff">coroutine</span>.status(co) <span style="color:#89ddff">~=</span> <span style="color:#c3e88d">"dead"</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">local</span> ok, val = <span style="color:#82aaff">coroutine</span>.resume(co)
+    <span style="color:#c792ea">if</span> ok <span style="color:#c792ea">then</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Wert:"</span>, val) <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-co1"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('co1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>Coroutines als Iteratoren (wrap)
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="coroutines als iteratoren (wrap)">
+  <div style="color:#6c9fe8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Coroutines als Iteratoren (wrap)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- coroutine.wrap: einfacheres API – gibt direkt Funktion zurück</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> range(von, bis, step)
+    step = step <span style="color:#c792ea">or</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">coroutine</span>.wrap(<span style="color:#c792ea">function</span>()
+        <span style="color:#c792ea">for</span> i = von, bis, step <span style="color:#c792ea">do</span>
+            <span style="color:#82aaff">coroutine</span>.yield(i)
+        <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Wie ein normaler Iterator verwendbar:</span>
+<span style="color:#c792ea">for</span> zahl <span style="color:#c792ea">in</span> range(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">2</span>) <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">io</span>.write(zahl <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" "</span>)   <span style="color:#546e7a">-- 1 3 5 7 9</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Producer-Consumer mit Coroutines</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> produzent()
+    <span style="color:#c792ea">local</span> items = {<span style="color:#c3e88d">"apfel"</span>, <span style="color:#c3e88d">"banane"</span>, <span style="color:#c3e88d">"kirsche"</span>}
+    <span style="color:#c792ea">for</span> _, item <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(items) <span style="color:#c792ea">do</span>
+        <span style="color:#82aaff">coroutine</span>.yield(item)
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> verbraucher(prod)
+    <span style="color:#c792ea">while</span> <span style="color:#c792ea">true</span> <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">local</span> ok, item = <span style="color:#82aaff">coroutine</span>.resume(prod)
+        <span style="color:#c792ea">if</span> <span style="color:#c792ea">not</span> ok <span style="color:#c792ea">or</span> item == <span style="color:#c792ea">nil</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">break</span> <span style="color:#c792ea">end</span>
+        <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Verarbeite: "</span> <span style="color:#89ddff">..</span> item)
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+verbraucher(<span style="color:#82aaff">coroutine</span>.create(produzent))</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-co2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('co2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Werte zwischen Coroutines senden
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="werte zwischen coroutines senden">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Werte zwischen Coroutines senden
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Werte können SOWOHL übergeben als auch empfangen werden!</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> akkumulator()
+    <span style="color:#c792ea">local</span> summe = <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">while</span> <span style="color:#c792ea">true</span> <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">local</span> wert = <span style="color:#82aaff">coroutine</span>.yield(summe)   <span style="color:#546e7a">-- gibt Summe, empfängt Wert</span>
+        <span style="color:#c792ea">if</span> wert == <span style="color:#c792ea">nil</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">break</span> <span style="color:#c792ea">end</span>
+        summe = summe + wert
+    <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> summe
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> co = <span style="color:#82aaff">coroutine</span>.create(akkumulator)
+<span style="color:#82aaff">coroutine</span>.resume(co)        <span style="color:#546e7a">-- starten, bekommt 0</span>
+<span style="color:#82aaff">coroutine</span>.resume(co, <span style="color:#f78c6c">10</span>)    <span style="color:#546e7a">-- schickt 10, bekommt 10</span>
+<span style="color:#82aaff">coroutine</span>.resume(co, <span style="color:#f78c6c">5</span>)     <span style="color:#546e7a">-- schickt 5, bekommt 15</span>
+<span style="color:#82aaff">coroutine</span>.resume(co, <span style="color:#f78c6c">7</span>)     <span style="color:#546e7a">-- schickt 7, bekommt 22</span>
+<span style="color:#c792ea">local</span> ok, summe = <span style="color:#82aaff">coroutine</span>.resume(co, <span style="color:#c792ea">nil</span>)   <span style="color:#546e7a">-- beendet</span>
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Summe:"</span>, summe)   <span style="color:#546e7a">-- 22</span>
+
+<span style="color:#546e7a">-- Fehlerbehandlung in Coroutines</span>
+<span style="color:#c792ea">local</span> co2 = <span style="color:#82aaff">coroutine</span>.create(<span style="color:#c792ea">function</span>()
+    <span style="color:#82aaff">error</span>(<span style="color:#c3e88d">"Coroutine-Fehler!"</span>)
+<span style="color:#c792ea">end</span>)
+<span style="color:#c792ea">local</span> ok, err = <span style="color:#82aaff">coroutine</span>.resume(co2)
+<span style="color:#82aaff">print</span>(ok, err)   <span style="color:#546e7a">-- false  input:1: Coroutine-Fehler!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-modules" class="tp">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Module erstellen &amp; laden
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="module erstellen &amp; laden">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Module erstellen &amp; laden
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Datei: mein_modul.lua</span>
+<span style="color:#546e7a">-- Konvention: Modul gibt eine Tabelle zurück</span>
+
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">M</span> = {}   <span style="color:#546e7a">-- Private Tabelle des Moduls</span>
+
+<span style="color:#546e7a">-- Private Variable (local = nicht sichtbar von außen)</span>
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">VERSION</span> = <span style="color:#c3e88d">"1.0"</span>
+
+<span style="color:#546e7a">-- Öffentliche Funktion</span>
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">M</span>.hallo(name)
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Hallo, "</span> <span style="color:#89ddff">..</span> name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">"! v"</span> <span style="color:#89ddff">..</span> <span style="color:#ffcb6b">VERSION</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Öffentliche Konstante</span>
+<span style="color:#ffcb6b">M</span>.<span style="color:#ffcb6b">MAX_WERT</span> = <span style="color:#f78c6c">100</span>
+
+<span style="color:#546e7a">-- Muster: Private Hilfsfunktionen</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> validiere(x)
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">type</span>(x) == <span style="color:#c3e88d">"number"</span> <span style="color:#c792ea">and</span> x &gt; <span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">M</span>.verarbeite(x)
+    <span style="color:#c792ea">if</span> <span style="color:#c792ea">not</span> validiere(x) <span style="color:#c792ea">then</span>
+        <span style="color:#82aaff">error</span>(<span style="color:#c3e88d">"Ungültiger Wert: "</span> <span style="color:#89ddff">..</span> <span style="color:#82aaff">tostring</span>(x))
+    <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> x * <span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">return</span> <span style="color:#ffcb6b">M</span>   <span style="color:#546e7a">-- Rückgabe ist Pflicht!</span>
+
+<span style="color:#546e7a">-- ────────────────────────────────────────────</span>
+<span style="color:#546e7a">-- Verwendung in einer anderen Datei:</span>
+<span style="color:#c792ea">local</span> modul = <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"mein_modul"</span>)
+<span style="color:#82aaff">print</span>(modul.hallo(<span style="color:#c3e88d">"Welt"</span>))         <span style="color:#546e7a">-- Hallo, Welt! v1.0</span>
+<span style="color:#82aaff">print</span>(modul.verarbeite(<span style="color:#f78c6c">5</span>))         <span style="color:#546e7a">-- 10</span>
+<span style="color:#546e7a">-- print(modul.VERSION)            -- nil! (privat)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>require &amp; Package-System
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="require &amp; package-system">
+  <div style="color:#6c9fe8;font-weight:700;font-size:12px;margin-bottom:8px">
+    require &amp; Package-System
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- require() lädt und führt ein Modul einmalig aus</span>
+<span style="color:#546e7a">-- Das Ergebnis wird in package.loaded[name] gecacht</span>
+<span style="color:#c792ea">local</span> json  = <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"json"</span>)          <span style="color:#546e7a">-- externe Bibliothek</span>
+<span style="color:#c792ea">local</span> utils = <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"lib.utils"</span>)     <span style="color:#546e7a">-- Unterordner: lib/utils.lua</span>
+
+<span style="color:#546e7a">-- require sucht in package.path (;-getrennte Muster)</span>
+<span style="color:#82aaff">print</span>(<span style="color:#82aaff">package</span>.path)
+<span style="color:#546e7a">-- ./?.lua;/usr/share/lua/5.4/?.lua;...</span>
+
+<span style="color:#546e7a">-- package.loaded: Cache aller geladenen Module</span>
+<span style="color:#82aaff">print</span>(<span style="color:#82aaff">package</span>.loaded[<span style="color:#c3e88d">"math"</span>])   <span style="color:#546e7a">-- die math-Bibliothek</span>
+
+<span style="color:#546e7a">-- Modul explizit neu laden (Cache umgehen)</span>
+<span style="color:#82aaff">package</span>.loaded[<span style="color:#c3e88d">"mein_modul"</span>] = <span style="color:#c792ea">nil</span>
+<span style="color:#c792ea">local</span> frisch = <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"mein_modul"</span>)
+
+<span style="color:#546e7a">-- Relativer require in LuaRocks-Paketen</span>
+<span style="color:#c792ea">local</span> _M = <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"mein_paket.helper"</span>)
+
+<span style="color:#546e7a">-- package.preload: Modul-Loader vorab registrieren</span>
+<span style="color:#82aaff">package</span>.preload[<span style="color:#c3e88d">"mein_inline_modul"</span>] = <span style="color:#c792ea">function</span>()
+    <span style="color:#c792ea">return</span> { wert = <span style="color:#f78c6c">42</span> }
+<span style="color:#c792ea">end</span>
+<span style="color:#c792ea">local</span> inline = <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"mein_inline_modul"</span>)
+<span style="color:#82aaff">print</span>(inline.wert)   <span style="color:#546e7a">-- 42</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Lua hat kein try/catch – stattdessen pcall und xpcall</span>
+
+<span style="color:#546e7a">-- pcall (protected call): fängt Fehler ab</span>
+<span style="color:#c792ea">local</span> ok, ergebnis = <span style="color:#82aaff">pcall</span>(<span style="color:#c792ea">function</span>()
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">10</span> / <span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">end</span>)
+<span style="color:#82aaff">print</span>(ok, ergebnis)   <span style="color:#546e7a">-- true  5.0</span>
+
+<span style="color:#546e7a">-- Bei Fehler: ok=false, ergebnis=Fehlermeldung</span>
+<span style="color:#c792ea">local</span> ok, fehler = <span style="color:#82aaff">pcall</span>(<span style="color:#c792ea">function</span>()
+    <span style="color:#82aaff">error</span>(<span style="color:#c3e88d">"Etwas schiefgelaufen!"</span>)
+<span style="color:#c792ea">end</span>)
+<span style="color:#82aaff">print</span>(ok, fehler)   <span style="color:#546e7a">-- false  input:2: Etwas schiefgelaufen!</span>
+
+<span style="color:#546e7a">-- error() mit Tabelle als Fehler-Objekt</span>
+<span style="color:#c792ea">local</span> ok, err = <span style="color:#82aaff">pcall</span>(<span style="color:#c792ea">function</span>()
+    <span style="color:#82aaff">error</span>({code = <span style="color:#f78c6c">404</span>, message = <span style="color:#c3e88d">"Nicht gefunden"</span>})
+<span style="color:#c792ea">end</span>)
+<span style="color:#c792ea">if</span> <span style="color:#c792ea">not</span> ok <span style="color:#c792ea">and</span> <span style="color:#82aaff">type</span>(err) == <span style="color:#c3e88d">"table"</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">print</span>(err.code, err.message)   <span style="color:#546e7a">-- 404  Nicht gefunden</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- xpcall: wie pcall, aber mit Message-Handler</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> handler(fehler)
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">debug</span>.traceback(fehler, <span style="color:#f78c6c">2</span>)   <span style="color:#546e7a">-- Stack-Trace</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> ok, msg = <span style="color:#82aaff">xpcall</span>(<span style="color:#c792ea">function</span>()
+    <span style="color:#82aaff">error</span>(<span style="color:#c3e88d">"Oh nein!"</span>)
+<span style="color:#c792ea">end</span>, handler)
+<span style="color:#82aaff">print</span>(msg)   <span style="color:#546e7a">-- Fehlermeldung + Stack-Trace</span>
+
+<span style="color:#546e7a">-- assert(): löst error() aus wenn Bedingung falsy</span>
+<span style="color:#c792ea">local</span> wert = <span style="color:#82aaff">assert</span>(<span style="color:#82aaff">tonumber</span>(<span style="color:#c3e88d">"42"</span>), <span style="color:#c3e88d">"Keine Zahl!"</span>)
+<span style="color:#546e7a">-- assert(bedingung, fehlermeldung)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button id="exb0" onclick="switchEx(0)" style="border:1px solid #6c9fe8;color:#6c9fe8;background:rgba(108,159,232,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">FizzBuzz</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Klassen &amp; Vererbung</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Fibonacci mit Coroutine</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Funktionales Programmieren</button>
+  <button id="exb4" onclick="switchEx(4)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Datei lesen &amp; verarbeiten</button>
+  
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Klassisch</span>
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">100</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">if</span>     i % <span style="color:#f78c6c">15</span> == <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"FizzBuzz"</span>)
+    <span style="color:#c792ea">elseif</span> i % <span style="color:#f78c6c">3</span>  == <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Fizz"</span>)
+    <span style="color:#c792ea">elseif</span> i % <span style="color:#f78c6c">5</span>  == <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Buzz"</span>)
+    <span style="color:#c792ea">else</span>                     <span style="color:#82aaff">print</span>(i)
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Eleganter mit Tabelle</span>
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">100</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">local</span> s = (i%<span style="color:#f78c6c">3</span>==<span style="color:#f78c6c">0</span> <span style="color:#c792ea">and</span> <span style="color:#c3e88d">"Fizz"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">""</span>)
+           <span style="color:#89ddff">..</span> (i%<span style="color:#f78c6c">5</span>==<span style="color:#f78c6c">0</span> <span style="color:#c792ea">and</span> <span style="color:#c3e88d">"Buzz"</span> <span style="color:#c792ea">or</span> <span style="color:#c3e88d">""</span>)
+    <span style="color:#82aaff">print</span>(s <span style="color:#89ddff">~=</span> <span style="color:#c3e88d">""</span> <span style="color:#c792ea">and</span> s <span style="color:#c792ea">or</span> i)
+<span style="color:#c792ea">end</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Basisklasse</span>
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">Tier</span> = {}
+<span style="color:#ffcb6b">Tier</span>.__index = <span style="color:#ffcb6b">Tier</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Tier</span>:neu(name, sound)
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">setmetatable</span>({name=name, sound=sound}, self)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Tier</span>:spreche()
+    <span style="color:#82aaff">print</span>(self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">": "</span> <span style="color:#89ddff">..</span> self.sound <span style="color:#89ddff">..</span> <span style="color:#c3e88d">"!"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Tier</span>:beschreibung()
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">string</span>.format(<span style="color:#c3e88d">"Tier '%s'"</span>, self.name)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Unterklasse</span>
+<span style="color:#c792ea">local</span> <span style="color:#ffcb6b">Hund</span> = <span style="color:#82aaff">setmetatable</span>({}, {__index = <span style="color:#ffcb6b">Tier</span>})
+<span style="color:#ffcb6b">Hund</span>.__index = <span style="color:#ffcb6b">Hund</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Hund</span>:neu(name)
+    <span style="color:#c792ea">local</span> inst = <span style="color:#ffcb6b">Tier</span>.neu(self, name, <span style="color:#c3e88d">"Wuff"</span>)
+    inst.tricks = {}
+    <span style="color:#c792ea">return</span> inst
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Hund</span>:lerne(trick)
+    <span style="color:#82aaff">table</span>.insert(self.tricks, trick)
+    <span style="color:#82aaff">print</span>(self.name <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" lernt: "</span> <span style="color:#89ddff">..</span> trick)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">function</span> <span style="color:#ffcb6b">Hund</span>:beschreibung()
+    <span style="color:#c792ea">local</span> basis = <span style="color:#ffcb6b">Tier</span>.beschreibung(self)     <span style="color:#546e7a">-- super-Aufruf</span>
+    <span style="color:#c792ea">return</span> basis <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" (Hund, "</span> <span style="color:#89ddff">..</span> #self.tricks <span style="color:#89ddff">..</span> <span style="color:#c3e88d">" Tricks)"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Verwendung</span>
+<span style="color:#c792ea">local</span> katze = <span style="color:#ffcb6b">Tier</span>:neu(<span style="color:#c3e88d">"Minka"</span>, <span style="color:#c3e88d">"Miau"</span>)
+<span style="color:#c792ea">local</span> rex   = <span style="color:#ffcb6b">Hund</span>:neu(<span style="color:#c3e88d">"Rex"</span>)
+
+katze:spreche()         <span style="color:#546e7a">-- Minka: Miau!</span>
+rex:spreche()           <span style="color:#546e7a">-- Rex: Wuff!</span>
+rex:lerne(<span style="color:#c3e88d">"Sitz"</span>)
+rex:lerne(<span style="color:#c3e88d">"Platz"</span>)
+<span style="color:#82aaff">print</span>(rex:beschreibung())  <span style="color:#546e7a">-- Tier 'Rex' (Hund, 2 Tricks)</span>
+
+<span style="color:#546e7a">-- Typ-Prüfung via Metatable</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> ist_hund(obj)
+    <span style="color:#c792ea">local</span> mt = <span style="color:#82aaff">getmetatable</span>(obj)
+    <span style="color:#c792ea">while</span> mt <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">if</span> mt == <span style="color:#ffcb6b">Hund</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">return</span> <span style="color:#c792ea">true</span> <span style="color:#c792ea">end</span>
+        mt = <span style="color:#82aaff">getmetatable</span>(mt)
+    <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">false</span>
+<span style="color:#c792ea">end</span>
+<span style="color:#82aaff">print</span>(ist_hund(rex))    <span style="color:#546e7a">-- true</span>
+<span style="color:#82aaff">print</span>(ist_hund(katze))  <span style="color:#546e7a">-- false</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Unendliche Fibonacci-Folge als Coroutine-Iterator</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> fibonacci_gen()
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">coroutine</span>.wrap(<span style="color:#c792ea">function</span>()
+        <span style="color:#c792ea">local</span> a, b = <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>
+        <span style="color:#c792ea">while</span> <span style="color:#c792ea">true</span> <span style="color:#c792ea">do</span>
+            <span style="color:#82aaff">coroutine</span>.yield(a)
+            a, b = b, a + b
+        <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Erste 10 Fibonacci-Zahlen</span>
+<span style="color:#c792ea">local</span> fib = fibonacci_gen()
+<span style="color:#c792ea">local</span> erste_10 = {}
+<span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">10</span> <span style="color:#c792ea">do</span>
+    erste_10[i] = fib()
+<span style="color:#c792ea">end</span>
+<span style="color:#82aaff">print</span>(<span style="color:#82aaff">table</span>.concat(erste_10, <span style="color:#c3e88d">", "</span>))
+<span style="color:#546e7a">-- 0, 1, 1, 2, 3, 5, 8, 13, 21, 34</span>
+
+<span style="color:#546e7a">-- Erste Fibonacci-Zahl &gt; 1000</span>
+<span style="color:#c792ea">local</span> fib2 = fibonacci_gen()
+<span style="color:#c792ea">local</span> n = fib2()
+<span style="color:#c792ea">while</span> n <span style="color:#89ddff">&lt;=</span> <span style="color:#f78c6c">1000</span> <span style="color:#c792ea">do</span> n = fib2() <span style="color:#c792ea">end</span>
+<span style="color:#82aaff">print</span>(n)   <span style="color:#546e7a">-- 1597</span>
+
+<span style="color:#546e7a">-- Mit take-Hilfsfunktion</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> take(gen, count)
+    <span style="color:#c792ea">local</span> result = {}
+    <span style="color:#c792ea">for</span> i = <span style="color:#f78c6c">1</span>, count <span style="color:#c792ea">do</span> result[i] = gen() <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> result
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> quadrat_fib = fibonacci_gen()
+<span style="color:#c792ea">local</span> gefiltert = {}
+<span style="color:#c792ea">for</span> n <span style="color:#c792ea">in</span> fibonacci_gen() <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">if</span> n &gt; <span style="color:#f78c6c">1000</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">break</span> <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">if</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span>
+        <span style="color:#82aaff">table</span>.insert(gefiltert, n)
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+<span style="color:#82aaff">print</span>(<span style="color:#82aaff">table</span>.concat(gefiltert, <span style="color:#c3e88d">", "</span>))   <span style="color:#546e7a">-- 0, 2, 8, 34, 144, 610</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Lua unterstützt funktionalen Stil sehr gut</span>
+
+<span style="color:#546e7a">-- map</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> map(t, fn)
+    <span style="color:#c792ea">local</span> result = {}
+    <span style="color:#c792ea">for</span> i, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(t) <span style="color:#c792ea">do</span> result[i] = fn(v) <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> result
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- filter</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> filter(t, pred)
+    <span style="color:#c792ea">local</span> result = {}
+    <span style="color:#c792ea">for</span> _, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(t) <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">if</span> pred(v) <span style="color:#c792ea">then</span> result[#result+<span style="color:#f78c6c">1</span>] = v <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> result
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- reduce</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> reduce(t, fn, init)
+    <span style="color:#c792ea">local</span> acc = init
+    <span style="color:#c792ea">for</span> _, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(t) <span style="color:#c792ea">do</span> acc = fn(acc, v) <span style="color:#c792ea">end</span>
+    <span style="color:#c792ea">return</span> acc
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- compose: f(g(x))</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> compose(<span style="color:#89ddff">...</span>)
+    <span style="color:#c792ea">local</span> fns = {<span style="color:#89ddff">...</span>}
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">function</span>(x)
+        <span style="color:#c792ea">local</span> result = x
+        <span style="color:#c792ea">for</span> i = #fns, <span style="color:#f78c6c">1</span>, -<span style="color:#f78c6c">1</span> <span style="color:#c792ea">do</span> result = fns[i](result) <span style="color:#c792ea">end</span>
+        <span style="color:#c792ea">return</span> result
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Pipeline</span>
+<span style="color:#c792ea">local</span> zahlen = {<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>}
+
+<span style="color:#c792ea">local</span> summe_gerader_quadrate = reduce(
+    map(
+        filter(zahlen, <span style="color:#c792ea">function</span>(x) <span style="color:#c792ea">return</span> x % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> <span style="color:#c792ea">end</span>),
+        <span style="color:#c792ea">function</span>(x) <span style="color:#c792ea">return</span> x * x <span style="color:#c792ea">end</span>
+    ),
+    <span style="color:#c792ea">function</span>(a, b) <span style="color:#c792ea">return</span> a + b <span style="color:#c792ea">end</span>,
+    <span style="color:#f78c6c">0</span>
+)
+<span style="color:#82aaff">print</span>(summe_gerader_quadrate)   <span style="color:#546e7a">-- 4+16+36+64+100 = 220</span>
+
+<span style="color:#546e7a">-- Partial Application</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> partial(fn, <span style="color:#89ddff">...</span>)
+    <span style="color:#c792ea">local</span> args = {<span style="color:#89ddff">...</span>}
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">function</span>(<span style="color:#89ddff">...</span>)
+        <span style="color:#c792ea">local</span> all = {<span style="color:#82aaff">table</span>.<span style="color:#82aaff">unpack</span>(args)}
+        <span style="color:#c792ea">for</span> _, v <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>({<span style="color:#89ddff">...</span>}) <span style="color:#c792ea">do</span> all[#all+<span style="color:#f78c6c">1</span>] = v <span style="color:#c792ea">end</span>
+        <span style="color:#c792ea">return</span> fn(<span style="color:#82aaff">table</span>.<span style="color:#82aaff">unpack</span>(all))
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">local</span> verdoppeln = partial(<span style="color:#c792ea">function</span>(f, x) <span style="color:#c792ea">return</span> f * x <span style="color:#c792ea">end</span>, <span style="color:#f78c6c">2</span>)
+<span style="color:#82aaff">print</span>(verdoppeln(<span style="color:#f78c6c">7</span>))   <span style="color:#546e7a">-- 14</span></pre>
+</div>
+<div id="exp4" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">-- Datei zeilenweise lesen und verarbeiten</span>
+<span style="color:#c792ea">local</span> <span style="color:#c792ea">function</span> lese_csv(pfad, trennzeichen)
+    trennzeichen = trennzeichen <span style="color:#c792ea">or</span> <span style="color:#c3e88d">","</span>
+    <span style="color:#c792ea">local</span> ergebnis = {}
+
+    <span style="color:#c792ea">local</span> datei, fehler = <span style="color:#82aaff">io</span>.open(pfad, <span style="color:#c3e88d">"r"</span>)
+    <span style="color:#c792ea">if</span> <span style="color:#c792ea">not</span> datei <span style="color:#c792ea">then</span>
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>, <span style="color:#c3e88d">"Kann Datei nicht öffnen: "</span> <span style="color:#89ddff">..</span> fehler
+    <span style="color:#c792ea">end</span>
+
+    <span style="color:#546e7a">-- Erste Zeile als Header</span>
+    <span style="color:#c792ea">local</span> header_zeile = datei:read(<span style="color:#c3e88d">"*l"</span>)
+    <span style="color:#c792ea">if</span> <span style="color:#c792ea">not</span> header_zeile <span style="color:#c792ea">then</span>
+        datei:close()
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>, <span style="color:#c3e88d">"Leere Datei"</span>
+    <span style="color:#c792ea">end</span>
+
+    <span style="color:#c792ea">local</span> headers = {}
+    <span style="color:#c792ea">for</span> feld <span style="color:#c792ea">in</span> header_zeile:gmatch(<span style="color:#c3e88d">"[^"</span> <span style="color:#89ddff">..</span> trennzeichen <span style="color:#89ddff">..</span> <span style="color:#c3e88d">"]+"</span>) <span style="color:#c792ea">do</span>
+        headers[#headers+<span style="color:#f78c6c">1</span>] = feld:match(<span style="color:#c3e88d">"^%s*(.-)%s*$"</span>)   <span style="color:#546e7a">-- trimmen</span>
+    <span style="color:#c792ea">end</span>
+
+    <span style="color:#546e7a">-- Restliche Zeilen</span>
+    <span style="color:#c792ea">for</span> zeile <span style="color:#c792ea">in</span> datei:lines() <span style="color:#c792ea">do</span>
+        <span style="color:#c792ea">local</span> felder = {}
+        <span style="color:#c792ea">local</span> i = <span style="color:#f78c6c">1</span>
+        <span style="color:#c792ea">for</span> feld <span style="color:#c792ea">in</span> zeile:gmatch(<span style="color:#c3e88d">"[^"</span> <span style="color:#89ddff">..</span> trennzeichen <span style="color:#89ddff">..</span> <span style="color:#c3e88d">"]+"</span>) <span style="color:#c792ea">do</span>
+            felder[headers[i]] = feld:match(<span style="color:#c3e88d">"^%s*(.-)%s*$"</span>)
+            i = i + <span style="color:#f78c6c">1</span>
+        <span style="color:#c792ea">end</span>
+        ergebnis[#ergebnis+<span style="color:#f78c6c">1</span>] = felder
+    <span style="color:#c792ea">end</span>
+
+    datei:close()
+    <span style="color:#c792ea">return</span> ergebnis
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">-- Nutzung mit pcall für sichere Fehlerbehandlung</span>
+<span style="color:#c792ea">local</span> ok, daten = <span style="color:#82aaff">pcall</span>(lese_csv, <span style="color:#c3e88d">"daten.csv"</span>)
+<span style="color:#c792ea">if</span> ok <span style="color:#c792ea">and</span> daten <span style="color:#c792ea">then</span>
+    <span style="color:#c792ea">for</span> i, zeile <span style="color:#c792ea">in</span> <span style="color:#82aaff">ipairs</span>(daten) <span style="color:#c792ea">do</span>
+        <span style="color:#82aaff">print</span>(<span style="color:#82aaff">string</span>.format(<span style="color:#c3e88d">"%-20s %s"</span>, zeile.name <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"?"</span>, zeile.email <span style="color:#c792ea">or</span> <span style="color:#c3e88d">"?"</span>))
+    <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">else</span>
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Fehler:"</span>, daten)
+<span style="color:#c792ea">end</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#6c9fe811;border:1px solid #6c9fe844;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#6c9fe8">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S lua luarocks lua-language-server</code><br><code style="color:#ffb347">luarocks install luacheck stylua busted</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>⚙ Lua installieren (Arch)
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">Lua 5.4</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lua</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S lua</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">Lua 5.3</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lua53</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S lua53</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">LuaJIT</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luajit</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S luajit  (2-10x schneller, LuaJIT-API)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">Luau</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luau (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S luau  (Roblox-Variante mit Typen)</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #6c9fe844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#6c9fe80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#6c9fe8">
+      <span style="display:inline-block;width:8px;height:8px;background:#6c9fe8;border-radius:50%;margin-right:2px"></span>⚙ LuaRocks – Paketmanager
+    </span>
+    <span class="aa" style="color:#6c9fe8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#6c9fe8;font-weight:700">luarocks</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S luarocks</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#6c9fe8;font-weight:700">installieren</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install luasocket
+luarocks install penlight
+luarocks install lua-cjson</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#6c9fe8;font-weight:700">lokal</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install --local paketname  # ohne sudo</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#6c9fe8;font-weight:700">suchen</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks search json
+luarocks list  # installierte Pakete</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Entwicklungsumgebung
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">lua-language-server</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lua-language-server</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S lua-language-server  # LSP für Editoren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">stylua</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">stylua (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S stylua
+stylua .  # Formatter</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">luacheck</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install luacheck
+luacheck .  # Linter</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">busted</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install busted
+busted spec/  # Test-Framework</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">luacov</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install luacov
+luacov  # Code-Coverage</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Bibliotheken
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Penlight</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">penlight</span>
+  </div>
+  <code style="color:#ffb347">luarocks install penlight  # Utils: pl.tablex, pl.path, pl.file</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">LuaSocket</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luasocket</span>
+  </div>
+  <code style="color:#ffb347">luarocks install luasocket  # TCP/UDP, HTTP</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">lua-cjson</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lua-cjson</span>
+  </div>
+  <code style="color:#ffb347">luarocks install lua-cjson  # Schnelles JSON</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">LPeg</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lpeg</span>
+  </div>
+  <code style="color:#ffb347">luarocks install lpeg  # Parser-Kombinatoren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Copas</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">copas</span>
+  </div>
+  <code style="color:#ffb347">luarocks install copas  # Async I/O mit Coroutines</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">LÖVE 2D</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">love (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S love  # 2D Spiele-Engine auf Lua-Basis</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">OpenResty</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">openresty</span>
+  </div>
+  <code style="color:#ffb347">Nginx + LuaJIT – Hochperformante Web-Apps</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Lapis</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install lapis  # Web-Framework für OpenResty</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>⚙ REPL &amp; Debugging
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">lua REPL</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lua</span>
+  </div>
+  <code style="color:#ffb347">lua  # interaktive Shell
+lua -e "print(1+1)"  # einmaliger Ausdruck</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">lua -i</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">lua</span>
+  </div>
+  <code style="color:#ffb347">lua -i skript.lua  # nach Ausführung REPL öffnen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">debug lib</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">stdlib</span>
+  </div>
+  <code style="color:#ffb347">debug.traceback()  # Stack-Trace
+debug.getinfo(fn)  # Funktions-Info</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">MobDebug</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">luarocks</span>
+  </div>
+  <code style="color:#ffb347">luarocks install mobdebug  # Remote-Debugger</code>
+</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// Akkordeon auf- / zuklappen
+function tA(id) {
+  const el   = document.getElementById('ac-' + id);
+  const body = el.querySelector('.ab');
+  const open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+// Tab-Navigation
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Suche im Kontrollfluss-Tab
+document.getElementById('ctrl-s').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+    card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+  });
+  if (q) {
+    document.querySelectorAll('[id^="ac-ct"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  }
+});
+
+// Suche in den Bibliotheks-Tabellen
+document.querySelectorAll('[id^="lib-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    const q     = this.value.toLowerCase();
+    const tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display =
+        !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+// Beispiel-Tabs
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach((panel, j) => {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach((btn, j) => {
+    if (j === index) {
+      btn.style.borderColor = '#6c9fe8';
+      btn.style.color       = '#6c9fe8';
+      btn.style.background  = 'rgba(108, 159, 232, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCaml Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #ee7a1a;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f0d0a, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(238,122,26,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(238,122,26,.03); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(238,122,26,.08); padding: 1px 5px; border-radius: 3px; color: #ee7a1a; }
+.cd { background: rgba(0,0,0,.6); border: 1px solid rgba(238,122,26,.15); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#ee7a1a">&#x03BB;</span>
+      <span style="color:#ee7a1a">OCaml</span> Syntax
+    </div>
+    <div id="hdr-sub">OCaml 5.x · ML-Familie · Hindley-Milner · ADTs · Module · Funktoren · Multicore · Lwt/Async</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="typen">ADTs & Pattern</button>
+    <button class="tb" data-tab="funktional">Funktional & Listen</button>
+    <button class="tb" data-tab="module">Module & Fehler</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#ee7a1a0e;border:1px solid #ee7a1a44;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#ee7a1a">OCaml – statisch typisiert, Typen werden inferiert.</strong>
+  ML-Familie. Beeinflusste Rust, F#, Haskell, Swift.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">let</code> statt var &nbsp;·&nbsp;
+    <code style="color:#c3e88d">;</code> trennt Listen-Elemente &nbsp;·&nbsp;
+    <code style="color:#c3e88d>+.</code> für Float-Arithmetik &nbsp;·&nbsp;
+    <code style="color:#c3e88d">|></code> Pipe &nbsp;·&nbsp;
+    <code style="color:#c3e88d">::</code> Cons &nbsp;·&nbsp;
+    <code style="color:#c3e88d">match</code> exhaustiv &nbsp;·&nbsp;
+    Online: <a href="https://v2.ocaml.org/play" style="color:#d4a017">v2.ocaml.org/play</a>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #ee7a1a44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ee7a1a0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ee7a1a">
+      <span style="display:inline-block;width:8px;height:8px;background:#ee7a1a;border-radius:50%;margin-right:2px"></span>OCaml – ML-Familie &amp; Typ-Inferenz
+    </span>
+    <span class="aa" style="color:#ee7a1a;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="ocaml – ml-familie &amp; typ-inferenz">
+  <div style="color:#ee7a1a;font-weight:700;font-size:12px;margin-bottom:8px">
+    OCaml – ML-Familie &amp; Typ-Inferenz
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* OCaml: statisch typisiert, aber Typen werden INFERIERT!</span>
+   <span style="color:#ffcb6b">Du</span> schreibst selten <span style="color:#ffcb6b">Typen</span> – der <span style="color:#ffcb6b">Compiler</span> weiß es selbst. *)
+
+<span style="color:#546e7a">(* Das erste OCaml-Programm *)</span>
+<span style="color:#c792ea">let</span> () = <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Hallo, OCaml!"</span>
+
+<span style="color:#546e7a">(* Kompilieren:</span>
+   ocamlopt -o hello hello.ml   <span style="color:#546e7a">(* Native-Code Compiler *)</span>
+   ocamlc   -o hello hello.ml   <span style="color:#546e7a">(* Bytecode Compiler *)</span>
+   utop                          <span style="color:#546e7a">(* Interaktive REPL! *)</span>
+*)
+
+<span style="color:#546e7a">(* WARUM OCaml?</span>
+   - <span style="color:#ffcb6b">Vollständige</span> <span style="color:#ffcb6b">Typ</span>-<span style="color:#ffcb6b">Inferenz</span>: weniger schreiben, trotzdem sicher
+   - <span style="color:#ffcb6b">Algebraische</span> <span style="color:#ffcb6b">Datentypen</span> + <span style="color:#ffcb6b">Pattern</span> <span style="color:#ffcb6b">Matching</span> (beeinflusste <span style="color:#ffcb6b">Rust</span>!)
+   - <span style="color:#ffcb6b">Module</span> &amp; <span style="color:#ffcb6b">Funktoren</span>: mächtigstes <span style="color:#ffcb6b">Modulsystem</span> überhaupt
+   - <span style="color:#ffcb6b">Performance</span>: nahe an <span style="color:#ffcb6b">C</span> für viele <span style="color:#ffcb6b">Workloads</span>
+   - <span style="color:#ffcb6b">Verwendet</span> bei: <span style="color:#ffcb6b">Jane</span> <span style="color:#ffcb6b">Street</span> (<span style="color:#ffcb6b">Wall</span> <span style="color:#ffcb6b">Street</span>!), <span style="color:#ffcb6b">Coq</span>, <span style="color:#ffcb6b">Docker</span>, ...
+
+   <span style="color:#ffcb6b">OCaml</span> beeinflusste: <span style="color:#ffcb6b">F</span>#, <span style="color:#ffcb6b">Rust</span>, <span style="color:#ffcb6b">Haskell</span>, <span style="color:#ffcb6b">Swift</span>, <span style="color:#ffcb6b">Scala</span>
+*)
+
+<span style="color:#546e7a">(* let – Werte binden (nicht "Variablen"!) *)</span>
+<span style="color:#c792ea">let</span> x = <span style="color:#f78c6c">42</span>             <span style="color:#546e7a">(* int  – inferiert! *)</span>
+<span style="color:#c792ea">let</span> pi = <span style="color:#f78c6c">3.14159</span>       <span style="color:#546e7a">(* float *)</span>
+<span style="color:#c792ea">let</span> name = <span style="color:#c3e88d">"Alice"</span>     <span style="color:#546e7a">(* string *)</span>
+<span style="color:#c792ea">let</span> aktiv = <span style="color:#c792ea">true</span>       <span style="color:#546e7a">(* bool *)</span>
+
+<span style="color:#546e7a">(* let..in – lokale Bindung *)</span>
+<span style="color:#c792ea">let</span> ergebnis =
+  <span style="color:#c792ea">let</span> a = <span style="color:#f78c6c">10</span> <span style="color:#c792ea">in</span>
+  <span style="color:#c792ea">let</span> b = <span style="color:#f78c6c">20</span> <span style="color:#c792ea">in</span>
+  a + b          <span style="color:#546e7a">(* 30 *)</span>
+
+<span style="color:#546e7a">(* Typen KÖNNEN angegeben werden, müssen aber nicht *)</span>
+<span style="color:#c792ea">let</span> n : <span style="color:#ffcb6b">int</span> = <span style="color:#f78c6c">42</span>
+<span style="color:#c792ea">let</span> gruss : <span style="color:#ffcb6b">string</span> = <span style="color:#c3e88d">"Hallo"</span>
+
+<span style="color:#546e7a">(* ;; trennt Top-Level Ausdrücke im REPL *)</span>
+<span style="color:#546e7a">(* In Dateien: nicht nötig, let..in reicht *)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">int</code></td>
+      <td style="color:#c3e88d;font-size:11px">42  |  -7  |  0xFF  |  0b1010  |  1_000</td>
+      <td style="color:#6c7a8e">Integer (63-Bit auf 64-Bit-System!)</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">float</code></td>
+      <td style="color:#c3e88d;font-size:11px">3.14  |  1e10  |  infinity  |  nan</td>
+      <td style="color:#6c7a8e">Fließkomma (IEEE 754)</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Boolean</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">char</code></td>
+      <td style="color:#c3e88d;font-size:11px">'a'  |  '\n'  |  '\x41'</td>
+      <td style="color:#6c7a8e">Einzelnes ASCII-Zeichen</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">string</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  {|raw string|}</td>
+      <td style="color:#6c7a8e">UTF-8 String (unveränderlich)</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">bytes</code></td>
+      <td style="color:#c3e88d;font-size:11px">Bytes.of_string "..."</td>
+      <td style="color:#6c7a8e">Veränderlicher Byte-Puffer</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">unit</code></td>
+      <td style="color:#c3e88d;font-size:11px">()</td>
+      <td style="color:#6c7a8e">Kein Wert (wie void). Einziger Wert: ()</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">'a list</code></td>
+      <td style="color:#c3e88d;font-size:11px">[1; 2; 3]  |  []  |  1 :: [2; 3]</td>
+      <td style="color:#6c7a8e">Verkettete Liste. ; trennt Elemente!</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">'a array</code></td>
+      <td style="color:#c3e88d;font-size:11px">[|1; 2; 3|]  |  Array.make 5 0</td>
+      <td style="color:#6c7a8e">Veränderliches Array. [| |] Syntax</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">'a option</code></td>
+      <td style="color:#c3e88d;font-size:11px">Some 42  |  None</td>
+      <td style="color:#6c7a8e">Optional – kein null!</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">('a, 'b) result</code></td>
+      <td style="color:#c3e88d;font-size:11px">Ok 42  |  Error "msg"</td>
+      <td style="color:#6c7a8e">Ergebnis oder Fehler</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">'a * 'b</code></td>
+      <td style="color:#c3e88d;font-size:11px">(42, "hallo")  |  (1, 2, 3)</td>
+      <td style="color:#6c7a8e">Tupel (unveränderlich)</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">'a ref</code></td>
+      <td style="color:#c3e88d;font-size:11px">ref 42  |  { contents = 42 }</td>
+      <td style="color:#6c7a8e">Veränderliche Referenz</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#4fc3f7">'a -&gt; 'b</code></td>
+      <td style="color:#c3e88d;font-size:11px">fun x -&gt; x + 1  |  (+)</td>
+      <td style="color:#6c7a8e">Funktionstyp</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Ausdrücke &amp; Operatoren
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="ausdrücke &amp; operatoren">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Ausdrücke &amp; Operatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* ALLES ist ein Ausdruck – gibt immer einen Wert zurück! *)</span>
+<span style="color:#c792ea">let</span> wert = <span style="color:#c792ea">if</span> <span style="color:#f78c6c">3</span> &gt; <span style="color:#f78c6c">2</span> <span style="color:#c792ea">then</span> <span style="color:#c3e88d">"größer"</span> <span style="color:#c792ea">else</span> <span style="color:#c3e88d">"kleiner"</span>  <span style="color:#546e7a">(* "größer" *)</span>
+
+<span style="color:#546e7a">(* Arithmetik: STRENG GETRENNT für int und float! *)</span>
+<span style="color:#c792ea">let</span> a = <span style="color:#f78c6c">3</span> + <span style="color:#f78c6c">4</span>        <span style="color:#546e7a">(* int: 7 *)</span>
+<span style="color:#c792ea">let</span> b = <span style="color:#f78c6c">3.0</span> +. <span style="color:#f78c6c">4.0</span>   <span style="color:#546e7a">(* float: 7.0  – Operators enden auf . für float! *)</span>
+<span style="color:#c792ea">let</span> c = <span style="color:#f78c6c">10</span> / <span style="color:#f78c6c">3</span>       <span style="color:#546e7a">(* int: 3 *)</span>
+<span style="color:#c792ea">let</span> d = <span style="color:#f78c6c">10.0</span> /. <span style="color:#f78c6c">3.0</span>  <span style="color:#546e7a">(* float: 3.333... *)</span>
+<span style="color:#c792ea">let</span> e = <span style="color:#f78c6c">10</span> <span style="color:#82aaff">mod</span> <span style="color:#f78c6c">3</span>     <span style="color:#546e7a">(* int: 1 *)</span>
+<span style="color:#c792ea">let</span> f = <span style="color:#f78c6c">2</span> ** <span style="color:#f78c6c">10</span>      <span style="color:#546e7a">(* FEHLER! ** ist für float *)</span>
+<span style="color:#c792ea">let</span> g = <span style="color:#f78c6c">2.0</span> ** <span style="color:#f78c6c">10.0</span>  <span style="color:#546e7a">(* float: 1024.0 *)</span>
+<span style="color:#c792ea">let</span> h = <span style="color:#ffcb6b">Int</span>.pow <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">10</span> <span style="color:#546e7a">(* int: 1024 – via Stdlib *)</span>
+
+<span style="color:#546e7a">(* Konvertierungen (explizit!) *)</span>
+<span style="color:#c792ea">let</span> i = <span style="color:#82aaff">float_of_int</span> <span style="color:#f78c6c">42</span>      <span style="color:#546e7a">(* 42.0 *)</span>
+<span style="color:#c792ea">let</span> j = <span style="color:#82aaff">int_of_float</span> <span style="color:#f78c6c">3.7</span>     <span style="color:#546e7a">(* 3 – truncate *)</span>
+<span style="color:#c792ea">let</span> k = <span style="color:#82aaff">string_of_int</span> <span style="color:#f78c6c">42</span>     <span style="color:#546e7a">(* "42" *)</span>
+<span style="color:#c792ea">let</span> l = <span style="color:#82aaff">int_of_string</span> <span style="color:#c3e88d">"42"</span>   <span style="color:#546e7a">(* 42 – raises Failure wenn ungültig *)</span>
+
+<span style="color:#546e7a">(* String-Operationen *)</span>
+<span style="color:#c792ea">let</span> s1 = <span style="color:#c3e88d">"Hallo"</span> <span style="color:#89ddff">^</span> <span style="color:#c3e88d">" Welt"</span>  <span style="color:#546e7a">(* "Hallo Welt"  ^ = Konkatenation *)</span>
+<span style="color:#c792ea">let</span> laenge = <span style="color:#ffcb6b">String</span>.length <span style="color:#c3e88d">"Hallo"</span>  <span style="color:#546e7a">(* 5 *)</span>
+
+<span style="color:#546e7a">(* Vergleiche – funktionieren für ALLE Typen! *)</span>
+<span style="color:#f78c6c">42</span> = <span style="color:#f78c6c">42</span>         <span style="color:#546e7a">(* true  – strukturelle Gleichheit *)</span>
+<span style="color:#f78c6c">42</span> &lt;&gt; <span style="color:#f78c6c">43</span>        <span style="color:#546e7a">(* true  – Ungleichheit *)</span>
+<span style="color:#c3e88d">"a"</span> &lt; <span style="color:#c3e88d">"b"</span>       <span style="color:#546e7a">(* true  – lexikografisch *)</span>
+[<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>] = [<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>]   <span style="color:#546e7a">(* true  – strukturell *)</span>
+
+<span style="color:#546e7a">(* Physische Gleichheit (Referenz) *)</span>
+<span style="color:#c792ea">let</span> x = [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>]
+<span style="color:#c792ea">let</span> y = [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>]
+x == y   <span style="color:#546e7a">(* false – verschiedene Referenzen *)</span>
+x == x   <span style="color:#546e7a">(* true  – gleiche Referenz *)</span>
+
+<span style="color:#546e7a">(* Pipe-Operator |&gt; – sehr häufig! *)</span>
+<span style="color:#c792ea">let</span> ergebnis =
+  [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>; <span style="color:#f78c6c">4</span>; <span style="color:#f78c6c">5</span>]
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.filter (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x <span style="color:#82aaff">mod</span> <span style="color:#f78c6c">2</span> = <span style="color:#f78c6c">0</span>)
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.map (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * x)
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.fold_left (+) <span style="color:#f78c6c">0</span>
+<span style="color:#546e7a">(* = 20  (4 + 16) *)</span>
+
+<span style="color:#546e7a">(* Komposition mit @@ und |&gt; *)</span>
+<span style="color:#c792ea">let</span> f x = x + <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">let</span> g x = x * <span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">let</span> h = f <span style="color:#89ddff">@</span><span style="color:#89ddff">@</span> g <span style="color:#89ddff">@</span><span style="color:#89ddff">@</span> <span style="color:#f78c6c">5</span>   <span style="color:#546e7a">(* f(g(5)) = f(10) = 11 *)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-typen" class="tp">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #ee7a1a44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ee7a1a0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ee7a1a">
+      <span style="display:inline-block;width:8px;height:8px;background:#ee7a1a;border-radius:50%;margin-right:2px"></span>Algebraische Datentypen (ADTs)
+    </span>
+    <span class="aa" style="color:#ee7a1a;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="algebraische datentypen (adts)">
+  <div style="color:#ee7a1a;font-weight:700;font-size:12px;margin-bottom:8px">
+    Algebraische Datentypen (ADTs)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* OCaml ADTs sind DAS Killer-Feature.</span>
+   <span style="color:#ffcb6b">Rust's</span> enums, <span style="color:#ffcb6b">Haskell's</span> data types – alle kommen von hier! *)
+
+<span style="color:#546e7a">(* ── EINFACHER VARIANT-TYP ──────────────────────────────────────*)</span>
+<span style="color:#c792ea">type</span> farbe = <span style="color:#ffcb6b">Rot</span> <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Gruen</span> <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Blau</span> <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Gelb</span>
+
+<span style="color:#c792ea">let</span> f = <span style="color:#ffcb6b">Rot</span>
+<span style="color:#c792ea">let</span> g = <span style="color:#ffcb6b">Gruen</span>
+
+<span style="color:#546e7a">(* ── VARIANT MIT DATEN ────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">type</span> form =
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Kreis</span>    <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">float</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Rechteck</span> <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">float</span> * <span style="color:#ffcb6b">float</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Dreieck</span>  <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">float</span> * <span style="color:#ffcb6b">float</span> * <span style="color:#ffcb6b">float</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Punkt</span>
+
+<span style="color:#546e7a">(* Konstruktoren sind Funktionen! *)</span>
+<span style="color:#c792ea">let</span> k = <span style="color:#ffcb6b">Kreis</span> <span style="color:#f78c6c">5.0</span>
+<span style="color:#c792ea">let</span> r = <span style="color:#ffcb6b">Rechteck</span> (<span style="color:#f78c6c">4.0</span>, <span style="color:#f78c6c">6.0</span>)
+<span style="color:#c792ea">let</span> d = <span style="color:#ffcb6b">Dreieck</span> (<span style="color:#f78c6c">3.0</span>, <span style="color:#f78c6c">4.0</span>, <span style="color:#f78c6c">5.0</span>)
+
+<span style="color:#546e7a">(* Pattern Matching ist die einzige Möglichkeit, ADTs zu öffnen! *)</span>
+<span style="color:#c792ea">let</span> flaeche form =
+  <span style="color:#c792ea">match</span> form <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Kreis</span> r         <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Float</span>.pi *. r *. r
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Rechteck</span> (b, h) <span style="color:#89ddff">-&gt;</span> b *. h
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Dreieck</span> (a, b, c) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span> s = (a +. b +. c) /. <span style="color:#f78c6c">2.0</span> <span style="color:#c792ea">in</span>
+      <span style="color:#82aaff">sqrt</span> (s *. (s -. a) *. (s -. b) *. (s -. c))
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Punkt</span>           <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0.0</span>
+
+<span style="color:#546e7a">(* ── REKURSIVE TYPEN ─────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">type</span> 'a baum =
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> <span style="color:#c792ea">of</span> 'a * 'a baum * 'a baum
+
+<span style="color:#c792ea">let</span> baum = <span style="color:#ffcb6b">Knoten</span> (<span style="color:#f78c6c">1</span>,
+             <span style="color:#ffcb6b">Knoten</span> (<span style="color:#f78c6c">2</span>, <span style="color:#ffcb6b">Leer</span>, <span style="color:#ffcb6b">Leer</span>),
+             <span style="color:#ffcb6b">Knoten</span> (<span style="color:#f78c6c">3</span>, <span style="color:#ffcb6b">Leer</span>, <span style="color:#ffcb6b">Leer</span>))
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> tiefe = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (_, l, r) <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">1</span> + <span style="color:#82aaff">max</span> (tiefe l) (tiefe r)
+
+<span style="color:#546e7a">(* ── OPTION – kein null! ─────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> suche liste wert =
+  <span style="color:#ffcb6b">List</span>.find_opt (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x = wert) liste
+
+<span style="color:#c792ea">let</span> ergebnis = suche [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>] <span style="color:#f78c6c">2</span>   <span style="color:#546e7a">(* Some 2 *)</span>
+<span style="color:#c792ea">let</span> nichts   = suche [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>] <span style="color:#f78c6c">9</span>   <span style="color:#546e7a">(* None *)</span>
+
+<span style="color:#c792ea">let</span> anzeigen opt =
+  <span style="color:#c792ea">match</span> opt <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> x <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Gefunden: %d</span>
+<span style="color:#c3e88d">" x</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Nicht gefunden"</span>
+
+<span style="color:#546e7a">(* ── RESULT – Fehler als Werte ───────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> parse_zahl s =
+  <span style="color:#c792ea">match</span> int_of_string_opt s <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> n <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Ok</span> n
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Error</span> (<span style="color:#c3e88d">"Kein Integer: "</span> <span style="color:#89ddff">^</span> s)
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#c792ea">match</span> parse_zahl <span style="color:#c3e88d">"42"</span> <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Ok</span> n    <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Zahl: %d</span>
+<span style="color:#c3e88d">" n</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Error</span> e <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Fehler: %s</span>
+<span style="color:#c3e88d">" e</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Pattern Matching – mächtiger als switch
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="pattern matching – mächtiger als switch">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Pattern Matching – mächtiger als switch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Pattern Matching in OCaml ist EXHAUSTIV –</span>
+   der <span style="color:#ffcb6b">Compiler</span> warnt wenn <span style="color:#ffcb6b">Fälle</span> fehlen! *)
+
+<span style="color:#546e7a">(* ── GRUNDLEGENDES MATCHING ──────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> beschreibe n =
+  <span style="color:#c792ea">match</span> n <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"null"</span>
+  <span style="color:#89ddff">|</span> <span style="color:#f78c6c">1</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"eins"</span>
+  <span style="color:#89ddff">|</span> <span style="color:#f78c6c">2</span> <span style="color:#89ddff">|</span> <span style="color:#f78c6c">3</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"zwei oder drei"</span>     <span style="color:#546e7a">(* Mehrere Pattern! *)</span>
+  <span style="color:#89ddff">|</span> n <span style="color:#c792ea">when</span> n &lt; <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"negativ"</span>     <span style="color:#546e7a">(* Guard mit when *)</span>
+  <span style="color:#89ddff">|</span> n <span style="color:#c792ea">when</span> n &lt; <span style="color:#f78c6c">10</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"einstellig"</span>
+  <span style="color:#89ddff">|</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"zehnstellig oder mehr"</span>  <span style="color:#546e7a">(* Wildcard *)</span>
+
+<span style="color:#546e7a">(* ── LISTEN MATCHING ─────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> summe = <span style="color:#c792ea">function</span>     <span style="color:#546e7a">(* function = fun x -&gt; match x with *)</span>
+  <span style="color:#89ddff">|</span> [] <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>
+  <span style="color:#89ddff">|</span> kopf <span style="color:#89ddff">::</span> rest <span style="color:#89ddff">-&gt;</span> kopf + summe rest
+
+<span style="color:#c792ea">let</span> erstes_und_rest = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> [] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+  <span style="color:#89ddff">|</span> x <span style="color:#89ddff">::</span> rest <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Some</span> (x, rest)
+
+<span style="color:#c792ea">let</span> zwei_erste = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> x <span style="color:#89ddff">::</span> y <span style="color:#89ddff">::</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Some</span> (x, y)   <span style="color:#546e7a">(* Mindestens 2 Elemente *)</span>
+  <span style="color:#89ddff">|</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+
+<span style="color:#546e7a">(* ── TUPEL MATCHING ──────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> min_max (a, b) =
+  <span style="color:#c792ea">if</span> a &lt;= b <span style="color:#c792ea">then</span> (a, b) <span style="color:#c792ea">else</span> (b, a)
+
+<span style="color:#c792ea">let</span> beschreibe_paar = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> (<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Ursprung"</span>
+  <span style="color:#89ddff">|</span> (x, <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"X-Achse bei %d"</span> x
+  <span style="color:#89ddff">|</span> (<span style="color:#f78c6c">0</span>, y) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"Y-Achse bei %d"</span> y
+  <span style="color:#89ddff">|</span> (x, y) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"Punkt (%d, %d)"</span> x y
+
+<span style="color:#546e7a">(* ── RECORD MATCHING ─────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">type</span> person = { name: <span style="color:#ffcb6b">string</span>; alter: <span style="color:#ffcb6b">int</span>; aktiv: <span style="color:#ffcb6b">bool</span> }
+
+<span style="color:#c792ea">let</span> begruessung { name; alter; _ } =    <span style="color:#546e7a">(* _ ignoriert Rest *)</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"Hallo %s, %d Jahre"</span> name alter
+
+<span style="color:#c792ea">let</span> nur_aktive = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> { aktiv = <span style="color:#c792ea">true</span>; name; _ } <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Some</span> name
+  <span style="color:#89ddff">|</span> { aktiv = <span style="color:#c792ea">false</span>; _ } <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+
+<span style="color:#546e7a">(* ── VERSCHACHTELTES MATCHING ───────────────────────────────────*)</span>
+<span style="color:#c792ea">type</span> expr =
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Zahl</span> <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">int</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Plus</span> <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span>  <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Neg</span>  <span style="color:#c792ea">of</span> expr
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> auswerten = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Zahl</span> n          <span style="color:#89ddff">-&gt;</span> n
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Plus</span> (a, b)     <span style="color:#89ddff">-&gt;</span> auswerten a + auswerten b
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span> (a, b)      <span style="color:#89ddff">-&gt;</span> auswerten a * auswerten b
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Neg</span> e           <span style="color:#89ddff">-&gt;</span> -(auswerten e)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span> (<span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">0</span>, _) <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>   <span style="color:#546e7a">(* Optimierung! Muss VOR allg. Mal stehen *)</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span> (_, <span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>
+
+<span style="color:#c792ea">let</span> ausdr = <span style="color:#ffcb6b">Plus</span> (<span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">3</span>, <span style="color:#ffcb6b">Mal</span> (<span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">4</span>, <span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">5</span>))
+<span style="color:#c792ea">let</span> wert  = auswerten ausdr   <span style="color:#546e7a">(* 23 *)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Records &amp; Immutability
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="records &amp; immutability">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Records &amp; Immutability
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Records sind benannte Tupel – und UNVERÄNDERLICH by default! *)</span>
+
+<span style="color:#c792ea">type</span> punkt = {
+  x: <span style="color:#ffcb6b">float</span>;
+  y: <span style="color:#ffcb6b">float</span>;
+}
+
+<span style="color:#c792ea">let</span> p = { x = <span style="color:#f78c6c">3.0</span>; y = <span style="color:#f78c6c">4.0</span> }
+<span style="color:#c792ea">let</span> laenge = <span style="color:#82aaff">sqrt</span> (p.x *. p.x +. p.y *. p.y)   <span style="color:#546e7a">(* 5.0 *)</span>
+
+<span style="color:#546e7a">(* Record Update – erzeugt NEUE Instanz! *)</span>
+<span style="color:#c792ea">let</span> p2 = { p <span style="color:#c792ea">with</span> y = <span style="color:#f78c6c">0.0</span> }    <span style="color:#546e7a">(* p.x = 3.0 bleibt *)</span>
+<span style="color:#546e7a">(* p ist unverändert! *)</span>
+
+<span style="color:#546e7a">(* Veränderliche Felder mit mutable *)</span>
+<span style="color:#c792ea">type</span> zaehler = {
+  <span style="color:#c792ea">mutable</span> wert: <span style="color:#ffcb6b">int</span>;
+  name: <span style="color:#ffcb6b">string</span>;         <span style="color:#546e7a">(* unveränderlich *)</span>
+}
+
+<span style="color:#c792ea">let</span> z = { wert = <span style="color:#f78c6c">0</span>; name = <span style="color:#c3e88d">"Zähler"</span> }
+z.wert &lt;- z.wert + <span style="color:#f78c6c">1</span>    <span style="color:#546e7a">(* &lt;- für mutable Felder *)</span>
+z.wert &lt;- z.wert + <span style="color:#f78c6c">1</span>
+<span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%s: %d</span>
+<span style="color:#c3e88d">" z.name z.wert   (* Zähler: 2 *)</span>
+
+<span style="color:#546e7a">(* ── LET-BINDING PATTERNS ───────────────────────────────────────*)</span>
+<span style="color:#546e7a">(* Überall wo let steht, kann ein Pattern stehen! *)</span>
+<span style="color:#c792ea">let</span> (a, b) = (<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>)            <span style="color:#546e7a">(* Tupel-Destructuring *)</span>
+<span style="color:#c792ea">let</span> { x; y } = p               <span style="color:#546e7a">(* Record-Destructuring *)</span>
+<span style="color:#c792ea">let</span> [hd; _; _] = [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>]   <span style="color:#546e7a">(* Listen-Destructuring (kann fehlschlagen!) *)</span>
+
+<span style="color:#546e7a">(* Sicherer mit match: *)</span>
+<span style="color:#c792ea">let</span> hd_opt = <span style="color:#c792ea">match</span> [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>] <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> h <span style="color:#89ddff">::</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Some</span> h
+  <span style="color:#89ddff">|</span> []     <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-funktional" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #ee7a1a44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ee7a1a0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ee7a1a">
+      <span style="display:inline-block;width:8px;height:8px;background:#ee7a1a;border-radius:50%;margin-right:2px"></span>Funktionen &amp; Higher-Order
+    </span>
+    <span class="aa" style="color:#ee7a1a;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen &amp; higher-order">
+  <div style="color:#ee7a1a;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen &amp; Higher-Order
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Funktionen in OCaml sind FIRST-CLASS VALUES *)</span>
+
+<span style="color:#546e7a">(* ── FUNKTIONSDEFINITION ─────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> addiere x y = x + y          <span style="color:#546e7a">(* int -&gt; int -&gt; int *)</span>
+<span style="color:#c792ea">let</span> quadrat x = x * x            <span style="color:#546e7a">(* int -&gt; int *)</span>
+<span style="color:#c792ea">let</span> gruss name = <span style="color:#c3e88d">"Hallo, "</span> <span style="color:#89ddff">^</span> name <span style="color:#546e7a">(* string -&gt; string *)</span>
+
+<span style="color:#546e7a">(* Lambda / Anonyme Funktion *)</span>
+<span style="color:#c792ea">let</span> verdopple = <span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * <span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">let</span> snd_triple = <span style="color:#c792ea">fun</span> (_, b, _) <span style="color:#89ddff">-&gt;</span> b
+
+<span style="color:#546e7a">(* Kurzform: function für 1-Arg-Pattern-Match *)</span>
+<span style="color:#c792ea">let</span> vorzeichen = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> n <span style="color:#c792ea">when</span> n &gt; <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">1</span>
+  <span style="color:#89ddff">|</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>
+  <span style="color:#89ddff">|</span> _ <span style="color:#89ddff">-&gt;</span> -<span style="color:#f78c6c">1</span>
+
+<span style="color:#546e7a">(* ── CURRYING – alle Funktionen sind gecurryt! ───────────────────*)</span>
+<span style="color:#546e7a">(* addiere hat Typ: int -&gt; int -&gt; int</span>
+   <span style="color:#ffcb6b">Nicht</span>: (<span style="color:#ffcb6b">int</span>, <span style="color:#ffcb6b">int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span>  (das wäre unkuriert) *)
+
+<span style="color:#c792ea">let</span> add5 = addiere <span style="color:#f78c6c">5</span>     <span style="color:#546e7a">(* Partielle Anwendung! add5 : int -&gt; int *)</span>
+<span style="color:#c792ea">let</span> zehn = add5 <span style="color:#f78c6c">5</span>        <span style="color:#546e7a">(* 10 *)</span>
+
+<span style="color:#546e7a">(* Sections / Partial Application mit Operators *)</span>
+<span style="color:#c792ea">let</span> verdreifache = ( * ) <span style="color:#f78c6c">3</span>   <span style="color:#546e7a">(* ( * ) ist der *-Operator als Funktion *)</span>
+<span style="color:#c792ea">let</span> div_by_2    = <span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x / <span style="color:#f78c6c">2</span>
+
+<span style="color:#546e7a">(* ── HIGHER-ORDER FUNCTIONS ─────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> anwende f x = f x
+<span style="color:#c792ea">let</span> ergebnis = anwende (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * x) <span style="color:#f78c6c">5</span>   <span style="color:#546e7a">(* 25 *)</span>
+
+<span style="color:#546e7a">(* Komposition *)</span>
+<span style="color:#c792ea">let</span> ( &gt;&gt; ) f g x = g (f x)    <span style="color:#546e7a">(* f dann g *)</span>
+<span style="color:#c792ea">let</span> ( &lt;&lt; ) f g x = f (g x)    <span style="color:#546e7a">(* g dann f (wie ∘) *)</span>
+
+<span style="color:#c792ea">let</span> add1_dann_verdopple = (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x + <span style="color:#f78c6c">1</span>) &gt;&gt; (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * <span style="color:#f78c6c">2</span>)
+<span style="color:#c792ea">let</span> r = add1_dann_verdopple <span style="color:#f78c6c">4</span>   <span style="color:#546e7a">(* (4+1)*2 = 10 *)</span>
+
+<span style="color:#546e7a">(* ── LABELED &amp; OPTIONAL ARGUMENTS ───────────────────────────────*)</span>
+<span style="color:#546e7a">(* ~label: für named arguments *)</span>
+<span style="color:#c792ea">let</span> verbinde <span style="color:#f07178">~host</span> <span style="color:#f07178">~port</span> = <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"%s:%d"</span> host port
+<span style="color:#c792ea">let</span> s = verbinde <span style="color:#f07178">~port</span>:<span style="color:#f78c6c">8080</span> <span style="color:#f07178">~host</span>:<span style="color:#c3e88d">"localhost"</span>  <span style="color:#546e7a">(* Reihenfolge egal! *)</span>
+
+<span style="color:#546e7a">(* ?opt: für optionale Argumente *)</span>
+<span style="color:#c792ea">let</span> gruss_opt <span style="color:#f07178">?prefix</span> name =
+  <span style="color:#c792ea">match</span> prefix <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Hallo, "</span> <span style="color:#89ddff">^</span> name
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> p <span style="color:#89ddff">-&gt;</span> p <span style="color:#89ddff">^</span> <span style="color:#c3e88d">" "</span> <span style="color:#89ddff">^</span> name
+
+<span style="color:#c792ea">let</span> s1 = gruss_opt <span style="color:#c3e88d">"Alice"</span>             <span style="color:#546e7a">(* "Hallo, Alice" *)</span>
+<span style="color:#c792ea">let</span> s2 = gruss_opt <span style="color:#f07178">~prefix</span>:<span style="color:#c3e88d">"Hey"</span> <span style="color:#c3e88d">"Bob"</span> <span style="color:#546e7a">(* "Hey Bob" *)</span>
+
+<span style="color:#546e7a">(* ── REKURSION: rec ──────────────────────────────────────────────*)</span>
+<span style="color:#546e7a">(* Ohne rec ist Selbstreferenz nicht möglich! *)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> fak n =
+  <span style="color:#c792ea">if</span> n &lt;= <span style="color:#f78c6c">1</span> <span style="color:#c792ea">then</span> <span style="color:#f78c6c">1</span>
+  <span style="color:#c792ea">else</span> n * fak (n - <span style="color:#f78c6c">1</span>)
+
+<span style="color:#546e7a">(* Tail-recursive mit Akkumulator *)</span>
+<span style="color:#c792ea">let</span> fak_tr n =
+  <span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> hilf n acc =
+    <span style="color:#c792ea">if</span> n &lt;= <span style="color:#f78c6c">1</span> <span style="color:#c792ea">then</span> acc
+    <span style="color:#c792ea">else</span> hilf (n - <span style="color:#f78c6c">1</span>) (n * acc)
+  <span style="color:#c792ea">in</span>
+  hilf n <span style="color:#f78c6c">1</span>
+
+<span style="color:#546e7a">(* Gegenseitig rekursive Funktionen: and *)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> gerade = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">true</span>
+  <span style="color:#89ddff">|</span> n <span style="color:#89ddff">-&gt;</span> ungerade (n - <span style="color:#f78c6c">1</span>)
+<span style="color:#c792ea">and</span> ungerade = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">false</span>
+  <span style="color:#89ddff">|</span> n <span style="color:#89ddff">-&gt;</span> gerade (n - <span style="color:#f78c6c">1</span>)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Listen-Programmierung
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="listen-programmierung">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Listen-Programmierung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Listen sind OCamls wichtigste Datenstruktur *)</span>
+<span style="color:#546e7a">(* Syntax: [1; 2; 3]  – SEMIKOLON, kein Komma! *)</span>
+<span style="color:#546e7a">(* Typ:    int list *)</span>
+
+<span style="color:#c792ea">let</span> zahlen = [<span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">2</span>; <span style="color:#f78c6c">3</span>; <span style="color:#f78c6c">4</span>; <span style="color:#f78c6c">5</span>; <span style="color:#f78c6c">6</span>; <span style="color:#f78c6c">7</span>; <span style="color:#f78c6c">8</span>; <span style="color:#f78c6c">9</span>; <span style="color:#f78c6c">10</span>]
+
+<span style="color:#546e7a">(* ── GRUNDOPERATIONEN ────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> laenge = <span style="color:#ffcb6b">List</span>.length zahlen      <span style="color:#546e7a">(* 10 *)</span>
+<span style="color:#c792ea">let</span> kopf   = <span style="color:#ffcb6b">List</span>.hd zahlen          <span style="color:#546e7a">(* 1  – raises Empty if [] *)</span>
+<span style="color:#c792ea">let</span> rest   = <span style="color:#ffcb6b">List</span>.tl zahlen          <span style="color:#546e7a">(* [2;3;4;5;6;7;8;9;10] *)</span>
+<span style="color:#c792ea">let</span> kopf2  = <span style="color:#ffcb6b">List</span>.nth zahlen <span style="color:#f78c6c">0</span>       <span style="color:#546e7a">(* 1 – 0-basiert *)</span>
+<span style="color:#c792ea">let</span> erster = <span style="color:#ffcb6b">List</span>.hd_opt zahlen      <span style="color:#546e7a">(* Some 1 – sicher! *)</span>
+
+<span style="color:#546e7a">(* :: = Cons (vorne anfügen, O(1)) *)</span>
+<span style="color:#c792ea">let</span> neu = <span style="color:#f78c6c">0</span> <span style="color:#89ddff">::</span> zahlen                <span style="color:#546e7a">(* [0;1;2;3;4;5;...] *)</span>
+
+<span style="color:#546e7a">(* @ = Append (O(n)) *)</span>
+<span style="color:#c792ea">let</span> verbunden = [<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>;<span style="color:#f78c6c">3</span>] <span style="color:#89ddff">@</span> [<span style="color:#f78c6c">4</span>;<span style="color:#f78c6c">5</span>;<span style="color:#f78c6c">6</span>]   <span style="color:#546e7a">(* [1;2;3;4;5;6] *)</span>
+
+<span style="color:#546e7a">(* ── FUNCTIONAL TRIO ─────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> verdoppelt = <span style="color:#ffcb6b">List</span>.map (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * <span style="color:#f78c6c">2</span>) zahlen
+<span style="color:#546e7a">(* [2;4;6;8;10;12;14;16;18;20] *)</span>
+
+<span style="color:#c792ea">let</span> geraden = <span style="color:#ffcb6b">List</span>.filter (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x <span style="color:#82aaff">mod</span> <span style="color:#f78c6c">2</span> = <span style="color:#f78c6c">0</span>) zahlen
+<span style="color:#546e7a">(* [2;4;6;8;10] *)</span>
+
+<span style="color:#c792ea">let</span> summe = <span style="color:#ffcb6b">List</span>.fold_left (+) <span style="color:#f78c6c">0</span> zahlen
+<span style="color:#546e7a">(* 55 *)</span>
+
+<span style="color:#c792ea">let</span> produkt = <span style="color:#ffcb6b">List</span>.fold_left ( * ) <span style="color:#f78c6c">1</span> [<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>;<span style="color:#f78c6c">3</span>;<span style="color:#f78c6c">4</span>;<span style="color:#f78c6c">5</span>]
+<span style="color:#546e7a">(* 120 *)</span>
+
+<span style="color:#546e7a">(* ── NÜTZLICHE LIST-FUNKTIONEN ───────────────────────────────────*)</span>
+<span style="color:#ffcb6b">List</span>.rev     zahlen                  <span style="color:#546e7a">(* Umkehren *)</span>
+<span style="color:#ffcb6b">List</span>.sort <span style="color:#82aaff">compare</span> zahlen             <span style="color:#546e7a">(* Sortieren *)</span>
+<span style="color:#ffcb6b">List</span>.sort_uniq <span style="color:#82aaff">compare</span> [<span style="color:#f78c6c">3</span>;<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>;<span style="color:#f78c6c">1</span>]    <span style="color:#546e7a">(* Sortieren + Deduplizieren *)</span>
+<span style="color:#ffcb6b">List</span>.mem <span style="color:#f78c6c">5</span> zahlen                    <span style="color:#546e7a">(* true – enthält? *)</span>
+<span style="color:#ffcb6b">List</span>.find (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x &gt; <span style="color:#f78c6c">5</span>) zahlen   <span style="color:#546e7a">(* 6 – erstes passendes Element *)</span>
+<span style="color:#ffcb6b">List</span>.find_opt (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x &gt; <span style="color:#f78c6c">5</span>) zahlen  <span style="color:#546e7a">(* Some 6 – sicher *)</span>
+<span style="color:#ffcb6b">List</span>.exists (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x &gt; <span style="color:#f78c6c">9</span>) zahlen  <span style="color:#546e7a">(* true – mindestens eines? *)</span>
+<span style="color:#ffcb6b">List</span>.for_all (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x &gt; <span style="color:#f78c6c">0</span>) zahlen <span style="color:#546e7a">(* true – alle? *)</span>
+<span style="color:#ffcb6b">List</span>.flatten [[<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>];[<span style="color:#f78c6c">3</span>;<span style="color:#f78c6c">4</span>];[<span style="color:#f78c6c">5</span>]]       <span style="color:#546e7a">(* [1;2;3;4;5] *)</span>
+<span style="color:#ffcb6b">List</span>.concat_map (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> [x; -x]) [<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>;<span style="color:#f78c6c">3</span>]  <span style="color:#546e7a">(* [1;-1;2;-2;3;-3] *)</span>
+<span style="color:#ffcb6b">List</span>.assoc <span style="color:#c3e88d">"b"</span> [(<span style="color:#c3e88d">"a"</span>,<span style="color:#f78c6c">1</span>);(<span style="color:#c3e88d">"b"</span>,<span style="color:#f78c6c">2</span>)]     <span style="color:#546e7a">(* 2 – Assoziationsliste *)</span>
+<span style="color:#ffcb6b">List</span>.split [(<span style="color:#f78c6c">1</span>,<span style="color:#c3e88d">"a"</span>);(<span style="color:#f78c6c">2</span>,<span style="color:#c3e88d">"b"</span>)]         <span style="color:#546e7a">(* ([1;2], ["a";"b"]) *)</span>
+<span style="color:#ffcb6b">List</span>.combine [<span style="color:#f78c6c">1</span>;<span style="color:#f78c6c">2</span>;<span style="color:#f78c6c">3</span>] [<span style="color:#c3e88d">"a"</span>;<span style="color:#c3e88d">"b"</span>;<span style="color:#c3e88d">"c"</span>]  <span style="color:#546e7a">(* [(1,"a");(2,"b");(3,"c")] *)</span>
+
+<span style="color:#546e7a">(* ── PIPE MIT LISTEN ─────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> ergebnis =
+  <span style="color:#ffcb6b">List</span>.init <span style="color:#f78c6c">20</span> (<span style="color:#c792ea">fun</span> i <span style="color:#89ddff">-&gt;</span> i + <span style="color:#f78c6c">1</span>)    <span style="color:#546e7a">(* [1..20] erzeugen *)</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.filter (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x <span style="color:#82aaff">mod</span> <span style="color:#f78c6c">2</span> = <span style="color:#f78c6c">0</span>)  <span style="color:#546e7a">(* Geraden *)</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.map (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * x)            <span style="color:#546e7a">(* Quadrate *)</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.fold_left (+) <span style="color:#f78c6c">0</span>                 <span style="color:#546e7a">(* Summen *)</span>
+<span style="color:#546e7a">(* = 1540 *)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-module" class="tp">
+
+<div class="ac open" id="ac-mo0"
+     style="border:1px solid #ee7a1a44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mo0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ee7a1a0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ee7a1a">
+      <span style="display:inline-block;width:8px;height:8px;background:#ee7a1a;border-radius:50%;margin-right:2px"></span>Module – OCamls Superkraft
+    </span>
+    <span class="aa" style="color:#ee7a1a;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="module – ocamls superkraft">
+  <div style="color:#ee7a1a;font-weight:700;font-size:12px;margin-bottom:8px">
+    Module – OCamls Superkraft
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* OCamls Modulsystem ist das mächtigste in einer Mainstream-Sprache.</span>
+   <span style="color:#ffcb6b">Module</span> sind <span style="color:#ffcb6b">First</span>-<span style="color:#ffcb6b">Class</span>: können übergeben, zurückgegeben werden! *)
+
+<span style="color:#546e7a">(* ── EINFACHES MODUL ─────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Geometrie</span> = <span style="color:#c792ea">struct</span>
+  <span style="color:#c792ea">type</span> punkt = { x: <span style="color:#ffcb6b">float</span>; y: <span style="color:#ffcb6b">float</span> }
+
+  <span style="color:#c792ea">let</span> erstelle x y = { x; y }
+
+  <span style="color:#c792ea">let</span> distanz p1 p2 =
+    <span style="color:#c792ea">let</span> dx = p1.x -. p2.x <span style="color:#c792ea">in</span>
+    <span style="color:#c792ea">let</span> dy = p1.y -. p2.y <span style="color:#c792ea">in</span>
+    <span style="color:#82aaff">sqrt</span> (dx *. dx +. dy *. dy)
+
+  <span style="color:#c792ea">let</span> ursprung = { x = <span style="color:#f78c6c">0.0</span>; y = <span style="color:#f78c6c">0.0</span> }
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">(* Zugriff: Modul.name *)</span>
+<span style="color:#c792ea">let</span> p = <span style="color:#ffcb6b">Geometrie</span>.erstelle <span style="color:#f78c6c">3.0</span> <span style="color:#f78c6c">4.0</span>
+<span style="color:#c792ea">let</span> d = <span style="color:#ffcb6b">Geometrie</span>.distanz p <span style="color:#ffcb6b">Geometrie</span>.ursprung   <span style="color:#546e7a">(* 5.0 *)</span>
+
+<span style="color:#546e7a">(* open: Inhalte direkt verfügbar machen *)</span>
+<span style="color:#c792ea">open</span> <span style="color:#ffcb6b">Geometrie</span>
+<span style="color:#c792ea">let</span> p2 = erstelle <span style="color:#f78c6c">1.0</span> <span style="color:#f78c6c">1.0</span>
+<span style="color:#c792ea">let</span> d2 = distanz p p2
+
+<span style="color:#546e7a">(* ── MODULE SIGNATURE ────────────────────────────────────────────*)</span>
+<span style="color:#546e7a">(* Signature = Interface – beschreibt was ein Modul exportiert *)</span>
+<span style="color:#c792ea">module</span> <span style="color:#c792ea">type</span> <span style="color:#ffcb6b">STACK</span> = <span style="color:#c792ea">sig</span>
+  <span style="color:#c792ea">type</span> 'a t
+  <span style="color:#c792ea">val</span> leer  : 'a t
+  <span style="color:#c792ea">val</span> push  : 'a <span style="color:#89ddff">-&gt;</span> 'a t <span style="color:#89ddff">-&gt;</span> 'a t
+  <span style="color:#c792ea">val</span> pop   : 'a t <span style="color:#89ddff">-&gt;</span> ('a * 'a t) <span style="color:#ffcb6b">option</span>
+  <span style="color:#c792ea">val</span> peek  : 'a t <span style="color:#89ddff">-&gt;</span> 'a <span style="color:#ffcb6b">option</span>
+  <span style="color:#c792ea">val</span> ist_leer : 'a t <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">bool</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">(* Implementierung *)</span>
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">Stack</span> : <span style="color:#ffcb6b">STACK</span> = <span style="color:#c792ea">struct</span>
+  <span style="color:#c792ea">type</span> 'a t = 'a <span style="color:#ffcb6b">list</span>
+
+  <span style="color:#c792ea">let</span> leer = []
+  <span style="color:#c792ea">let</span> push x s = x <span style="color:#89ddff">::</span> s
+  <span style="color:#c792ea">let</span> pop = <span style="color:#c792ea">function</span>
+    <span style="color:#89ddff">|</span> []     <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+    <span style="color:#89ddff">|</span> x <span style="color:#89ddff">::</span> rest <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Some</span> (x, rest)
+  <span style="color:#c792ea">let</span> peek = <span style="color:#c792ea">function</span>
+    <span style="color:#89ddff">|</span> [] <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+    <span style="color:#89ddff">|</span> x <span style="color:#89ddff">::</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Some</span> x
+  <span style="color:#c792ea">let</span> ist_leer = <span style="color:#c792ea">function</span> [] <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">true</span> <span style="color:#89ddff">|</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">false</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">(* ── FUNKTOR – parameterisiertes Modul ───────────────────────────*)</span>
+<span style="color:#546e7a">(* Funktor = Funktion von Modul zu Modul! *)</span>
+<span style="color:#c792ea">module</span> <span style="color:#c792ea">type</span> <span style="color:#ffcb6b">VERGLEICHBAR</span> = <span style="color:#c792ea">sig</span>
+  <span style="color:#c792ea">type</span> t
+  <span style="color:#c792ea">val</span> vergleiche : t <span style="color:#89ddff">-&gt;</span> t <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">int</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">MacheSet</span> (<span style="color:#ffcb6b">V</span> : <span style="color:#ffcb6b">VERGLEICHBAR</span>) = <span style="color:#c792ea">struct</span>
+  <span style="color:#546e7a">(* Binärer Suchbaum basierend auf V.vergleiche *)</span>
+  <span style="color:#c792ea">type</span> t = <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">V</span>.t * t * t
+
+  <span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> einfuegen x = <span style="color:#c792ea">function</span>
+    <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Knoten</span> (x, <span style="color:#ffcb6b">Leer</span>, <span style="color:#ffcb6b">Leer</span>)
+    <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (y, l, r) <span style="color:#89ddff">-&gt;</span>
+        <span style="color:#c792ea">let</span> c = <span style="color:#ffcb6b">V</span>.vergleiche x y <span style="color:#c792ea">in</span>
+        <span style="color:#c792ea">if</span> c = <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Knoten</span> (y, l, r)
+        <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> c &lt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Knoten</span> (y, einfuegen x l, r)
+        <span style="color:#c792ea">else</span> <span style="color:#ffcb6b">Knoten</span> (y, l, einfuegen x r)
+
+  <span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> enthaelt x = <span style="color:#c792ea">function</span>
+    <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">false</span>
+    <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (y, l, r) <span style="color:#89ddff">-&gt;</span>
+        <span style="color:#c792ea">let</span> c = <span style="color:#ffcb6b">V</span>.vergleiche x y <span style="color:#c792ea">in</span>
+        <span style="color:#c792ea">if</span> c = <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">true</span>
+        <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> c &lt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> enthaelt x l
+        <span style="color:#c792ea">else</span> enthaelt x r
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a">(* Funktor anwenden: *)</span>
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">IntSet</span> = <span style="color:#ffcb6b">MacheSet</span>(<span style="color:#c792ea">struct</span>
+  <span style="color:#c792ea">type</span> t = <span style="color:#ffcb6b">int</span>
+  <span style="color:#c792ea">let</span> vergleiche = <span style="color:#82aaff">compare</span>
+<span style="color:#c792ea">end</span>)
+
+<span style="color:#c792ea">let</span> mein_set =
+  <span style="color:#ffcb6b">IntSet</span>.leer
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">IntSet</span>.einfuegen <span style="color:#f78c6c">3</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">IntSet</span>.einfuegen <span style="color:#f78c6c">1</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">IntSet</span>.einfuegen <span style="color:#f78c6c">4</span>
+
+<span style="color:#c792ea">let</span> _ = <span style="color:#ffcb6b">IntSet</span>.enthaelt <span style="color:#f78c6c">3</span> mein_set   <span style="color:#546e7a">(* true *)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mo1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mo1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung &amp; Ausnahmen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung &amp; ausnahmen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung &amp; Ausnahmen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* OCaml hat BEIDE Stile: Ausnahmen UND Result-Typ *)</span>
+
+<span style="color:#546e7a">(* ── AUSNAHMEN ───────────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">exception</span> <span style="color:#ffcb6b">Divisions_fehler</span>
+<span style="color:#c792ea">exception</span> <span style="color:#ffcb6b">Validierungsfehler</span> <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">string</span>
+
+<span style="color:#c792ea">let</span> sicher_teilen a b =
+  <span style="color:#c792ea">if</span> b = <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#c792ea">raise</span> <span style="color:#ffcb6b">Divisions_fehler</span>
+  <span style="color:#c792ea">else</span> a / b
+
+<span style="color:#546e7a">(* try...with *)</span>
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#c792ea">match</span>
+    (<span style="color:#c792ea">try</span> <span style="color:#ffcb6b">Some</span> (sicher_teilen <span style="color:#f78c6c">10</span> <span style="color:#f78c6c">0</span>)
+     <span style="color:#c792ea">with</span> <span style="color:#ffcb6b">Divisions_fehler</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>)
+  <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> n <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Ergebnis: %d</span>
+<span style="color:#c3e88d">" n</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Division durch Null!"</span>
+
+<span style="color:#546e7a">(* Eingebaute Ausnahmen *)</span>
+<span style="color:#546e7a">(* Not_found – von List.find, Hashtbl.find etc. *)</span>
+<span style="color:#546e7a">(* Invalid_argument – falsche Argumente *)</span>
+<span style="color:#546e7a">(* Failure "msg" – von failwith "msg" *)</span>
+<span style="color:#546e7a">(* End_of_file – Dateiende *)</span>
+
+<span style="color:#c792ea">let</span> sicher_hd liste =
+  <span style="color:#c792ea">try</span> <span style="color:#ffcb6b">Some</span> (<span style="color:#ffcb6b">List</span>.hd liste)
+  <span style="color:#c792ea">with</span> <span style="color:#ffcb6b">Not_found</span> <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Failure</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+
+<span style="color:#546e7a">(* ── RESULT-TYP (funktionaler Stil) ────────────────────────────*)</span>
+<span style="color:#546e7a">(* Seit OCaml 4.08: eingebaut als result *)</span>
+
+<span style="color:#c792ea">let</span> parse_int s =
+  <span style="color:#c792ea">match</span> int_of_string_opt s <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> n <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Ok</span> n
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Error</span> (<span style="color:#c3e88d">"Kein Integer: "</span> <span style="color:#89ddff">^</span> s)
+
+<span style="color:#546e7a">(* Verketten von Results *)</span>
+<span style="color:#c792ea">let</span> ( <span style="color:#c792ea">let</span>* ) r f = <span style="color:#c792ea">match</span> r <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Ok</span> x    <span style="color:#89ddff">-&gt;</span> f x
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Error</span> e <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Error</span> e
+
+<span style="color:#546e7a">(* "Binding Operator" – wie do-Notation *)</span>
+<span style="color:#c792ea">let</span> berechne s1 s2 =
+  <span style="color:#c792ea">let</span>* a = parse_int s1 <span style="color:#c792ea">in</span>
+  <span style="color:#c792ea">let</span>* b = parse_int s2 <span style="color:#c792ea">in</span>
+  <span style="color:#c792ea">if</span> b = <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Error</span> <span style="color:#c3e88d">"Division durch Null"</span>
+  <span style="color:#c792ea">else</span> <span style="color:#ffcb6b">Ok</span> (a / b)
+
+<span style="color:#c792ea">let</span> r1 = berechne <span style="color:#c3e88d">"10"</span> <span style="color:#c3e88d">"2"</span>    <span style="color:#546e7a">(* Ok 5 *)</span>
+<span style="color:#c792ea">let</span> r2 = berechne <span style="color:#c3e88d">"10"</span> <span style="color:#c3e88d">"abc"</span>  <span style="color:#546e7a">(* Error "Kein Integer: abc" *)</span>
+<span style="color:#c792ea">let</span> r3 = berechne <span style="color:#c3e88d">"10"</span> <span style="color:#c3e88d">"0"</span>    <span style="color:#546e7a">(* Error "Division durch Null" *)</span>
+
+<span style="color:#546e7a">(* Result-Helfer *)</span>
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#ffcb6b">Result</span>.iter (<span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"OK: %d</span>
+<span style="color:#c3e88d">") r1;</span>
+  <span style="color:#ffcb6b">Result</span>.iter_error (<span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Fehler: %s</span>
+<span style="color:#c3e88d">") r2;</span>
+  <span style="color:#c792ea">let</span> wert = <span style="color:#ffcb6b">Result</span>.value r1 <span style="color:#f07178">~default</span>:(-<span style="color:#f78c6c">1</span>) <span style="color:#c792ea">in</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Wert: %d</span>
+<span style="color:#c3e88d">" wert</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #ee7a1a44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ee7a1a0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ee7a1a">
+      <span style="display:inline-block;width:8px;height:8px;background:#ee7a1a;border-radius:50%;margin-right:2px"></span>List-Modul
+    </span>
+    <span class="aa" style="color:#ee7a1a;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Wert</th><th>Beschreibung</th><th>Beispiel / Signatur</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="list.length l" data-d="länge">
+      <td style="width:230px"><code style="color:#ee7a1a">List.length l</code></td>
+      <td style="color:#6c7a8e">Länge</td>
+      <td style="color:#c3e88d;font-size:11px">[1;2;3] → 3</td>
+    </tr>
+    <tr class="cr" data-m="list.hd l" data-d="kopf (raises empty)">
+      <td style="width:230px"><code style="color:#ee7a1a">List.hd l</code></td>
+      <td style="color:#6c7a8e">Kopf (raises Empty)</td>
+      <td style="color:#c3e88d;font-size:11px">List.hd [1;2] → 1</td>
+    </tr>
+    <tr class="cr" data-m="list.tl l" data-d="schwanz (raises empty)">
+      <td style="width:230px"><code style="color:#ee7a1a">List.tl l</code></td>
+      <td style="color:#6c7a8e">Schwanz (raises Empty)</td>
+      <td style="color:#c3e88d;font-size:11px">List.tl [1;2] → [2]</td>
+    </tr>
+    <tr class="cr" data-m="list.nth l i" data-d="i-tes element (0-basiert)">
+      <td style="width:230px"><code style="color:#ee7a1a">List.nth l i</code></td>
+      <td style="color:#6c7a8e">i-tes Element (0-basiert)</td>
+      <td style="color:#c3e88d;font-size:11px">List.nth [a;b;c] 1 → b</td>
+    </tr>
+    <tr class="cr" data-m="list.hd_opt l" data-d="kopf als option (sicher)">
+      <td style="width:230px"><code style="color:#ee7a1a">List.hd_opt l</code></td>
+      <td style="color:#6c7a8e">Kopf als Option (sicher)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.rev l" data-d="umkehren">
+      <td style="width:230px"><code style="color:#ee7a1a">List.rev l</code></td>
+      <td style="color:#6c7a8e">Umkehren</td>
+      <td style="color:#c3e88d;font-size:11px">List.rev [1;2;3] → [3;2;1]</td>
+    </tr>
+    <tr class="cr" data-m="list.append l1 l2" data-d="verbinden (auch: @)">
+      <td style="width:230px"><code style="color:#ee7a1a">List.append l1 l2</code></td>
+      <td style="color:#6c7a8e">Verbinden (auch: @)</td>
+      <td style="color:#c3e88d;font-size:11px">[1;2] @ [3;4] → [1;2;3;4]</td>
+    </tr>
+    <tr class="cr" data-m="list.map f l" data-d="transformieren">
+      <td style="width:230px"><code style="color:#ee7a1a">List.map f l</code></td>
+      <td style="color:#6c7a8e">Transformieren</td>
+      <td style="color:#c3e88d;font-size:11px">List.map ((*) 2) [1;2;3]</td>
+    </tr>
+    <tr class="cr" data-m="list.filter f l" data-d="filtern">
+      <td style="width:230px"><code style="color:#ee7a1a">List.filter f l</code></td>
+      <td style="color:#6c7a8e">Filtern</td>
+      <td style="color:#c3e88d;font-size:11px">List.filter (fun x -&gt; x&gt;2) [1;2;3]</td>
+    </tr>
+    <tr class="cr" data-m="list.fold_left f i l" data-d="akkumulieren von links">
+      <td style="width:230px"><code style="color:#ee7a1a">List.fold_left f i l</code></td>
+      <td style="color:#6c7a8e">Akkumulieren von links</td>
+      <td style="color:#c3e88d;font-size:11px">List.fold_left (+) 0 [1;2;3] → 6</td>
+    </tr>
+    <tr class="cr" data-m="list.fold_right f l i" data-d="akkumulieren von rechts">
+      <td style="width:230px"><code style="color:#ee7a1a">List.fold_right f l i</code></td>
+      <td style="color:#6c7a8e">Akkumulieren von rechts</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.for_all f l" data-d="alle elemente erfüllen f?">
+      <td style="width:230px"><code style="color:#ee7a1a">List.for_all f l</code></td>
+      <td style="color:#6c7a8e">Alle Elemente erfüllen f?</td>
+      <td style="color:#c3e88d;font-size:11px">List.for_all (fun x-&gt;x&gt;0) [1;2]</td>
+    </tr>
+    <tr class="cr" data-m="list.exists f l" data-d="mindestens eines erfüllt f?">
+      <td style="width:230px"><code style="color:#ee7a1a">List.exists f l</code></td>
+      <td style="color:#6c7a8e">Mindestens eines erfüllt f?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.find f l" data-d="erstes passendes element">
+      <td style="width:230px"><code style="color:#ee7a1a">List.find f l</code></td>
+      <td style="color:#6c7a8e">Erstes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px">raises Not_found</td>
+    </tr>
+    <tr class="cr" data-m="list.find_opt f l" data-d="sicher: option">
+      <td style="width:230px"><code style="color:#ee7a1a">List.find_opt f l</code></td>
+      <td style="color:#6c7a8e">Sicher: Option</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.mem x l" data-d="enthält x?">
+      <td style="width:230px"><code style="color:#ee7a1a">List.mem x l</code></td>
+      <td style="color:#6c7a8e">Enthält x?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.sort cmp l" data-d="sortieren">
+      <td style="width:230px"><code style="color:#ee7a1a">List.sort cmp l</code></td>
+      <td style="color:#6c7a8e">Sortieren</td>
+      <td style="color:#c3e88d;font-size:11px">List.sort compare [3;1;2]</td>
+    </tr>
+    <tr class="cr" data-m="list.sort_uniq cmp l" data-d="sortieren + deduplizieren">
+      <td style="width:230px"><code style="color:#ee7a1a">List.sort_uniq cmp l</code></td>
+      <td style="color:#6c7a8e">Sortieren + Deduplizieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.flatten ll" data-d="verschachtelt flach machen">
+      <td style="width:230px"><code style="color:#ee7a1a">List.flatten ll</code></td>
+      <td style="color:#6c7a8e">Verschachtelt flach machen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.concat_map f l" data-d="map + flatten">
+      <td style="width:230px"><code style="color:#ee7a1a">List.concat_map f l</code></td>
+      <td style="color:#6c7a8e">map + flatten</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.init n f" data-d="liste erzeugen: [f 0; f 1; ...]">
+      <td style="width:230px"><code style="color:#ee7a1a">List.init n f</code></td>
+      <td style="color:#6c7a8e">Liste erzeugen: [f 0; f 1; ...]</td>
+      <td style="color:#c3e88d;font-size:11px">List.init 5 Fun.id → [0;1;2;3;4]</td>
+    </tr>
+    <tr class="cr" data-m="list.combine l1 l2" data-d="zu paar-liste">
+      <td style="width:230px"><code style="color:#ee7a1a">List.combine l1 l2</code></td>
+      <td style="color:#6c7a8e">Zu Paar-Liste</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.split l" data-d="paar-liste aufteilen">
+      <td style="width:230px"><code style="color:#ee7a1a">List.split l</code></td>
+      <td style="color:#6c7a8e">Paar-Liste aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list.assoc k l" data-d="assoziation nachschlagen">
+      <td style="width:230px"><code style="color:#ee7a1a">List.assoc k l</code></td>
+      <td style="color:#6c7a8e">Assoziation nachschlagen</td>
+      <td style="color:#c3e88d;font-size:11px">raises Not_found</td>
+    </tr>
+    <tr class="cr" data-m="list.assoc_opt k l" data-d="sicher: option">
+      <td style="width:230px"><code style="color:#ee7a1a">List.assoc_opt k l</code></td>
+      <td style="color:#6c7a8e">Sicher: Option</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>String &amp; Printf
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Wert</th><th>Beschreibung</th><th>Beispiel / Signatur</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="string.length s" data-d="länge">
+      <td style="width:230px"><code style="color:#4fc3f7">String.length s</code></td>
+      <td style="color:#6c7a8e">Länge</td>
+      <td style="color:#c3e88d;font-size:11px">String.length "Hi" → 2</td>
+    </tr>
+    <tr class="cr" data-m="string.get s i" data-d="zeichen bei index (auch s.[i])">
+      <td style="width:230px"><code style="color:#4fc3f7">String.get s i</code></td>
+      <td style="color:#6c7a8e">Zeichen bei Index (auch s.[i])</td>
+      <td style="color:#c3e88d;font-size:11px">String.get "Hi" 0 → h</td>
+    </tr>
+    <tr class="cr" data-m="string.sub s i len" data-d="teilstring">
+      <td style="width:230px"><code style="color:#4fc3f7">String.sub s i len</code></td>
+      <td style="color:#6c7a8e">Teilstring</td>
+      <td style="color:#c3e88d;font-size:11px">String.sub "Hello" 1 3 → "ell"</td>
+    </tr>
+    <tr class="cr" data-m="string.concat sep l" data-d="verbinden">
+      <td style="width:230px"><code style="color:#4fc3f7">String.concat sep l</code></td>
+      <td style="color:#6c7a8e">Verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">String.concat "," ["a";"b"] → "a,b"</td>
+    </tr>
+    <tr class="cr" data-m="string.split_on_char c s" data-d="aufteilen">
+      <td style="width:230px"><code style="color:#4fc3f7">String.split_on_char c s</code></td>
+      <td style="color:#6c7a8e">Aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px">String.split_on_char ',' "a,b"</td>
+    </tr>
+    <tr class="cr" data-m="string.contains s c" data-d="enthält zeichen?">
+      <td style="width:230px"><code style="color:#4fc3f7">String.contains s c</code></td>
+      <td style="color:#6c7a8e">Enthält Zeichen?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="string.uppercase_ascii s" data-d="großbuchstaben (ascii)">
+      <td style="width:230px"><code style="color:#4fc3f7">String.uppercase_ascii s</code></td>
+      <td style="color:#6c7a8e">Großbuchstaben (ASCII)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="string.lowercase_ascii s" data-d="kleinbuchstaben (ascii)">
+      <td style="width:230px"><code style="color:#4fc3f7">String.lowercase_ascii s</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben (ASCII)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="string.trim s" data-d="whitespace entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">String.trim s</code></td>
+      <td style="color:#6c7a8e">Whitespace entfernen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="string_of_int n" data-d="integer zu string">
+      <td style="width:230px"><code style="color:#4fc3f7">string_of_int n</code></td>
+      <td style="color:#6c7a8e">Integer zu String</td>
+      <td style="color:#c3e88d;font-size:11px">string_of_int 42 → "42"</td>
+    </tr>
+    <tr class="cr" data-m="int_of_string s" data-d="string zu integer (raises)">
+      <td style="width:230px"><code style="color:#4fc3f7">int_of_string s</code></td>
+      <td style="color:#6c7a8e">String zu Integer (raises)</td>
+      <td style="color:#c3e88d;font-size:11px">int_of_string "42" → 42</td>
+    </tr>
+    <tr class="cr" data-m="int_of_string_opt s" data-d="sicher: option">
+      <td style="width:230px"><code style="color:#4fc3f7">int_of_string_opt s</code></td>
+      <td style="color:#6c7a8e">Sicher: Option</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="printf.printf fmt ..." data-d=""printf"-ausgabe">
+      <td style="width:230px"><code style="color:#4fc3f7">Printf.printf fmt ...</code></td>
+      <td style="color:#6c7a8e">"printf"-Ausgabe</td>
+      <td style="color:#c3e88d;font-size:11px">Printf.printf "%d %s" 42 "hi"</td>
+    </tr>
+    <tr class="cr" data-m="printf.sprintf fmt ..." data-d="in string">
+      <td style="width:230px"><code style="color:#4fc3f7">Printf.sprintf fmt ...</code></td>
+      <td style="color:#6c7a8e">In String</td>
+      <td style="color:#c3e88d;font-size:11px">Printf.sprintf "%.2f" 3.14</td>
+    </tr>
+    <tr class="cr" data-m="printf.fprintf oc fmt" data-d="in channel">
+      <td style="width:230px"><code style="color:#4fc3f7">Printf.fprintf oc fmt</code></td>
+      <td style="color:#6c7a8e">In Channel</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="format.printf fmt ..." data-d="mit pretty-printing">
+      <td style="width:230px"><code style="color:#4fc3f7">Format.printf fmt ...</code></td>
+      <td style="color:#6c7a8e">Mit Pretty-Printing</td>
+      <td style="color:#c3e88d;font-size:11px">Format.printf "@[%d@]" 42</td>
+    </tr>
+    <tr class="cr" data-m="^" data-d="string-konkatenation">
+      <td style="width:230px"><code style="color:#4fc3f7">^</code></td>
+      <td style="color:#6c7a8e">String-Konkatenation</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo" ^ " welt"</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Option &amp; Result
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Wert</th><th>Beschreibung</th><th>Beispiel / Signatur</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="option.get opt" data-d="auspacken (raises invalid_argument)">
+      <td style="width:230px"><code style="color:#c792ea">Option.get opt</code></td>
+      <td style="color:#6c7a8e">Auspacken (raises Invalid_argument)</td>
+      <td style="color:#c3e88d;font-size:11px">Option.get (Some 42) → 42</td>
+    </tr>
+    <tr class="cr" data-m="option.value opt ~default" data-d="auspacken mit default">
+      <td style="width:230px"><code style="color:#c792ea">Option.value opt ~default</code></td>
+      <td style="color:#6c7a8e">Auspacken mit Default</td>
+      <td style="color:#c3e88d;font-size:11px">Option.value None ~default:0 → 0</td>
+    </tr>
+    <tr class="cr" data-m="option.map f opt" data-d="transformieren wenn some">
+      <td style="width:230px"><code style="color:#c792ea">Option.map f opt</code></td>
+      <td style="color:#6c7a8e">Transformieren wenn Some</td>
+      <td style="color:#c3e88d;font-size:11px">Option.map ((*) 2) (Some 5) → Some 10</td>
+    </tr>
+    <tr class="cr" data-m="option.bind opt f" data-d="monadic bind (flatmap)">
+      <td style="width:230px"><code style="color:#c792ea">Option.bind opt f</code></td>
+      <td style="color:#6c7a8e">Monadic Bind (flatMap)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="option.iter f opt" data-d="seiteneffekt wenn some">
+      <td style="width:230px"><code style="color:#c792ea">Option.iter f opt</code></td>
+      <td style="color:#6c7a8e">Seiteneffekt wenn Some</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="option.is_some opt" data-d="ist some?">
+      <td style="width:230px"><code style="color:#c792ea">Option.is_some opt</code></td>
+      <td style="color:#6c7a8e">Ist Some?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="option.is_none opt" data-d="ist none?">
+      <td style="width:230px"><code style="color:#c792ea">Option.is_none opt</code></td>
+      <td style="color:#6c7a8e">Ist None?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="option.fold ~none ~some opt" data-d="pattern matching als funktion">
+      <td style="width:230px"><code style="color:#c792ea">Option.fold ~none ~some opt</code></td>
+      <td style="color:#6c7a8e">Pattern matching als Funktion</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.ok x" data-d="erzeugt ok x">
+      <td style="width:230px"><code style="color:#c792ea">Result.ok x</code></td>
+      <td style="color:#6c7a8e">Erzeugt Ok x</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.error e" data-d="erzeugt error e">
+      <td style="width:230px"><code style="color:#c792ea">Result.error e</code></td>
+      <td style="color:#6c7a8e">Erzeugt Error e</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.map f r" data-d="transformiert ok-wert">
+      <td style="width:230px"><code style="color:#c792ea">Result.map f r</code></td>
+      <td style="color:#6c7a8e">Transformiert Ok-Wert</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.bind r f" data-d="monadic bind">
+      <td style="width:230px"><code style="color:#c792ea">Result.bind r f</code></td>
+      <td style="color:#6c7a8e">Monadic Bind</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.value r ~default" data-d="ok-wert oder default">
+      <td style="width:230px"><code style="color:#c792ea">Result.value r ~default</code></td>
+      <td style="color:#6c7a8e">Ok-Wert oder Default</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.iter f r" data-d="seiteneffekt bei ok">
+      <td style="width:230px"><code style="color:#c792ea">Result.iter f r</code></td>
+      <td style="color:#6c7a8e">Seiteneffekt bei Ok</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.iter_error f r" data-d="seiteneffekt bei error">
+      <td style="width:230px"><code style="color:#c792ea">Result.iter_error f r</code></td>
+      <td style="color:#6c7a8e">Seiteneffekt bei Error</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="result.is_ok r" data-d="ist ok?">
+      <td style="width:230px"><code style="color:#c792ea">Result.is_ok r</code></td>
+      <td style="color:#6c7a8e">Ist Ok?</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #ee7a1a;color:#ee7a1a;background:rgba(238,122,26,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Polymorphischer Binärbaum</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Ausdruck-Interpreter</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Streams &amp; Lazy Evaluation</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Modul-Funktor: Maps &amp; Sets</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Vollständig polymorphischer, ausbalancierter Binärbaum *)</span>
+
+<span style="color:#c792ea">type</span> 'a baum =
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> <span style="color:#c792ea">of</span> 'a * 'a baum * 'a baum
+
+<span style="color:#546e7a">(* ── GRUNDOPERATIONEN ────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> leer = <span style="color:#ffcb6b">Leer</span>
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> einfuegen cmp x = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Knoten</span> (x, <span style="color:#ffcb6b">Leer</span>, <span style="color:#ffcb6b">Leer</span>)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (y, l, r) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span> c = cmp x y <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">if</span> c = <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Knoten</span> (y, l, r)          <span style="color:#546e7a">(* Bereits vorhanden *)</span>
+      <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> c &lt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Knoten</span> (y, einfuegen cmp x l, r)
+      <span style="color:#c792ea">else</span> <span style="color:#ffcb6b">Knoten</span> (y, l, einfuegen cmp x r)
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> suche cmp x = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">None</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (y, l, r) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span> c = cmp x y <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">if</span> c = <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Some</span> y
+      <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> c &lt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> suche cmp x l
+      <span style="color:#c792ea">else</span> suche cmp x r
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> tiefe = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (_, l, r) <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">1</span> + <span style="color:#82aaff">max</span> (tiefe l) (tiefe r)
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> groesse = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">0</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (_, l, r) <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">1</span> + groesse l + groesse r
+
+<span style="color:#546e7a">(* In-Order Traversierung → sortierte Liste! *)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> inorder = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> []
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (x, l, r) <span style="color:#89ddff">-&gt;</span> inorder l <span style="color:#89ddff">@</span> [x] <span style="color:#89ddff">@</span> inorder r
+
+<span style="color:#546e7a">(* map über den Baum *)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> baum_map f = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Leer</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (x, l, r) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#ffcb6b">Knoten</span> (f x, baum_map f l, baum_map f r)
+
+<span style="color:#546e7a">(* fold über den Baum *)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> baum_fold f acc = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Leer</span> <span style="color:#89ddff">-&gt;</span> acc
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Knoten</span> (x, l, r) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span> acc' = baum_fold f acc l <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">let</span> acc'' = f acc' x <span style="color:#c792ea">in</span>
+      baum_fold f acc'' r
+
+<span style="color:#546e7a">(* ── VERWENDUNG ──────────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> zahlen_baum =
+  [<span style="color:#f78c6c">5</span>; <span style="color:#f78c6c">3</span>; <span style="color:#f78c6c">7</span>; <span style="color:#f78c6c">1</span>; <span style="color:#f78c6c">4</span>; <span style="color:#f78c6c">6</span>; <span style="color:#f78c6c">8</span>; <span style="color:#f78c6c">2</span>]
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.fold_left (<span style="color:#c792ea">fun</span> b x <span style="color:#89ddff">-&gt;</span> einfuegen <span style="color:#82aaff">compare</span> x b) <span style="color:#ffcb6b">Leer</span>
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Tiefe: %d</span>
+<span style="color:#c3e88d">" (tiefe zahlen_baum);     (* 4 *)</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Größe: %d</span>
+<span style="color:#c3e88d">" (groesse zahlen_baum);   (* 8 *)</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Sortiert: %s</span>
+<span style="color:#c3e88d">"</span>
+    (inorder zahlen_baum
+     <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.map <span style="color:#82aaff">string_of_int</span>
+     <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">String</span>.concat <span style="color:#c3e88d">", "</span>);                           <span style="color:#546e7a">(* 1,2,3,4,5,6,7,8 *)</span>
+
+  (<span style="color:#c792ea">match</span> suche <span style="color:#82aaff">compare</span> <span style="color:#f78c6c">4</span> zahlen_baum <span style="color:#c792ea">with</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> x <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Gefunden: %d</span>
+<span style="color:#c3e88d">" x</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Nicht gefunden"</span>);
+
+  <span style="color:#546e7a">(* Baum-map: alle verdoppeln *)</span>
+  <span style="color:#c792ea">let</span> verdoppelt = baum_map (( * ) <span style="color:#f78c6c">2</span>) zahlen_baum <span style="color:#c792ea">in</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Max: %d</span>
+<span style="color:#c3e88d">"</span>
+    (baum_fold <span style="color:#82aaff">max</span> <span style="color:#f78c6c">0</span> verdoppelt)                       <span style="color:#546e7a">(* 16 *)</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Mini-Interpreter für arithmetische Ausdrücke *)</span>
+<span style="color:#546e7a">(* Zeigt: ADTs, rekursive Typen, Pattern Matching *)</span>
+
+<span style="color:#c792ea">type</span> expr =
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Zahl</span>   <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">float</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Var</span>    <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">string</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Plus</span>   <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Minus</span>  <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span>    <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Durch</span>  <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Potenz</span> <span style="color:#c792ea">of</span> expr * expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Negativ</span> <span style="color:#c792ea">of</span> expr
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Abs</span>    <span style="color:#c792ea">of</span> expr
+
+<span style="color:#c792ea">type</span> fehler =
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Unbekannte_variable</span> <span style="color:#c792ea">of</span> <span style="color:#ffcb6b">string</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Division_durch_null</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Negative_wurzel</span>
+
+<span style="color:#546e7a">(* Umgebung: Variablen-Tabelle *)</span>
+<span style="color:#c792ea">type</span> umgebung = (<span style="color:#ffcb6b">string</span> * <span style="color:#ffcb6b">float</span>) <span style="color:#ffcb6b">list</span>
+
+<span style="color:#c792ea">let</span> nachschlagen env name =
+  <span style="color:#c792ea">match</span> <span style="color:#ffcb6b">List</span>.assoc_opt name env <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> v <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Ok</span> v
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Error</span> (<span style="color:#ffcb6b">Unbekannte_variable</span> name)
+
+<span style="color:#546e7a">(* Auswertung mit Result-Monad *)</span>
+<span style="color:#c792ea">let</span> ( <span style="color:#c792ea">let</span>* ) = <span style="color:#ffcb6b">Result</span>.bind
+
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> auswerten env = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Zahl</span> n       <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Ok</span> n
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Var</span> s        <span style="color:#89ddff">-&gt;</span> nachschlagen env s
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Plus</span>  (a, b) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env a <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">let</span>* y = auswerten env b <span style="color:#c792ea">in</span>
+      <span style="color:#ffcb6b">Ok</span> (x +. y)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Minus</span> (a, b) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env a <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">let</span>* y = auswerten env b <span style="color:#c792ea">in</span>
+      <span style="color:#ffcb6b">Ok</span> (x -. y)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span>   (a, b) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env a <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">let</span>* y = auswerten env b <span style="color:#c792ea">in</span>
+      <span style="color:#ffcb6b">Ok</span> (x *. y)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Durch</span> (a, b) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env a <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">let</span>* y = auswerten env b <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">if</span> y = <span style="color:#f78c6c">0.0</span> <span style="color:#c792ea">then</span> <span style="color:#ffcb6b">Error</span> <span style="color:#ffcb6b">Division_durch_null</span>
+      <span style="color:#c792ea">else</span> <span style="color:#ffcb6b">Ok</span> (x /. y)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Potenz</span> (a, b) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env a <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">let</span>* y = auswerten env b <span style="color:#c792ea">in</span>
+      <span style="color:#ffcb6b">Ok</span> (x ** y)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Negativ</span> e <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env e <span style="color:#c792ea">in</span>
+      <span style="color:#ffcb6b">Ok</span> (-.x)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Abs</span> e <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span>* x = auswerten env e <span style="color:#c792ea">in</span>
+      <span style="color:#ffcb6b">Ok</span> (abs_float x)
+
+<span style="color:#546e7a">(* Pretty Printer *)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> drucken = <span style="color:#c792ea">function</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Zahl</span> n    <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">string_of_float</span> n
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Var</span> s     <span style="color:#89ddff">-&gt;</span> s
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Plus</span> (a, b)  <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"(%s + %s)"</span> (drucken a) (drucken b)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Minus</span> (a, b) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"(%s - %s)"</span> (drucken a) (drucken b)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Mal</span> (a, b)   <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"(%s * %s)"</span> (drucken a) (drucken b)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Durch</span> (a, b) <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"(%s / %s)"</span> (drucken a) (drucken b)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Potenz</span> (a, b)<span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"(%s ^ %s)"</span> (drucken a) (drucken b)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Negativ</span> e    <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"(-%s)"</span> (drucken e)
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Abs</span> e        <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">sprintf</span> <span style="color:#c3e88d">"|%s|"</span> (drucken e)
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#c792ea">let</span> env = [(<span style="color:#c3e88d">"x"</span>, <span style="color:#f78c6c">3.0</span>); (<span style="color:#c3e88d">"y"</span>, <span style="color:#f78c6c">4.0</span>)] <span style="color:#c792ea">in</span>
+
+  <span style="color:#546e7a">(* x² + y² *)</span>
+  <span style="color:#c792ea">let</span> ausdr = <span style="color:#ffcb6b">Plus</span> (<span style="color:#ffcb6b">Potenz</span> (<span style="color:#ffcb6b">Var</span> <span style="color:#c3e88d">"x"</span>, <span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">2.0</span>),
+                    <span style="color:#ffcb6b">Potenz</span> (<span style="color:#ffcb6b">Var</span> <span style="color:#c3e88d">"y"</span>, <span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">2.0</span>)) <span style="color:#c792ea">in</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%s = "</span> (drucken ausdr);
+  (<span style="color:#c792ea">match</span> auswerten env ausdr <span style="color:#c792ea">with</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Ok</span> v    <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%.1f</span>
+<span style="color:#c3e88d">" v   (* 25.0 *)</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Error</span> _ <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Fehler"</span>);
+
+  <span style="color:#546e7a">(* Division durch 0 *)</span>
+  <span style="color:#c792ea">let</span> fehler = <span style="color:#ffcb6b">Durch</span> (<span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">1.0</span>, <span style="color:#ffcb6b">Zahl</span> <span style="color:#f78c6c">0.0</span>) <span style="color:#c792ea">in</span>
+  (<span style="color:#c792ea">match</span> auswerten env fehler <span style="color:#c792ea">with</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Ok</span> _                    <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"?"</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Error</span> <span style="color:#ffcb6b">Division_durch_null</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Division durch Null!"</span>)</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* Lazy Streams – unendliche Sequenzen in OCaml *)</span>
+<span style="color:#546e7a">(* Seq.t ist der eingebaute Lazy-Stream-Typ *)</span>
+
+<span style="color:#546e7a">(* ── EINFACHE SEQUENZEN ──────────────────────────────────────────*)</span>
+
+<span style="color:#546e7a">(* Unendlicher Zähler *)</span>
+<span style="color:#c792ea">let</span> zahlen_ab n =
+  <span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> go i () = <span style="color:#ffcb6b">Seq</span>.<span style="color:#ffcb6b">Cons</span> (i, go (i + <span style="color:#f78c6c">1</span>)) <span style="color:#c792ea">in</span>
+  go n
+
+<span style="color:#546e7a">(* Ersten n Elemente nehmen *)</span>
+<span style="color:#c792ea">let</span> nimm n <span style="color:#ffcb6b">seq</span> =
+  <span style="color:#ffcb6b">Seq</span>.take n <span style="color:#ffcb6b">seq</span> <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.of_seq
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#c792ea">let</span> erste10 = nimm <span style="color:#f78c6c">10</span> (zahlen_ab <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">in</span>
+  <span style="color:#ffcb6b">List</span>.iter (<span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%d "</span>) erste10;
+  <span style="color:#82aaff">print_newline</span> ()   <span style="color:#546e7a">(* 0 1 2 3 4 5 6 7 8 9 *)</span>
+
+<span style="color:#546e7a">(* ── FIBONACCI ALS STREAM ───────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> fib_stream =
+  <span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> go a b () = <span style="color:#ffcb6b">Seq</span>.<span style="color:#ffcb6b">Cons</span> (a, go b (a + b)) <span style="color:#c792ea">in</span>
+  go <span style="color:#f78c6c">0</span> <span style="color:#f78c6c">1</span>
+
+<span style="color:#c792ea">let</span> () =
+  nimm <span style="color:#f78c6c">15</span> fib_stream
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.map <span style="color:#82aaff">string_of_int</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">String</span>.concat <span style="color:#c3e88d">" "</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#82aaff">print_endline</span>
+  <span style="color:#546e7a">(* 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 *)</span>
+
+<span style="color:#546e7a">(* ── PRIMZAHLEN VIA SIEB (lazy) ─────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> <span style="color:#c792ea">rec</span> sieb <span style="color:#ffcb6b">seq</span> =
+  <span style="color:#c792ea">match</span> <span style="color:#ffcb6b">seq</span> () <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Seq</span>.<span style="color:#ffcb6b">Nil</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Seq</span>.empty
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Seq</span>.<span style="color:#ffcb6b">Cons</span> (p, rest) <span style="color:#89ddff">-&gt;</span>
+      <span style="color:#c792ea">let</span> filtered = <span style="color:#ffcb6b">Seq</span>.filter (<span style="color:#c792ea">fun</span> n <span style="color:#89ddff">-&gt;</span> n <span style="color:#82aaff">mod</span> p &lt;&gt; <span style="color:#f78c6c">0</span>) rest <span style="color:#c792ea">in</span>
+      <span style="color:#c792ea">fun</span> () <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Seq</span>.<span style="color:#ffcb6b">Cons</span> (p, sieb filtered)
+
+<span style="color:#c792ea">let</span> primzahlen = sieb (zahlen_ab <span style="color:#f78c6c">2</span>)
+
+<span style="color:#c792ea">let</span> () =
+  nimm <span style="color:#f78c6c">20</span> primzahlen
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.map <span style="color:#82aaff">string_of_int</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">String</span>.concat <span style="color:#c3e88d">" "</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#82aaff">print_endline</span>
+  <span style="color:#546e7a">(* 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 *)</span>
+
+<span style="color:#546e7a">(* ── SEQUENZ-OPERATOREN ──────────────────────────────────────────*)</span>
+<span style="color:#c792ea">let</span> gerade_quadrate =
+  zahlen_ab <span style="color:#f78c6c">1</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">Seq</span>.filter (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x <span style="color:#82aaff">mod</span> <span style="color:#f78c6c">2</span> = <span style="color:#f78c6c">0</span>)    <span style="color:#546e7a">(* Gerade Zahlen *)</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">Seq</span>.map (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x * x)              <span style="color:#546e7a">(* Quadrieren *)</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">Seq</span>.take_while (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x &lt; <span style="color:#f78c6c">200</span>)    <span style="color:#546e7a">(* Bis 200 *)</span>
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#ffcb6b">List</span>.of_seq gerade_quadrate
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.map <span style="color:#82aaff">string_of_int</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">String</span>.concat <span style="color:#c3e88d">", "</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Gerade Quadrate &lt; 200: [%s]</span>
+<span style="color:#c3e88d">"</span>
+  <span style="color:#546e7a">(* [4, 16, 36, 64, 100, 144, 196] *)</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">(* OCamls Stdlib Map und Set sind Funktoren!</span>
+   <span style="color:#ffcb6b">Der</span> bekannteste <span style="color:#ffcb6b">Funktor</span>-<span style="color:#ffcb6b">Anwendungsfall</span>. *)
+
+<span style="color:#546e7a">(* ── STRING MAP ──────────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">StringMap</span> = <span style="color:#ffcb6b">Map</span>.<span style="color:#ffcb6b">Make</span>(<span style="color:#ffcb6b">String</span>)
+
+<span style="color:#c792ea">let</span> woerterbuch =
+  <span style="color:#ffcb6b">StringMap</span>.empty
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">StringMap</span>.add <span style="color:#c3e88d">"Haus"</span>    <span style="color:#c3e88d">"house"</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">StringMap</span>.add <span style="color:#c3e88d">"Auto"</span>    <span style="color:#c3e88d">"car"</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">StringMap</span>.add <span style="color:#c3e88d">"Katze"</span>   <span style="color:#c3e88d">"cat"</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">StringMap</span>.add <span style="color:#c3e88d">"Hund"</span>    <span style="color:#c3e88d">"dog"</span>
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#546e7a">(* Nachschlagen *)</span>
+  (<span style="color:#c792ea">match</span> <span style="color:#ffcb6b">StringMap</span>.find_opt <span style="color:#c3e88d">"Katze"</span> woerterbuch <span style="color:#c792ea">with</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> eng <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Katze = %s</span>
+<span style="color:#c3e88d">" eng    (* cat *)</span>
+   <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>     <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">print_endline</span> <span style="color:#c3e88d">"Nicht gefunden"</span>);
+
+  <span style="color:#546e7a">(* Alle Einträge *)</span>
+  <span style="color:#ffcb6b">StringMap</span>.iter (<span style="color:#c792ea">fun</span> de en <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%s → %s</span>
+<span style="color:#c3e88d">" de en</span>
+  ) woerterbuch;
+
+  <span style="color:#546e7a">(* Map transformieren *)</span>
+  <span style="color:#c792ea">let</span> upper = <span style="color:#ffcb6b">StringMap</span>.map <span style="color:#ffcb6b">String</span>.uppercase_ascii woerterbuch <span style="color:#c792ea">in</span>
+  <span style="color:#ffcb6b">StringMap</span>.iter (<span style="color:#c792ea">fun</span> k v <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%s: %s</span>
+<span style="color:#c3e88d">" k v) upper;</span>
+
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Größe: %d</span>
+<span style="color:#c3e88d">" (StringMap.cardinal woerterbuch)   (* 4 *)</span>
+
+<span style="color:#546e7a">(* ── INT SET ────────────────────────────────────────────────────*)</span>
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">IntSet</span> = <span style="color:#ffcb6b">Set</span>.<span style="color:#ffcb6b">Make</span>(<span style="color:#ffcb6b">Int</span>)
+
+<span style="color:#c792ea">let</span> primzahlen_set =
+  [<span style="color:#f78c6c">2</span>;<span style="color:#f78c6c">3</span>;<span style="color:#f78c6c">5</span>;<span style="color:#f78c6c">7</span>;<span style="color:#f78c6c">11</span>;<span style="color:#f78c6c">13</span>;<span style="color:#f78c6c">17</span>;<span style="color:#f78c6c">19</span>;<span style="color:#f78c6c">23</span>;<span style="color:#f78c6c">29</span>]
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">List</span>.fold_left (<span style="color:#c792ea">fun</span> s x <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IntSet</span>.add x s) <span style="color:#ffcb6b">IntSet</span>.empty
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"11 prim? %b</span>
+<span style="color:#c3e88d">" (IntSet.mem 11 primzahlen_set);  (* true *)</span>
+  <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"10 prim? %b</span>
+<span style="color:#c3e88d">" (IntSet.mem 10 primzahlen_set);  (* false *)</span>
+
+  <span style="color:#c792ea">let</span> under_15 = <span style="color:#ffcb6b">IntSet</span>.filter (<span style="color:#c792ea">fun</span> x <span style="color:#89ddff">-&gt;</span> x &lt; <span style="color:#f78c6c">15</span>) primzahlen_set <span style="color:#c792ea">in</span>
+  <span style="color:#ffcb6b">IntSet</span>.iter (<span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%d "</span>) under_15;
+  <span style="color:#82aaff">print_newline</span> ()   <span style="color:#546e7a">(* 2 3 5 7 11 13 *)</span>
+
+<span style="color:#546e7a">(* ── EIGENER FUNKTOR ──────────────────────────────────────────────*)</span>
+<span style="color:#546e7a">(* Map für einen eigenen Typ *)</span>
+<span style="color:#c792ea">type</span> punkt = { x: <span style="color:#ffcb6b">int</span>; y: <span style="color:#ffcb6b">int</span> }
+
+<span style="color:#c792ea">module</span> <span style="color:#ffcb6b">PunktMap</span> = <span style="color:#ffcb6b">Map</span>.<span style="color:#ffcb6b">Make</span>(<span style="color:#c792ea">struct</span>
+  <span style="color:#c792ea">type</span> t = punkt
+  <span style="color:#c792ea">let</span> <span style="color:#82aaff">compare</span> p1 p2 =
+    <span style="color:#c792ea">let</span> cx = <span style="color:#82aaff">compare</span> p1.x p2.x <span style="color:#c792ea">in</span>
+    <span style="color:#c792ea">if</span> cx &lt;&gt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">then</span> cx <span style="color:#c792ea">else</span> <span style="color:#82aaff">compare</span> p1.y p2.y
+<span style="color:#c792ea">end</span>)
+
+<span style="color:#c792ea">let</span> karte =
+  <span style="color:#ffcb6b">PunktMap</span>.empty
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">PunktMap</span>.add {x=<span style="color:#f78c6c">0</span>; y=<span style="color:#f78c6c">0</span>} <span style="color:#c3e88d">"Ursprung"</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">PunktMap</span>.add {x=<span style="color:#f78c6c">1</span>; y=<span style="color:#f78c6c">0</span>} <span style="color:#c3e88d">"Rechts"</span>
+  <span style="color:#89ddff">|</span>&gt; <span style="color:#ffcb6b">PunktMap</span>.add {x=<span style="color:#f78c6c">0</span>; y=<span style="color:#f78c6c">1</span>} <span style="color:#c3e88d">"Oben"</span>
+
+<span style="color:#c792ea">let</span> () =
+  <span style="color:#c792ea">match</span> <span style="color:#ffcb6b">PunktMap</span>.find_opt {x=<span style="color:#f78c6c">0</span>; y=<span style="color:#f78c6c">0</span>} karte <span style="color:#c792ea">with</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">Some</span> s <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Printf</span>.<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Ursprung heißt: %s</span>
+<span style="color:#c3e88d">" s</span>
+  <span style="color:#89ddff">|</span> <span style="color:#ffcb6b">None</span>   <span style="color:#89ddff">-&gt;</span> ()</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#ee7a1a0e;border:1px solid #ee7a1a44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#ee7a1a">Schnellstart:</strong> <code style="color:#ffb347">opam init && opam install utop && utop</code><br>Oder online: <a href="https://v2.ocaml.org/play" style="color:#d4a017">v2.ocaml.org/play</a></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #ee7a1a44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ee7a1a0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ee7a1a">
+      <span style="display:inline-block;width:8px;height:8px;background:#ee7a1a;border-radius:50%;margin-right:2px"></span>⚙ OCaml installieren (Linux)
+    </span>
+    <span class="aa" style="color:#ee7a1a;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:250px"><code style="color:#ee7a1a">opam (empfohlen!)</code></td><td style="color:#cdd6f4">opam.ocaml.org</td><td style="color:#6c7a8e">bash -c "sh &lt;(curl -fsSL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh)"
+opam init &amp;&amp; opam switch create 5.1.0</td></tr><tr><td style="width:250px"><code style="color:#ee7a1a">Arch/CachyOS</code></td><td style="color:#cdd6f4">ocaml</td><td style="color:#6c7a8e">sudo pacman -S ocaml opam
+opam init</td></tr><tr><td style="width:250px"><code style="color:#ee7a1a">Ubuntu/Debian</code></td><td style="color:#cdd6f4">opam</td><td style="color:#6c7a8e">sudo apt install opam
+opam init &amp;&amp; opam switch create 5.1.0</td></tr><tr><td style="width:250px"><code style="color:#ee7a1a">macOS (Homebrew)</code></td><td style="color:#cdd6f4">brew</td><td style="color:#6c7a8e">brew install opam &amp;&amp; opam init</td></tr><tr><td style="width:250px"><code style="color:#ee7a1a">utop (REPL)</code></td><td style="color:#cdd6f4">opam</td><td style="color:#6c7a8e">opam install utop
+utop   # Viel besser als ocaml!</td></tr><tr><td style="width:250px"><code style="color:#ee7a1a">OCaml Playground</code></td><td style="color:#cdd6f4">v2.ocaml.org/play</td><td style="color:#6c7a8e">https://v2.ocaml.org/play
+Direkt im Browser!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Tools &amp; Build-System
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:250px"><code style="color:#4fc3f7">ocamlopt datei.ml</code></td><td style="color:#cdd6f4">Direkt kompilieren (native)</td><td style="color:#6c7a8e">-o ausgabe für Ausgabedatei</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">ocamlc datei.ml</code></td><td style="color:#cdd6f4">Bytecode kompilieren</td><td style="color:#6c7a8e">Plattformunabhängig</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">utop</code></td><td style="color:#cdd6f4">Beste REPL für OCaml</td><td style="color:#6c7a8e">opam install utop</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">ocamlfind</code></td><td style="color:#cdd6f4">Bibliotheken finden</td><td style="color:#6c7a8e">ocamlfind ocamlopt -package str</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">dune</code></td><td style="color:#cdd6f4">Modernes Build-System (Standard!)</td><td style="color:#6c7a8e">opam install dune</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">dune init exe meinprog</code></td><td style="color:#cdd6f4">Neues Projekt</td><td style="color:#6c7a8e">dann: dune build &amp;&amp; ./_build/default/meinprog.exe</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">dune build</code></td><td style="color:#cdd6f4">Projekt bauen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">dune exec ./main.exe</code></td><td style="color:#cdd6f4">Ausführen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">dune test</code></td><td style="color:#cdd6f4">Tests ausführen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">ocamlformat</code></td><td style="color:#cdd6f4">Code formatieren</td><td style="color:#6c7a8e">opam install ocamlformat</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">merlin</code></td><td style="color:#cdd6f4">IDE-Support (LSP-Basis)</td><td style="color:#6c7a8e">opam install merlin</td></tr><tr><td style="width:250px"><code style="color:#4fc3f7">ocaml-lsp-server</code></td><td style="color:#cdd6f4">Language Server</td><td style="color:#6c7a8e">opam install ocaml-lsp-server</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Bibliotheken (opam)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:250px"><code style="color:#c792ea">Core (Jane Street)</code></td><td style="color:#cdd6f4">opam install core</td><td style="color:#6c7a8e">Erweiterte Stdlib von Jane Street. Sehr beliebt</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Lwt</code></td><td style="color:#cdd6f4">opam install lwt</td><td style="color:#6c7a8e">Asynchrone Programmierung (Promises)</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Async (Jane Street)</code></td><td style="color:#cdd6f4">opam install async</td><td style="color:#6c7a8e">Alternative zu Lwt</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Dream</code></td><td style="color:#cdd6f4">opam install dream</td><td style="color:#6c7a8e">Web-Framework: dream ~&gt; Route ~&gt; Handler</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Cohttp</code></td><td style="color:#cdd6f4">opam install cohttp-lwt-unix</td><td style="color:#6c7a8e">HTTP-Client und -Server</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Yojson</code></td><td style="color:#cdd6f4">opam install yojson</td><td style="color:#6c7a8e">JSON parsen/erzeugen</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Ppxlib</code></td><td style="color:#cdd6f4">opam install ppxlib</td><td style="color:#6c7a8e">Präprozessor-Erweiterungen</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Alcotest</code></td><td style="color:#cdd6f4">opam install alcotest</td><td style="color:#6c7a8e">Test-Framework</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Dune (build)</code></td><td style="color:#cdd6f4">opam install dune</td><td style="color:#6c7a8e">Modernes Build-System (Standard)</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Zarith</code></td><td style="color:#cdd6f4">opam install zarith</td><td style="color:#6c7a8e">Beliebig große Integer</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Cmdliner</code></td><td style="color:#cdd6f4">opam install cmdliner</td><td style="color:#6c7a8e">CLI-Argument-Parsing</td></tr><tr><td style="width:250px"><code style="color:#c792ea">Angstrom</code></td><td style="color:#cdd6f4">opam install angstrom</td><td style="color:#6c7a8e">Parser-Kombinator-Bibliothek</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Lernressourcen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:250px"><code style="color:#4ec9b0">Real World OCaml</code></td><td style="color:#cdd6f4">dev.realworldocaml.org</td><td style="color:#6c7a8e">Kostenlos online! DAS OCaml-Buch</td></tr><tr><td style="width:250px"><code style="color:#4ec9b0">OCaml Manual</code></td><td style="color:#cdd6f4">v2.ocaml.org/manual</td><td style="color:#6c7a8e">Offizielle Referenz</td></tr><tr><td style="width:250px"><code style="color:#4ec9b0">OCaml Playground</code></td><td style="color:#cdd6f4">v2.ocaml.org/play</td><td style="color:#6c7a8e">Browser-REPL</td></tr><tr><td style="width:250px"><code style="color:#4ec9b0">Exercism OCaml</code></td><td style="color:#cdd6f4">exercism.org/tracks/ocaml</td><td style="color:#6c7a8e">Übungsaufgaben mit Mentor-Feedback</td></tr><tr><td style="width:250px"><code style="color:#4ec9b0">99 OCaml Problems</code></td><td style="color:#cdd6f4">v2.ocaml.org/learn/tutorials</td><td style="color:#6c7a8e">Klassische Problemsammlung</td></tr><tr><td style="width:250px"><code style="color:#4ec9b0">Jane Street Blog</code></td><td style="color:#cdd6f4">blog.janestreet.com</td><td style="color:#6c7a8e">Praxis-Artikel von OCaml-Experten</td></tr><tr><td style="width:250px"><code style="color:#4ec9b0">Awesome OCaml</code></td><td style="color:#cdd6f4">github.com/ocaml-community</td><td style="color:#6c7a8e">Kuratierte Bibliotheksliste</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ OCaml vs. ähnliche Sprachen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:250px"><code style="color:#ffb347">vs. Haskell</code></td><td style="color:#cdd6f4">Beide ML-Familie</td><td style="color:#6c7a8e">OCaml: imperativ möglich, eager; Haskell: pure, lazy</td></tr><tr><td style="width:250px"><code style="color:#ffb347">vs. F#</code></td><td style="color:#cdd6f4">F# = OCaml für .NET</td><td style="color:#6c7a8e">F# ist direkter Nachfolger, auf CLR</td></tr><tr><td style="width:250px"><code style="color:#ffb347">vs. Rust</code></td><td style="color:#cdd6f4">Rust inspiriert von OCaml</td><td style="color:#6c7a8e">Rust: kein GC, Ownership; OCaml: GC, einfacher</td></tr><tr><td style="width:250px"><code style="color:#ffb347">vs. Scala</code></td><td style="color:#cdd6f4">Beide JVM-Alternativen</td><td style="color:#6c7a8e">Scala: JVM, OOP-Fokus; OCaml: native, Modul-Fokus</td></tr><tr><td style="width:250px"><code style="color:#ffb347">Typ-Inferenz</code></td><td style="color:#cdd6f4">Hindley-Milner</td><td style="color:#6c7a8e">Vollständig: praktisch nie Typen schreiben müssen</td></tr><tr><td style="width:250px"><code style="color:#ffb347">Module</code></td><td style="color:#cdd6f4">Mächtigstes Modulsystem</td><td style="color:#6c7a8e">Funktoren = Funktionen über Module</td></tr><tr><td style="width:250px"><code style="color:#ffb347">OCaml 5</code></td><td style="color:#cdd6f4">Multicore + Effects</td><td style="color:#6c7a8e">2022: eingebaute Parallelität und Effektsystem</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#ee7a1a';
+      btn.style.color       = '#ee7a1a';
+      btn.style.background  = 'rgba(238,122,26,.08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BQN Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #3fc997;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0a0f0a, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(63,201,151,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(63,201,151,.04); }
+
+code { font-family: 'Courier New', monospace; font-size:13px; background: rgba(63,201,151,.08); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#3fc997">⊞</span>
+      <span style="color:#3fc997">BQN</span> Syntax
+    </div>
+    <div id="hdr-sub">BQN 2020+ · Array-Programmierung · Glyphen · Trains · Modifier · Tacit · APL-Nachfolger</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="primitives">Primitive Funktionen</button>
+    <button class="tb" data-tab="modifiers">Modifier</button>
+    <button class="tb" data-tab="blocks">Blöcke & Kontrollfluss</button>
+    <button class="tb" data-tab="stdlib">Stdlib & Idiome</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#3fc9970a;border:1px solid #3fc99744;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#3fc997">BQN – Array-Programmierung mit Glyphen.</strong>
+  Kein if/while/for – Arrays und Funktionen machen alles.<br>
+  <span style="color:#cdd6f4">
+    Auswertung <code style="color:#c3e88d">rechts nach links</code> &nbsp;·&nbsp;
+    <code style="color:#c3e88d">f x</code> monadisch &nbsp;·&nbsp;
+    <code style="color:#c3e88d">x f y</code> dyadisch &nbsp;·&nbsp;
+    <code style="color:#c3e88d">𝕩</code> rechtes Arg &nbsp;·&nbsp;
+    <code style="color:#c3e88d">𝕨</code> linkes Arg &nbsp;·&nbsp;
+    Online: <a href="https://mlochbaum.github.io/BQN/try.html" style="color:#d4a017">try.html</a>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #3fc99744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3fc9970e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3fc997">
+      <span style="display:inline-block;width:8px;height:8px;background:#3fc997;border-radius:50%;margin-right:2px"></span>Was BQN ist – und wie man es liest
+    </span>
+    <span class="aa" style="color:#3fc997;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="was bqn ist – und wie man es liest">
+  <div style="color:#3fc997;font-weight:700;font-size:12px;margin-bottom:8px">
+    Was BQN ist – und wie man es liest
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># BQN ist eine Array-Programmiersprache</span>
+<span style="color:#546e7a"># Alles dreht sich um Arrays – kein if/while/for nötig!</span>
+<span style="color:#546e7a"># Kurze Glyphen ersetzen lange Funktionsnamen</span>
+
+<span style="color:#546e7a"># AUSWERTUNGSREIHENFOLGE: Rechts nach links!</span>
+<span style="color:#f78c6c">2</span> <span style="color:#82aaff">+</span> <span style="color:#f78c6c">3</span> <span style="color:#82aaff">×</span> <span style="color:#f78c6c">4</span>        <span style="color:#546e7a"># 2 + (3×4) = 14  NICHT (2+3)×4 = 20!</span>
+                 <span style="color:#546e7a"># Ausnahme: Klammern wie üblich</span>
+
+<span style="color:#546e7a"># MONADISCH vs. DYADISCH</span>
+<span style="color:#546e7a"># Dieselbe Glyph hat zwei Bedeutungen je nach Argumentanzahl!</span>
+<span style="color:#82aaff">-</span> <span style="color:#f78c6c">5</span>              <span style="color:#546e7a"># Monadisch: Negation (-5)</span>
+<span style="color:#f78c6c">3</span> <span style="color:#82aaff">-</span> <span style="color:#f78c6c">5</span>            <span style="color:#546e7a"># Dyadisch:  Subtraktion (-2)</span>
+
+<span style="color:#82aaff">⌽</span> <span style="color:#c3e88d">"hallo"</span>        <span style="color:#546e7a"># Monadisch: Umkehren → "ollah"</span>
+<span style="color:#f78c6c">2</span> <span style="color:#82aaff">⌽</span> <span style="color:#c3e88d">"hallo"</span>      <span style="color:#546e7a"># Dyadisch:  Rotieren  → "lloha"</span>
+
+<span style="color:#546e7a"># DIE VIER ROLLEN in BQN:</span>
+<span style="color:#546e7a"># Subject    (lowercase):    x, zahlen, ergebnis</span>
+<span style="color:#546e7a"># Function   (Uppercase/Glyph): F, +, ×, Summe</span>
+<span style="color:#546e7a"># 1-Modifier (superscript):  ˜, ¨, ´   (wirken auf 1 Funktion)</span>
+<span style="color:#546e7a"># 2-Modifier (subscript):    ∘, ⊸, ⟜   (wirken auf 2 Funktionen)</span>
+
+<span style="color:#546e7a"># ROLLEN bestimmen die Grammatik, nicht Schlüsselwörter!</span>
+zahl <span style="color:#89ddff">←</span> <span style="color:#f78c6c">42</span>              <span style="color:#546e7a"># subject (lowercase)</span>
+<span style="color:#82aaff">Verdopple</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">×</span><span style="color:#ffcb6b">⟜</span><span style="color:#f78c6c">2</span>       <span style="color:#546e7a"># function (uppercase)</span>
+<span style="color:#82aaff">_einmal</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝔽</span><span style="color:#e05252">}</span>         <span style="color:#546e7a"># 1-modifier (underscore prefix)</span>
+<span style="color:#82aaff">_Compose_</span> <span style="color:#89ddff">←</span> <span style="color:#ffcb6b">∘</span>          <span style="color:#546e7a"># 2-modifier (underscore both sides)</span>
+
+<span style="color:#546e7a"># ZUWEISUNG</span>
+x <span style="color:#89ddff">←</span> <span style="color:#f78c6c">5</span>            <span style="color:#546e7a"># Definieren (wie = in anderen Sprachen)</span>
+x <span style="color:#89ddff">↩</span> x <span style="color:#82aaff">+</span> <span style="color:#f78c6c">1</span>        <span style="color:#546e7a"># Modifizieren (wie += 1)</span>
+<span style="color:#82aaff">F</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">+</span>            <span style="color:#546e7a"># Funktion zuweisen</span>
+
+<span style="color:#546e7a"># AUSGABE: Jeder Ausdruck auf der obersten Ebene wird ausgegeben</span>
+<span style="color:#f78c6c">42</span>               <span style="color:#546e7a"># Gibt 42 aus</span>
+<span style="color:#c3e88d">"Hallo"</span>          <span style="color:#546e7a"># Gibt "Hallo" aus</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Typen &amp; Literale
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Literal</th><th>Beispiele</th><th>Beschreibung</th></tr></thead><tbody>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">42</td>
+      <td style="color:#c3e88d;font-size:11px">42  ¯5  3.14  1e6  ∞  π</td>
+      <td style="color:#6c7a8e">Zahl (Number). ¯ = negativ (kein Minus!)</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">"Hallo"</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo, Welt!"  "Es""cape"</td>
+      <td style="color:#6c7a8e">String = Zeichen-Array. "" = escaped "</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">'A'</td>
+      <td style="color:#c3e88d;font-size:11px">@A  @a  @0  @ (Leerzeichen)</td>
+      <td style="color:#6c7a8e">Zeichen (Character). @ = 0-Wert</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">⟨1,2,3⟩</td>
+      <td style="color:#c3e88d;font-size:11px">⟨1,"Hallo",+⟩</td>
+      <td style="color:#6c7a8e">Gemischte Liste (beliebige Typen)</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">[1,2,3]</td>
+      <td style="color:#c3e88d;font-size:11px">[1 2 3]  3‿4‿5</td>
+      <td style="color:#6c7a8e">Array (homogen). Leerzeichen = Trenner</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">3‿4‿5</td>
+      <td style="color:#c3e88d;font-size:11px">a‿b‿c  →  ⟨a,b,c⟩</td>
+      <td style="color:#6c7a8e">Strand-Notation: a‿b ist Paar ohne Klammern</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">&lt;42&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">&lt;"hallo"  &lt;[1 2 3]</td>
+      <td style="color:#6c7a8e">Unit (Array der Tiefe 0 – alles eingehüllt)</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">+</td>
+      <td style="color:#c3e88d;font-size:11px">×÷-⌊⌈√ ...</td>
+      <td style="color:#6c7a8e">Funktion (Glyph oder Uppercase-Name)</td>
+    </tr>
+    <tr>
+      <td style="font-size:16px;color:#4fc3f7;font-weight:700;width:80px;text-align:center">{𝕩+1}</td>
+      <td style="color:#c3e88d;font-size:11px">{𝕨×𝕩}  {⌽𝕩}</td>
+      <td style="color:#6c7a8e">Block (anonyme Funktion). 𝕩=rechts, 𝕨=links</td>
+    </tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Arrays – das Herzstück
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arrays – das herzstück">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arrays – das Herzstück
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Arrays haben FORM (shape) und RANG (rank)</span>
+
+a <span style="color:#89ddff">←</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]     <span style="color:#546e7a"># 1D-Array, Form ⟨5⟩, Rang 1</span>
+b <span style="color:#89ddff">←</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">3</span> <span style="color:#82aaff">⥊</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">9</span>       <span style="color:#546e7a"># 2D-Array (Matrix), Form ⟨3,3⟩, Rang 2</span>
+                    <span style="color:#546e7a"># ↕9 = 0..8, ⥊ = reshape</span>
+
+<span style="color:#82aaff">≢</span> a                 <span style="color:#546e7a"># Form von a → ⟨5⟩</span>
+<span style="color:#82aaff">≢</span> b                 <span style="color:#546e7a"># Form von b → ⟨3,3⟩</span>
+<span style="color:#82aaff">=</span>  a                <span style="color:#546e7a"># Rang von a → 1  (Anzahl Dimensionen)</span>
+<span style="color:#82aaff">≠</span>  a                <span style="color:#546e7a"># Länge von a → 5 (erste Dimension)</span>
+
+<span style="color:#546e7a"># Array-Erstellung</span>
+<span style="color:#82aaff">↕</span> <span style="color:#f78c6c">5</span>                 <span style="color:#546e7a"># Range 0..4:      0 1 2 3 4</span>
+<span style="color:#f78c6c">1</span> <span style="color:#82aaff">+</span> <span style="color:#82aaff">↕</span> <span style="color:#f78c6c">5</span>             <span style="color:#546e7a"># Range 1..5:      1 2 3 4 5</span>
+<span style="color:#f78c6c">2</span> <span style="color:#82aaff">×</span> <span style="color:#82aaff">↕</span> <span style="color:#f78c6c">10</span>            <span style="color:#546e7a"># Gerade Zahlen:   0 2 4 6 8 10 12 14 16 18</span>
+<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span> <span style="color:#82aaff">⥊</span> <span style="color:#f78c6c">0</span>             <span style="color:#546e7a"># 3×4 Matrix aus 0en</span>
+<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span> <span style="color:#82aaff">⥊</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">12</span>           <span style="color:#546e7a"># 3×4 Matrix, Werte 0..11</span>
+
+<span style="color:#546e7a"># ZUGRIFF (0-basiert!)</span>
+a <span style="color:#89ddff">←</span> <span style="color:#c3e88d">"hallo"</span>
+<span style="color:#f78c6c">1</span> <span style="color:#82aaff">⊑</span> a               <span style="color:#546e7a"># Zeichen an Index 1 → 'a'</span>
+<span style="color:#82aaff">⊑</span>  a                <span style="color:#546e7a"># Erstes Element → 'h'</span>
+<span style="color:#f78c6c">¯1</span> <span style="color:#82aaff">⊑</span> a              <span style="color:#546e7a"># Letztes Element → 'o'  (¯1 = -1)</span>
+<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">4</span> <span style="color:#82aaff">⊑</span> a             <span style="color:#546e7a"># Elemente 2 und 4 → "lo"</span>
+
+<span style="color:#546e7a"># SLICING</span>
+<span style="color:#f78c6c">2</span> <span style="color:#82aaff">↑</span> a               <span style="color:#546e7a"># Erste 2:  "ha"</span>
+<span style="color:#f78c6c">¯2</span> <span style="color:#82aaff">↑</span> a              <span style="color:#546e7a"># Letzte 2: "lo"</span>
+<span style="color:#f78c6c">2</span> <span style="color:#82aaff">↓</span> a               <span style="color:#546e7a"># Ab Index 2: "llo"</span>
+<span style="color:#f78c6c">¯2</span> <span style="color:#82aaff">↓</span> a              <span style="color:#546e7a"># Ohne letzte 2: "hal"</span>
+<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">3</span> <span style="color:#82aaff">/</span> a             <span style="color:#546e7a"># Auswahl nach Maske (nein, ja, nein, ja = ?)</span>
+
+<span style="color:#546e7a"># ELEMENTWEISE OPERATIONEN – kein Loop nötig!</span>
+a <span style="color:#89ddff">←</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]
+a <span style="color:#82aaff">+</span> <span style="color:#f78c6c">10</span>              <span style="color:#546e7a"># [11 12 13 14 15]  (jedes + 10)</span>
+a <span style="color:#82aaff">×</span> a               <span style="color:#546e7a"># [1 4 9 16 25]    (elementweise ×)</span>
+a <span style="color:#82aaff">&lt;</span> <span style="color:#f78c6c">3</span>               <span style="color:#546e7a"># [1 1 0 0 0]      (elementweise Vergleich)</span>
+<span style="color:#82aaff">⌊</span> <span style="color:#f78c6c">2.7</span>‿<span style="color:#f78c6c">3.9</span>‿<span style="color:#f78c6c">1.1</span>       <span style="color:#546e7a"># [2 3 1]          (Funktion auf alle)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-primitives" class="tp">
+
+<div class="ac open" id="ac-pa0"
+     style="border:1px solid #3fc99744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3fc9970e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3fc997">
+      <span style="display:inline-block;width:8px;height:8px;background:#3fc997;border-radius:50%;margin-right:2px"></span>⊞ Arithmetik &amp; Logik
+    </span>
+    <span class="aa" style="color:#3fc997;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th style="text-align:center">Glyph</th>
+    <th>Monadisch (f x)</th>
+    <th>Dyadisch (x f y)</th>
+    <th>Hinweise</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">+</td>
+      <td style="color:#82aaff;font-size:11px">Konjugat (Komplex)</td>
+      <td style="color:#ffcb6b;font-size:11px">Addieren</td>
+      <td style="color:#6c7a8e;font-size:11px">a+b</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">-</td>
+      <td style="color:#82aaff;font-size:11px">Negieren</td>
+      <td style="color:#ffcb6b;font-size:11px">Subtrahieren</td>
+      <td style="color:#6c7a8e;font-size:11px">3-1 → 2</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">×</td>
+      <td style="color:#82aaff;font-size:11px">Vorzeichen</td>
+      <td style="color:#ffcb6b;font-size:11px">Multiplizieren</td>
+      <td style="color:#6c7a8e;font-size:11px">3×4 → 12</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">÷</td>
+      <td style="color:#82aaff;font-size:11px">Kehrwert (1/x)</td>
+      <td style="color:#ffcb6b;font-size:11px">Dividieren</td>
+      <td style="color:#6c7a8e;font-size:11px">10÷4 → 2.5</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⋆</td>
+      <td style="color:#82aaff;font-size:11px">e^x</td>
+      <td style="color:#ffcb6b;font-size:11px">Potenz x^y</td>
+      <td style="color:#6c7a8e;font-size:11px">2⋆10 → 1024</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">√</td>
+      <td style="color:#82aaff;font-size:11px">Quadratwurzel</td>
+      <td style="color:#ffcb6b;font-size:11px">xte Wurzel aus y</td>
+      <td style="color:#6c7a8e;font-size:11px">2√9 → 3</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⌊</td>
+      <td style="color:#82aaff;font-size:11px">Abrunden (Floor)</td>
+      <td style="color:#ffcb6b;font-size:11px">Minimum</td>
+      <td style="color:#6c7a8e;font-size:11px">2⌊5 → 2</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⌈</td>
+      <td style="color:#82aaff;font-size:11px">Aufrunden (Ceil)</td>
+      <td style="color:#ffcb6b;font-size:11px">Maximum</td>
+      <td style="color:#6c7a8e;font-size:11px">2⌈5 → 5</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">|</td>
+      <td style="color:#82aaff;font-size:11px">Absolutwert</td>
+      <td style="color:#ffcb6b;font-size:11px">Modulo (y mod x)</td>
+      <td style="color:#6c7a8e;font-size:11px">3|7 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">¬</td>
+      <td style="color:#82aaff;font-size:11px">Logisches NOT (1-x)</td>
+      <td style="color:#ffcb6b;font-size:11px">1-x Span</td>
+      <td style="color:#6c7a8e;font-size:11px">¬0 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">∧</td>
+      <td style="color:#82aaff;font-size:11px">Sortieren Aufsteigend</td>
+      <td style="color:#ffcb6b;font-size:11px">Logisches UND (min)</td>
+      <td style="color:#6c7a8e;font-size:11px">1∧0 → 0</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#3fc997;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">∨</td>
+      <td style="color:#82aaff;font-size:11px">Sortieren Absteigend</td>
+      <td style="color:#ffcb6b;font-size:11px">Logisches ODER (max)</td>
+      <td style="color:#6c7a8e;font-size:11px">1∨0 → 1</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pa1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>≡ Vergleiche
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th style="text-align:center">Glyph</th>
+    <th>Monadisch (f x)</th>
+    <th>Dyadisch (x f y)</th>
+    <th>Hinweise</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">&lt;</td>
+      <td style="color:#82aaff;font-size:11px">Einschließen (&lt;e&gt; = Box)</td>
+      <td style="color:#ffcb6b;font-size:11px">Kleiner als</td>
+      <td style="color:#6c7a8e;font-size:11px">3&lt;5 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">&gt;</td>
+      <td style="color:#82aaff;font-size:11px">Öffnen (Unbox)</td>
+      <td style="color:#ffcb6b;font-size:11px">Größer als</td>
+      <td style="color:#6c7a8e;font-size:11px">3&gt;5 → 0</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">≤</td>
+      <td style="color:#82aaff;font-size:11px">–</td>
+      <td style="color:#ffcb6b;font-size:11px">Kleiner oder gleich</td>
+      <td style="color:#6c7a8e;font-size:11px">3≤3 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">≥</td>
+      <td style="color:#82aaff;font-size:11px">–</td>
+      <td style="color:#ffcb6b;font-size:11px">Größer oder gleich</td>
+      <td style="color:#6c7a8e;font-size:11px"></td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">=</td>
+      <td style="color:#82aaff;font-size:11px">Rang</td>
+      <td style="color:#ffcb6b;font-size:11px">Gleich (elementweise)</td>
+      <td style="color:#6c7a8e;font-size:11px">3=3 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">≠</td>
+      <td style="color:#82aaff;font-size:11px">Länge</td>
+      <td style="color:#ffcb6b;font-size:11px">Ungleich</td>
+      <td style="color:#6c7a8e;font-size:11px">3≠4 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">≡</td>
+      <td style="color:#82aaff;font-size:11px">Tiefe (Schachtelungs-ebene)</td>
+      <td style="color:#ffcb6b;font-size:11px">Übereinstimmung (1=gleich)</td>
+      <td style="color:#6c7a8e;font-size:11px">1‿2 ≡ 1‿2 → 1</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4fc3f7;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">≢</td>
+      <td style="color:#82aaff;font-size:11px">Form</td>
+      <td style="color:#ffcb6b;font-size:11px">Keine Übereinstimmung</td>
+      <td style="color:#6c7a8e;font-size:11px">1‿2 ≢ 1‿3 → 1</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pa2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⥊ Array-Funktionen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th style="text-align:center">Glyph</th>
+    <th>Monadisch (f x)</th>
+    <th>Dyadisch (x f y)</th>
+    <th>Hinweise</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⥊</td>
+      <td style="color:#82aaff;font-size:11px">Ravel (zu 1D flach)</td>
+      <td style="color:#ffcb6b;font-size:11px">Reshape (x⥊y)</td>
+      <td style="color:#6c7a8e;font-size:11px">2‿3 ⥊ ↕6</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">∾</td>
+      <td style="color:#82aaff;font-size:11px">Enlist (1-el. Array)</td>
+      <td style="color:#ffcb6b;font-size:11px">Verketten/Verbinden</td>
+      <td style="color:#6c7a8e;font-size:11px">"ha"∾"llo" → "hallo"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">≍</td>
+      <td style="color:#82aaff;font-size:11px">Solo (neue Achse links)</td>
+      <td style="color:#ffcb6b;font-size:11px">Couple (2 Arrays stapeln)</td>
+      <td style="color:#6c7a8e;font-size:11px">1‿2 ≍ 3‿4</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⋈</td>
+      <td style="color:#82aaff;font-size:11px">Enlist (Einwickeln)</td>
+      <td style="color:#ffcb6b;font-size:11px">Paar (2-el. Array)</td>
+      <td style="color:#6c7a8e;font-size:11px">1 ⋈ 2 → ⟨1,2⟩</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">↑</td>
+      <td style="color:#82aaff;font-size:11px">Präfixe</td>
+      <td style="color:#ffcb6b;font-size:11px">Take (x Elemente)</td>
+      <td style="color:#6c7a8e;font-size:11px">3↑"hallo" → "hal"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">↓</td>
+      <td style="color:#82aaff;font-size:11px">Suffixe</td>
+      <td style="color:#ffcb6b;font-size:11px">Drop (x Elemente fallen lassen)</td>
+      <td style="color:#6c7a8e;font-size:11px">2↓"hallo" → "llo"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">↕</td>
+      <td style="color:#82aaff;font-size:11px">Zahlenbereich 0..x-1</td>
+      <td style="color:#ffcb6b;font-size:11px">Windows (Fenster)</td>
+      <td style="color:#6c7a8e;font-size:11px">↕5 → ⟨0,1,2,3,4⟩</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">«</td>
+      <td style="color:#82aaff;font-size:11px">Shift Before (Nullen links)</td>
+      <td style="color:#ffcb6b;font-size:11px">Rotate Left um x</td>
+      <td style="color:#6c7a8e;font-size:11px">2«"hallo" → "llo  "</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">»</td>
+      <td style="color:#82aaff;font-size:11px">Shift After (Nullen rechts)</td>
+      <td style="color:#ffcb6b;font-size:11px">Rotate Right um x</td>
+      <td style="color:#6c7a8e;font-size:11px">2»"hallo" → "  hal"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⌽</td>
+      <td style="color:#82aaff;font-size:11px">Umkehren (Reverse)</td>
+      <td style="color:#ffcb6b;font-size:11px">Rotieren (x Stellen)</td>
+      <td style="color:#6c7a8e;font-size:11px">1⌽"hallo" → "alloh"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⍉</td>
+      <td style="color:#82aaff;font-size:11px">Transponieren</td>
+      <td style="color:#ffcb6b;font-size:11px">Achsen neu anordnen</td>
+      <td style="color:#6c7a8e;font-size:11px">⍉ 3‿4 ⥊↕12</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">/</td>
+      <td style="color:#82aaff;font-size:11px">Replizieren/Komprimieren</td>
+      <td style="color:#ffcb6b;font-size:11px">Filter (1en behalten)</td>
+      <td style="color:#6c7a8e;font-size:11px">1‿0‿1/"abc" → "ac"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⍋</td>
+      <td style="color:#82aaff;font-size:11px">Grade Up (sortierte Indizes)</td>
+      <td style="color:#ffcb6b;font-size:11px">BinSearch Up</td>
+      <td style="color:#6c7a8e;font-size:11px">a[⍋a] = aufsteigend</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#c792ea;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⍒</td>
+      <td style="color:#82aaff;font-size:11px">Grade Down</td>
+      <td style="color:#ffcb6b;font-size:11px">BinSearch Down</td>
+      <td style="color:#6c7a8e;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-pa3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pa3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⊏ Selektion &amp; Suche
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th style="text-align:center">Glyph</th>
+    <th>Monadisch (f x)</th>
+    <th>Dyadisch (x f y)</th>
+    <th>Hinweise</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊏</td>
+      <td style="color:#82aaff;font-size:11px">Erstes Element</td>
+      <td style="color:#ffcb6b;font-size:11px">Select (x wählt Zeilen)</td>
+      <td style="color:#6c7a8e;font-size:11px">1‿3 ⊏ "abcde" → "bd"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊑</td>
+      <td style="color:#82aaff;font-size:11px">Erstes (skalares Pick)</td>
+      <td style="color:#ffcb6b;font-size:11px">Pick (tiefes Indexieren)</td>
+      <td style="color:#6c7a8e;font-size:11px">2 ⊑ "hallo" → 'l'</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊐</td>
+      <td style="color:#82aaff;font-size:11px">Classify (→ Indizes)</td>
+      <td style="color:#ffcb6b;font-size:11px">IndexOf (x findet y)</td>
+      <td style="color:#6c7a8e;font-size:11px">"lo" ⊐ "hello" → 4‿2</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊒</td>
+      <td style="color:#82aaff;font-size:11px">Occurrence Count</td>
+      <td style="color:#ffcb6b;font-size:11px">Progressive IndexOf</td>
+      <td style="color:#6c7a8e;font-size:11px"></td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">∊</td>
+      <td style="color:#82aaff;font-size:11px">Mark Firsts</td>
+      <td style="color:#ffcb6b;font-size:11px">Member Of (enthält?)</td>
+      <td style="color:#6c7a8e;font-size:11px">"lo" ∊ "hello" → ⟨1,1⟩</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⍷</td>
+      <td style="color:#82aaff;font-size:11px">Deduplizieren</td>
+      <td style="color:#ffcb6b;font-size:11px">Find (sucht Unter-Array)</td>
+      <td style="color:#6c7a8e;font-size:11px"></td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊔</td>
+      <td style="color:#82aaff;font-size:11px">Group Indices</td>
+      <td style="color:#ffcb6b;font-size:11px">Group (gruppieren)</td>
+      <td style="color:#6c7a8e;font-size:11px"></td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊣</td>
+      <td style="color:#82aaff;font-size:11px">Identität</td>
+      <td style="color:#ffcb6b;font-size:11px">Left (gibt linkes Arg)</td>
+      <td style="color:#6c7a8e;font-size:11px">3 ⊣ 5 → 3</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊢</td>
+      <td style="color:#82aaff;font-size:11px">Identität</td>
+      <td style="color:#ffcb6b;font-size:11px">Right (gibt rechtes Arg)</td>
+      <td style="color:#6c7a8e;font-size:11px">3 ⊢ 5 → 5</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#4ec9b0;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">!</td>
+      <td style="color:#82aaff;font-size:11px">Assert (Fehler wenn 0)</td>
+      <td style="color:#ffcb6b;font-size:11px">Assert mit Nachricht</td>
+      <td style="color:#6c7a8e;font-size:11px">"Fehler!" ! 0</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-modifiers" class="tp">
+<div id="tp-modifiers" class="tp">
+<div style="background:#ffcb6b0a;border:1px solid #ffcb6b44;border-radius:8px;
+            padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#ffcb6b">Modifier transformieren Funktionen!</strong><br>
+  <code style="color:#c3e88d">F˜ x</code> = x F x (Selbst-Anwendung) &nbsp;·&nbsp;
+  <code style="color:#c3e88d">F¨ arr</code> = F auf jedes Element &nbsp;·&nbsp;
+  <code style="color:#c3e88d">F´ arr</code> = Fold/Reduce &nbsp;·&nbsp;
+  <code style="color:#c3e88d">F∘G x</code> = F(G x) (Komposition) &nbsp;·&nbsp;
+  <code style="color:#c3e88d">F⍟n x</code> = F n-mal anwenden
+</div>
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #ffcb6b44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffcb6b0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffcb6b">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffcb6b;border-radius:50%;margin-right:2px"></span>˜ 1-Modifier (wirken auf 1 Funktion)
+    </span>
+    <span class="aa" style="color:#ffcb6b;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th style="text-align:center">Modifier</th>
+    <th>Name</th>
+    <th>Beschreibung</th>
+    <th>Beispiel</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">˜</td>
+      <td style="color:#82aaff">Self/Swap</td>
+      <td style="color:#cdd6f4;font-size:11px">Monadisch: F˜x = x F x  |  Dyadisch: x F˜y = y F x</td>
+      <td style="color:#c3e88d;font-size:11px">+˜ 3 → 6  (3+3)  |  3 -˜ 8 → 5  (8-3)</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">¨</td>
+      <td style="color:#82aaff">Each</td>
+      <td style="color:#cdd6f4;font-size:11px">Wendet F auf jedes Element an (elementweise)</td>
+      <td style="color:#c3e88d;font-size:11px">⌽¨ ⟨"abc","xy","z"⟩ → ⟨"cba","yx","z"⟩</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⌜</td>
+      <td style="color:#82aaff">Table</td>
+      <td style="color:#cdd6f4;font-size:11px">Outer Product: jedes x gegen jedes y</td>
+      <td style="color:#c3e88d;font-size:11px">(↕3) +⌜ (↕4) → 3×4 Additionstabelle</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⁼</td>
+      <td style="color:#82aaff">Undo/Invert</td>
+      <td style="color:#cdd6f4;font-size:11px">Inverse der Funktion (wenn möglich)</td>
+      <td style="color:#c3e88d;font-size:11px">⋆⁼ 8 → 2.07...  (Logarithmus)  |  +⁼ 5 → 5</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">´</td>
+      <td style="color:#82aaff">Fold/Reduce</td>
+      <td style="color:#cdd6f4;font-size:11px">Von rechts akkumulieren</td>
+      <td style="color:#c3e88d;font-size:11px">+´ 1‿2‿3‿4 → 10  |  ×´ 1‿2‿3‿4 → 24</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">˝</td>
+      <td style="color:#82aaff">Insert</td>
+      <td style="color:#cdd6f4;font-size:11px">Einfügen entlang erster Achse</td>
+      <td style="color:#c3e88d;font-size:11px">+˝ 3‿4 ⥊ ↕12 → Spaltensummen</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ffcb6b;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">`</td>
+      <td style="color:#82aaff">Scan</td>
+      <td style="color:#cdd6f4;font-size:11px">Kumulatives Akkumulieren (wie Prefix-Sum)</td>
+      <td style="color:#c3e88d;font-size:11px">+` 1‿1‿1‿1 → 1‿2‿3‿4  (Prefix-Sum)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #ff980044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ff98000e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ff9800">
+      <span style="display:inline-block;width:8px;height:8px;background:#ff9800;border-radius:50%;margin-right:2px"></span>∘ 2-Modifier (wirken auf 2 Funktionen)
+    </span>
+    <span class="aa" style="color:#ff9800;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th style="text-align:center">Modifier</th>
+    <th>Name</th>
+    <th>Beschreibung</th>
+    <th>Beispiel</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">∘</td>
+      <td style="color:#82aaff">Atop</td>
+      <td style="color:#cdd6f4;font-size:11px">F∘G: erst G, dann F  (F(Gx) oder (Fx)G(Gy))</td>
+      <td style="color:#c3e88d;font-size:11px">-∘÷ 3 → ¯1/3  |  +∘× als F○G Hybrid</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">○</td>
+      <td style="color:#82aaff">Over</td>
+      <td style="color:#cdd6f4;font-size:11px">F○G: G auf beide Argumente, dann F</td>
+      <td style="color:#c3e88d;font-size:11px">+○⌊ 3.2‿4.7 → ⌊ anwenden, dann addieren</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⟜</td>
+      <td style="color:#82aaff">Before</td>
+      <td style="color:#cdd6f4;font-size:11px">F⟜G: x(FG)y = x F (G y)  — G vor rechtem Arg</td>
+      <td style="color:#c3e88d;font-size:11px">+⟜1 5 → 6  (5+1)  |  2⊸× 5 → 10  (2×5)</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊸</td>
+      <td style="color:#82aaff">After</td>
+      <td style="color:#cdd6f4;font-size:11px">F⊸G: x(FG)y = (F x) G y  — F vor linkem Arg</td>
+      <td style="color:#c3e88d;font-size:11px">⌽⊸∾ "ha" → "ah"∾"ha" → "ahha"</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⊘</td>
+      <td style="color:#82aaff">Valences</td>
+      <td style="color:#cdd6f4;font-size:11px">F⊘G: F wenn monadisch, G wenn dyadisch</td>
+      <td style="color:#c3e88d;font-size:11px">(+⊘-) 3 → 3  |  1(+⊘-)3 → 1-3 → ¯2</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">◶</td>
+      <td style="color:#82aaff">Choose</td>
+      <td style="color:#cdd6f4;font-size:11px">F◶G: wählt Funktion via Bedingung</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⎊</td>
+      <td style="color:#82aaff">Catch</td>
+      <td style="color:#cdd6f4;font-size:11px">F⎊G: F ausführen, bei Fehler G</td>
+      <td style="color:#c3e88d;font-size:11px">+⎊0 "text" → 0  (Fehler abgefangen)</td>
+    </tr>
+    <tr>
+      <td style="font-size:18px;text-align:center;color:#ff9800;font-weight:700;
+                 width:50px;background:rgba(0,0,0,.4);border-radius:4px">⍟</td>
+      <td style="color:#82aaff">Repeat</td>
+      <td style="color:#cdd6f4;font-size:11px">F⍟n: F n-mal anwenden</td>
+      <td style="color:#c3e88d;font-size:11px">(×⟜2)⍟5 1 → 32  (2^5)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-blocks" class="tp">
+
+<div class="ac open" id="ac-bl0"
+     style="border:1px solid #3fc99744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('bl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3fc9970e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3fc997">
+      <span style="display:inline-block;width:8px;height:8px;background:#3fc997;border-radius:50%;margin-right:2px"></span>Blöcke – Funktionen definieren
+    </span>
+    <span class="aa" style="color:#3fc997;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="blöcke – funktionen definieren">
+  <div style="color:#3fc997;font-weight:700;font-size:12px;margin-bottom:8px">
+    Blöcke – Funktionen definieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Blöcke sind BQNs Funktionen und Kontrollstrukturen</span>
+<span style="color:#546e7a"># Schreibe {Ausdruck} für eine anonyme Funktion</span>
+
+<span style="color:#546e7a"># SPEZIELLE NAMEN IN BLÖCKEN:</span>
+<span style="color:#546e7a"># 𝕩 = rechtes Argument (immer vorhanden)</span>
+<span style="color:#546e7a"># 𝕨 = linkes Argument (nur bei dyadischem Aufruf)</span>
+<span style="color:#546e7a"># 𝕤 = die Funktion selbst (für Rekursion)</span>
+<span style="color:#546e7a"># 𝔽 = linker Operand (in Modifiern)</span>
+<span style="color:#546e7a"># 𝔾 = rechter Operand (in 2-Modifiern)</span>
+
+<span style="color:#546e7a"># Einfache Blöcke</span>
+<span style="color:#e05252">{</span><span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">+</span> <span style="color:#f78c6c">1</span><span style="color:#e05252">}</span> <span style="color:#f78c6c">4</span>          <span style="color:#546e7a"># → 5    (monadisch)</span>
+<span style="color:#e05252">{</span><span style="color:#c792ea">𝕨</span> <span style="color:#82aaff">×</span> <span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>        <span style="color:#546e7a"># Fehler! 3‿4 ist ein Array, nicht Argumente</span>
+
+<span style="color:#f78c6c">3</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝕨</span> <span style="color:#82aaff">×</span> <span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span> <span style="color:#f78c6c">4</span>        <span style="color:#546e7a"># → 12   (dyadisch: 𝕨=3, 𝕩=4)</span>
+
+<span style="color:#546e7a"># Benannte Funktionen (Uppercase!)</span>
+<span style="color:#82aaff">Quadrat</span>  <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">×</span> <span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span>
+<span style="color:#82aaff">Verdopple</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#f78c6c">2</span> <span style="color:#82aaff">×</span> <span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span>
+<span style="color:#82aaff">Addiere</span>  <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝕨</span> <span style="color:#82aaff">+</span> <span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span>
+
+<span style="color:#82aaff">Quadrat</span> <span style="color:#f78c6c">5</span>           <span style="color:#546e7a"># 25</span>
+<span style="color:#82aaff">Verdopple</span> <span style="color:#f78c6c">7</span>         <span style="color:#546e7a"># 14</span>
+<span style="color:#f78c6c">3</span> <span style="color:#82aaff">Addiere</span> <span style="color:#f78c6c">4</span>         <span style="color:#546e7a"># 7</span>
+
+<span style="color:#546e7a"># Mehrere Ausdrücke: nur der letzte ist Rückgabewert</span>
+<span style="color:#82aaff">Beschreibe</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    n <span style="color:#89ddff">←</span> <span style="color:#c792ea">𝕩</span>
+    positiv <span style="color:#89ddff">←</span> n <span style="color:#82aaff">&gt;</span> <span style="color:#f78c6c">0</span>
+    negativ <span style="color:#89ddff">←</span> n <span style="color:#82aaff">&lt;</span> <span style="color:#f78c6c">0</span>
+    positiv <span style="color:#82aaff">-</span> negativ    <span style="color:#546e7a"># ¯1, 0, oder 1</span>
+<span style="color:#e05252">}</span>
+
+<span style="color:#82aaff">Beschreibe</span> <span style="color:#f78c6c">5</span>        <span style="color:#546e7a"># 1</span>
+<span style="color:#82aaff">Beschreibe</span> <span style="color:#f78c6c">¯3</span>       <span style="color:#546e7a"># ¯1</span>
+<span style="color:#82aaff">Beschreibe</span> <span style="color:#f78c6c">0</span>        <span style="color:#546e7a"># 0</span>
+
+<span style="color:#546e7a"># Guard / Bedingung mit ?</span>
+<span style="color:#546e7a"># Condition ? Wert_wenn_wahr (wirft Fehler wenn falsch)</span>
+<span style="color:#546e7a"># Condition ? Wahr ! Falsch  (wie if/else)</span>
+
+<span style="color:#82aaff">Abs</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">≥</span> <span style="color:#f78c6c">0</span> ? <span style="color:#c792ea">𝕩</span> ; <span style="color:#82aaff">-</span><span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span>    <span style="color:#546e7a"># ternärer Ausdruck</span>
+
+<span style="color:#82aaff">Abs</span> <span style="color:#f78c6c">5</span>               <span style="color:#546e7a"># 5</span>
+<span style="color:#82aaff">Abs</span> <span style="color:#f78c6c">¯3</span>              <span style="color:#546e7a"># 3</span>
+
+<span style="color:#546e7a"># Mehrere Guards (wie if/elseif/else)</span>
+<span style="color:#82aaff">Kategorie</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">&lt;</span> <span style="color:#f78c6c">0</span> ? <span style="color:#c3e88d">"negativ"</span> ;
+    <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">=</span> <span style="color:#f78c6c">0</span> ? <span style="color:#c3e88d">"null"</span> ;
+    <span style="color:#c3e88d">"positiv"</span>
+<span style="color:#e05252">}</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-bl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('bl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Rekursion &amp; bedingte Schleifen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="rekursion &amp; bedingte schleifen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Rekursion &amp; bedingte Schleifen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># BQN hat kein while/for – man nutzt Rekursion oder Modifier!</span>
+
+<span style="color:#546e7a"># REKURSION mit 𝕤 (Self-Referenz)</span>
+<span style="color:#82aaff">Fak</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">≤</span> <span style="color:#f78c6c">1</span> ? <span style="color:#f78c6c">1</span> ;
+    <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">×</span> <span style="color:#c792ea">𝕤</span> (<span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">-</span> <span style="color:#f78c6c">1</span>)    <span style="color:#546e7a"># 𝕤 = diese Funktion selbst!</span>
+<span style="color:#e05252">}</span>
+
+<span style="color:#82aaff">Fak</span> <span style="color:#f78c6c">5</span>               <span style="color:#546e7a"># 120</span>
+<span style="color:#82aaff">Fak</span> <span style="color:#f78c6c">10</span>              <span style="color:#546e7a"># 3628800</span>
+
+<span style="color:#546e7a"># REKURSION mit Namen</span>
+<span style="color:#82aaff">Fib</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">≤</span> <span style="color:#f78c6c">1</span> ? <span style="color:#c792ea">𝕩</span> ;
+    (<span style="color:#82aaff">Fib</span> <span style="color:#c792ea">𝕩</span><span style="color:#82aaff">-</span><span style="color:#f78c6c">1</span>) <span style="color:#82aaff">+</span> <span style="color:#82aaff">Fib</span> <span style="color:#c792ea">𝕩</span><span style="color:#82aaff">-</span><span style="color:#f78c6c">2</span>
+<span style="color:#e05252">}</span>
+
+<span style="color:#82aaff">Fib</span> <span style="color:#f78c6c">10</span>              <span style="color:#546e7a"># 55</span>
+
+<span style="color:#546e7a"># LOOP-SIMULATION mit ⍟ (Repeat-Modifier)</span>
+<span style="color:#546e7a"># F⍟n x = F angewendet n-mal auf x</span>
+(<span style="color:#82aaff">+</span><span style="color:#ffcb6b">⟜</span><span style="color:#f78c6c">1</span>)<span style="color:#ffcb6b">⍟</span><span style="color:#f78c6c">5</span> <span style="color:#f78c6c">0</span>          <span style="color:#546e7a"># 0+1+1+1+1+1 = 5</span>
+
+<span style="color:#546e7a"># Bis Bedingung erfüllt: ⍟F (F als Zählbedingung)</span>
+<span style="color:#546e7a"># Stoppt wenn F 0 zurückgibt</span>
+<span style="color:#82aaff">NächstePrimzahl</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    p <span style="color:#89ddff">←</span> <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">+</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#82aaff">IstPrim</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#f78c6c">0</span> <span style="color:#82aaff">=</span> <span style="color:#f78c6c">0</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝕨</span><span style="color:#82aaff">+</span><span style="color:#c792ea">𝕨</span><span style="color:#82aaff">×</span><span style="color:#c792ea">𝕩</span><span style="color:#82aaff">&gt;</span><span style="color:#f78c6c">1</span><span style="color:#e05252">}</span> <span style="color:#f78c6c">2</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span>(<span style="color:#c792ea">𝕩</span><span style="color:#82aaff">-</span><span style="color:#f78c6c">2</span>)<span style="color:#e05252">}</span>
+    <span style="color:#546e7a"># ... (vereinfacht)</span>
+    p
+<span style="color:#e05252">}</span>
+
+<span style="color:#546e7a"># WHILE-Äquivalent mit Rekursion</span>
+<span style="color:#82aaff">WährendPositiv</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">≤</span> <span style="color:#f78c6c">0</span> ? <span style="color:#c792ea">𝕩</span> ;     <span style="color:#546e7a"># Abbruch</span>
+    <span style="color:#c792ea">𝕤</span> <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">-</span> <span style="color:#f78c6c">3</span>          <span style="color:#546e7a"># Selbst mit x-3 aufrufen</span>
+<span style="color:#e05252">}</span>
+
+<span style="color:#546e7a"># DO-WHILE mit Schleife</span>
+<span style="color:#546e7a"># In BQN üblich: Daten transformieren statt zu schleifen!</span>
+<span style="color:#546e7a"># Statt: while(i&lt;10) { sum += i; i++ }</span>
+<span style="color:#546e7a"># BQN:  +´ ↕10   (Summe von 0..9, viel kürzer!)</span>
+
+<span style="color:#546e7a"># ITERATION über Arrays</span>
+<span style="color:#e05252">{</span><span style="color:#c792ea">𝕩</span><span style="color:#82aaff">+</span><span style="color:#f78c6c">1</span><span style="color:#e05252">}</span><span style="color:#ffcb6b">¨</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>     <span style="color:#546e7a"># Each: [2,3,4,5]</span>
+<span style="color:#e05252">{</span><span style="color:#c792ea">𝕨</span><span style="color:#82aaff">+</span><span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span><span style="color:#ffcb6b">´</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>     <span style="color:#546e7a"># Fold: 10</span>
+<span style="color:#e05252">{</span><span style="color:#c792ea">𝕨</span>,<span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span><span style="color:#ffcb6b">`</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>     <span style="color:#546e7a"># Scan: zeigt Zwischenergebnisse</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-bl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('bl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Trains – Tacit Programming
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="trains – tacit programming">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Trains – Tacit Programming
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># TRAINS: Funktionen ohne explizite Argumente verknüpfen!</span>
+<span style="color:#546e7a"># Das ist BQNs mächtigstes Feature für dichte Ausdrücke.</span>
+
+<span style="color:#546e7a"># 2-Train (Atop): F G  =  {F G 𝕩}  oder  {(F 𝕩) G (F 𝕨) wenn dyadisch... warte}</span>
+<span style="color:#546e7a"># Eigentlich: 2-Train ist Kompositum: (F G) x = F (G x)</span>
+
+<span style="color:#546e7a"># 3-Train (Fork): F G H  =  {(F 𝕩) G (H 𝕩)}  für monadisch</span>
+<span style="color:#546e7a">#                          {(F 𝕨‿𝕩) G (H 𝕨‿𝕩)}  für dyadisch</span>
+
+<span style="color:#546e7a"># Beispiele</span>
+<span style="color:#546e7a"># (F G H) x  =  (F x) G (H x)</span>
+
+<span style="color:#546e7a"># Mittelwert: (+´ ÷ ≠) als Train</span>
+<span style="color:#546e7a">#   = (+´ daten) ÷ (≠ daten)</span>
+<span style="color:#546e7a">#   = Summe ÷ Anzahl</span>
+<span style="color:#82aaff">Mittelwert</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span> <span style="color:#82aaff">÷</span> <span style="color:#82aaff">≠</span>
+<span style="color:#82aaff">Mittelwert</span> <span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">6</span>‿<span style="color:#f78c6c">8</span>     <span style="color:#546e7a"># (2+4+6+8) ÷ 4 = 5</span>
+
+<span style="color:#546e7a"># Normieren: (÷ +´) als 2-Train  (atop)</span>
+<span style="color:#82aaff">Normiere</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">÷</span> <span style="color:#ffcb6b">⟜</span> <span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span>
+<span style="color:#82aaff">Normiere</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>        <span style="color:#546e7a"># Jeden Wert durch Summe (10) teilen</span>
+
+<span style="color:#546e7a"># Spanne: (⌈´ - ⌊´)</span>
+<span style="color:#82aaff">Spanne</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">⌈</span><span style="color:#ffcb6b">´</span> <span style="color:#82aaff">-</span> <span style="color:#82aaff">⌊</span><span style="color:#ffcb6b">´</span>
+<span style="color:#82aaff">Spanne</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">9</span>      <span style="color:#546e7a"># 9-1 = 8</span>
+
+<span style="color:#546e7a"># Anzahl der Elemente &gt; 0: (+´ ∘ (0&lt;⊢))</span>
+<span style="color:#82aaff">PositiveAnzahl</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span><span style="color:#ffcb6b">∘</span>(<span style="color:#f78c6c">0</span><span style="color:#ffcb6b">⊸</span><span style="color:#82aaff">&lt;</span>)
+<span style="color:#82aaff">PositiveAnzahl</span> <span style="color:#f78c6c">¯1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">¯3</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">0</span>    <span style="color:#546e7a"># 2</span>
+
+<span style="color:#546e7a"># Strings verbinden mit Trennzeichen: ∾⟜" "  als Modifier</span>
+<span style="color:#82aaff">WortVerbinden</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#82aaff">∾</span> <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">∾</span><span style="color:#ffcb6b">¨</span><span style="color:#82aaff">&lt;</span> <span style="color:#c3e88d">" "</span><span style="color:#e05252">}</span>    <span style="color:#546e7a"># Block-Version</span>
+
+<span style="color:#546e7a"># Tacit Palindrom-Check: ≡ ⟜ ⌽</span>
+<span style="color:#82aaff">IstPalindrom</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">≡</span><span style="color:#ffcb6b">⟜</span><span style="color:#82aaff">⌽</span>
+<span style="color:#82aaff">IstPalindrom</span> <span style="color:#c3e88d">"racecar"</span>   <span style="color:#546e7a"># 1 (ja)</span>
+<span style="color:#82aaff">IstPalindrom</span> <span style="color:#c3e88d">"hallo"</span>     <span style="color:#546e7a"># 0 (nein)</span>
+
+<span style="color:#546e7a"># Sortieren via Grade: ⊏⟜⍋  (select by grade up)</span>
+<span style="color:#82aaff">Sortiere</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">⟜</span><span style="color:#82aaff">⍋</span>
+<span style="color:#82aaff">Sortiere</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">9</span>    <span style="color:#546e7a"># 1‿1‿3‿4‿5‿9</span>
+
+<span style="color:#546e7a"># Unique (Deduplizieren): ⊏⟜(⊐⊢)</span>
+<span style="color:#82aaff">Unique</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">⟜</span>(<span style="color:#82aaff">⊐</span><span style="color:#82aaff">⊢</span>)
+<span style="color:#82aaff">Unique</span> <span style="color:#c3e88d">"mississippi"</span>     <span style="color:#546e7a"># "misp"</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-st0"
+     style="border:1px solid #3fc99744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3fc9970e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3fc997">
+      <span style="display:inline-block;width:8px;height:8px;background:#3fc997;border-radius:50%;margin-right:2px"></span>•-Builtins (Standard-Bibliothek)
+    </span>
+    <span class="aa" style="color:#3fc997;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="•-builtins (standard-bibliothek)">
+  <div style="color:#3fc997;font-weight:700;font-size:12px;margin-bottom:8px">
+    •-Builtins (Standard-Bibliothek)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># BQN hat eine eingebaute Standardbibliothek</span>
+<span style="color:#546e7a"># Zugriff über Bullet • (Punkt-Notation)</span>
+
+<span style="color:#546e7a"># ── AUSGABE ──────────────────────────────────────────────────────</span>
+<span style="color:#ffcb6b">•Show</span> <span style="color:#f78c6c">42</span>                        <span style="color:#546e7a"># Ausgabe mit Label</span>
+<span style="color:#ffcb6b">•Out</span> <span style="color:#c3e88d">"Hallo, Welt!"</span>             <span style="color:#546e7a"># Ausgabe ohne Newline</span>
+<span style="color:#ffcb6b">•Fmt</span> <span style="color:#f78c6c">3.14159</span>                    <span style="color:#546e7a"># Formatieren zu String</span>
+
+<span style="color:#546e7a"># ── SYSTEM ───────────────────────────────────────────────────────</span>
+<span style="color:#ffcb6b">•args</span>                           <span style="color:#546e7a"># Kommandozeilen-Argumente</span>
+<span style="color:#ffcb6b">•Exit</span> <span style="color:#f78c6c">0</span>                         <span style="color:#546e7a"># Programm beenden</span>
+<span style="color:#ffcb6b">•time</span>                           <span style="color:#546e7a"># Aktuelle Zeit (Unix-Timestamp)</span>
+
+<span style="color:#546e7a"># ── STRINGS / TYPEN ─────────────────────────────────────────────</span>
+<span style="color:#ffcb6b">•Repr</span> <span style="color:#f78c6c">42</span>‿<span style="color:#c3e88d">"hallo"</span>                <span style="color:#546e7a"># Interne Repräsentation als String</span>
+<span style="color:#ffcb6b">•Type</span> <span style="color:#f78c6c">42</span>                        <span style="color:#546e7a"># Typ-Nummer (0=Zahl, 1=Char, 2=Array...)</span>
+<span style="color:#ffcb6b">•Glyph</span> <span style="color:#82aaff">+</span>                        <span style="color:#546e7a"># Glyph-Name einer Funktion</span>
+
+<span style="color:#546e7a"># ── DATEISYSTEM ──────────────────────────────────────────────────</span>
+<span style="color:#ffcb6b">•file.Bytes</span> <span style="color:#c3e88d">"datei.bin"</span>         <span style="color:#546e7a"># Datei als Byte-Array lesen</span>
+<span style="color:#ffcb6b">•file.Lines</span> <span style="color:#c3e88d">"datei.txt"</span>         <span style="color:#546e7a"># Datei als Zeilen-Array lesen</span>
+<span style="color:#c3e88d">"Inhalt"</span> <span style="color:#ffcb6b">•file.Bytes</span><span style="color:#ffcb6b">∘</span><span style="color:#ffcb6b">•</span> <span style="color:#c3e88d">"datei"</span>  <span style="color:#546e7a"># Schreiben</span>
+
+<span style="color:#546e7a"># ── NAMESPACES ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a"># Namespaces via {key: value} Syntax</span>
+mein_ns <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    x: <span style="color:#f78c6c">42</span>
+    y: <span style="color:#c3e88d">"hallo"</span>
+    <span style="color:#82aaff">F</span>: <span style="color:#82aaff">+</span><span style="color:#ffcb6b">⟜</span><span style="color:#f78c6c">1</span>
+<span style="color:#e05252">}</span>
+mein_ns.x               <span style="color:#546e7a"># 42</span>
+mein_ns.<span style="color:#82aaff">F</span> <span style="color:#f78c6c">5</span>             <span style="color:#546e7a"># 6</span>
+
+<span style="color:#546e7a"># Namespace aus Datei laden (wie import)</span>
+math <span style="color:#89ddff">←</span> <span style="color:#ffcb6b">•Import</span> <span style="color:#c3e88d">"math.bqn"</span>
+math.<span style="color:#82aaff">Sqrt</span> <span style="color:#f78c6c">9</span>              <span style="color:#546e7a"># 3</span>
+
+<span style="color:#546e7a"># ── MATH-NAMESPACE ───────────────────────────────────────────────</span>
+<span style="color:#546e7a"># Meist direkt als Primitiven verfügbar</span>
+<span style="color:#82aaff">⋆</span> <span style="color:#f78c6c">1</span>                      <span style="color:#546e7a"># e^1 = 2.71828...</span>
+<span style="color:#82aaff">⋆</span><span style="color:#ffcb6b">⁼</span> (<span style="color:#82aaff">⋆</span><span style="color:#f78c6c">1</span>)                  <span style="color:#546e7a"># ln(e) = 1</span>
+<span style="color:#ffcb6b">○</span><span style="color:#f78c6c">1</span>                       <span style="color:#546e7a"># pi = 3.14159...</span>
+<span style="color:#f78c6c">1</span> <span style="color:#82aaff">÷</span> ∞                    <span style="color:#546e7a"># 0 (unendlich)</span>
+<span style="color:#f78c6c">0</span> <span style="color:#82aaff">÷</span> <span style="color:#f78c6c">0</span>                    <span style="color:#546e7a"># NaN</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Nützliche Idiome
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="nützliche idiome">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Nützliche Idiome
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># HÄUFIGE BQN-IDIOME – kurz und mächtig!</span>
+
+<span style="color:#546e7a"># ── ZAHLEN ───────────────────────────────────────────────────────</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">10</span>              <span style="color:#546e7a"># Summe 0..9 = 45</span>
+<span style="color:#82aaff">×</span><span style="color:#ffcb6b">´</span> <span style="color:#f78c6c">1</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span><span style="color:#f78c6c">5</span>             <span style="color:#546e7a"># Fakultät: 1×2×3×4×5 = 120</span>
+<span style="color:#82aaff">⌈</span><span style="color:#ffcb6b">´</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">9</span>     <span style="color:#546e7a"># Maximum = 9</span>
+<span style="color:#82aaff">⌊</span><span style="color:#ffcb6b">´</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">9</span>     <span style="color:#546e7a"># Minimum = 1</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span> <span style="color:#82aaff">÷</span> <span style="color:#82aaff">≠</span>              <span style="color:#546e7a"># Mittelwert (als Train)</span>
+
+<span style="color:#546e7a"># ── ARRAYS ────────────────────────────────────────────────────────</span>
+<span style="color:#82aaff">⊢</span> a <span style="color:#89ddff">←</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">5</span>           <span style="color:#546e7a"># Zuweisung und sofortige Ausgabe</span>
+<span style="color:#82aaff">⌽</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">5</span>               <span style="color:#546e7a"># [4,3,2,1,0] – umgekehrter Range</span>
+<span style="color:#f78c6c">1</span> <span style="color:#82aaff">+</span> <span style="color:#82aaff">↕</span> <span style="color:#f78c6c">26</span>           <span style="color:#546e7a"># [1..26] – für Alphabetindizes</span>
+
+a <span style="color:#89ddff">←</span> <span style="color:#c3e88d">"banane"</span>
+<span style="color:#82aaff">/</span> 'a' <span style="color:#82aaff">=</span> a          <span style="color:#546e7a"># Indizes aller 'a' → 1‿3‿5</span>
+
+<span style="color:#546e7a"># ── STRINGS ─────────────────────────────────────────────────────</span>
+'a' <span style="color:#82aaff">+</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">26</span>           <span style="color:#546e7a"># Alle Kleinbuchstaben als Chars</span>
+<span style="color:#ffcb6b">•Fmt</span> <span style="color:#ffcb6b">¨</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">5</span>           <span style="color:#546e7a"># Zahlen 0..4 zu Strings</span>
+
+<span style="color:#546e7a"># Wort zählen</span>
+<span style="color:#82aaff">≠</span> ' ' (<span style="color:#82aaff">⊢</span><span style="color:#82aaff">-</span><span style="color:#ffcb6b">˜</span>·<span style="color:#82aaff">⌈</span><span style="color:#ffcb6b">`</span>·<span style="color:#82aaff">∨</span><span style="color:#ffcb6b">⟜</span><span style="color:#82aaff">«</span><span style="color:#f78c6c">0</span><span style="color:#ffcb6b">⊸</span><span style="color:#82aaff">=</span>) <span style="color:#c3e88d">"hallo welt foo"</span>  <span style="color:#546e7a"># Anzahl Wörter</span>
+
+<span style="color:#546e7a"># ── MENGEN-OPERATIONEN ───────────────────────────────────────────</span>
+a <span style="color:#89ddff">←</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">5</span>
+b <span style="color:#89ddff">←</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">6</span>‿<span style="color:#f78c6c">7</span>
+
+a <span style="color:#82aaff">∊</span> b               <span style="color:#546e7a"># Mitgliedschaft: 0‿0‿1‿1‿1</span>
+a <span style="color:#82aaff">/</span> <span style="color:#ffcb6b">˜</span> a <span style="color:#82aaff">∊</span> b         <span style="color:#546e7a"># Schnittmenge: 3‿4‿5</span>
+a <span style="color:#82aaff">/</span> <span style="color:#ffcb6b">˜</span> <span style="color:#82aaff">¬</span> a <span style="color:#82aaff">∊</span> b       <span style="color:#546e7a"># Differenz: 1‿2</span>
+
+<span style="color:#546e7a"># ── MATRIX-OPERATIONEN ───────────────────────────────────────────</span>
+m <span style="color:#89ddff">←</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">3</span> <span style="color:#82aaff">⥊</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">9</span>       <span style="color:#546e7a"># 3×3 Matrix</span>
+<span style="color:#82aaff">⍉</span> m                 <span style="color:#546e7a"># Transponieren</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">˝</span> m                <span style="color:#546e7a"># Spaltensummen (Sum entlang 1. Achse)</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">˝</span><span style="color:#82aaff">⍉</span> m               <span style="color:#546e7a"># Zeilensummen</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span><span style="color:#ffcb6b">˝</span> m               <span style="color:#546e7a"># Gesamtsumme</span>
+
+<span style="color:#546e7a"># ── BOOLEAN-TRICKS ────────────────────────────────────────────────</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span> <span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>        <span style="color:#546e7a"># Anzahl Einser = 3</span>
+<span style="color:#82aaff">/</span> <span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>         <span style="color:#546e7a"># Indizes der Einser: 1‿2‿4</span>
+<span style="color:#82aaff">¬</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">1</span>           <span style="color:#546e7a"># Invertieren: 0‿1‿0‿0</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #3fc997;color:#3fc997;background:rgba(63,201,151,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Sieb des Eratosthenes</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Fibonacci &amp; Sequenzen</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Sortieren &amp; Suchen</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Wort-Frequenz Analyse</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Primzahlen bis N – kompakter Array-Style!</span>
+
+<span style="color:#546e7a"># Variante 1: Klassisch mit Iteration über Primes</span>
+<span style="color:#82aaff">Primzahlen</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    n <span style="color:#89ddff">←</span> <span style="color:#c792ea">𝕩</span>
+    a <span style="color:#89ddff">←</span> <span style="color:#f78c6c">1</span> <span style="color:#82aaff">↓</span> <span style="color:#82aaff">↕</span>n<span style="color:#82aaff">+</span><span style="color:#f78c6c">1</span>   <span style="color:#546e7a"># 1..n</span>
+    <span style="color:#e05252">{</span>
+        p <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊑</span><span style="color:#c792ea">𝕩</span>        <span style="color:#546e7a"># Erste Primzahl</span>
+        rest <span style="color:#89ddff">←</span> <span style="color:#f78c6c">1</span><span style="color:#82aaff">↓</span><span style="color:#c792ea">𝕩</span>     <span style="color:#546e7a"># Rest der Liste</span>
+        <span style="color:#f78c6c">0</span><span style="color:#82aaff">=</span><span style="color:#82aaff">≠</span>rest ? <span style="color:#c792ea">𝕩</span> ;  <span style="color:#546e7a"># Nur noch eine → fertig</span>
+        erhalten <span style="color:#89ddff">←</span> rest <span style="color:#82aaff">/</span> <span style="color:#ffcb6b">˜</span> <span style="color:#f78c6c">0</span> <span style="color:#82aaff">≠</span> p <span style="color:#82aaff">|</span> rest  <span style="color:#546e7a"># Entferne Vielfache</span>
+        p <span style="color:#82aaff">∾</span> <span style="color:#c792ea">𝕤</span> erhalten <span style="color:#546e7a"># Rekursiv weitermachen</span>
+    <span style="color:#e05252">}</span> a
+<span style="color:#e05252">}</span>
+
+<span style="color:#82aaff">Primzahlen</span> <span style="color:#f78c6c">50</span>
+<span style="color:#546e7a"># 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47</span>
+
+<span style="color:#546e7a"># Variante 2: One-liner (BQN-Stil!)</span>
+<span style="color:#546e7a"># Idee: Für jede Zahl p, entferne Vielfache von p</span>
+<span style="color:#82aaff">Primes</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    (<span style="color:#f78c6c">1</span><span style="color:#82aaff">↓</span><span style="color:#82aaff">⊢</span>)<span style="color:#82aaff">/</span><span style="color:#ffcb6b">˜</span><span style="color:#e05252">{</span>a<span style="color:#89ddff">←</span><span style="color:#f78c6c">1</span><span style="color:#82aaff">↑</span><span style="color:#c792ea">𝕩</span> ⋄ (<span style="color:#c792ea">𝕩</span><span style="color:#82aaff">/</span><span style="color:#ffcb6b">˜</span><span style="color:#f78c6c">0</span><span style="color:#82aaff">≠</span>a<span style="color:#82aaff">|</span><span style="color:#c792ea">𝕩</span>)<span style="color:#82aaff">∾</span>a<span style="color:#e05252">}</span><span style="color:#ffcb6b">´</span><span style="color:#82aaff">⌽</span><span style="color:#82aaff">↕</span><span style="color:#c792ea">𝕩</span><span style="color:#82aaff">+</span><span style="color:#f78c6c">1</span>
+<span style="color:#e05252">}</span>
+
+<span style="color:#546e7a"># Noch kürzer (für den Wettbewerb!)</span>
+<span style="color:#546e7a"># Zähle wie viele Teiler jede Zahl hat &lt; sich selbst</span>
+<span style="color:#546e7a"># Primzahlen haben genau 0 solche Teiler (außer 1)</span>
+
+n <span style="color:#89ddff">←</span> <span style="color:#f78c6c">50</span>
+teiler <span style="color:#89ddff">←</span> (<span style="color:#f78c6c">1</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span>n) <span style="color:#82aaff">|</span><span style="color:#ffcb6b">⌜</span> <span style="color:#f78c6c">1</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span>n    <span style="color:#546e7a"># Modulo-Tabelle</span>
+ist_teiler <span style="color:#89ddff">←</span> <span style="color:#f78c6c">0</span> <span style="color:#82aaff">=</span> teiler      <span style="color:#546e7a"># Wo Teiler vorhanden</span>
+anzahl_teiler <span style="color:#89ddff">←</span> <span style="color:#82aaff">+</span><span style="color:#ffcb6b">˝</span> ist_teiler <span style="color:#546e7a"># Pro Zahl: Anzahl Teiler</span>
+primes <span style="color:#89ddff">←</span> (<span style="color:#f78c6c">1</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span>n) <span style="color:#82aaff">/</span> <span style="color:#ffcb6b">˜</span> <span style="color:#f78c6c">2</span> <span style="color:#82aaff">=</span> anzahl_teiler  <span style="color:#546e7a"># Genau 2 Teiler (1 und sich selbst)</span>
+
+<span style="color:#ffcb6b">•Show</span> primes</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Verschiedene Wege Fibonacci in BQN zu berechnen</span>
+
+<span style="color:#546e7a"># 1. Rekursiv (langsam aber klar)</span>
+<span style="color:#82aaff">Fib</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">≤</span> <span style="color:#f78c6c">1</span> ? <span style="color:#c792ea">𝕩</span> ; (<span style="color:#c792ea">𝕤</span> <span style="color:#c792ea">𝕩</span><span style="color:#82aaff">-</span><span style="color:#f78c6c">1</span>) <span style="color:#82aaff">+</span> <span style="color:#c792ea">𝕤</span> <span style="color:#c792ea">𝕩</span><span style="color:#82aaff">-</span><span style="color:#f78c6c">2</span><span style="color:#e05252">}</span>
+
+<span style="color:#546e7a"># 2. Iterativ mit Scan – ELEGANT!</span>
+<span style="color:#546e7a"># Starte mit [0,1], addiere je letzte zwei</span>
+<span style="color:#546e7a"># +` ≡ Prefix-Summe, aber wir brauchen etwas anderes</span>
+<span style="color:#82aaff">FibSeq</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    <span style="color:#546e7a"># n-te Fibonacci-Zahl via Paar-Iteration</span>
+    s <span style="color:#89ddff">←</span> <span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>
+    r <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>a‿b: b‿(a<span style="color:#82aaff">+</span>b)<span style="color:#e05252">}</span><span style="color:#ffcb6b">⍟</span><span style="color:#c792ea">𝕩</span> s   <span style="color:#546e7a"># n-mal anwenden</span>
+    <span style="color:#82aaff">⊑</span> r
+<span style="color:#e05252">}</span>
+
+<span style="color:#82aaff">FibSeq</span> <span style="color:#f78c6c">10</span>              <span style="color:#546e7a"># 55</span>
+<span style="color:#82aaff">FibSeq</span><span style="color:#ffcb6b">¨</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">15</span>            <span style="color:#546e7a"># [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377]</span>
+
+<span style="color:#546e7a"># 3. Matrix-Methode (für große n)</span>
+<span style="color:#546e7a"># [[1,1],[1,0]] ^ n gibt Fibonacci-Zahlen</span>
+
+<span style="color:#546e7a"># 4. Generativ – unendliche Fibonacci-Sequenz simulieren</span>
+<span style="color:#546e7a"># Erste 20 Fibonacci-Zahlen via Scan auf [0,1,1,...]</span>
+fib20 <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    <span style="color:#82aaff">+</span><span style="color:#ffcb6b">`</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">1</span> <span style="color:#82aaff">∾</span> (<span style="color:#f78c6c">20</span><span style="color:#82aaff">-</span><span style="color:#f78c6c">2</span>) <span style="color:#82aaff">/</span> <span style="color:#f78c6c">0</span>   <span style="color:#546e7a"># Nein, das ist falsch...</span>
+    <span style="color:#546e7a"># Richtig: jeweils 2 addieren</span>
+    a <span style="color:#89ddff">←</span> <span style="color:#f78c6c">0</span>‿<span style="color:#f78c6c">1</span>
+    <span style="color:#e05252">{</span> b <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊑</span><span style="color:#82aaff">⌽</span><span style="color:#c792ea">𝕩</span> ⋄ c <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊑</span><span style="color:#82aaff">⌽</span><span style="color:#f78c6c">1</span><span style="color:#82aaff">↓</span><span style="color:#c792ea">𝕩</span> ⋄ <span style="color:#c792ea">𝕩</span> <span style="color:#82aaff">∾</span> b<span style="color:#82aaff">+</span>c <span style="color:#e05252">}</span><span style="color:#ffcb6b">⍟</span><span style="color:#f78c6c">18</span> a
+<span style="color:#e05252">}</span>
+
+<span style="color:#ffcb6b">•Show</span> fib20
+
+<span style="color:#546e7a"># Interessante Sequenzen</span>
+<span style="color:#546e7a"># Dreieckszahlen: n*(n+1)/2</span>
+<span style="color:#82aaff">Dreieck</span> <span style="color:#89ddff">←</span> (<span style="color:#82aaff">↕</span><span style="color:#ffcb6b">⊸</span><span style="color:#82aaff">×</span> <span style="color:#82aaff">÷</span> <span style="color:#f78c6c">2</span>) <span style="color:#f78c6c">1</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span><span style="color:#f78c6c">10</span>   <span style="color:#546e7a"># [1,3,6,10,15,21,28,36,45,55]</span>
+
+<span style="color:#546e7a"># Quadratzahlen</span>
+<span style="color:#82aaff">Quadrate</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">⋆</span><span style="color:#ffcb6b">⟜</span><span style="color:#f78c6c">2</span> <span style="color:#f78c6c">1</span><span style="color:#82aaff">+</span><span style="color:#82aaff">↕</span><span style="color:#f78c6c">10</span>          <span style="color:#546e7a"># [1,4,9,16,25,36,49,64,81,100]</span>
+
+<span style="color:#546e7a"># Kumulierte Summe</span>
+<span style="color:#82aaff">+</span><span style="color:#ffcb6b">`</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">5</span>                  <span style="color:#546e7a"># [1,3,6,10,15]</span>
+
+<span style="color:#ffcb6b">•Show</span> <span style="color:#82aaff">Dreieck</span>
+<span style="color:#ffcb6b">•Show</span> <span style="color:#82aaff">Quadrate</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Sortieren, Suchen und Array-Manipulation</span>
+
+<span style="color:#546e7a"># ── SORTIEREN ────────────────────────────────────────────────────</span>
+daten <span style="color:#89ddff">←</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">9</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">6</span>‿<span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">3</span>
+
+<span style="color:#546e7a"># Aufsteigend</span>
+aufsteigend <span style="color:#89ddff">←</span> daten <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> <span style="color:#82aaff">⍋</span> daten
+<span style="color:#546e7a"># Kurzschreibweise als Train:</span>
+<span style="color:#82aaff">Aufsteigend</span> <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span><span style="color:#ffcb6b">⟜</span><span style="color:#82aaff">⍋</span>
+
+<span style="color:#546e7a"># Absteigend</span>
+absteigend <span style="color:#89ddff">←</span> daten <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> <span style="color:#82aaff">⍒</span> daten
+
+<span style="color:#546e7a"># Sortiere Strings nach Länge</span>
+wörter <span style="color:#89ddff">←</span> ⟨<span style="color:#c3e88d">"Banane"</span>, <span style="color:#c3e88d">"Apfel"</span>, <span style="color:#c3e88d">"Kiwi"</span>, <span style="color:#c3e88d">"Erdbeere"</span>⟩
+wörter <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> <span style="color:#82aaff">⍋</span> <span style="color:#82aaff">≠</span><span style="color:#ffcb6b">¨</span> wörter         <span style="color:#546e7a"># Nach Länge sortiert</span>
+
+<span style="color:#546e7a"># ── BINÄRE SUCHE ─────────────────────────────────────────────────</span>
+<span style="color:#546e7a"># ⍋ und ⍒ sind auch BinSearch wenn dyadisch!</span>
+sortiert <span style="color:#89ddff">←</span> <span style="color:#82aaff">↕</span><span style="color:#f78c6c">10</span>                  <span style="color:#546e7a"># [0,1,2,3,4,5,6,7,8,9]</span>
+sortiert <span style="color:#82aaff">⍋</span> <span style="color:#f78c6c">3</span>                    <span style="color:#546e7a"># Position von 3 → 3</span>
+sortiert <span style="color:#82aaff">⍋</span> <span style="color:#f78c6c">3.5</span>                  <span style="color:#546e7a"># Einfügeposition → 4</span>
+
+<span style="color:#546e7a"># ── DUPLIKATE ENTFERNEN ──────────────────────────────────────────</span>
+a <span style="color:#89ddff">←</span> <span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">4</span>
+<span style="color:#82aaff">⊢</span> a <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> (<span style="color:#82aaff">⊐</span><span style="color:#82aaff">⊢</span>) a                 <span style="color:#546e7a"># Unique (erste Vorkommnisse)</span>
+<span style="color:#546e7a"># Einfacher: ⊑¨ / (⊔⊢)         # Group dann erstes Element</span>
+
+<span style="color:#546e7a"># ── GRUPPIEREN ───────────────────────────────────────────────────</span>
+note <span style="color:#89ddff">←</span> <span style="color:#c3e88d">"AABBBCCCCA"</span>
+gruppen <span style="color:#89ddff">←</span> note <span style="color:#82aaff">⊔</span><span style="color:#ffcb6b">˜</span> (<span style="color:#82aaff">⊐</span><span style="color:#82aaff">⊢</span>) note   <span style="color:#546e7a"># Jeder Buchstabe → eigene Gruppe</span>
+
+<span style="color:#546e7a"># ── TOP N ────────────────────────────────────────────────────────</span>
+<span style="color:#82aaff">TopN</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>n‿daten: daten <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> n <span style="color:#82aaff">↑</span> <span style="color:#82aaff">⍒</span> daten<span style="color:#e05252">}</span>
+<span style="color:#82aaff">TopN</span> <span style="color:#f78c6c">3</span>‿⟨<span style="color:#f78c6c">7</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">9</span>,<span style="color:#f78c6c">4</span>,<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">8</span>,<span style="color:#f78c6c">5</span>⟩         <span style="color:#546e7a"># [9, 8, 7]</span>
+
+<span style="color:#546e7a"># ── MATRIX-ZEILENSORTIERUNG ──────────────────────────────────────</span>
+m <span style="color:#89ddff">←</span> <span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">3</span> <span style="color:#82aaff">⥊</span> <span style="color:#f78c6c">5</span>‿<span style="color:#f78c6c">1</span>‿<span style="color:#f78c6c">4</span>‿<span style="color:#f78c6c">3</span>‿<span style="color:#f78c6c">2</span>‿<span style="color:#f78c6c">6</span>‿<span style="color:#f78c6c">9</span>‿<span style="color:#f78c6c">8</span>‿<span style="color:#f78c6c">7</span>
+<span style="color:#82aaff">SortiereZeilen</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span><span style="color:#82aaff">⍋</span><span style="color:#ffcb6b">⌜</span><span style="color:#ffcb6b">⊸</span><span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> <span style="color:#c792ea">𝕩</span><span style="color:#e05252">}</span>    <span style="color:#546e7a"># Jede Zeile sortieren</span>
+
+<span style="color:#ffcb6b">•Show</span> aufsteigend
+<span style="color:#ffcb6b">•Show</span> absteigend
+<span style="color:#ffcb6b">•Show</span> <span style="color:#82aaff">SortiereZeilen</span> m</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:2.0;white-space:pre"><span style="color:#546e7a"># Text analysieren – zeigt BQNs Stärken bei String-Verarbeitung</span>
+
+text <span style="color:#89ddff">←</span> <span style="color:#c3e88d">"die katze sitzt auf der matte die katze spielt"</span>
+
+<span style="color:#546e7a"># ── WÖRTER AUFTEILEN ─────────────────────────────────────────────</span>
+<span style="color:#546e7a"># Trennzeichen finden und an Leerzeichen splitten</span>
+<span style="color:#82aaff">SplitBei</span> <span style="color:#89ddff">←</span> <span style="color:#e05252">{</span>
+    trenn <span style="color:#89ddff">←</span> <span style="color:#c792ea">𝕨</span>
+    s <span style="color:#89ddff">←</span> <span style="color:#c792ea">𝕩</span>
+    maske <span style="color:#89ddff">←</span> s <span style="color:#82aaff">=</span> trenn
+    <span style="color:#546e7a"># Gruppen bilden wo NICHT Trennzeichen</span>
+    gruppen <span style="color:#89ddff">←</span> (<span style="color:#f78c6c">1</span><span style="color:#82aaff">↓</span><span style="color:#82aaff">¬</span>maske) <span style="color:#82aaff">⊔</span> s
+    <span style="color:#546e7a"># Leere entfernen</span>
+    gruppen <span style="color:#82aaff">/</span> <span style="color:#ffcb6b">˜</span> <span style="color:#f78c6c">0</span> <span style="color:#82aaff">&lt;</span> <span style="color:#82aaff">≠</span><span style="color:#ffcb6b">¨</span> gruppen
+<span style="color:#e05252">}</span>
+
+wörter <span style="color:#89ddff">←</span> ' ' <span style="color:#82aaff">SplitBei</span> text
+<span style="color:#546e7a"># ⟨"die","katze","sitzt","auf","der","matte","die","katze","spielt"⟩</span>
+
+<span style="color:#546e7a"># ── HÄUFIGKEITEN ZÄHLEN ──────────────────────────────────────────</span>
+unique_w <span style="color:#89ddff">←</span> wörter <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> <span style="color:#82aaff">⍋</span> wörter   <span style="color:#546e7a"># Sortierte Wörter für Verarbeitung</span>
+
+<span style="color:#546e7a"># Klassifizieren: jedes Wort → eindeutiger Index</span>
+indizes <span style="color:#89ddff">←</span> wörter <span style="color:#82aaff">⊐</span> wörter        <span style="color:#546e7a"># Index jedes Worts</span>
+
+<span style="color:#546e7a"># Anzahl pro Index</span>
+anzahl <span style="color:#89ddff">←</span> <span style="color:#82aaff">+</span><span style="color:#ffcb6b">´</span><span style="color:#ffcb6b">∘</span>(<span style="color:#82aaff">⊢</span><span style="color:#82aaff">=</span><span style="color:#ffcb6b">⌜</span><span style="color:#82aaff">⊢</span>) indizes      <span style="color:#546e7a"># Für jede Position: wie oft?</span>
+
+<span style="color:#546e7a"># ── UNIQUE MIT FREQUENZ ──────────────────────────────────────────</span>
+unique_idx <span style="color:#89ddff">←</span> <span style="color:#82aaff">⊐</span><span style="color:#ffcb6b">⊸</span><span style="color:#82aaff">⊏</span> wörter          <span style="color:#546e7a"># Nur erstes Vorkommen jedes Worts</span>
+freq <span style="color:#89ddff">←</span> <span style="color:#82aaff">+</span><span style="color:#ffcb6b">˝</span> indizes <span style="color:#82aaff">=</span><span style="color:#ffcb6b">⌜</span> <span style="color:#82aaff">↕</span><span style="color:#82aaff">≠</span>unique_idx <span style="color:#546e7a"># Frequenz</span>
+
+<span style="color:#546e7a"># Ausgabe: häufigste zuerst</span>
+reihenfolge <span style="color:#89ddff">←</span> <span style="color:#82aaff">⍒</span> freq
+sorted_words <span style="color:#89ddff">←</span> unique_idx <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> reihenfolge
+sorted_freq  <span style="color:#89ddff">←</span> freq <span style="color:#82aaff">⊏</span><span style="color:#ffcb6b">˜</span> reihenfolge
+
+<span style="color:#546e7a"># Anzeigen</span>
+<span style="color:#e05252">{</span>
+    w <span style="color:#89ddff">←</span> sorted_words <span style="color:#82aaff">⊑</span><span style="color:#ffcb6b">˜</span> <span style="color:#c792ea">𝕩</span>
+    f <span style="color:#89ddff">←</span> sorted_freq <span style="color:#82aaff">⊑</span> <span style="color:#c792ea">𝕩</span>
+    <span style="color:#ffcb6b">•Out</span> (<span style="color:#ffcb6b">•Fmt</span> f) <span style="color:#82aaff">∾</span> <span style="color:#c3e88d">"× "</span> <span style="color:#82aaff">∾</span> w
+<span style="color:#e05252">}</span><span style="color:#ffcb6b">¨</span> <span style="color:#82aaff">↕</span><span style="color:#82aaff">≠</span>sorted_words
+
+<span style="color:#546e7a"># Ausgabe:</span>
+<span style="color:#546e7a"># 2× die</span>
+<span style="color:#546e7a"># 2× katze</span>
+<span style="color:#546e7a"># 1× sitzt</span>
+<span style="color:#546e7a"># 1× auf</span>
+<span style="color:#546e7a"># 1× der</span>
+<span style="color:#546e7a"># ...</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#3fc9970a;border:1px solid #3fc99744;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#3fc997">Sofort ausprobieren:</strong> <a href="https://mlochbaum.github.io/BQN/try.html" style="color:#d4a017">https://mlochbaum.github.io/BQN/try.html</a> – kein Install!<br>Oder: <code style="color:#ffb347">yay -S cbqn && bqn</code> (Arch/CachyOS)</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #3fc99744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3fc9970e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3fc997">
+      <span style="display:inline-block;width:8px;height:8px;background:#3fc997;border-radius:50%;margin-right:2px"></span>⚙ BQN installieren &amp; starten
+    </span>
+    <span class="aa" style="color:#3fc997;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:180px"><code style="color:#3fc997;font-size:14px">CBQN (C, empfohlen)</code></td><td style="color:#cdd6f4">github.com/dzaima/CBQN</td><td style="color:#6c7a8e">git clone --recurse-submodules https://github.com/dzaima/CBQN
+make &amp;&amp; ./BQN</td></tr><tr><td style="width:180px"><code style="color:#3fc997;font-size:14px">Arch/CachyOS (AUR)</code></td><td style="color:#cdd6f4">cbqn (AUR)</td><td style="color:#6c7a8e">yay -S cbqn
+bqn  # REPL starten</td></tr><tr><td style="width:180px"><code style="color:#3fc997;font-size:14px">BQN.js (Browser!)</code></td><td style="color:#cdd6f4">mlochbaum.github.io</td><td style="color:#6c7a8e">https://mlochbaum.github.io/BQN/try.html
+Kein Install – direkt im Browser!</td></tr><tr><td style="width:180px"><code style="color:#3fc997;font-size:14px">Nix</code></td><td style="color:#cdd6f4">nixpkgs</td><td style="color:#6c7a8e">nix-shell -p cbqn
+bqn</td></tr><tr><td style="width:180px"><code style="color:#3fc997;font-size:14px">Script ausführen</code></td><td style="color:#cdd6f4">bqn</td><td style="color:#6c7a8e">bqn mein_skript.bqn
+bqn -e "2+3"  # Inline</td></tr><tr><td style="width:180px"><code style="color:#3fc997;font-size:14px">REPL starten</code></td><td style="color:#cdd6f4">bqn</td><td style="color:#6c7a8e">bqn
+)help        # Hilfe im REPL
+)q          # Beenden</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Glyphen eingeben
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">BQN-Tastaturlayout</code></td><td style="color:#cdd6f4">github.com/mlochbaum</td><td style="color:#6c7a8e">BQN hat eigenes Keyboard-Layout
+Prefix: \ gefolgt von ASCII-Buchstabe</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">\+  → +</code></td><td style="color:#cdd6f4">bqn keyboard</td><td style="color:#6c7a8e">\=  → ≡  \n  → ≠  \a  → ∧  \v  → ∨</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">\,  → ⋈</code></td><td style="color:#cdd6f4">bqn keyboard</td><td style="color:#6c7a8e">\j  → ⟨  \k  → ⟩  \(  → ←  \)  → ↩</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">\i  → ⊑</code></td><td style="color:#cdd6f4">bqn keyboard</td><td style="color:#6c7a8e">\I  → ⊏  \o  → ⊒  \O  → ⊐</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">\d  → ↕</code></td><td style="color:#cdd6f4">bqn keyboard</td><td style="color:#6c7a8e">\D  → ⍉  \r  → ⌽  \e  → ⍋  \E  → ⍒</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">Neovim plugin</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">github.com/mlochbaum/BQN-vim
+oder: https://github.com/razetime/bqn-nvim</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">VS Code extension</code></td><td style="color:#cdd6f4">marketplace</td><td style="color:#6c7a8e">BQN (mlochbaum.bqn-vscode)</td></tr><tr><td style="width:180px"><code style="color:#4fc3f7;font-size:14px">Emacs</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">github.com/museoa/bqn-mode</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Lernressourcen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">Offizielle Doku</code></td><td style="color:#cdd6f4">mlochbaum.github.io/BQN</td><td style="color:#6c7a8e">Vollständige Referenz, Tutorial, Erklärungen</td></tr><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">Try BQN (Browser)</code></td><td style="color:#cdd6f4">mlochbaum.github.io/BQN/try.html</td><td style="color:#6c7a8e">Online-REPL, kein Install nötig!</td></tr><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">BQN 15 Minutes</code></td><td style="color:#cdd6f4">mlochbaum.github.io</td><td style="color:#6c7a8e">Schnelleinstieg: /doc/quick.html</td></tr><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">Rosetta Code BQN</code></td><td style="color:#cdd6f4">rosettacode.org</td><td style="color:#6c7a8e">Viele Aufgaben in BQN gelöst</td></tr><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">BQN Discord</code></td><td style="color:#cdd6f4">mlochbaum.github.io</td><td style="color:#6c7a8e">Aktive Community</td></tr><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">Array Cast Podcast</code></td><td style="color:#cdd6f4">arraycast.com</td><td style="color:#6c7a8e">Podcast über Array-Sprachen (APL, J, K, BQN)</td></tr><tr><td style="width:180px"><code style="color:#c792ea;font-size:14px">APL Farm</code></td><td style="color:#cdd6f4">aplwiki.com</td><td style="color:#6c7a8e">Wiki für alle Array-Sprachen</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ BQN vs. andere Array-Sprachen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">APL</code></td><td style="color:#cdd6f4">1962, Kenneth Iverson</td><td style="color:#6c7a8e">BQNs Großvater. Operator-Overloading, aber inkonsistenter</td></tr><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">J</code></td><td style="color:#cdd6f4">1990, Roger Hui &amp; Iverson</td><td style="color:#6c7a8e">ASCII-Syntax (keine Unicode). Ähnliche Konzepte</td></tr><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">K/Q</code></td><td style="color:#cdd6f4">1993, Arthur Whitney</td><td style="color:#6c7a8e">Datenbankfokus (KDB+). Sehr kompakt</td></tr><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">Uiua</code></td><td style="color:#cdd6f4">2023, Kai Bonn</td><td style="color:#6c7a8e">Stack-basiert (kein ←). Moderner als BQN</td></tr><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">BQN</code></td><td style="color:#cdd6f4">2020, Marshall Lochbaum</td><td style="color:#6c7a8e">Konsistenteste Syntax. Trains + Modifier + Namespaces</td></tr><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">Dyalog APL</code></td><td style="color:#cdd6f4">1983, Dyalog Ltd.</td><td style="color:#6c7a8e">Kommerziell, sehr mächtig, Enterprise-Einsatz</td></tr><tr><td style="width:180px"><code style="color:#ffb347;font-size:14px">Gemeinsam</code></td><td style="color:#cdd6f4">Array-Sprachen</td><td style="color:#6c7a8e">Alle: Arrays als primitive Typen, Rank-Polymorphismus</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#3fc997';
+      btn.style.color       = '#3fc997';
+      btn.style.background  = 'rgba(63, 201, 151, .08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

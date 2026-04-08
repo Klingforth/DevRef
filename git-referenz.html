@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #f05033;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(240, 80, 51, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#f05033">&#x2387;</span>
+      <span style="color:#f05033">Git</span> Referenz
+    </div>
+    <div id="hdr-sub">Versionskontrolle · Branches · Workflows · Alle wichtigen Befehle</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="branches">Branches</button>
+    <button class="tb" data-tab="remote">Remote & Sync</button>
+    <button class="tb" data-tab="undo">Rückgängig</button>
+    <button class="tb" data-tab="tags">Tags</button>
+    <button class="tb" data-tab="advanced">Fortgeschritten</button>
+    <button class="tb" data-tab="config">Config & Aliases</button>
+    <button class="tb" data-tab="examples">Workflows</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#f050330e;border:1px solid #f0503344;border-radius:8px;
+            padding:14px 16px;margin-bottom:16px;font-size:12px;line-height:1.9">
+  <strong style="color:#f05033">Die drei Bereiche:</strong><br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">Arbeitsverzeichnis</code>
+    <span style="color:#ffb347"> → git add → </span>
+    <code style="color:#c3e88d">Stage (Index)</code>
+    <span style="color:#ffb347"> → git commit → </span>
+    <code style="color:#c3e88d">Repository (.git/)</code>
+    <span style="color:#ffb347"> → git push → </span>
+    <code style="color:#c3e88d">Remote</code>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #f0503344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f050330e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05033">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05033;border-radius:50%;margin-right:2px"></span>Einrichten &amp; Initialisieren
+    </span>
+    <span class="aa" style="color:#f05033;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git init</code>
+      </td>
+      <td style="color:#cdd6f4">Neues Repository erstellen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Im aktuellen Verzeichnis</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git init mein-projekt</code>
+      </td>
+      <td style="color:#cdd6f4">Repository in neuem Verzeichnis</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git clone &lt;url&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">Repository klonen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Lokal + remote-Tracking</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git clone &lt;url&gt; &lt;verz&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">In bestimmtes Verzeichnis klonen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git clone --depth 1 &lt;url&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">Shallow Clone (nur letzter Commit)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Schneller für große Repos</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global user.name "Name"</code>
+      </td>
+      <td style="color:#cdd6f4">Benutzername setzen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Einmalig nötig</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global user.email "x@y.de"</code>
+      </td>
+      <td style="color:#cdd6f4">E-Mail setzen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Einmalig nötig</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global init.defaultBranch main</code>
+      </td>
+      <td style="color:#cdd6f4">Standard-Branch setzen</td>
+      <td><span style="color:#c3e88d;font-size:11px">main statt master</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --list</code>
+      </td>
+      <td style="color:#cdd6f4">Alle Einstellungen anzeigen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global core.editor "vim"</code>
+      </td>
+      <td style="color:#cdd6f4">Editor setzen</td>
+      <td><span style="color:#c3e88d;font-size:11px">vim / nano / code --wait</span></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Status &amp; Informationen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git status</code>
+      </td>
+      <td style="color:#cdd6f4">Zustand des Arbeitsverzeichnisses</td>
+      <td><span style="color:#c3e88d;font-size:11px">Staged / Unstaged / Untracked</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git status -s</code>
+      </td>
+      <td style="color:#cdd6f4">Kompakte Statusanzeige</td>
+      <td><span style="color:#c3e88d;font-size:11px">M=modified A=added ?=untracked</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log</code>
+      </td>
+      <td style="color:#cdd6f4">Commit-Historie</td>
+      <td><span style="color:#c3e88d;font-size:11px">q zum Beenden</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log --oneline</code>
+      </td>
+      <td style="color:#cdd6f4">Eine Zeile pro Commit</td>
+      <td><span style="color:#c3e88d;font-size:11px">Hash + Message</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log --oneline --graph --all</code>
+      </td>
+      <td style="color:#cdd6f4">Branches als ASCII-Graph</td>
+      <td><span style="color:#c3e88d;font-size:11px">Übersicht aller Branches</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log -n 10</code>
+      </td>
+      <td style="color:#cdd6f4">Letzte 10 Commits</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log --author="Alice"</code>
+      </td>
+      <td style="color:#cdd6f4">Commits von Autor filtern</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log --since="2 weeks ago"</code>
+      </td>
+      <td style="color:#cdd6f4">Nach Datum filtern</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log --grep="fix"</code>
+      </td>
+      <td style="color:#cdd6f4">Commits nach Message filtern</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log -p</code>
+      </td>
+      <td style="color:#cdd6f4">Commits mit Diffs</td>
+      <td><span style="color:#c3e88d;font-size:11px">Zeigt was geändert wurde</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git log --stat</code>
+      </td>
+      <td style="color:#cdd6f4">Commits mit geänderten Dateien</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git show &lt;hash&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">Einen Commit anzeigen</td>
+      <td><span style="color:#c3e88d;font-size:11px">HEAD, HEAD~1, abc1234</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git diff</code>
+      </td>
+      <td style="color:#cdd6f4">Unstaged Änderungen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Arbeitsverzeichnis vs. Stage</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git diff --staged</code>
+      </td>
+      <td style="color:#cdd6f4">Staged Änderungen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Stage vs. letzter Commit</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git diff main..feature</code>
+      </td>
+      <td style="color:#cdd6f4">Unterschied zwischen Branches</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4fc3f7;font-size:12px">git blame &lt;datei&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">Wer hat welche Zeile geändert?</td>
+      <td></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-st0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Staging Area – der Index
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="staging area – der index">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Staging Area – der Index
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Die drei Bereiche in Git:</span>
+<span style="color:#546e7a"># Arbeitsverzeichnis  →  Stage (Index)  →  Repository</span>
+
+<span style="color:#546e7a"># Dateien zum Commit vormerken</span>
+git <span style="color:#82aaff">add</span> datei.txt             <span style="color:#546e7a"># eine Datei</span>
+git <span style="color:#82aaff">add</span> ordner/               <span style="color:#546e7a"># ganzes Verzeichnis</span>
+git <span style="color:#82aaff">add</span> .                     <span style="color:#546e7a"># alles im aktuellen Verzeichnis</span>
+git <span style="color:#82aaff">add</span> <span style="color:#ffcb6b">-A</span>                    <span style="color:#546e7a"># alles (auch gelöschte)</span>
+git <span style="color:#82aaff">add</span> <span style="color:#ffcb6b">-p</span>                    <span style="color:#546e7a"># interaktiv: Hunks auswählen</span>
+git <span style="color:#82aaff">add</span> <span style="color:#ffcb6b">-i</span>                    <span style="color:#546e7a"># interaktiver Modus</span>
+
+<span style="color:#546e7a"># Status prüfen</span>
+git <span style="color:#82aaff">status</span>
+git <span style="color:#82aaff">diff</span> <span style="color:#ffcb6b">--staged</span>             <span style="color:#546e7a"># was ist gestaged?</span>
+
+<span style="color:#546e7a"># Staging rückgängig machen (Datei aus Stage entfernen)</span>
+git <span style="color:#82aaff">restore</span> <span style="color:#ffcb6b">--staged</span> datei.txt   <span style="color:#546e7a"># Modern (Git 2.23+)</span>
+git <span style="color:#82aaff">reset</span> HEAD datei.txt         <span style="color:#546e7a"># Klassisch, gleiches Ergebnis</span>
+
+<span style="color:#546e7a"># Datei aus Arbeitsverzeichnis wiederherstellen (Änderungen verwerfen!)</span>
+git <span style="color:#82aaff">restore</span> datei.txt             <span style="color:#546e7a"># Änderungen verwerfen – nicht rückgängig machbar!</span>
+git <span style="color:#82aaff">checkout</span> <span style="color:#ffcb6b">--</span> datei.txt         <span style="color:#546e7a"># Klassisch</span>
+
+<span style="color:#546e7a"># .gitignore – Dateien ignorieren</span>
+echo <span style="color:#c3e88d">"node_modules/"</span> &gt;&gt; .gitignore
+echo <span style="color:#c3e88d">"*.log"</span> &gt;&gt; .gitignore
+echo <span style="color:#c3e88d">".env"</span> &gt;&gt; .gitignore
+git <span style="color:#82aaff">check-ignore</span> <span style="color:#ffcb6b">-v</span> datei.txt     <span style="color:#546e7a"># Warum wird Datei ignoriert?</span>
+
+<span style="color:#546e7a"># Bereits getrackte Datei jetzt ignorieren</span>
+git <span style="color:#82aaff">rm</span> <span style="color:#ffcb6b">--cached</span> datei.txt         <span style="color:#546e7a"># Aus Tracking entfernen</span>
+echo <span style="color:#c3e88d">"datei.txt"</span> &gt;&gt; .gitignore    <span style="color:#546e7a"># Dann ignorieren</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st1"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Commits erstellen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="commits erstellen">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Commits erstellen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Commit erstellen</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"feat: Login-Formular hinzugefügt"</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"fix: Null-Pointer in UserService behoben"</span>
+git <span style="color:#82aaff">commit</span>                        <span style="color:#546e7a"># Editor öffnet sich</span>
+
+<span style="color:#546e7a"># Alles auf einmal (add + commit – nur für bereits getrackte Dateien!)</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-am</span> <span style="color:#c3e88d">"fix: Tippfehler korrigiert"</span>
+
+<span style="color:#546e7a"># Letzten Commit ändern (nur vor push!)</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">--amend</span>                <span style="color:#546e7a"># Editor öffnet sich</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">--amend</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"Neue Nachricht"</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">--amend</span> <span style="color:#ffcb6b">--no-edit</span>      <span style="color:#546e7a"># Dateien hinzufügen ohne Nachricht zu ändern</span>
+
+<span style="color:#546e7a"># Leerer Commit (z.B. um CI zu triggern)</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">--allow-empty</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"chore: CI neu starten"</span>
+
+<span style="color:#546e7a"># Gute Commit-Nachrichten (Conventional Commits):</span>
+<span style="color:#546e7a"># feat:     Neues Feature</span>
+<span style="color:#546e7a"># fix:      Bugfix</span>
+<span style="color:#546e7a"># docs:     Dokumentation</span>
+<span style="color:#546e7a"># style:    Formatierung (kein Code-Änderung)</span>
+<span style="color:#546e7a"># refactor: Refactoring ohne Feature/Fix</span>
+<span style="color:#546e7a"># test:     Tests hinzufügen/ändern</span>
+<span style="color:#546e7a"># chore:    Build, Config, Abhängigkeiten</span>
+<span style="color:#546e7a"># perf:     Performance-Verbesserung</span>
+<span style="color:#546e7a"># ci:       CI/CD-Änderungen</span>
+<span style="color:#546e7a">#</span>
+<span style="color:#546e7a"># Format: &lt;typ&gt;(&lt;scope&gt;): &lt;kurze Beschreibung&gt;</span>
+<span style="color:#546e7a"># Beispiel: feat(auth): OAuth2-Login implementiert</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-branches" class="tp">
+
+<div class="ac open" id="ac-br0"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('br0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Branches verwalten
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch</code>
+      </td>
+      <td style="color:#cdd6f4">Alle lokalen Branches anzeigen</td>
+      <td><span style="color:#c3e88d;font-size:11px">* = aktueller Branch</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch -a</code>
+      </td>
+      <td style="color:#cdd6f4">Alle Branches (lokal + remote)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch -v</code>
+      </td>
+      <td style="color:#cdd6f4">Branches mit letztem Commit</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch feature/login</code>
+      </td>
+      <td style="color:#cdd6f4">Neuen Branch erstellen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Wechselt NICHT zu ihm</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git switch feature/login</code>
+      </td>
+      <td style="color:#cdd6f4">Zu Branch wechseln (modern)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Git 2.23+</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git checkout feature/login</code>
+      </td>
+      <td style="color:#cdd6f4">Zu Branch wechseln (klassisch)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git switch -c feature/login</code>
+      </td>
+      <td style="color:#cdd6f4">Erstellen + wechseln (modern)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Empfohlen</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git checkout -b feature/login</code>
+      </td>
+      <td style="color:#cdd6f4">Erstellen + wechseln (klassisch)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch -d feature/login</code>
+      </td>
+      <td style="color:#cdd6f4">Branch löschen (merged)</td>
+      <td><span style="color:#c3e88d;font-size:11px">-D = erzwingen</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch -m alter neuer</code>
+      </td>
+      <td style="color:#cdd6f4">Branch umbenennen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch --merged</code>
+      </td>
+      <td style="color:#cdd6f4">Bereits gemergte Branches</td>
+      <td><span style="color:#c3e88d;font-size:11px">Kandidaten zum Löschen</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#c792ea;font-size:12px">git branch --no-merged</code>
+      </td>
+      <td style="color:#cdd6f4">Noch nicht gemergte Branches</td>
+      <td></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-br1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('br1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Mergen &amp; Rebasen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="mergen &amp; rebasen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Mergen &amp; Rebasen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># ── MERGE ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a"># Feature-Branch in main mergen</span>
+git <span style="color:#82aaff">switch</span> main
+git <span style="color:#82aaff">merge</span> feature/login
+
+<span style="color:#546e7a"># Merge immer als Merge-Commit (kein Fast-Forward)</span>
+git <span style="color:#82aaff">merge</span> <span style="color:#ffcb6b">--no-ff</span> feature/login
+
+<span style="color:#546e7a"># Nur Fast-Forward erlauben (schlägt fehl wenn nicht möglich)</span>
+git <span style="color:#82aaff">merge</span> <span style="color:#ffcb6b">--ff-only</span> feature/login
+
+<span style="color:#546e7a"># Merge abbrechen bei Konflikten</span>
+git <span style="color:#82aaff">merge</span> <span style="color:#ffcb6b">--abort</span>
+
+<span style="color:#546e7a"># ── REBASE ───────────────────────────────────────────────────</span>
+<span style="color:#546e7a"># feature-Branch auf main rebasen</span>
+git <span style="color:#82aaff">switch</span> feature/login
+git <span style="color:#82aaff">rebase</span> main
+
+<span style="color:#546e7a"># Interaktiver Rebase – Commits umschreiben</span>
+git <span style="color:#82aaff">rebase</span> <span style="color:#ffcb6b">-i</span> HEAD~3            <span style="color:#546e7a"># Letzte 3 Commits bearbeiten</span>
+git <span style="color:#82aaff">rebase</span> <span style="color:#ffcb6b">-i</span> main              <span style="color:#546e7a"># Alle Commits seit main</span>
+
+<span style="color:#546e7a"># Im interaktiven Editor:</span>
+<span style="color:#546e7a"># pick   = Commit behalten</span>
+<span style="color:#546e7a"># reword = Commit-Nachricht ändern</span>
+<span style="color:#546e7a"># edit   = Commit bearbeiten</span>
+<span style="color:#546e7a"># squash = Mit vorherigem Commit zusammenführen</span>
+<span style="color:#546e7a"># fixup  = Wie squash aber Nachricht verwerfen</span>
+<span style="color:#546e7a"># drop   = Commit entfernen</span>
+
+<span style="color:#546e7a"># Rebase abbrechen</span>
+git <span style="color:#82aaff">rebase</span> <span style="color:#ffcb6b">--abort</span>
+
+<span style="color:#546e7a"># Rebase nach Konflikt-Lösung fortsetzen</span>
+git <span style="color:#82aaff">add</span> .
+git <span style="color:#82aaff">rebase</span> <span style="color:#ffcb6b">--continue</span>
+
+<span style="color:#546e7a"># Goldene Rebase-Regel:</span>
+<span style="color:#546e7a"># NIEMALS bereits gepushte Commits rebasen!</span>
+<span style="color:#546e7a"># (außer du weißt genau was du tust)</span>
+
+<span style="color:#546e7a"># ── CHERRY-PICK ───────────────────────────────────────────────</span>
+<span style="color:#546e7a"># Einzelnen Commit aus anderem Branch übernehmen</span>
+git <span style="color:#82aaff">cherry-pick</span> <span style="color:#f07178">abc1234</span>
+
+<span style="color:#546e7a"># Mehrere Commits</span>
+git <span style="color:#82aaff">cherry-pick</span> <span style="color:#f07178">abc1234</span> <span style="color:#f07178">def5678</span>
+
+<span style="color:#546e7a"># Cherry-pick ohne Commit (nur Stage)</span>
+git <span style="color:#82aaff">cherry-pick</span> <span style="color:#ffcb6b">-n</span> <span style="color:#f07178">abc1234</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-br2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('br2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Merge-Konflikte lösen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="merge-konflikte lösen">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Merge-Konflikte lösen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Wenn git merge oder rebase einen Konflikt meldet:</span>
+
+<span style="color:#546e7a"># 1. Konflikt-Dateien anzeigen</span>
+git <span style="color:#82aaff">status</span>   <span style="color:#546e7a"># zeigt "both modified: datei.txt"</span>
+
+<span style="color:#546e7a"># 2. Datei öffnen und Konflikt-Marker auflösen:</span>
+<span style="color:#546e7a"># &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+<span style="color:#546e7a"># Deine Version (aktueller Branch)</span>
+<span style="color:#546e7a"># =======</span>
+<span style="color:#546e7a"># Eingehende Version (zu mergender Branch)</span>
+<span style="color:#546e7a"># &gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/login</span>
+
+<span style="color:#546e7a"># 3. Datei nach Auflösung stagen</span>
+git <span style="color:#82aaff">add</span> datei.txt
+
+<span style="color:#546e7a"># 4. Merge abschließen</span>
+git <span style="color:#82aaff">commit</span>   <span style="color:#546e7a"># Merge-Commit Nachricht bestätigen</span>
+
+<span style="color:#546e7a"># Tools für Konflikt-Lösung</span>
+git <span style="color:#82aaff">mergetool</span>               <span style="color:#546e7a"># Konfigurierbares Tool öffnen</span>
+git <span style="color:#82aaff">mergetool</span> <span style="color:#ffcb6b">--tool=vimdiff</span>
+
+<span style="color:#546e7a"># Eigene Version behalten (für eine Datei)</span>
+git <span style="color:#82aaff">checkout</span> <span style="color:#ffcb6b">--ours</span> datei.txt
+git <span style="color:#82aaff">add</span> datei.txt
+
+<span style="color:#546e7a"># Eingehende Version nehmen</span>
+git <span style="color:#82aaff">checkout</span> <span style="color:#ffcb6b">--theirs</span> datei.txt
+git <span style="color:#82aaff">add</span> datei.txt</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-remote" class="tp">
+
+<div class="ac open" id="ac-rem0"
+     style="border:1px solid #f0503344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('rem0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f050330e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05033">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05033;border-radius:50%;margin-right:2px"></span>Remote-Repositories
+    </span>
+    <span class="aa" style="color:#f05033;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git remote -v</code>
+      </td>
+      <td style="color:#cdd6f4">Remote-URLs anzeigen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git remote add origin &lt;url&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">Remote hinzufügen</td>
+      <td><span style="color:#c3e88d;font-size:11px">origin ist Konvention</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git remote add upstream &lt;url&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">Upstream-Remote (für Forks)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git remote remove origin</code>
+      </td>
+      <td style="color:#cdd6f4">Remote entfernen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git remote rename old new</code>
+      </td>
+      <td style="color:#cdd6f4">Remote umbenennen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git remote set-url origin &lt;url&gt;</code>
+      </td>
+      <td style="color:#cdd6f4">URL ändern</td>
+      <td><span style="color:#c3e88d;font-size:11px">Für SSH/HTTPS Wechsel</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git fetch</code>
+      </td>
+      <td style="color:#cdd6f4">Änderungen holen (kein merge)</td>
+      <td><span style="color:#c3e88d;font-size:11px">origin</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git fetch --all</code>
+      </td>
+      <td style="color:#cdd6f4">Alle Remotes holen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git fetch --prune</code>
+      </td>
+      <td style="color:#cdd6f4">Gelöschte Remote-Branches entfernen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git pull</code>
+      </td>
+      <td style="color:#cdd6f4">fetch + merge</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git pull --rebase</code>
+      </td>
+      <td style="color:#cdd6f4">fetch + rebase (sauberere History)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Empfohlen</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git pull --ff-only</code>
+      </td>
+      <td style="color:#cdd6f4">Nur wenn Fast-Forward möglich</td>
+      <td><span style="color:#c3e88d;font-size:11px">Sicher</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git push origin main</code>
+      </td>
+      <td style="color:#cdd6f4">Branch pushen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git push -u origin feature</code>
+      </td>
+      <td style="color:#cdd6f4">Push + Tracking setzen</td>
+      <td><span style="color:#c3e88d;font-size:11px">-u = --set-upstream</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git push --force-with-lease</code>
+      </td>
+      <td style="color:#cdd6f4">Force-Push (sicher)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Schlägt fehl wenn jemand anderes gepusht hat</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git push --force</code>
+      </td>
+      <td style="color:#cdd6f4">Force-Push (gefährlich!)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Überschreibt History</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git push origin --delete feature</code>
+      </td>
+      <td style="color:#cdd6f4">Remote-Branch löschen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git push --tags</code>
+      </td>
+      <td style="color:#cdd6f4">Tags pushen</td>
+      <td></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-rem1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('rem1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Typische Workflows
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="typische workflows">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Typische Workflows
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># ── GitHub Flow (einfachster Workflow) ───────────────────────</span>
+<span style="color:#546e7a"># 1. Branch erstellen</span>
+git <span style="color:#82aaff">switch</span> <span style="color:#ffcb6b">-c</span> feature/neues-feature
+
+<span style="color:#546e7a"># 2. Änderungen machen und committen</span>
+git <span style="color:#82aaff">add</span> .
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"feat: Neues Feature implementiert"</span>
+
+<span style="color:#546e7a"># 3. Pushen und Pull Request erstellen</span>
+git <span style="color:#82aaff">push</span> <span style="color:#ffcb6b">-u</span> origin feature/neues-feature
+<span style="color:#546e7a"># → Auf GitHub/GitLab PR/MR erstellen</span>
+
+<span style="color:#546e7a"># 4. Nach Merge: Branch aufräumen</span>
+git <span style="color:#82aaff">switch</span> main
+git <span style="color:#82aaff">pull</span>
+git <span style="color:#82aaff">branch</span> <span style="color:#ffcb6b">-d</span> feature/neues-feature
+git <span style="color:#82aaff">push</span> origin <span style="color:#ffcb6b">--delete</span> feature/neues-feature
+
+<span style="color:#546e7a"># ── Fork &amp; Upstream ───────────────────────────────────────────</span>
+<span style="color:#546e7a"># Fork eines Open-Source-Projekts auf dem neuesten Stand halten</span>
+git <span style="color:#82aaff">remote</span> add upstream https://github.com/original/repo.git
+
+git <span style="color:#82aaff">fetch</span> upstream
+git <span style="color:#82aaff">switch</span> main
+git <span style="color:#82aaff">merge</span> upstream/main    <span style="color:#546e7a"># oder: git rebase upstream/main</span>
+git <span style="color:#82aaff">push</span> origin main
+
+<span style="color:#546e7a"># ── Gitflow (für größere Projekte) ───────────────────────────</span>
+<span style="color:#546e7a"># Branches: main, develop, feature/*, release/*, hotfix/*</span>
+<span style="color:#546e7a"># main:     nur stabile Releases</span>
+<span style="color:#546e7a"># develop:  Entwicklungs-Integration</span>
+<span style="color:#546e7a"># feature:  neue Features (von develop)</span>
+<span style="color:#546e7a"># release:  Release-Vorbereitung</span>
+<span style="color:#546e7a"># hotfix:   Notfallkorrekturen auf main</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-undo" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Befehl suchen…">
+
+<div class="ac open" id="ac-undo0"
+     style="border:1px solid #f0503344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('undo0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f050330e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05033">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05033;border-radius:50%;margin-right:2px"></span>Änderungen rückgängig machen
+    </span>
+    <span class="aa" style="color:#f05033;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="änderungen rückgängig machen">
+  <div style="color:#f05033;font-weight:700;font-size:12px;margin-bottom:8px">
+    Änderungen rückgängig machen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># ── LOKAL – noch nicht gepusht ────────────────────────────────</span>
+
+<span style="color:#546e7a"># Einzelne Datei wiederherstellen (Änderungen im Arbeitsverz. verwerfen)</span>
+git <span style="color:#82aaff">restore</span> datei.txt                  <span style="color:#546e7a"># Modern (Git 2.23+)</span>
+git <span style="color:#82aaff">checkout</span> <span style="color:#ffcb6b">--</span> datei.txt              <span style="color:#546e7a"># Klassisch</span>
+
+<span style="color:#546e7a"># Datei aus Stage entfernen (unstagen)</span>
+git <span style="color:#82aaff">restore</span> <span style="color:#ffcb6b">--staged</span> datei.txt
+git <span style="color:#82aaff">reset</span> HEAD datei.txt               <span style="color:#546e7a"># Klassisch</span>
+
+<span style="color:#546e7a"># Letzten Commit rückgängig (Änderungen bleiben im Arbeitsverz.)</span>
+git <span style="color:#82aaff">reset</span> HEAD~1                       <span style="color:#546e7a"># = git reset --mixed HEAD~1</span>
+
+<span style="color:#546e7a"># Letzten Commit rückgängig + Stage beibehalten</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--soft</span> HEAD~1
+
+<span style="color:#546e7a"># Letzten Commit rückgängig + alles verwerfen (DESTRUKTIV!)</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--hard</span> HEAD~1
+
+<span style="color:#546e7a"># ── GEPUSHT – bereits im Remote ──────────────────────────────</span>
+
+<span style="color:#546e7a"># Neuen Commit erstellen der den alten rückgängig macht (sicher!)</span>
+git <span style="color:#82aaff">revert</span> HEAD                        <span style="color:#546e7a"># Letzten Commit revertieren</span>
+git <span style="color:#82aaff">revert</span> <span style="color:#f07178">abc1234</span>                     <span style="color:#546e7a"># Bestimmten Commit</span>
+git <span style="color:#82aaff">revert</span> HEAD~3..HEAD                <span style="color:#546e7a"># Mehrere Commits</span>
+git <span style="color:#82aaff">revert</span> <span style="color:#ffcb6b">--no-commit</span> HEAD~3..HEAD    <span style="color:#546e7a"># Ohne sofortigen Commit</span>
+
+<span style="color:#546e7a"># ── DATEI-VERSIONEN ───────────────────────────────────────────</span>
+
+<span style="color:#546e7a"># Datei aus einem bestimmten Commit wiederherstellen</span>
+git <span style="color:#82aaff">restore</span> <span style="color:#ffcb6b">--source</span> <span style="color:#f07178">abc1234</span> datei.txt
+git <span style="color:#82aaff">checkout</span> <span style="color:#f07178">abc1234</span> <span style="color:#ffcb6b">--</span> datei.txt      <span style="color:#546e7a"># Klassisch</span>
+
+<span style="color:#546e7a"># Datei aus einem anderen Branch holen</span>
+git <span style="color:#82aaff">restore</span> <span style="color:#ffcb6b">--source</span> feature/login <span style="color:#ffcb6b">--</span> src/auth.ts
+
+<span style="color:#546e7a"># ── WAS WURDE GERADE GELÖSCHT? ───────────────────────────────</span>
+
+<span style="color:#546e7a"># Commit-History für eine Datei</span>
+git <span style="color:#82aaff">log</span> <span style="color:#ffcb6b">--all</span> <span style="color:#ffcb6b">--full-history</span> <span style="color:#ffcb6b">--</span> datei.txt
+
+<span style="color:#546e7a"># Reflog – ALLES was passiert ist (auch nach reset --hard!)</span>
+git <span style="color:#82aaff">reflog</span>
+git <span style="color:#82aaff">checkout</span> HEAD@{3}                  <span style="color:#546e7a"># Zu früherem Zustand</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--hard</span> HEAD@{5}              <span style="color:#546e7a"># Zustand wiederherstellen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-undo1"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('undo1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>reset vs revert vs restore
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="reset vs revert vs restore">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    reset vs revert vs restore
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># ── ÜBERSICHT: Die drei R's ───────────────────────────────────</span>
+
+<span style="color:#546e7a"># git restore – Dateien wiederherstellen (Git 2.23+)</span>
+git <span style="color:#82aaff">restore</span> datei.txt              <span style="color:#546e7a"># Arbeitsverzeichnis auf HEAD setzen</span>
+git <span style="color:#82aaff">restore</span> <span style="color:#ffcb6b">--staged</span> datei.txt     <span style="color:#546e7a"># Stage auf HEAD setzen</span>
+git <span style="color:#82aaff">restore</span> <span style="color:#ffcb6b">--source</span> HEAD~2 datei  <span style="color:#546e7a"># Datei aus älterem Commit</span>
+
+<span style="color:#546e7a"># git reset – Commit-Pointer verschieben</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--soft</span> HEAD~1   <span style="color:#546e7a"># Nur Pointer zurück, Stage + Dateien bleiben</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--mixed</span> HEAD~1  <span style="color:#546e7a"># Pointer + Stage zurück, Dateien bleiben (Standard)</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--hard</span> HEAD~1   <span style="color:#546e7a"># Alles zurück (DESTRUKTIV!)</span>
+
+<span style="color:#546e7a"># Merkhilfe:</span>
+<span style="color:#546e7a"># --soft  = commit rückgängig    → Stage hat Änderungen</span>
+<span style="color:#546e7a"># --mixed = commit + add rückgängig → Dateien haben Änderungen</span>
+<span style="color:#546e7a"># --hard  = alles rückgängig     → Nichts mehr übrig</span>
+
+<span style="color:#546e7a"># git revert – Sicheres Rückgängigmachen</span>
+git <span style="color:#82aaff">revert</span> HEAD            <span style="color:#546e7a"># Erstellt neuen Commit der HEAD umkehrt</span>
+<span style="color:#546e7a"># Ändert die History NICHT – sicher für geteilte Branches</span>
+
+<span style="color:#546e7a"># Wann was nutzen?</span>
+<span style="color:#546e7a"># restore:  Datei-Änderungen verwerfen oder Datei aus Commit holen</span>
+<span style="color:#546e7a"># reset:    Lokale Commits entfernen (vor dem Push!)</span>
+<span style="color:#546e7a"># revert:   Commits die bereits gepusht wurden rückgängig machen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-undo2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('undo2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Stash – Änderungen zwischenspeichern
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="stash – änderungen zwischenspeichern">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Stash – Änderungen zwischenspeichern
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Änderungen temporär speichern (z.B. für Branch-Wechsel)</span>
+git <span style="color:#82aaff">stash</span>                            <span style="color:#546e7a"># Alles wegspeichern</span>
+git <span style="color:#82aaff">stash</span> push <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"WIP: Login-Form"</span>  <span style="color:#546e7a"># Mit Beschreibung</span>
+git <span style="color:#82aaff">stash</span> push <span style="color:#ffcb6b">-u</span>                    <span style="color:#546e7a"># Auch ungetrackte Dateien</span>
+git <span style="color:#82aaff">stash</span> push <span style="color:#ffcb6b">-p</span>                    <span style="color:#546e7a"># Interaktiv (Hunks wählen)</span>
+
+<span style="color:#546e7a"># Stash-Liste</span>
+git <span style="color:#82aaff">stash</span> list
+<span style="color:#546e7a"># stash@{0}: On main: WIP: Login-Form</span>
+<span style="color:#546e7a"># stash@{1}: On feature: ...</span>
+
+<span style="color:#546e7a"># Stash anwenden</span>
+git <span style="color:#82aaff">stash</span> pop                        <span style="color:#546e7a"># Anwenden + aus Liste entfernen</span>
+git <span style="color:#82aaff">stash</span> apply                      <span style="color:#546e7a"># Anwenden, in Liste lassen</span>
+git <span style="color:#82aaff">stash</span> apply stash@{2}            <span style="color:#546e7a"># Bestimmten Stash</span>
+
+<span style="color:#546e7a"># Stash inspizieren</span>
+git <span style="color:#82aaff">stash</span> show stash@{0}             <span style="color:#546e7a"># Geänderte Dateien</span>
+git <span style="color:#82aaff">stash</span> show <span style="color:#ffcb6b">-p</span> stash@{0}          <span style="color:#546e7a"># Mit Diff</span>
+
+<span style="color:#546e7a"># Stash auf neuem Branch anwenden</span>
+git <span style="color:#82aaff">stash</span> branch feature/neues stash@{0}
+
+<span style="color:#546e7a"># Stash entfernen</span>
+git <span style="color:#82aaff">stash</span> drop stash@{0}
+git <span style="color:#82aaff">stash</span> clear                      <span style="color:#546e7a"># Alle löschen</span>
+
+<span style="color:#546e7a"># Praktisches Muster:</span>
+git <span style="color:#82aaff">stash</span> &amp;&amp; git <span style="color:#82aaff">pull</span> &amp;&amp; git <span style="color:#82aaff">stash</span> pop   <span style="color:#546e7a"># Pull + eigene Änderungen drüber</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-tags" class="tp">
+
+<div class="ac open" id="ac-tag0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tag0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Tags verwalten
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git tag</code>
+      </td>
+      <td style="color:#cdd6f4">Alle Tags anzeigen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git tag -l "v1.*"</code>
+      </td>
+      <td style="color:#cdd6f4">Tags filtern</td>
+      <td><span style="color:#c3e88d;font-size:11px">Glob-Pattern</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git tag v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Lightweight Tag erstellen</td>
+      <td><span style="color:#c3e88d;font-size:11px">Nur ein Zeiger</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git tag -a v1.0.0 -m "msg"</code>
+      </td>
+      <td style="color:#cdd6f4">Annotated Tag (empfohlen)</td>
+      <td><span style="color:#c3e88d;font-size:11px">Mit Metadaten</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git tag -a v1.0.0 abc1234</code>
+      </td>
+      <td style="color:#cdd6f4">Tag für alten Commit</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git show v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Tag anzeigen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git push origin v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Einzelnen Tag pushen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git push origin --tags</code>
+      </td>
+      <td style="color:#cdd6f4">Alle Tags pushen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git tag -d v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Lokalen Tag löschen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git push origin --delete v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Remote-Tag löschen</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git checkout v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Zu Tag wechseln</td>
+      <td><span style="color:#c3e88d;font-size:11px">Detached HEAD!</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#4ec9b0;font-size:12px">git switch -c release/1.0 v1.0.0</code>
+      </td>
+      <td style="color:#cdd6f4">Branch von Tag erstellen</td>
+      <td></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-advanced" class="tp">
+
+<div class="ac open" id="ac-adv0"
+     style="border:1px solid #f0503344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('adv0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f050330e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05033">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05033;border-radius:50%;margin-right:2px"></span>bisect – Fehler per Binärsuche finden
+    </span>
+    <span class="aa" style="color:#f05033;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="bisect – fehler per binärsuche finden">
+  <div style="color:#f05033;font-weight:700;font-size:12px;margin-bottom:8px">
+    bisect – Fehler per Binärsuche finden
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># git bisect findet automatisch welcher Commit einen Bug eingeführt hat</span>
+
+<span style="color:#546e7a"># Suche starten</span>
+git <span style="color:#82aaff">bisect</span> start
+
+<span style="color:#546e7a"># Aktuellen Zustand als "schlecht" markieren (Bug vorhanden)</span>
+git <span style="color:#82aaff">bisect</span> bad
+
+<span style="color:#546e7a"># Bekannten guten Commit markieren (kein Bug)</span>
+git <span style="color:#82aaff">bisect</span> good v1.0.0    <span style="color:#546e7a"># Tag, Hash oder HEAD~50</span>
+
+<span style="color:#546e7a"># Git checkt automatisch den mittleren Commit aus</span>
+<span style="color:#546e7a"># Testen: hat dieser Commit den Bug?</span>
+
+git <span style="color:#82aaff">bisect</span> good   <span style="color:#546e7a"># Nein, dieser Commit ist ok</span>
+git <span style="color:#82aaff">bisect</span> bad    <span style="color:#546e7a"># Ja, dieser Commit hat den Bug</span>
+
+<span style="color:#546e7a"># Git wiederholt bis der fehlerhafte Commit gefunden ist:</span>
+<span style="color:#546e7a"># "abc1234 is the first bad commit"</span>
+
+<span style="color:#546e7a"># Automatisiert mit Test-Skript</span>
+git <span style="color:#82aaff">bisect</span> run ./test.sh   <span style="color:#546e7a"># 0 = good, 1-125 = bad</span>
+
+<span style="color:#546e7a"># Suche beenden</span>
+git <span style="color:#82aaff">bisect</span> reset           <span style="color:#546e7a"># Zurück zum ursprünglichen HEAD</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-adv1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('adv1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>worktree – Mehrere Branches gleichzeitig
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="worktree – mehrere branches gleichzeitig">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    worktree – Mehrere Branches gleichzeitig
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Mehrere Working Trees für dasselbe Repository</span>
+<span style="color:#546e7a"># Kein clone nötig – teilt Object-Store</span>
+
+<span style="color:#546e7a"># Neuen Worktree erstellen</span>
+git <span style="color:#82aaff">worktree</span> add ../hotfix hotfix/critical-bug
+git <span style="color:#82aaff">worktree</span> add <span style="color:#ffcb6b">-b</span> feature/neue ../neue-feature main
+
+<span style="color:#546e7a"># Alle Worktrees anzeigen</span>
+git <span style="color:#82aaff">worktree</span> list
+
+<span style="color:#546e7a"># Worktree entfernen</span>
+git <span style="color:#82aaff">worktree</span> remove ../hotfix
+git <span style="color:#82aaff">worktree</span> prune    <span style="color:#546e7a"># Verwaiste Worktrees aufräumen</span>
+
+<span style="color:#546e7a"># Anwendungsfall:</span>
+<span style="color:#546e7a"># Aktuell an Feature arbeiten, aber Hotfix nötig?</span>
+<span style="color:#546e7a"># Kein stash, kein Branch-Wechsel!</span>
+git <span style="color:#82aaff">worktree</span> add ../hotfix-work hotfix/dringend
+cd ../hotfix-work
+<span style="color:#546e7a"># ... Bugfix machen, committen, pushen ...</span>
+cd ../mein-projekt   <span style="color:#546e7a"># Weiterarbeiten wo man war</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-adv2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('adv2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>submodules – Repos in Repos
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="submodules – repos in repos">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    submodules – Repos in Repos
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Submodule hinzufügen</span>
+git <span style="color:#82aaff">submodule</span> add https://github.com/user/lib vendor/lib
+
+<span style="color:#546e7a"># Repository mit Submodulen klonen</span>
+git <span style="color:#82aaff">clone</span> <span style="color:#ffcb6b">--recurse-submodules</span> &lt;url&gt;
+<span style="color:#546e7a"># Oder nachträglich:</span>
+git <span style="color:#82aaff">submodule</span> update <span style="color:#ffcb6b">--init</span> <span style="color:#ffcb6b">--recursive</span>
+
+<span style="color:#546e7a"># Submodule aktualisieren</span>
+git <span style="color:#82aaff">submodule</span> update <span style="color:#ffcb6b">--remote</span>        <span style="color:#546e7a"># Neueste Version</span>
+git <span style="color:#82aaff">submodule</span> foreach git <span style="color:#82aaff">pull</span>       <span style="color:#546e7a"># In allen Submodulen</span>
+
+<span style="color:#546e7a"># Submodule entfernen</span>
+git <span style="color:#82aaff">submodule</span> deinit vendor/lib
+git <span style="color:#82aaff">rm</span> vendor/lib
+rm <span style="color:#ffcb6b">-rf</span> .git/modules/vendor/lib
+
+<span style="color:#546e7a"># Alternativ zu Submodulen: git subtree</span>
+git <span style="color:#82aaff">subtree</span> add <span style="color:#ffcb6b">--prefix=vendor</span>/lib &lt;url&gt; main <span style="color:#ffcb6b">--squash</span>
+git <span style="color:#82aaff">subtree</span> pull <span style="color:#ffcb6b">--prefix=vendor</span>/lib &lt;url&gt; main <span style="color:#ffcb6b">--squash</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-adv3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('adv3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>reflog &amp; History retten
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="reflog &amp; history retten">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    reflog &amp; History retten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Reflog zeigt ALLE Bewegungen des HEAD</span>
+<span style="color:#546e7a"># Auch nach reset --hard, Branch-Löschung etc.</span>
+
+git <span style="color:#82aaff">reflog</span>
+<span style="color:#546e7a"># HEAD@{0}: reset: moving to HEAD~1</span>
+<span style="color:#546e7a"># HEAD@{1}: commit: feat: Login hinzugefügt</span>
+<span style="color:#546e7a"># HEAD@{2}: checkout: moving from main to feature</span>
+<span style="color:#546e7a"># ...</span>
+
+<span style="color:#546e7a"># Zu einem früheren Zustand zurück</span>
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--hard</span> HEAD@{2}
+
+<span style="color:#546e7a"># Gelöschten Branch wiederherstellen</span>
+git <span style="color:#82aaff">switch</span> <span style="color:#ffcb6b">-c</span> wiedergefunden HEAD@{4}
+
+<span style="color:#546e7a"># Reflog für bestimmten Branch</span>
+git <span style="color:#82aaff">reflog</span> show feature/login
+
+<span style="color:#546e7a"># Reflog läuft nach 90 Tagen ab (standard)</span>
+<span style="color:#546e7a"># Nie verloren: git gc räumt erst nach Ablauf auf</span>
+
+<span style="color:#546e7a"># Verlorenen Commit finden</span>
+git <span style="color:#82aaff">fsck</span> <span style="color:#ffcb6b">--lost-found</span>    <span style="color:#546e7a"># Findet "dangling commits"</span>
+<span style="color:#546e7a"># dann: git show &lt;hash&gt; und git cherry-pick &lt;hash&gt;</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-adv4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('adv4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>filter-branch &amp; filter-repo
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="filter-branch &amp; filter-repo">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    filter-branch &amp; filter-repo
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># WARNUNG: Ändert die gesamte History!</span>
+<span style="color:#546e7a"># Alle Mitarbeiter müssen danach neu klonen!</span>
+
+<span style="color:#546e7a"># Empfohlen: git-filter-repo (schneller, sicherer)</span>
+pip install git-filter-repo
+
+<span style="color:#546e7a"># Datei aus gesamter History entfernen (z.B. versehentlich eingecheckte Secrets!)</span>
+git <span style="color:#82aaff">filter-repo</span> <span style="color:#ffcb6b">--path</span> geheimes-passwort.txt <span style="color:#ffcb6b">--invert-paths</span>
+
+<span style="color:#546e7a"># Verzeichnis aus History entfernen</span>
+git <span style="color:#82aaff">filter-repo</span> <span style="color:#ffcb6b">--path</span> src/legacy/ <span style="color:#ffcb6b">--invert-paths</span>
+
+<span style="color:#546e7a"># Autor-Email korrigieren (ältere Methode)</span>
+git <span style="color:#82aaff">filter-branch</span> <span style="color:#ffcb6b">--env-filter</span> <span style="color:#c3e88d">'</span>
+  if [ <span style="color:#c3e88d">"$GIT_AUTHOR_EMAIL"</span> = <span style="color:#c3e88d">"falsch@example.com"</span> ]; then
+    GIT_AUTHOR_EMAIL=<span style="color:#c3e88d">"richtig@example.com"</span>
+    GIT_AUTHOR_NAME=<span style="color:#c3e88d">"Richtiger Name"</span>
+  fi
+<span style="color:#c3e88d">' --tag-name-filter cat -- --all</span>
+
+<span style="color:#546e7a"># Nach filter-branch: Force-Push nötig</span>
+git <span style="color:#82aaff">push</span> <span style="color:#ffcb6b">--force</span> <span style="color:#ffcb6b">--all</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-config" class="tp">
+
+<div class="ac open" id="ac-cfg0"
+     style="border:1px solid #f0503344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cfg0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f050330e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05033">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05033;border-radius:50%;margin-right:2px"></span>git config – Konfiguration
+    </span>
+    <span class="aa" style="color:#f05033;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Befehl</th><th>Beschreibung</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global user.name "Name"</code>
+      </td>
+      <td style="color:#cdd6f4">Benutzername</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global user.email "e@m.de"</code>
+      </td>
+      <td style="color:#cdd6f4">E-Mail</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global core.editor "code --wait"</code>
+      </td>
+      <td style="color:#cdd6f4">Editor</td>
+      <td><span style="color:#c3e88d;font-size:11px">vim / nano / hx</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global core.autocrlf input</code>
+      </td>
+      <td style="color:#cdd6f4">Zeilenenden (Linux)</td>
+      <td><span style="color:#c3e88d;font-size:11px">false auf Linux</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global pull.rebase true</code>
+      </td>
+      <td style="color:#cdd6f4">pull = fetch + rebase</td>
+      <td><span style="color:#c3e88d;font-size:11px">Empfohlen</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global push.autoSetupRemote true</code>
+      </td>
+      <td style="color:#cdd6f4">Auto-Upstream</td>
+      <td><span style="color:#c3e88d;font-size:11px">Git 2.37+</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global init.defaultBranch main</code>
+      </td>
+      <td style="color:#cdd6f4">Standard-Branch</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global rerere.enabled true</code>
+      </td>
+      <td style="color:#cdd6f4">Konflikt-Lösungen merken</td>
+      <td><span style="color:#c3e88d;font-size:11px">Re-use Recorded Resolution</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global fetch.prune true</code>
+      </td>
+      <td style="color:#cdd6f4">Auto-Prune bei fetch</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global diff.colorMoved true</code>
+      </td>
+      <td style="color:#cdd6f4">Verschobenen Code färben</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global merge.conflictstyle diff3</code>
+      </td>
+      <td style="color:#cdd6f4">Bessere Konflikte</td>
+      <td><span style="color:#c3e88d;font-size:11px">Zeigt Basis zusätzlich</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">git config --global log.date relative</code>
+      </td>
+      <td style="color:#cdd6f4">Relative Datumsangaben</td>
+      <td><span style="color:#c3e88d;font-size:11px">2 hours ago</span></td>
+    </tr>
+    <tr>
+      <td style="width:260px;white-space:nowrap">
+        <code style="color:#f05033;font-size:12px">cat ~/.gitconfig</code>
+      </td>
+      <td style="color:#cdd6f4">Konfigurationsdatei anzeigen</td>
+      <td></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-cfg1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cfg1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Aliases – Abkürzungen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="aliases – abkürzungen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Aliases – Abkürzungen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Kurze Aliases global setzen</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.st status
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.co checkout
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.br branch
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.cm <span style="color:#c3e88d">"commit -m"</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.sw switch
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.unstage <span style="color:#c3e88d">"restore --staged"</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.last <span style="color:#c3e88d">"log -1 HEAD"</span>
+
+<span style="color:#546e7a"># Mächtige Aliases</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.lg <span style="color:#c3e88d">"log --color --graph --pretty=format:\'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset\' --abbrev-commit --all"</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.undo <span style="color:#c3e88d">"reset HEAD~1 --mixed"</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.aliases <span style="color:#c3e88d">"config --get-regexp alias"</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.whoami <span style="color:#c3e88d">"config user.email"</span>
+
+<span style="color:#546e7a"># Shell-Befehle in Aliases (! am Anfang)</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.root <span style="color:#c3e88d">"!pwd"</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> alias.delete-merged <span style="color:#c3e88d">"!git branch --merged | grep -v main | xargs git branch -d"</span>
+
+<span style="color:#546e7a"># Aliases nutzen</span>
+git <span style="color:#82aaff">st</span>           <span style="color:#546e7a"># = git status</span>
+git <span style="color:#82aaff">lg</span>           <span style="color:#546e7a"># schöner Log mit Graph</span>
+git <span style="color:#82aaff">undo</span>         <span style="color:#546e7a"># = git reset HEAD~1 --mixed</span>
+
+<span style="color:#546e7a"># Direkte Bearbeitung in ~/.gitconfig:</span>
+<span style="color:#546e7a"># [alias]</span>
+<span style="color:#546e7a">#     st = status</span>
+<span style="color:#546e7a">#     lg = log --oneline --graph --all</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cfg2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cfg2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>.gitignore – Patterns
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s=".gitignore – patterns">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    .gitignore – Patterns
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Spezielle Zeichen</span>
+*           <span style="color:#546e7a"># Alles (kein /)</span>
+**          <span style="color:#546e7a"># Alles inkl. Verzeichnisse</span>
+?           <span style="color:#546e7a"># Ein beliebiges Zeichen</span>
+[abc]       <span style="color:#546e7a"># Ein Zeichen aus der Menge</span>
+!           <span style="color:#546e7a"># Ausnahme (Negation)</span>
+
+<span style="color:#546e7a"># Beispiele</span>
+*.log               <span style="color:#546e7a"># Alle .log Dateien</span>
+*.log
+!wichtig.log        <span style="color:#546e7a"># Aber diese behalten!</span>
+
+build/              <span style="color:#546e7a"># Verzeichnis "build" (egal wo)</span>
+/build/             <span style="color:#546e7a"># Nur im Root-Verzeichnis</span>
+src/**/*.o          <span style="color:#546e7a"># .o-Dateien in src/ (egal wie tief)</span>
+
+<span style="color:#546e7a"># Typische Einträge</span>
+<span style="color:#546e7a"># ── Node.js ──</span>
+node_modules/
+npm-debug.log
+.env
+.env.local
+dist/
+
+<span style="color:#546e7a"># ── Python ──</span>
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+dist/
+*.egg-info/
+
+<span style="color:#546e7a"># ── Editoren ──</span>
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+<span style="color:#546e7a"># ── Build ──</span>
+build/
+target/
+*.o
+*.so
+*.exe
+
+<span style="color:#546e7a"># Globale .gitignore (für alle Repos)</span>
+git <span style="color:#82aaff">config</span> <span style="color:#ffcb6b">--global</span> core.excludesfile ~/.gitignore_global</pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #f05033;color:#f05033;background:rgba(240,80,51,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Erster Commit</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Feature-Branch Workflow</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Hotfix mitten in der Arbeit</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">History bereinigen</button>
+  <button id="exb4" onclick="switchEx(4)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Secrets aus History entfernen</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Neues Projekt starten</span>
+mkdir mein-projekt &amp;&amp; cd mein-projekt
+git <span style="color:#82aaff">init</span>
+git <span style="color:#82aaff">config</span> user.name <span style="color:#c3e88d">"Alice"</span>
+git <span style="color:#82aaff">config</span> user.email <span style="color:#c3e88d">"alice@example.com"</span>
+
+<span style="color:#546e7a"># Erste Datei erstellen</span>
+echo <span style="color:#c3e88d">"# Mein Projekt"</span> &gt; README.md
+echo <span style="color:#c3e88d">"node_modules/"</span> &gt; .gitignore
+
+<span style="color:#546e7a"># Ersten Commit erstellen</span>
+git <span style="color:#82aaff">add</span> .
+git <span style="color:#82aaff">status</span>                    <span style="color:#546e7a"># Was wird committed?</span>
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"Initial commit: README und .gitignore"</span>
+
+<span style="color:#546e7a"># Auf GitHub pushen</span>
+git <span style="color:#82aaff">remote</span> add origin https://github.com/alice/mein-projekt.git
+git <span style="color:#82aaff">branch</span> <span style="color:#ffcb6b">-M</span> main
+git <span style="color:#82aaff">push</span> <span style="color:#ffcb6b">-u</span> origin main
+
+<span style="color:#546e7a"># Ergebnis:</span>
+<span style="color:#546e7a"># On branch main</span>
+<span style="color:#546e7a"># nothing to commit, working tree clean</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># 1. Neuesten Stand holen</span>
+git <span style="color:#82aaff">switch</span> main
+git <span style="color:#82aaff">pull</span> <span style="color:#ffcb6b">--rebase</span>
+
+<span style="color:#546e7a"># 2. Feature-Branch erstellen</span>
+git <span style="color:#82aaff">switch</span> <span style="color:#ffcb6b">-c</span> feature/user-authentication
+
+<span style="color:#546e7a"># 3. Änderungen machen</span>
+<span style="color:#546e7a"># ... Code schreiben ...</span>
+git <span style="color:#82aaff">add</span> src/auth/
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"feat(auth): JWT-Middleware hinzugefügt"</span>
+
+<span style="color:#546e7a"># ... mehr Code ...</span>
+git <span style="color:#82aaff">add</span> .
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"feat(auth): Login-Endpoint implementiert"</span>
+
+<span style="color:#546e7a"># 4. Branch auf dem neuesten Stand halten</span>
+git <span style="color:#82aaff">fetch</span> origin
+git <span style="color:#82aaff">rebase</span> origin/main     <span style="color:#546e7a"># Neueste main-Änderungen integrieren</span>
+
+<span style="color:#546e7a"># 5. Pushen + Pull Request</span>
+git <span style="color:#82aaff">push</span> <span style="color:#ffcb6b">-u</span> origin feature/user-authentication
+
+<span style="color:#546e7a"># 6. Nach Merge des PR: Aufräumen</span>
+git <span style="color:#82aaff">switch</span> main
+git <span style="color:#82aaff">pull</span>
+git <span style="color:#82aaff">branch</span> <span style="color:#ffcb6b">-d</span> feature/user-authentication
+git <span style="color:#82aaff">push</span> origin <span style="color:#ffcb6b">--delete</span> feature/user-authentication
+
+<span style="color:#546e7a"># Übersicht der Arbeit</span>
+git <span style="color:#82aaff">log</span> <span style="color:#ffcb6b">--oneline</span> <span style="color:#ffcb6b">--graph</span> origin/main..HEAD</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Du arbeitest gerade an einem Feature...</span>
+<span style="color:#546e7a"># Plötzlich muss ein kritischer Bug auf main gefixt werden!</span>
+
+<span style="color:#546e7a"># Option 1: Stash nutzen</span>
+git <span style="color:#82aaff">stash</span> push <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"WIP: Feature X halbfertig"</span>
+git <span style="color:#82aaff">switch</span> main
+git <span style="color:#82aaff">pull</span>
+
+git <span style="color:#82aaff">switch</span> <span style="color:#ffcb6b">-c</span> hotfix/kritischer-bug
+<span style="color:#546e7a"># ... Bug fixen ...</span>
+git <span style="color:#82aaff">add</span> .
+git <span style="color:#82aaff">commit</span> <span style="color:#ffcb6b">-m</span> <span style="color:#c3e88d">"fix: Memory-Leak im UserService behoben"</span>
+git <span style="color:#82aaff">push</span> origin hotfix/kritischer-bug
+<span style="color:#546e7a"># → PR erstellen und mergen</span>
+
+git <span style="color:#82aaff">switch</span> main &amp;&amp; git <span style="color:#82aaff">pull</span>
+git <span style="color:#82aaff">branch</span> <span style="color:#ffcb6b">-d</span> hotfix/kritischer-bug
+
+<span style="color:#546e7a"># Zurück zum Feature</span>
+git <span style="color:#82aaff">switch</span> feature/x
+git <span style="color:#82aaff">stash</span> pop
+
+<span style="color:#546e7a"># Option 2: Worktree (eleganter)</span>
+git <span style="color:#82aaff">worktree</span> add ../hotfix hotfix/kritischer-bug
+cd ../hotfix
+<span style="color:#546e7a"># ... Bug fixen, committen, pushen ...</span>
+cd ../mein-projekt   <span style="color:#546e7a"># Einfach weitermachen!</span>
+git <span style="color:#82aaff">worktree</span> remove ../hotfix</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Situation: Feature-Branch hat viele kleine "WIP"-Commits</span>
+<span style="color:#546e7a"># Vor dem Merge: Commits aufräumen</span>
+
+git <span style="color:#82aaff">log</span> <span style="color:#ffcb6b">--oneline</span> origin/main..HEAD
+<span style="color:#546e7a"># abc1234 WIP</span>
+<span style="color:#546e7a"># def5678 WIP: fast fertig</span>
+<span style="color:#546e7a"># ghi9012 fix typo</span>
+<span style="color:#546e7a"># jkl3456 feat: Neues Feature</span>
+
+<span style="color:#546e7a"># Interaktiver Rebase: Commits zusammenfassen</span>
+git <span style="color:#82aaff">rebase</span> <span style="color:#ffcb6b">-i</span> origin/main
+
+<span style="color:#546e7a"># Im Editor (vi/nano öffnet sich):</span>
+<span style="color:#546e7a"># pick jkl3456 feat: Neues Feature    ← behalten</span>
+<span style="color:#546e7a"># squash ghi9012 fix typo             ← in vorherigen squashen</span>
+<span style="color:#546e7a"># squash def5678 WIP: fast fertig     ← in vorherigen squashen</span>
+<span style="color:#546e7a"># squash abc1234 WIP                  ← in vorherigen squashen</span>
+
+<span style="color:#546e7a"># Nach dem Speichern: Commit-Nachricht bearbeiten</span>
+<span style="color:#546e7a"># → Alle 4 werden zu einem sauberen Commit</span>
+
+git <span style="color:#82aaff">log</span> <span style="color:#ffcb6b">--oneline</span> origin/main..HEAD
+<span style="color:#546e7a"># xyz9999 feat: Neues Feature vollständig implementiert</span>
+
+<span style="color:#546e7a"># Push (force nötig da History geändert wurde)</span>
+git <span style="color:#82aaff">push</span> <span style="color:#ffcb6b">--force-with-lease</span> origin feature/mein-feature
+
+<span style="color:#546e7a"># WICHTIG: Nur auf Feature-Branches die noch nicht von anderen</span>
+<span style="color:#546e7a"># verwendet werden! Nie auf main/develop!</span></pre>
+</div>
+<div id="exp4" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Ein API-Key wurde versehentlich committed!</span>
+<span style="color:#546e7a"># SOFORT handeln:</span>
+
+<span style="color:#546e7a"># 1. Key/Secret invalidieren (in der jeweiligen API/Dienst)</span>
+<span style="color:#546e7a"># 2. Aus der History entfernen</span>
+
+<span style="color:#546e7a"># git-filter-repo installieren (empfohlen)</span>
+pip install git-filter-repo
+<span style="color:#546e7a"># oder: yay -S git-filter-repo (Arch)</span>
+
+<span style="color:#546e7a"># Einzelne Datei aus gesamter History entfernen</span>
+git <span style="color:#82aaff">filter-repo</span> <span style="color:#ffcb6b">--path</span> config/secrets.env <span style="color:#ffcb6b">--invert-paths</span>
+
+<span style="color:#546e7a"># Bestimmten String ersetzen</span>
+git <span style="color:#82aaff">filter-repo</span> <span style="color:#ffcb6b">--replace-text</span> &lt;(echo <span style="color:#c3e88d">"mein-api-key==&gt;REDACTED"</span>)
+
+<span style="color:#546e7a"># Nach der Bereinigung: Force-Push</span>
+git <span style="color:#82aaff">push</span> origin <span style="color:#ffcb6b">--force</span> <span style="color:#ffcb6b">--all</span>
+git <span style="color:#82aaff">push</span> origin <span style="color:#ffcb6b">--force</span> <span style="color:#ffcb6b">--tags</span>
+
+<span style="color:#546e7a"># Alle Mitarbeiter müssen danach:</span>
+git <span style="color:#82aaff">fetch</span> origin
+git <span style="color:#82aaff">reset</span> <span style="color:#ffcb6b">--hard</span> origin/main   <span style="color:#546e7a"># ACHTUNG: lokale Änderungen verloren!</span>
+<span style="color:#546e7a"># Besser: komplett neu klonen</span>
+
+<span style="color:#546e7a"># Sicherheit für die Zukunft:</span>
+<span style="color:#546e7a"># 1. .env in .gitignore aufnehmen</span>
+<span style="color:#546e7a"># 2. pre-commit Hooks nutzen (z.B. detect-secrets)</span>
+<span style="color:#546e7a"># 3. git-secrets installieren: git secrets --scan</span></pre>
+</div>
+
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-undo"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#f05033';
+      btn.style.color       = '#f05033';
+      btn.style.background  = 'rgba(240, 80, 51, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

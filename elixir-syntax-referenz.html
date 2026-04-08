@@ -1,0 +1,2561 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elixir Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #a855f7;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+/* ── Tabs ── */
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(168, 85, 247, .07);
+}
+
+/* ── Content ── */
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+/* ── Search ── */
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+/* ── Accordion ── */
+.ac   { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+/* ── Tables ── */
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Cards ── */
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 720px) {
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#a855f7">&#x26A1;</span>
+      <span style="color:#a855f7">Elixir</span> Syntax
+    </div>
+    <div id="hdr-sub">Interaktive Referenz — Arch Linux / CachyOS</div>
+  </div>
+
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="operators">Operatoren</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="modules">Module & OTP-Grundl.</button>
+    <button class="tb" data-tab="concurrency">Nebenläufigkeit</button>
+    <button class="tb" data-tab="enum">Enum & Stream</button>
+    <button class="tb" data-tab="strings">Strings & Regex</button>
+    <button class="tb" data-tab="exceptions">Exceptions</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<!-- ═══════════ INHALT ═══════════ -->
+<div class="con">
+
+  <div id="tp-types" class="tp active">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #f0717844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f071780e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#f07178">
+      <span style="display:inline-block;width:8px;height:8px;background:#f07178;border-radius:50%;margin-right:2px"></span>Atoms &amp; Booleans
+    </span>
+    <span class="aa" style="color:#f07178;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#f07178">:atom</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">:hello  |  :ok  |  :error  |  :world</td>
+      <td style="color:#6c7a8e">Immutabler, gecachter Bezeichner. Vergleich via ==</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#f07178">true/false</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false  |  is_boolean(true)</td>
+      <td style="color:#6c7a8e">Sind intern :true und :false – Atoms!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#f07178">nil</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">nil  |  is_nil(nil)  |  nil == false  # false</td>
+      <td style="color:#6c7a8e">Ist intern :nil – falsy (wie false)</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#f07178">Falsy</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">Nur nil und false → falsy. Alles andere truthy.</td>
+      <td style="color:#6c7a8e">0, "", [] sind TRUTHY – anders als Python/Ruby!</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #c3e88d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c3e88d0e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#c3e88d">
+      <span style="display:inline-block;width:8px;height:8px;background:#c3e88d;border-radius:50%;margin-right:2px"></span>Strings &amp; Charlists
+    </span>
+    <span class="aa" style="color:#c3e88d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">String</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo #{name}!"  |  "multi
+line"</td>
+      <td style="color:#6c7a8e">UTF-8 Binary – doppelte Anführungszeichen</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">Heredoc</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"""
+  mehrzeilig
+"""</td>
+      <td style="color:#6c7a8e">Triple-Quote – Einrückung beibehalten</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">Charlist</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">'hallo'  →  [104, 97, 108, 108, 111]</td>
+      <td style="color:#6c7a8e">Einzel-Quotes → Liste von Codepoints (selten genutzt)</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">Sigil ~s</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">~s(Hallo #{name})  |  ~S(kein #{escape})</td>
+      <td style="color:#6c7a8e">~s interpoliert, ~S ist raw</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">Sigil ~r</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">~r/\d+/  |  ~r/hello/i</td>
+      <td style="color:#6c7a8e">Regex-Sigil</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">Sigil ~w</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">~w[eins zwei drei]  →  ["eins","zwei","drei"]</td>
+      <td style="color:#6c7a8e">Wort-Liste als String-Array</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c3e88d">String-Fns</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">String.length/1  .upcase/1  .split/2  .replace/3</td>
+      <td style="color:#6c7a8e">String-Modul: .contains? .starts_with? .trim</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Numbers
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">Integer</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">42  |  -7  |  1_000_000  |  0xFF  |  0b1010  |  0o17</td>
+      <td style="color:#6c7a8e">Beliebige Größe, kein Overflow</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">Float</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">3.14  |  1.5e10  |  1.0e-3</td>
+      <td style="color:#6c7a8e">IEEE 754 64-Bit double</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">Arithmetik</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">div(7,2)  →  3   |   rem(7,2)  →  1</td>
+      <td style="color:#6c7a8e">div/rem für Integer; / gibt immer Float</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">Runden</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">round(3.5)  |  trunc(3.9)  |  ceil(1.1)  |  floor(1.9)</td>
+      <td style="color:#6c7a8e">Kernel-Funktionen direkt nutzbar</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Listen (List)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4fc3f7">Literal</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[1, 2, 3]  |  [1 | [2, 3]]  |  []</td>
+      <td style="color:#6c7a8e">Verkettete Liste – O(1) prepend, O(n) random access</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4fc3f7">Cons-Zelle</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[head | tail] = [1,2,3]  →  head=1, tail=[2,3]</td>
+      <td style="color:#6c7a8e">Pattern Matching auf Head/Tail</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4fc3f7">Keyword</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[name: "Alice", alter: 30]  # = [{:name,"Alice"},…]</td>
+      <td style="color:#6c7a8e">Keyword-Liste: geordnet, Schlüssel = Atoms</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4fc3f7">Enum</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">Enum.map/2  .filter/2  .reduce/3  .sort/1  .sum/1</td>
+      <td style="color:#6c7a8e">Enum-Modul für alle Iterables</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4fc3f7">List-Fns</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">hd/1  tl/1  length/1  Enum.member?/2  ++  --</td>
+      <td style="color:#6c7a8e">Verkettung mit ++; Differenz mit --</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Tuple &amp; Map
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">Tuple</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{:ok, wert}  |  {1, "a", :b}  |  {}</td>
+      <td style="color:#6c7a8e">Feste Größe, O(1) random access, immutablel</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">Map</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">%{key: "val"}  |  %{"str" =&gt; 1}  |  %{}</td>
+      <td style="color:#6c7a8e">Hash-Map – Schlüssel beliebigen Typs</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">Map Update</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">%{map | key: neue_val}</td>
+      <td style="color:#6c7a8e">Update-Syntax – Key muss existieren!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">Map Access</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">map.key  |  map[:key]  |  Map.get(map, :key, default)</td>
+      <td style="color:#6c7a8e">Punkt-Syntax nur für Atom-Keys</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">Struct</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">%User{name: "Alice", alter: 30}</td>
+      <td style="color:#6c7a8e">Benannte Map mit festen Feldern und Defaults</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty5"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty5')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>Pattern Matching &amp; Guards
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00ff88">=</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">x = 42  |  {a, b} = {1, 2}  |  [h|t] = lst</td>
+      <td style="color:#6c7a8e">Der = Operator ist der Match-Operator, keine Zuweisung!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00ff88">Pin ^</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">^x = 42  # matcht nur wenn x == 42</td>
+      <td style="color:#6c7a8e">Pin verhindert Re-Binding</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00ff88">Guards</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">when is_integer(x) and x &gt; 0</td>
+      <td style="color:#6c7a8e">In def/case/cond/receive: is_*/2, and, or, not, comparison</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00ff88">_</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">_ = ignorierter_wert  |  {_, b} = {1, 2}</td>
+      <td style="color:#6c7a8e">Wildcard – matcht alles, kein Binding</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty6"
+     style="border:1px solid #ff980044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty6')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ff98000e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ff9800">
+      <span style="display:inline-block;width:8px;height:8px;background:#ff9800;border-radius:50%;margin-right:2px"></span>Ranges &amp; Bitstrings
+    </span>
+    <span class="aa" style="color:#ff9800;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Beispiel / Literal</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ff9800">Range</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">1..10  |  1..10//2  (step, ab 1.12)</td>
+      <td style="color:#6c7a8e">Inklusive Range. Lazy – kein Speicher</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ff9800">Range Enum</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">Enum.to_list(1..5)  |  for x &lt;- 1..10, do: x*2</td>
+      <td style="color:#6c7a8e">In Enumerables nutzbar</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ff9800">Bitstring</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">&lt;&lt;1, 2, 3&gt;&gt;  |  &lt;&lt;x :: integer-size(16)&gt;&gt;</td>
+      <td style="color:#6c7a8e">Rohes Bit/Byte-Muster</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-operators" class="tp">
+
+<div class="ac open" id="ac-op0"
+     style="border:1px solid #ff980044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ff98000e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ff9800">
+      <span style="display:inline-block;width:8px;height:8px;background:#ff9800;border-radius:50%;margin-right:2px"></span>Arithmetik &amp; Vergleich
+    </span>
+    <span class="aa" style="color:#ff9800;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">+  -  *  /</code></div>
+  <div style="color:#6c7a8e;font-size:12px">/ gibt immer Float: 7/2 → 3.5. Für Int: div/2</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">div(a,b)  rem(a,b)</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Integer-Division und Modulo</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">**</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Potenz (ab Elixir 1.13): 2**10 → 1024</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">==  !=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Wert-Gleichheit (1 == 1.0 → true)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">===  !==</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Strikte Gleichheit inkl. Typ (1 === 1.0 → false)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&lt;  &gt;  &lt;=  &gt;=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Vergleich – auch zwischen verschiedenen Typen!</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&lt;&gt;</code></div>
+  <div style="color:#6c7a8e;font-size:12px">String-Konkatenation: "Hal" &lt;&gt; "lo" → "Hallo"</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ff9800;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">++  --</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Listen-Konkatenation / -Differenz</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>Logik &amp; Bitweise
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#a855f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">and  or  not</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Nur für Booleans – gibt true/false zurück</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#a855f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&amp;&amp;  ||  !</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Für beliebige Werte – gibt Operand zurück (wie JS)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#a855f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&amp;&amp;&amp;  |||  ^^^  ~~~</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Bitweise AND / OR / XOR / NOT</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#a855f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&lt;&lt;&lt;  &gt;&gt;&gt;</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Bit-Shift links / rechts</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Pipe &amp; Spezielle
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4fc3f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">|&gt;</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Pipe: x |&gt; f() |&gt; g()  ≡  g(f(x))</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4fc3f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Match-Operator (kein einfaches Assignment!)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4fc3f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">^</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Pin-Operator: ^x matcht gegen bestehenden Wert</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4fc3f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&amp;</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Capture: &amp;String.upcase/1  |  &amp;(&amp;1 * 2)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4fc3f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">..</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Range: 1..10  |  mit Step: 1..10//2</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4fc3f7;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">when</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Guard-Klausel in def/case/cond</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op3"
+     style="border:1px solid #c3e88d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c3e88d0e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#c3e88d">
+      <span style="display:inline-block;width:8px;height:8px;background:#c3e88d;border-radius:50%;margin-right:2px"></span>Match-Operatoren
+    </span>
+    <span class="aa" style="color:#c3e88d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c3e88d;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">{:ok, val} = result</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Tuple-Matching – wirft bei Fehlschlag</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c3e88d;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">%{key: val} = map</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Map-Matching – matcht Subset</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c3e88d;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">[h | t] = list</code></div>
+  <div style="color:#6c7a8e;font-size:12px">List-Matching – Head/Tail</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c3e88d;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">&lt;&lt;a, b, rest::binary&gt;&gt; = b</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Bitstring-Matching</div>
+</div></div>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-ct0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / unless / cond
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / unless / cond">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / unless / cond
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># if – nur für einfache Fälle (case bevorzugen!)</span>
+<span style="color:#c792ea">if</span> x &gt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c3e88d">"positiv"</span>
+<span style="color:#c792ea">else</span>
+  <span style="color:#c3e88d">"nicht positiv"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Einzeiler</span>
+<span style="color:#c792ea">if</span> ready?, <span style="color:#c792ea">do</span>: starte(), <span style="color:#c792ea">else</span>: warte()
+
+<span style="color:#546e7a"># unless</span>
+<span style="color:#c792ea">unless</span> fertig? <span style="color:#c792ea">do</span>
+  weiterarbeiten()
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># cond – mehrere Bedingungen (wie else-if Kette)</span>
+<span style="color:#c792ea">cond</span> <span style="color:#c792ea">do</span>
+  x &gt; <span style="color:#f78c6c">10</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"groß"</span>
+  x &gt; <span style="color:#f78c6c">5</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"mittel"</span>
+  <span style="color:#c792ea">true</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"klein"</span>   # <span style="color:#c792ea">catch</span>-all
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>case – Pattern Matching
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="case – pattern matching">
+  <div style="color:#a855f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    case – Pattern Matching
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">case</span> antwort <span style="color:#c792ea">do</span>
+  {<span style="color:#f07178">:ok</span>, wert}     <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Erfolg: #{wert}"</span>)
+  {<span style="color:#f07178">:error</span>, grund} <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Fehler: #{grund}"</span>)
+  _               <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Unbekannt"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Mit Guards</span>
+<span style="color:#c792ea">case</span> x <span style="color:#c792ea">do</span>
+  n <span style="color:#c792ea">when</span> is_integer(n) <span style="color:#c792ea">and</span> n &gt; <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"positive Ganzzahl"</span>
+  n <span style="color:#c792ea">when</span> is_float(n)              <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Float"</span>
+  _                               <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"anderes"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Verschachtelt / Tuple</span>
+<span style="color:#c792ea">case</span> <span style="color:#ffcb6b">HTTP</span>.get(url) <span style="color:#c792ea">do</span>
+  {<span style="color:#f07178">:ok</span>, %{status: <span style="color:#f78c6c">200</span>, body: body}} <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:ok</span>, body}
+  {<span style="color:#f07178">:ok</span>, %{status: status}}          <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, status}
+  {<span style="color:#f07178">:error</span>, reason}                  <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, reason}
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>with – Happy Path
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="with – happy path">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    with – Happy Path
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># with: Kette von Matches – bei Fehler sofort abbrechen</span>
+<span style="color:#c792ea">with</span> {<span style="color:#f07178">:ok</span>, user}  <span style="color:#89ddff">&lt;-</span> <span style="color:#ffcb6b">Users</span>.find(id),
+     {<span style="color:#f07178">:ok</span>, order} <span style="color:#89ddff">&lt;-</span> <span style="color:#ffcb6b">Orders</span>.create(user),
+     {<span style="color:#f07178">:ok</span>, email} <span style="color:#89ddff">&lt;-</span> <span style="color:#ffcb6b">Mailer</span>.<span style="color:#c792ea">send</span>(order) <span style="color:#c792ea">do</span>
+  {<span style="color:#f07178">:ok</span>, email}
+<span style="color:#c792ea">else</span>
+  {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:not_found</span>} <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, <span style="color:#c3e88d">"User nicht gefunden"</span>}
+  {<span style="color:#f07178">:error</span>, reason}     <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, reason}
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># with und lokale Variablen</span>
+<span style="color:#c792ea">with</span> %{name: name} <span style="color:#89ddff">&lt;-</span> config,
+     {<span style="color:#f07178">:ok</span>, parsed} <span style="color:#89ddff">&lt;-</span> parse(name) <span style="color:#c792ea">do</span>
+  parsed
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>for – Comprehensions
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for – comprehensions">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    for – Comprehensions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># List Comprehension</span>
+result = <span style="color:#c792ea">for</span> x <span style="color:#89ddff">&lt;-</span> <span style="color:#f78c6c">1..5</span>, <span style="color:#c792ea">do</span>: x * x
+<span style="color:#546e7a"># [1, 4, 9, 16, 25]</span>
+
+<span style="color:#546e7a"># Mit Filter (Guard)</span>
+gerade = <span style="color:#c792ea">for</span> x <span style="color:#89ddff">&lt;-</span> <span style="color:#f78c6c">1..10</span>, rem(x, <span style="color:#f78c6c">2</span>) == <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">do</span>: x
+<span style="color:#546e7a"># [2, 4, 6, 8, 10]</span>
+
+<span style="color:#546e7a"># Mehrere Generatoren</span>
+paare = <span style="color:#c792ea">for</span> x <span style="color:#89ddff">&lt;-</span> <span style="color:#f78c6c">1..3</span>, y <span style="color:#89ddff">&lt;-</span> <span style="color:#f78c6c">1..3</span>, x != y, <span style="color:#c792ea">do</span>: {x, y}
+
+<span style="color:#546e7a"># into: – Ergebnis-Kollektion</span>
+map = <span style="color:#c792ea">for</span> {k, v} <span style="color:#89ddff">&lt;-</span> [a: <span style="color:#f78c6c">1</span>, b: <span style="color:#f78c6c">2</span>], into: %{}, <span style="color:#c792ea">do</span>: {k, v * <span style="color:#f78c6c">10</span>}
+<span style="color:#546e7a"># %{a: 10, b: 20}</span>
+
+<span style="color:#546e7a"># reduce:</span>
+<span style="color:#c792ea">for</span> x <span style="color:#89ddff">&lt;-</span> <span style="color:#f78c6c">1..5</span>, reduce: <span style="color:#f78c6c">0</span> <span style="color:#c792ea">do</span>
+  acc <span style="color:#89ddff">-&gt;</span> acc + x
+<span style="color:#c792ea">end</span>
+<span style="color:#546e7a"># 15</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct4"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>receive – Message Passing
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="receive – message passing">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    receive – Message Passing
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Prozess wartet auf Nachrichten</span>
+<span style="color:#c792ea">receive</span> <span style="color:#c792ea">do</span>
+  {<span style="color:#f07178">:hello</span>, name} <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Hallo #{name}"</span>)
+  {<span style="color:#f07178">:ping</span>, sender} <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#c792ea">send</span>(sender, <span style="color:#f07178">:pong</span>)
+  _andere <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"unbekannte Nachricht"</span>)
+<span style="color:#c792ea">after</span>
+  <span style="color:#f78c6c">5_000</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Timeout nach 5s"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Nachricht senden</span>
+pid = spawn(<span style="color:#c792ea">fn</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">receive</span> <span style="color:#c792ea">do</span> <span style="color:#f07178">:start</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f07178">:ok</span> <span style="color:#c792ea">end</span> <span style="color:#c792ea">end</span>)
+<span style="color:#c792ea">send</span>(pid, <span style="color:#f07178">:start</span>)</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>def / defp / Arität
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="def / defp / arität">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    def / defp / Arität
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Mathe</span> <span style="color:#c792ea">do</span>
+  <span style="color:#546e7a"># Öffentliche Funktion</span>
+  <span style="color:#c792ea">def</span> quadrat(x), <span style="color:#c792ea">do</span>: x * x
+
+  <span style="color:#546e7a"># Mehrere Clauses – von oben nach unten</span>
+  <span style="color:#c792ea">def</span> fakultaet(<span style="color:#f78c6c">0</span>), <span style="color:#c792ea">do</span>: <span style="color:#f78c6c">1</span>
+  <span style="color:#c792ea">def</span> fakultaet(n) <span style="color:#c792ea">when</span> n &gt; <span style="color:#f78c6c">0</span> <span style="color:#c792ea">do</span>
+    n * fakultaet(n - <span style="color:#f78c6c">1</span>)
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#546e7a"># Private Funktion (nur im Modul nutzbar)</span>
+  <span style="color:#c792ea">defp</span> helper(x), <span style="color:#c792ea">do</span>: x + <span style="color:#f78c6c">1</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#ffcb6b">Mathe</span>.quadrat(<span style="color:#f78c6c">5</span>)    # <span style="color:#f78c6c">25</span>
+<span style="color:#ffcb6b">Mathe</span>.fakultaet(<span style="color:#f78c6c">5</span>)  # <span style="color:#f78c6c">120</span>
+<span style="color:#546e7a"># Mathe.helper(1)   # UndefinedFunctionError!</span>
+
+<span style="color:#546e7a"># Arität: Mathe.quadrat/1 bezeichnet</span>
+<span style="color:#546e7a"># die Funktion mit genau 1 Argument</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>Pattern Matching in Funktionen
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="pattern matching in funktionen">
+  <div style="color:#a855f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Pattern Matching in Funktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Parser</span> <span style="color:#c792ea">do</span>
+  <span style="color:#546e7a"># Mehrere Clauses – Elixir probiert von oben nach unten</span>
+  <span style="color:#c792ea">def</span> parse({<span style="color:#f07178">:int</span>, n}),        <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, <span style="color:#ffcb6b">String</span>.to_integer(n)}
+  <span style="color:#c792ea">def</span> parse({<span style="color:#f07178">:float</span>, f}),      <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, <span style="color:#ffcb6b">String</span>.to_float(f)}
+  <span style="color:#c792ea">def</span> parse({<span style="color:#f07178">:bool</span>, <span style="color:#c3e88d">"true"</span>}),  <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, <span style="color:#c792ea">true</span>}
+  <span style="color:#c792ea">def</span> parse({<span style="color:#f07178">:bool</span>, <span style="color:#c3e88d">"false"</span>}), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, <span style="color:#c792ea">false</span>}
+  <span style="color:#c792ea">def</span> parse(_),                <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:unknown</span>}
+
+  <span style="color:#546e7a"># Guards</span>
+  <span style="color:#c792ea">def</span> abs(n) <span style="color:#c792ea">when</span> n &gt;= <span style="color:#f78c6c">0</span>, <span style="color:#c792ea">do</span>: n
+  <span style="color:#c792ea">def</span> abs(n),              <span style="color:#c792ea">do</span>: -n
+
+  <span style="color:#546e7a"># Default-Argumente mit \\</span>
+  <span style="color:#c792ea">def</span> verbinde(host, port \\ <span style="color:#f78c6c">80</span>, ssl \\ <span style="color:#c792ea">false</span>) <span style="color:#c792ea">do</span>
+    <span style="color:#c3e88d">"#{if ssl, do: "</span>https<span style="color:#c3e88d">", else: "</span>http<span style="color:#c3e88d">"}://#{host}:#{port}"</span>
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Anonyme Funktionen &amp; Capture
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="anonyme funktionen &amp; capture">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Anonyme Funktionen &amp; Capture
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># fn...end</span>
+addiere = <span style="color:#c792ea">fn</span> a, b <span style="color:#89ddff">-&gt;</span> a + b <span style="color:#c792ea">end</span>
+addiere.(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>)   # <span style="color:#f78c6c">7</span>  (<span style="color:#ffcb6b">Punkt</span>-<span style="color:#ffcb6b">Aufruf!</span>)
+
+<span style="color:#546e7a"># Kurze Form mit &amp;</span>
+doppler = <span style="color:#89ddff">&amp;</span>(&amp;<span style="color:#f78c6c">1</span> * <span style="color:#f78c6c">2</span>)
+doppler.(<span style="color:#f78c6c">5</span>)   # <span style="color:#f78c6c">10</span>
+
+<span style="color:#546e7a"># Existing function capturen</span>
+to_upper = <span style="color:#89ddff">&amp;</span><span style="color:#ffcb6b">String</span>.upcase/<span style="color:#f78c6c">1</span>
+<span style="color:#ffcb6b">Enum</span>.map([<span style="color:#c3e88d">"a"</span>, <span style="color:#c3e88d">"b"</span>], to_upper)   # [<span style="color:#c3e88d">"A"</span>, <span style="color:#c3e88d">"B"</span>]
+
+<span style="color:#546e7a"># Mehrere Clauses in fn</span>
+handler = <span style="color:#c792ea">fn</span>
+  {<span style="color:#f07178">:ok</span>, val}    <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"OK: #{val}"</span>
+  {<span style="color:#f07178">:error</span>, msg} <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"ERR: #{msg}"</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Closure</span>
+macher = <span style="color:#c792ea">fn</span> n <span style="color:#89ddff">-&gt;</span>
+  <span style="color:#c792ea">fn</span> x <span style="color:#89ddff">-&gt;</span> x * n <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+verdoppeln = macher.(<span style="color:#f78c6c">2</span>)
+verdoppeln.(<span style="color:#f78c6c">5</span>)   # <span style="color:#f78c6c">10</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Pipe Operator |&gt;
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="pipe operator |&gt;">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Pipe Operator |&gt;
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Ohne Pipe – schwer zu lesen:</span>
+result = <span style="color:#ffcb6b">Enum</span>.join(
+  <span style="color:#ffcb6b">Enum</span>.map(<span style="color:#ffcb6b">String</span>.split(<span style="color:#c3e88d">"hallo welt"</span>, <span style="color:#c3e88d">" "</span>), <span style="color:#89ddff">&amp;</span><span style="color:#ffcb6b">String</span>.upcase/<span style="color:#f78c6c">1</span>),
+  <span style="color:#c3e88d">"-"</span>
+)
+
+<span style="color:#546e7a"># Mit Pipe – links nach rechts lesen:</span>
+result =
+  <span style="color:#c3e88d">"hallo welt"</span>
+  <span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">String</span>.split(<span style="color:#c3e88d">" "</span>)
+  <span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.map(<span style="color:#89ddff">&amp;</span><span style="color:#ffcb6b">String</span>.upcase/<span style="color:#f78c6c">1</span>)
+  <span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.join(<span style="color:#c3e88d">"-"</span>)
+<span style="color:#546e7a"># "HALLO-WELT"</span>
+
+<span style="color:#546e7a"># Pipe mit Lambda</span>
+[<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.filter(<span style="color:#89ddff">&amp;</span>(rem(&amp;<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>) == <span style="color:#f78c6c">0</span>))
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.map(<span style="color:#89ddff">&amp;</span>(&amp;<span style="color:#f78c6c">1</span> * &amp;<span style="color:#f78c6c">1</span>))
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.sum()
+<span style="color:#546e7a"># 20</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn4"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Rekursion &amp; Tail Calls
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="rekursion &amp; tail calls">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Rekursion &amp; Tail Calls
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Liste</span> <span style="color:#c792ea">do</span>
+  <span style="color:#546e7a"># Tail-Call Optimiert (TCO) – kein Stack-Overflow</span>
+  <span style="color:#c792ea">def</span> summe(list, acc \\ <span style="color:#f78c6c">0</span>)
+  <span style="color:#c792ea">def</span> summe([], acc),      <span style="color:#c792ea">do</span>: acc
+  <span style="color:#c792ea">def</span> summe([h | t], acc), <span style="color:#c792ea">do</span>: summe(t, acc + h)
+
+  <span style="color:#546e7a"># Map selbst implementiert</span>
+  <span style="color:#c792ea">def</span> mein_map([], _f),      <span style="color:#c792ea">do</span>: []
+  <span style="color:#c792ea">def</span> mein_map([h | t], f),  <span style="color:#c792ea">do</span>: [f.(h) | mein_map(t, f)]
+
+  <span style="color:#546e7a"># Flatten</span>
+  <span style="color:#c792ea">def</span> flatten([]),                          <span style="color:#c792ea">do</span>: []
+  <span style="color:#c792ea">def</span> flatten([h | t]) <span style="color:#c792ea">when</span> is_list(h),    <span style="color:#c792ea">do</span>: flatten(h) ++ flatten(t)
+  <span style="color:#c792ea">def</span> flatten([h | t]),                    <span style="color:#c792ea">do</span>: [h | flatten(t)]
+<span style="color:#c792ea">end</span>
+
+<span style="color:#ffcb6b">Liste</span>.summe([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>])         # <span style="color:#f78c6c">15</span>
+<span style="color:#ffcb6b">Liste</span>.mein_map([<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>,<span style="color:#f78c6c">3</span>], <span style="color:#89ddff">&amp;</span>(&amp;<span style="color:#f78c6c">1</span> * <span style="color:#f78c6c">2</span>))   # [<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">6</span>]
+<span style="color:#ffcb6b">Liste</span>.flatten([<span style="color:#f78c6c">1</span>, [<span style="color:#f78c6c">2</span>, [<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>]], <span style="color:#f78c6c">5</span>])   # [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-modules" class="tp">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>defmodule &amp; Struktur
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="defmodule &amp; struktur">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    defmodule &amp; Struktur
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">MeinProjekt</span>.<span style="color:#ffcb6b">User</span> <span style="color:#c792ea">do</span>
+  <span style="color:#ff9800">@moduledoc</span> <span style="color:#c3e88d">""</span><span style="color:#c3e88d">"</span>
+  <span style="color:#ffcb6b">Repräsentiert</span> einen <span style="color:#ffcb6b">Benutzer</span> im <span style="color:#ffcb6b">System</span>.
+  <span style="color:#c3e88d">""</span><span style="color:#c3e88d">"</span>
+
+  <span style="color:#546e7a"># Modul-Attribut (Compile-Zeit-Konstante)</span>
+  <span style="color:#ff9800">@max_name_length</span> <span style="color:#f78c6c">100</span>
+
+  <span style="color:#546e7a"># Struct definieren</span>
+  <span style="color:#c792ea">defstruct</span> [<span style="color:#f07178">:name</span>, <span style="color:#f07178">:email</span>, alter: <span style="color:#f78c6c">0</span>, aktiv: <span style="color:#c792ea">true</span>]
+
+  <span style="color:#ff9800">@type</span> t :: %<span style="color:#c792ea">__MODULE__</span>{
+    name:  <span style="color:#ffcb6b">String</span>.t(),
+    email: <span style="color:#ffcb6b">String</span>.t(),
+    alter: non_neg_integer(),
+    aktiv: boolean()
+  }
+
+  <span style="color:#ff9800">@spec</span> erstelle(<span style="color:#ffcb6b">String</span>.t(), <span style="color:#ffcb6b">String</span>.t()) :: {<span style="color:#f07178">:ok</span>, t()} | {<span style="color:#f07178">:error</span>, <span style="color:#ffcb6b">String</span>.t()}
+  <span style="color:#c792ea">def</span> erstelle(name, email) <span style="color:#c792ea">when</span> byte_size(name) &lt;= <span style="color:#ff9800">@max_name_length</span> <span style="color:#c792ea">do</span>
+    {<span style="color:#f07178">:ok</span>, %<span style="color:#c792ea">__MODULE__</span>{name: name, email: email}}
+  <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">def</span> erstelle(_, _), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:error</span>, <span style="color:#c3e88d">"Name zu lang"</span>}
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Nutzung</span>
+{<span style="color:#f07178">:ok</span>, user} = <span style="color:#ffcb6b">MeinProjekt</span>.<span style="color:#ffcb6b">User</span>.erstelle(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"a@b.com"</span>)
+%<span style="color:#ffcb6b">MeinProjekt</span>.<span style="color:#ffcb6b">User</span>{name: name} = user   # <span style="color:#ffcb6b">Pattern</span> <span style="color:#ffcb6b">Match</span> auf <span style="color:#ffcb6b">Struct</span>
+<span style="color:#ffcb6b">IO</span>.puts(name)   # <span style="color:#c3e88d">"Alice"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>use / import / alias / require
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="use / import / alias / require">
+  <div style="color:#a855f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    use / import / alias / require
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">MeinModul</span> <span style="color:#c792ea">do</span>
+  <span style="color:#546e7a"># alias – Kurzname für langen Modulnamen</span>
+  <span style="color:#c792ea">alias</span> <span style="color:#ffcb6b">MeinProjekt</span>.{<span style="color:#ffcb6b">User</span>, <span style="color:#ffcb6b">Order</span>, <span style="color:#ffcb6b">Repo</span>}
+  <span style="color:#546e7a"># Jetzt: User statt MeinProjekt.User</span>
+
+  <span style="color:#546e7a"># import – Funktionen direkt nutzen (ohne Modulpräfix)</span>
+  <span style="color:#c792ea">import</span> <span style="color:#ffcb6b">Enum</span>, only: [map: <span style="color:#f78c6c">2</span>, filter: <span style="color:#f78c6c">2</span>]
+  <span style="color:#c792ea">import</span> <span style="color:#ffcb6b">String</span>, except: [length: <span style="color:#f78c6c">1</span>]
+
+  <span style="color:#546e7a"># require – Makros laden (muss vor dem Aufruf stehen)</span>
+  <span style="color:#c792ea">require</span> <span style="color:#ffcb6b">Logger</span>
+  <span style="color:#ffcb6b">Logger</span>.info(<span style="color:#c3e88d">"Modul geladen"</span>)   # <span style="color:#ffcb6b">Makro</span>-<span style="color:#ffcb6b">Aufruf</span>
+
+  <span style="color:#546e7a"># use – bettet Code aus anderem Modul ein</span>
+  <span style="color:#c792ea">use</span> <span style="color:#ffcb6b">GenServer</span>
+  <span style="color:#c792ea">use</span> <span style="color:#ffcb6b">Phoenix</span>.<span style="color:#ffcb6b">Controller</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># alias mit eigenem Namen:</span>
+<span style="color:#c792ea">alias</span> <span style="color:#ffcb6b">MeinProjekt</span>.<span style="color:#ffcb6b">SehrLangerModulname</span>, as: <span style="color:#ffcb6b">SLMN</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Behaviour &amp; Protocol
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="behaviour &amp; protocol">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Behaviour &amp; Protocol
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Behaviour – Interface-Definition (wie ein Interface in Java)</span>
+<span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Zahlungsanbieter</span> <span style="color:#c792ea">do</span>
+  <span style="color:#ff9800">@callback</span> zahle(betrag :: number(), waehrung :: <span style="color:#ffcb6b">String</span>.t()) ::
+    {<span style="color:#f07178">:ok</span>, <span style="color:#ffcb6b">String</span>.t()} | {<span style="color:#f07178">:error</span>, <span style="color:#ffcb6b">String</span>.t()}
+  <span style="color:#ff9800">@callback</span> rueckerstattung(id :: <span style="color:#ffcb6b">String</span>.t()) :: <span style="color:#f07178">:ok</span> | {<span style="color:#f07178">:error</span>, <span style="color:#ffcb6b">String</span>.t()}
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Stripe</span> <span style="color:#c792ea">do</span>
+  <span style="color:#ff9800">@behaviour</span> <span style="color:#ffcb6b">Zahlungsanbieter</span>
+  <span style="color:#c792ea">def</span> zahle(betrag, waehrung), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, <span style="color:#c3e88d">"stripe-#{betrag}-#{waehrung}"</span>}
+  <span style="color:#c792ea">def</span> rueckerstattung(id),     <span style="color:#c792ea">do</span>: <span style="color:#f07178">:ok</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Protocol – Polymorphismus für verschiedene Datentypen</span>
+<span style="color:#c792ea">defprotocol</span> <span style="color:#ffcb6b">Serialisierbar</span> <span style="color:#c792ea">do</span>
+  <span style="color:#ff9800">@doc</span> <span style="color:#c3e88d">"Konvertiert zu JSON-String"</span>
+  <span style="color:#c792ea">def</span> zu_json(data)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">defimpl</span> <span style="color:#ffcb6b">Serialisierbar</span>, <span style="color:#c792ea">for</span>: <span style="color:#ffcb6b">Map</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">def</span> zu_json(map), <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">Jason</span>.encode!(map)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">defimpl</span> <span style="color:#ffcb6b">Serialisierbar</span>, <span style="color:#c792ea">for</span>: <span style="color:#ffcb6b">List</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">def</span> zu_json(list), <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">Jason</span>.encode!(list)
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('mod3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Metaprogrammierung &amp; Makros
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="metaprogrammierung &amp; makros">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Metaprogrammierung &amp; Makros
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Makro definieren</span>
+<span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">MeineLib</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">defmacro</span> <span style="color:#c792ea">unless</span>(bedingung, <span style="color:#c792ea">do</span>: block) <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">quote</span> <span style="color:#c792ea">do</span>
+      <span style="color:#c792ea">if</span> !<span style="color:#c792ea">unquote</span>(bedingung), <span style="color:#c792ea">do</span>: <span style="color:#c792ea">unquote</span>(block)
+    <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#546e7a"># __using__/1 – wird bei "use MeineLib" ausgeführt</span>
+  <span style="color:#c792ea">defmacro</span> __using__(_opts) <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">quote</span> <span style="color:#c792ea">do</span>
+      <span style="color:#c792ea">import</span> <span style="color:#ffcb6b">MeineLib</span>
+    <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Nutzung</span>
+<span style="color:#c792ea">require</span> <span style="color:#ffcb6b">MeineLib</span>
+<span style="color:#ffcb6b">MeineLib</span>.<span style="color:#c792ea">unless</span> <span style="color:#c792ea">false</span> <span style="color:#c792ea">do</span>
+  <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"wird ausgeführt"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Nützliche Makros in der Standardlib</span>
+<span style="color:#c792ea">require</span> <span style="color:#ffcb6b">Logger</span>
+<span style="color:#ffcb6b">Logger</span>.debug(<span style="color:#c3e88d">"nur im :debug Level sichtbar"</span>)
+<span style="color:#ffcb6b">Logger</span>.info(<span style="color:#c3e88d">"normale Info-Nachricht"</span>)</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-concurrency" class="tp">
+
+<div class="ac open" id="ac-con0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('con0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>spawn &amp; send/receive
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="spawn &amp; send/receive">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    spawn &amp; send/receive
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Prozess starten</span>
+pid = spawn(<span style="color:#c792ea">fn</span> <span style="color:#89ddff">-&gt;</span>
+  <span style="color:#c792ea">receive</span> <span style="color:#c792ea">do</span>
+    {<span style="color:#f07178">:hallo</span>, name} <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Hallo #{name}!"</span>)
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>)
+
+<span style="color:#546e7a"># Nachricht senden</span>
+<span style="color:#c792ea">send</span>(pid, {<span style="color:#f07178">:hallo</span>, <span style="color:#c3e88d">"Elixir"</span>})
+
+<span style="color:#546e7a"># self() – eigene PID</span>
+<span style="color:#ffcb6b">IO</span>.puts(inspect(self()))   # #<span style="color:#ffcb6b">PID</span>&lt;<span style="color:#f78c6c">0.105.0</span>&gt;
+
+<span style="color:#546e7a"># Prozess überwachen</span>
+{pid, ref} = spawn_monitor(<span style="color:#c792ea">fn</span> <span style="color:#89ddff">-&gt;</span>
+  <span style="color:#c792ea">raise</span> <span style="color:#c3e88d">"Absicht!"</span>
+<span style="color:#c792ea">end</span>)
+
+<span style="color:#c792ea">receive</span> <span style="color:#c792ea">do</span>
+  {<span style="color:#f07178">:DOWN</span>, ^ref, <span style="color:#f07178">:process</span>, ^pid, grund} <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Prozess beendet: #{inspect(grund)}"</span>)
+<span style="color:#c792ea">end</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-con1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('con1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>Task &amp; Agent
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="task &amp; agent">
+  <div style="color:#a855f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Task &amp; Agent
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Task – Async Berechnungen</span>
+task = <span style="color:#ffcb6b">Task</span>.async(<span style="color:#c792ea">fn</span> <span style="color:#89ddff">-&gt;</span> langsame_berechnung() <span style="color:#c792ea">end</span>)
+andere_arbeit()
+result = <span style="color:#ffcb6b">Task</span>.await(task, <span style="color:#f78c6c">5_000</span>)   # <span style="color:#ffcb6b">Timeout</span> <span style="color:#c792ea">in</span> ms
+
+<span style="color:#546e7a"># Task.async_stream – parallele Map</span>
+urls
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Task</span>.async_stream(<span style="color:#89ddff">&amp;</span><span style="color:#ffcb6b">HTTP</span>.get/<span style="color:#f78c6c">1</span>, max_concurrency: <span style="color:#f78c6c">10</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.map(<span style="color:#c792ea">fn</span> {<span style="color:#f07178">:ok</span>, res} <span style="color:#89ddff">-&gt;</span> res <span style="color:#c792ea">end</span>)
+
+<span style="color:#546e7a"># Agent – einfacher gemeinsamer Zustand</span>
+{<span style="color:#f07178">:ok</span>, pid} = <span style="color:#ffcb6b">Agent</span>.start_link(<span style="color:#c792ea">fn</span> <span style="color:#89ddff">-&gt;</span> %{count: <span style="color:#f78c6c">0</span>} <span style="color:#c792ea">end</span>)
+<span style="color:#ffcb6b">Agent</span>.update(pid, <span style="color:#c792ea">fn</span> state <span style="color:#89ddff">-&gt;</span> %{state | count: state.count + <span style="color:#f78c6c">1</span>} <span style="color:#c792ea">end</span>)
+<span style="color:#ffcb6b">Agent</span>.get(pid, <span style="color:#c792ea">fn</span> state <span style="color:#89ddff">-&gt;</span> state.count <span style="color:#c792ea">end</span>)   # <span style="color:#f78c6c">1</span>
+<span style="color:#ffcb6b">Agent</span>.stop(pid)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-con2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('con2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>GenServer
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="genserver">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    GenServer
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Zaehler</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">use</span> <span style="color:#ffcb6b">GenServer</span>
+
+  <span style="color:#546e7a"># Client API</span>
+  <span style="color:#c792ea">def</span> start_link(start \\ <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">do</span>
+    <span style="color:#ffcb6b">GenServer</span>.start_link(<span style="color:#c792ea">__MODULE__</span>, start, name: <span style="color:#c792ea">__MODULE__</span>)
+  <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">def</span> inkrementiere, <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">GenServer</span>.cast(<span style="color:#c792ea">__MODULE__</span>, <span style="color:#f07178">:inc</span>)
+  <span style="color:#c792ea">def</span> wert,          <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">GenServer</span>.call(<span style="color:#c792ea">__MODULE__</span>, <span style="color:#f07178">:get</span>)
+
+  <span style="color:#546e7a"># Server Callbacks</span>
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> init(start), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, start}
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> handle_cast(<span style="color:#f07178">:inc</span>, state), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:noreply</span>, state + <span style="color:#f78c6c">1</span>}
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> handle_call(<span style="color:#f07178">:get</span>, _from, state), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:reply</span>, state, state}
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> handle_info(<span style="color:#f07178">:reset</span>, _state), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:noreply</span>, <span style="color:#f78c6c">0</span>}
+<span style="color:#c792ea">end</span>
+
+{<span style="color:#f07178">:ok</span>, _pid} = <span style="color:#ffcb6b">Zaehler</span>.start_link(<span style="color:#f78c6c">0</span>)
+<span style="color:#ffcb6b">Zaehler</span>.inkrementiere()
+<span style="color:#ffcb6b">Zaehler</span>.wert()   # <span style="color:#f78c6c">1</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-con3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('con3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Supervisor &amp; OTP
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="supervisor &amp; otp">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Supervisor &amp; OTP
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">Application</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">use</span> <span style="color:#ffcb6b">Application</span>
+
+  <span style="color:#c792ea">def</span> start(_type, _args) <span style="color:#c792ea">do</span>
+    kinder = [
+      <span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">Repo</span>,
+      {<span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">Worker</span>, [name: <span style="color:#f07178">:worker1</span>]},
+      {<span style="color:#ffcb6b">Task</span>.<span style="color:#ffcb6b">Supervisor</span>, name: <span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">TaskSup</span>}
+    ]
+
+    opts = [strategy: <span style="color:#f07178">:one_for_one</span>, name: <span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">Supervisor</span>]
+    <span style="color:#ffcb6b">Supervisor</span>.start_link(kinder, opts)
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Strategien:</span>
+<span style="color:#546e7a"># :one_for_one  – nur fehlgeschlagenes Kind neu starten</span>
+<span style="color:#546e7a"># :one_for_all  – alle Kinder neu starten</span>
+<span style="color:#546e7a"># :rest_for_one – dieses + alle danach neu starten</span>
+
+<span style="color:#546e7a"># DynamicSupervisor</span>
+{<span style="color:#f07178">:ok</span>, pid} = <span style="color:#ffcb6b">DynamicSupervisor</span>.start_child(
+  <span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">TaskSup</span>,
+  {<span style="color:#ffcb6b">MeineApp</span>.<span style="color:#ffcb6b">Worker</span>, args}
+)</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-enum" class="tp">
+
+<div class="ac open" id="ac-en0"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('en0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Enum – Kernmethoden
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<input class="sb" id="enum-s-0" type="text" placeholder="🔍 Methode suchen…" style="margin-top:4px">
+<table>
+  <thead>
+    <tr>
+      <th>Funktion</th>
+      <th>Beschreibung / Beispiel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cr"
+        data-m="enum.map/2"
+        data-d="transformieren: enum.map([1,2,3], &amp;(&amp;1*2))  →  [2,4,6]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.map/2</code>
+      </td>
+      <td style="color:#6c7a8e">Transformieren: Enum.map([1,2,3], &amp;(&amp;1*2))  →  [2,4,6]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.filter/2"
+        data-d="filtern: enum.filter(1..10, &amp;(rem(&amp;1,2)==0))  →  [2,4,6,8,10]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.filter/2</code>
+      </td>
+      <td style="color:#6c7a8e">Filtern: Enum.filter(1..10, &amp;(rem(&amp;1,2)==0))  →  [2,4,6,8,10]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.reduce/3"
+        data-d="akkumulieren: enum.reduce([1,2,3], 0, &amp;+/2)  →  6">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.reduce/3</code>
+      </td>
+      <td style="color:#6c7a8e">Akkumulieren: Enum.reduce([1,2,3], 0, &amp;+/2)  →  6</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.flat_map/2"
+        data-d="map + flatten: enum.flat_map([1,2], &amp;[&amp;1,&amp;1*2])  →  [1,2,2,4]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.flat_map/2</code>
+      </td>
+      <td style="color:#6c7a8e">map + flatten: Enum.flat_map([1,2], &amp;[&amp;1,&amp;1*2])  →  [1,2,2,4]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.each/2"
+        data-d="seiteneffekte: enum.each(list, &amp;io.puts/1)">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.each/2</code>
+      </td>
+      <td style="color:#6c7a8e">Seiteneffekte: Enum.each(list, &amp;IO.puts/1)</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.any?/2"
+        data-d="prüfen: enum.any?([1,2,3], &amp;(&amp;1&gt;2))  →  true">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.any?/2</code>
+      </td>
+      <td style="color:#6c7a8e">Prüfen: Enum.any?([1,2,3], &amp;(&amp;1&gt;2))  →  true</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.all?/2"
+        data-d="alle: enum.all?([2,4,6], &amp;(rem(&amp;1,2)==0))  →  true">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.all?/2</code>
+      </td>
+      <td style="color:#6c7a8e">Alle: Enum.all?([2,4,6], &amp;(rem(&amp;1,2)==0))  →  true</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.find/2"
+        data-d="erstes: enum.find([1,2,3], &amp;(&amp;1&gt;1))  →  2">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.find/2</code>
+      </td>
+      <td style="color:#6c7a8e">Erstes: Enum.find([1,2,3], &amp;(&amp;1&gt;1))  →  2</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.sort/1"
+        data-d="sortieren: enum.sort([3,1,2])  →  [1,2,3]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.sort/1</code>
+      </td>
+      <td style="color:#6c7a8e">Sortieren: Enum.sort([3,1,2])  →  [1,2,3]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.sort_by/2"
+        data-d="nach key: enum.sort_by(users, &amp; &amp;1.name)">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.sort_by/2</code>
+      </td>
+      <td style="color:#6c7a8e">Nach Key: Enum.sort_by(users, &amp; &amp;1.name)</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.group_by/2"
+        data-d="gruppieren: enum.group_by(list, &amp;rem(&amp;1,2))">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.group_by/2</code>
+      </td>
+      <td style="color:#6c7a8e">Gruppieren: Enum.group_by(list, &amp;rem(&amp;1,2))</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.zip/2"
+        data-d="zusammenführen: enum.zip([1,2], [:a,:b])  →  [{1,:a},{2,:b}]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.zip/2</code>
+      </td>
+      <td style="color:#6c7a8e">Zusammenführen: Enum.zip([1,2], [:a,:b])  →  [{1,:a},{2,:b}]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.uniq/1"
+        data-d="duplikate entfernen: enum.uniq([1,1,2])  →  [1,2]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.uniq/1</code>
+      </td>
+      <td style="color:#6c7a8e">Duplikate entfernen: Enum.uniq([1,1,2])  →  [1,2]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.count/1"
+        data-d="anzahl: enum.count(1..100)  →  100">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.count/1</code>
+      </td>
+      <td style="color:#6c7a8e">Anzahl: Enum.count(1..100)  →  100</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.sum/1"
+        data-d="summe: enum.sum([1,2,3])  →  6">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.sum/1</code>
+      </td>
+      <td style="color:#6c7a8e">Summe: Enum.sum([1,2,3])  →  6</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.min/max"
+        data-d="extremwerte: enum.min([3,1,2])  →  1">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.min/max</code>
+      </td>
+      <td style="color:#6c7a8e">Extremwerte: Enum.min([3,1,2])  →  1</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.take/2"
+        data-d="erste n: enum.take([1,2,3,4], 2)  →  [1,2]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.take/2</code>
+      </td>
+      <td style="color:#6c7a8e">Erste n: Enum.take([1,2,3,4], 2)  →  [1,2]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.drop/2"
+        data-d="ohne erste n: enum.drop([1,2,3], 1)  →  [2,3]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.drop/2</code>
+      </td>
+      <td style="color:#6c7a8e">Ohne erste n: Enum.drop([1,2,3], 1)  →  [2,3]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.chunk_every/2"
+        data-d="unterteilen: enum.chunk_every([1,2,3,4], 2)  →  [[1,2],[3,4]]">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.chunk_every/2</code>
+      </td>
+      <td style="color:#6c7a8e">Unterteilen: Enum.chunk_every([1,2,3,4], 2)  →  [[1,2],[3,4]]</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.frequencies/1"
+        data-d="häufigkeiten: enum.frequencies(["a","b","a"])  →  %{"a"=&gt;2,"b"=&gt;1}">
+      <td style="width:200px">
+        <code style="color:#4fc3f7">Enum.frequencies/1</code>
+      </td>
+      <td style="color:#6c7a8e">Häufigkeiten: Enum.frequencies(["a","b","a"])  →  %{"a"=&gt;2,"b"=&gt;1}</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-en1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('en1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>Stream – Lazy Enum
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="enum-s-1" type="text" placeholder="🔍 Methode suchen…" style="margin-top:4px">
+<table>
+  <thead>
+    <tr>
+      <th>Funktion</th>
+      <th>Beschreibung / Beispiel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cr"
+        data-m="stream.map/2"
+        data-d="lazy map – kein sofortiger ausdruck">
+      <td style="width:200px">
+        <code style="color:#a855f7">Stream.map/2</code>
+      </td>
+      <td style="color:#6c7a8e">Lazy map – kein sofortiger Ausdruck</td>
+    </tr>
+    <tr class="cr"
+        data-m="stream.filter/2"
+        data-d="lazy filter">
+      <td style="width:200px">
+        <code style="color:#a855f7">Stream.filter/2</code>
+      </td>
+      <td style="color:#6c7a8e">Lazy filter</td>
+    </tr>
+    <tr class="cr"
+        data-m="stream.take/2"
+        data-d="nur erste n auswerten">
+      <td style="width:200px">
+        <code style="color:#a855f7">Stream.take/2</code>
+      </td>
+      <td style="color:#6c7a8e">Nur erste n auswerten</td>
+    </tr>
+    <tr class="cr"
+        data-m="stream.iterate/2"
+        data-d="unendliche sequenz: stream.iterate(0, &amp;(&amp;1+1))">
+      <td style="width:200px">
+        <code style="color:#a855f7">Stream.iterate/2</code>
+      </td>
+      <td style="color:#6c7a8e">Unendliche Sequenz: Stream.iterate(0, &amp;(&amp;1+1))</td>
+    </tr>
+    <tr class="cr"
+        data-m="stream.cycle/1"
+        data-d="endlos wiederholen: stream.cycle([1,2,3])">
+      <td style="width:200px">
+        <code style="color:#a855f7">Stream.cycle/1</code>
+      </td>
+      <td style="color:#6c7a8e">Endlos wiederholen: Stream.cycle([1,2,3])</td>
+    </tr>
+    <tr class="cr"
+        data-m="stream.unfold/2"
+        data-d="generator mit state">
+      <td style="width:200px">
+        <code style="color:#a855f7">Stream.unfold/2</code>
+      </td>
+      <td style="color:#6c7a8e">Generator mit State</td>
+    </tr>
+    <tr class="cr"
+        data-m="enum.to_list/1"
+        data-d="stream auswerten: stream |&gt; enum.to_list()">
+      <td style="width:200px">
+        <code style="color:#a855f7">Enum.to_list/1</code>
+      </td>
+      <td style="color:#6c7a8e">Stream auswerten: stream |&gt; Enum.to_list()</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-strings" class="tp">
+
+<div class="ac open" id="ac-str0"
+     style="border:1px solid #c3e88d44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('str0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c3e88d0e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#c3e88d">
+      <span style="display:inline-block;width:8px;height:8px;background:#c3e88d;border-radius:50%;margin-right:2px"></span>String-Methoden
+    </span>
+    <span class="aa" style="color:#c3e88d;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="string-methoden">
+  <div style="color:#c3e88d;font-weight:700;font-size:12px;margin-bottom:8px">
+    String-Methoden
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># String-Modul</span>
+<span style="color:#ffcb6b">String</span>.length(<span style="color:#c3e88d">"Hallo"</span>)          # <span style="color:#f78c6c">5</span>
+<span style="color:#ffcb6b">String</span>.upcase(<span style="color:#c3e88d">"hallo"</span>)           # <span style="color:#c3e88d">"HALLO"</span>
+<span style="color:#ffcb6b">String</span>.downcase(<span style="color:#c3e88d">"HALLO"</span>)         # <span style="color:#c3e88d">"hallo"</span>
+<span style="color:#ffcb6b">String</span>.capitalize(<span style="color:#c3e88d">"hallo"</span>)       # <span style="color:#c3e88d">"Hallo"</span>
+<span style="color:#ffcb6b">String</span>.trim(<span style="color:#c3e88d">"  hallo  "</span>)         # <span style="color:#c3e88d">"hallo"</span>
+<span style="color:#ffcb6b">String</span>.split(<span style="color:#c3e88d">"a,b,c"</span>, <span style="color:#c3e88d">","</span>)       # [<span style="color:#c3e88d">"a"</span>,<span style="color:#c3e88d">"b"</span>,<span style="color:#c3e88d">"c"</span>]
+<span style="color:#ffcb6b">String</span>.replace(<span style="color:#c3e88d">"hallo"</span>, <span style="color:#c3e88d">"l"</span>,<span style="color:#c3e88d">"L"</span>) # <span style="color:#c3e88d">"haLLo"</span>
+<span style="color:#ffcb6b">String</span>.contains?(<span style="color:#c3e88d">"hallo"</span>,<span style="color:#c3e88d">"all"</span>)  # <span style="color:#c792ea">true</span>
+<span style="color:#ffcb6b">String</span>.starts_with?(<span style="color:#c3e88d">"hallo"</span>,<span style="color:#c3e88d">"ha"</span>)   # <span style="color:#c792ea">true</span>
+<span style="color:#ffcb6b">String</span>.ends_with?(<span style="color:#c3e88d">"hallo"</span>,<span style="color:#c3e88d">"lo"</span>)     # <span style="color:#c792ea">true</span>
+<span style="color:#ffcb6b">String</span>.to_integer(<span style="color:#c3e88d">"42"</span>)          # <span style="color:#f78c6c">42</span>
+<span style="color:#ffcb6b">String</span>.to_float(<span style="color:#c3e88d">"3.14"</span>)          # <span style="color:#f78c6c">3.14</span>
+<span style="color:#ffcb6b">String</span>.slice(<span style="color:#c3e88d">"hallo"</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">3</span>)      # <span style="color:#c3e88d">"all"</span>
+<span style="color:#ffcb6b">String</span>.pad_leading(<span style="color:#c3e88d">"42"</span>, <span style="color:#f78c6c">5</span>, <span style="color:#c3e88d">"0"</span>) # <span style="color:#c3e88d">"00042"</span>
+<span style="color:#ffcb6b">String</span>.reverse(<span style="color:#c3e88d">"hallo"</span>)          # <span style="color:#c3e88d">"ollah"</span>
+<span style="color:#ffcb6b">String</span>.graphemes(<span style="color:#c3e88d">"héllo"</span>)        # [<span style="color:#c3e88d">"h"</span>,<span style="color:#c3e88d">"é"</span>,<span style="color:#c3e88d">"l"</span>,<span style="color:#c3e88d">"l"</span>,<span style="color:#c3e88d">"o"</span>]</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-str1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('str1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>Regex
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="regex">
+  <div style="color:#a855f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Regex
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Regex mit Sigil ~r</span>
+regex = <span style="color:#c3e88d">~r/\d+\.\d+/</span>
+
+<span style="color:#ffcb6b">Regex</span>.match?(<span style="color:#c3e88d">~r/hello/</span>, <span style="color:#c3e88d">"hello world"</span>)    # <span style="color:#c792ea">true</span>
+<span style="color:#ffcb6b">Regex</span>.run(<span style="color:#c3e88d">~r/(\w+)@(\w+)/</span>, <span style="color:#c3e88d">"a@b.com"</span>)   # [<span style="color:#c3e88d">"a@b.com"</span>,<span style="color:#c3e88d">"a"</span>,<span style="color:#c3e88d">"b"</span>]
+<span style="color:#ffcb6b">Regex</span>.scan(<span style="color:#c3e88d">~r/\d+/</span>, <span style="color:#c3e88d">"a1b2c3"</span>)            # [[<span style="color:#c3e88d">"1"</span>],[<span style="color:#c3e88d">"2"</span>],[<span style="color:#c3e88d">"3"</span>]]
+<span style="color:#ffcb6b">Regex</span>.replace(<span style="color:#c3e88d">~r/\d+/</span>, <span style="color:#c3e88d">"a1b2"</span>, <span style="color:#c3e88d">"N"</span>)      # <span style="color:#c3e88d">"aNbN"</span>
+<span style="color:#ffcb6b">Regex</span>.split(<span style="color:#c3e88d">~r/\s+/</span>, <span style="color:#c3e88d">"a  b   c"</span>)         # [<span style="color:#c3e88d">"a"</span>,<span style="color:#c3e88d">"b"</span>,<span style="color:#c3e88d">"c"</span>]
+
+<span style="color:#546e7a"># Named Captures</span>
+<span style="color:#c3e88d">~r/(?&lt;n&gt;\w+)@(?&lt;domain&gt;\w+)/</span>
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Regex</span>.named_captures(<span style="color:#c3e88d">"alice@example"</span>)
+<span style="color:#546e7a"># %{"n" =&gt; "alice", "domain" =&gt; "example"}</span>
+
+<span style="color:#546e7a"># Flags: i=case-insensitive, m=multiline, s=dotall</span>
+<span style="color:#c3e88d">~r/hallo/</span>i
+<span style="color:#c3e88d">~r/^start/</span>m</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-str2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('str2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Binaries &amp; Charlists
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="binaries &amp; charlists">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Binaries &amp; Charlists
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Elixir String = UTF-8 Binary</span>
+byte_size(<span style="color:#c3e88d">"hello"</span>)     # <span style="color:#f78c6c">5</span>
+byte_size(<span style="color:#c3e88d">"héllo"</span>)     # <span style="color:#f78c6c">6</span>  (é = <span style="color:#f78c6c">2</span> <span style="color:#ffcb6b">Bytes</span>)
+<span style="color:#ffcb6b">String</span>.length(<span style="color:#c3e88d">"héllo"</span>) # <span style="color:#f78c6c">5</span>  (<span style="color:#f78c6c">5</span> <span style="color:#ffcb6b">Grapheme</span>)
+
+<span style="color:#546e7a"># String zu Binary</span>
+&lt;&lt;<span style="color:#f78c6c">104</span>, <span style="color:#f78c6c">101</span>, <span style="color:#f78c6c">108</span>, <span style="color:#f78c6c">108</span>, <span style="color:#f78c6c">111</span>&gt;&gt; = <span style="color:#c3e88d">"hello"</span>
+
+<span style="color:#546e7a"># Charlist (Erlang-kompatibel)</span>
+<span style="color:#c3e88d">~c"hello"</span> == [<span style="color:#f78c6c">104</span>, <span style="color:#f78c6c">101</span>, <span style="color:#f78c6c">108</span>, <span style="color:#f78c6c">108</span>, <span style="color:#f78c6c">111</span>]   # <span style="color:#c792ea">true</span>
+to_charlist(<span style="color:#c3e88d">"hello"</span>)   # [<span style="color:#f78c6c">104</span>, <span style="color:#f78c6c">101</span>, <span style="color:#f78c6c">108</span>, <span style="color:#f78c6c">108</span>, <span style="color:#f78c6c">111</span>]
+to_string([<span style="color:#f78c6c">104</span>, <span style="color:#f78c6c">101</span>])  # <span style="color:#c3e88d">"he"</span>
+
+<span style="color:#546e7a"># IO-Listen (effizient für Output)</span>
+<span style="color:#ffcb6b">IO</span>.puts([<span style="color:#c3e88d">"Hallo "</span>, <span style="color:#c3e88d">"Welt"</span>, <span style="color:#c3e88d">"!"</span>])
+<span style="color:#546e7a"># Keine Konkatenation – direkt als Liste ausgeben</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-exceptions" class="tp">
+
+<div class="ac open" id="ac-exc0"
+     style="border:1px solid #ff537044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('exc0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ff53700e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ff5370">
+      <span style="display:inline-block;width:8px;height:8px;background:#ff5370;border-radius:50%;margin-right:2px"></span>try / rescue / catch / after
+    </span>
+    <span class="aa" style="color:#ff5370;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="try / rescue / catch / after">
+  <div style="color:#ff5370;font-weight:700;font-size:12px;margin-bottom:8px">
+    try / rescue / catch / after
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># rescue – Exception abfangen</span>
+<span style="color:#c792ea">try</span> <span style="color:#c792ea">do</span>
+  <span style="color:#ffcb6b">File</span>.read!(<span style="color:#c3e88d">"nicht_da.txt"</span>)
+<span style="color:#c792ea">rescue</span>
+  e <span style="color:#c792ea">in</span> <span style="color:#ffcb6b">File</span>.<span style="color:#ffcb6b">Error</span> <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Datei-Fehler: #{e.message}"</span>)
+  e <span style="color:#c792ea">in</span> [<span style="color:#ffcb6b">RuntimeError</span>, <span style="color:#ffcb6b">ArgumentError</span>] <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Fehler: #{inspect(e)}"</span>)
+  _ <span style="color:#89ddff">-&gt;</span>
+    <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Unbekannter Fehler"</span>)
+<span style="color:#c792ea">after</span>
+  <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Wird immer ausgeführt"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># catch – für throw und exits</span>
+<span style="color:#c792ea">try</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">throw</span>(<span style="color:#f07178">:stopp</span>)
+<span style="color:#c792ea">catch</span>
+  <span style="color:#f07178">:throw</span>, <span style="color:#f07178">:stopp</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Gestoppt!"</span>)
+  <span style="color:#f07178">:exit</span>, _       <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">IO</span>.puts(<span style="color:#c3e88d">"Exit"</span>)
+<span style="color:#c792ea">end</span>
+
+<span style="color:#546e7a"># Elixir-Konvention:</span>
+<span style="color:#546e7a"># ! Funktionen werfen, andere geben {:ok}/{:error}</span>
+<span style="color:#ffcb6b">File</span>.read(<span style="color:#c3e88d">"datei.txt"</span>)   # {<span style="color:#f07178">:ok</span>, inhalt} | {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:enoent</span>}
+<span style="color:#ffcb6b">File</span>.read!(<span style="color:#c3e88d">"datei.txt"</span>)  # inhalt oder wirft <span style="color:#ffcb6b">File</span>.<span style="color:#ffcb6b">Error</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-exc1"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('exc1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>raise / throw / eigene Exceptions
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="raise / throw / eigene exceptions">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    raise / throw / eigene Exceptions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># raise – Exception werfen</span>
+<span style="color:#c792ea">raise</span> <span style="color:#c3e88d">"Etwas schiefgelaufen"</span>
+<span style="color:#c792ea">raise</span> <span style="color:#ffcb6b">ArgumentError</span>, message: <span style="color:#c3e88d">"Ungültiges Argument"</span>
+<span style="color:#c792ea">raise</span> <span style="color:#ffcb6b">MeinFehler</span>, grund: <span style="color:#f07178">:timeout</span>
+
+<span style="color:#546e7a"># Eigene Exception definieren</span>
+<span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">ValidationError</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">defexception</span> [<span style="color:#f07178">:message</span>, <span style="color:#f07178">:feld</span>]
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> exception(opts) <span style="color:#c792ea">do</span>
+    feld = opts[<span style="color:#f07178">:feld</span>]
+    msg  = opts[<span style="color:#f07178">:message</span>] || <span style="color:#c3e88d">"Ungültig"</span>
+    %<span style="color:#c792ea">__MODULE__</span>{message: <span style="color:#c3e88d">"#{feld}: #{msg}"</span>, feld: feld}
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#c792ea">raise</span> <span style="color:#ffcb6b">ValidationError</span>, feld: <span style="color:#c3e88d">"email"</span>, message: <span style="color:#c3e88d">"Ungültiges Format"</span>
+
+<span style="color:#546e7a"># Elixir-Philosophie: "Lass es krachen" (Let it crash)</span>
+<span style="color:#546e7a"># Supervisor startet fehlgeschlagene Prozesse neu.</span>
+<span style="color:#546e7a"># Statt defensivem try/rescue besser {:ok}/{:error} nutzen.</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button id="exb0" onclick="switchEx(0)" style="border:1px solid #a855f7;color:#a855f7;background:rgba(168,85,247,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">FizzBuzz</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">GenServer Zähler</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Rekursion &amp; Pattern</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Stream – Lazy &amp; Unendlich</button>
+  <button id="exb4" onclick="switchEx(4)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">with &amp; Error Handling</button>
+  
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#f78c6c">1..100</span>
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.map(<span style="color:#c792ea">fn</span> n <span style="color:#89ddff">-&gt;</span>
+  <span style="color:#c792ea">cond</span> <span style="color:#c792ea">do</span>
+    rem(n, <span style="color:#f78c6c">15</span>) == <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"FizzBuzz"</span>
+    rem(n, <span style="color:#f78c6c">3</span>)  == <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Fizz"</span>
+    rem(n, <span style="color:#f78c6c">5</span>)  == <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Buzz"</span>
+    <span style="color:#c792ea">true</span>            <span style="color:#89ddff">-&gt;</span> <span style="color:#ffcb6b">Integer</span>.to_string(n)
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.join(<span style="color:#c3e88d">"\n"</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">IO</span>.puts()</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Zaehler</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">use</span> <span style="color:#ffcb6b">GenServer</span>
+
+  <span style="color:#c792ea">def</span> start_link(n \\ <span style="color:#f78c6c">0</span>),   <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">GenServer</span>.start_link(<span style="color:#c792ea">__MODULE__</span>, n, name: <span style="color:#c792ea">__MODULE__</span>)
+  <span style="color:#c792ea">def</span> inc,                   <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">GenServer</span>.cast(<span style="color:#c792ea">__MODULE__</span>, <span style="color:#f07178">:inc</span>)
+  <span style="color:#c792ea">def</span> reset,                 <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">GenServer</span>.cast(<span style="color:#c792ea">__MODULE__</span>, <span style="color:#f07178">:reset</span>)
+  <span style="color:#c792ea">def</span> wert,                  <span style="color:#c792ea">do</span>: <span style="color:#ffcb6b">GenServer</span>.call(<span style="color:#c792ea">__MODULE__</span>, <span style="color:#f07178">:get</span>)
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> init(n),               <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, n}
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> handle_cast(<span style="color:#f07178">:inc</span>, n),  <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:noreply</span>, n + <span style="color:#f78c6c">1</span>}
+  <span style="color:#c792ea">def</span> handle_cast(<span style="color:#f07178">:reset</span>,_), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:noreply</span>, <span style="color:#f78c6c">0</span>}
+
+  <span style="color:#ff9800">@impl</span> <span style="color:#c792ea">true</span>
+  <span style="color:#c792ea">def</span> handle_call(<span style="color:#f07178">:get</span>,_,n), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:reply</span>, n, n}
+<span style="color:#c792ea">end</span>
+
+{<span style="color:#f07178">:ok</span>, _} = <span style="color:#ffcb6b">Zaehler</span>.start_link()
+<span style="color:#ffcb6b">Zaehler</span>.inc()
+<span style="color:#ffcb6b">Zaehler</span>.inc()
+<span style="color:#ffcb6b">Zaehler</span>.wert()   # <span style="color:#f78c6c">2</span>
+<span style="color:#ffcb6b">Zaehler</span>.reset()
+<span style="color:#ffcb6b">Zaehler</span>.wert()   # <span style="color:#f78c6c">0</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">Liste</span> <span style="color:#c792ea">do</span>
+  <span style="color:#546e7a"># Summe mit Tail-Recursion</span>
+  <span style="color:#c792ea">def</span> summe(list, acc \\ <span style="color:#f78c6c">0</span>)
+  <span style="color:#c792ea">def</span> summe([], acc),      <span style="color:#c792ea">do</span>: acc
+  <span style="color:#c792ea">def</span> summe([h | t], acc), <span style="color:#c792ea">do</span>: summe(t, acc + h)
+
+  <span style="color:#546e7a"># Flatten</span>
+  <span style="color:#c792ea">def</span> flatten([]),                       <span style="color:#c792ea">do</span>: []
+  <span style="color:#c792ea">def</span> flatten([h | t]) <span style="color:#c792ea">when</span> is_list(h), <span style="color:#c792ea">do</span>: flatten(h) ++ flatten(t)
+  <span style="color:#c792ea">def</span> flatten([h | t]),                 <span style="color:#c792ea">do</span>: [h | flatten(t)]
+
+  <span style="color:#546e7a"># Quicksort</span>
+  <span style="color:#c792ea">def</span> sort([]), <span style="color:#c792ea">do</span>: []
+  <span style="color:#c792ea">def</span> sort([pivot | rest]) <span style="color:#c792ea">do</span>
+    kleiner  = <span style="color:#ffcb6b">Enum</span>.filter(rest, <span style="color:#89ddff">&amp;</span>(&amp;<span style="color:#f78c6c">1</span> &lt;= pivot))
+    groesser = <span style="color:#ffcb6b">Enum</span>.filter(rest, <span style="color:#89ddff">&amp;</span>(&amp;<span style="color:#f78c6c">1</span> &gt; pivot))
+    sort(kleiner) ++ [pivot] ++ sort(groesser)
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span>
+
+<span style="color:#ffcb6b">Liste</span>.summe([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>])         # <span style="color:#f78c6c">15</span>
+<span style="color:#ffcb6b">Liste</span>.flatten([<span style="color:#f78c6c">1</span>, [<span style="color:#f78c6c">2</span>, [<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>]], <span style="color:#f78c6c">5</span>])   # [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]
+<span style="color:#ffcb6b">Liste</span>.sort([<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">2</span>])   # [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">9</span>]</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Unendliche Fibonacci-Sequenz</span>
+<span style="color:#ffcb6b">Stream</span>.iterate({<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>}, <span style="color:#c792ea">fn</span> {a, b} <span style="color:#89ddff">-&gt;</span> {b, a + b} <span style="color:#c792ea">end</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Stream</span>.map(<span style="color:#89ddff">&amp;</span>elem(&amp;<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">0</span>))
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Stream</span>.take(<span style="color:#f78c6c">10</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.to_list()
+<span style="color:#546e7a"># [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</span>
+
+<span style="color:#546e7a"># Erste Fibonacci-Zahl &gt; 1000</span>
+<span style="color:#ffcb6b">Stream</span>.iterate({<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>}, <span style="color:#c792ea">fn</span> {a, b} <span style="color:#89ddff">-&gt;</span> {b, a + b} <span style="color:#c792ea">end</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Stream</span>.map(<span style="color:#89ddff">&amp;</span>elem(&amp;<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">0</span>))
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Stream</span>.drop_while(<span style="color:#89ddff">&amp;</span>(&amp;<span style="color:#f78c6c">1</span> &lt;= <span style="color:#f78c6c">1000</span>))
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.take(<span style="color:#f78c6c">1</span>)
+<span style="color:#546e7a"># [1597]</span>
+
+<span style="color:#546e7a"># Parallele HTTP-Anfragen</span>
+urls = [<span style="color:#c3e88d">"http://api1.com"</span>, <span style="color:#c3e88d">"http://api2.com"</span>, <span style="color:#c3e88d">"http://api3.com"</span>]
+urls
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Task</span>.async_stream(<span style="color:#89ddff">&amp;</span><span style="color:#ffcb6b">HTTPoison</span>.get!/<span style="color:#f78c6c">1</span>, max_concurrency: <span style="color:#f78c6c">3</span>, timeout: <span style="color:#f78c6c">5_000</span>)
+<span style="color:#89ddff">|&gt;</span> <span style="color:#ffcb6b">Enum</span>.map(<span style="color:#c792ea">fn</span> {<span style="color:#f07178">:ok</span>, res} <span style="color:#89ddff">-&gt;</span> res.body <span style="color:#c792ea">end</span>)</pre>
+</div>
+<div id="exp4" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">defmodule</span> <span style="color:#ffcb6b">UserService</span> <span style="color:#c792ea">do</span>
+  <span style="color:#c792ea">def</span> registrieren(params) <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">with</span> {<span style="color:#f07178">:ok</span>, name}  <span style="color:#89ddff">&lt;-</span> validiere_name(params[<span style="color:#c3e88d">"name"</span>]),
+         {<span style="color:#f07178">:ok</span>, email} <span style="color:#89ddff">&lt;-</span> validiere_email(params[<span style="color:#c3e88d">"email"</span>]),
+         {<span style="color:#f07178">:ok</span>, user}  <span style="color:#89ddff">&lt;-</span> <span style="color:#ffcb6b">Repo</span>.insert(%<span style="color:#ffcb6b">User</span>{name: name, email: email}),
+         {<span style="color:#f07178">:ok</span>, _}     <span style="color:#89ddff">&lt;-</span> <span style="color:#ffcb6b">Mailer</span>.willkommen(user) <span style="color:#c792ea">do</span>
+      {<span style="color:#f07178">:ok</span>, user}
+    <span style="color:#c792ea">else</span>
+      {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:name_leer</span>}    <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, <span style="color:#c3e88d">"Name darf nicht leer sein"</span>}
+      {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:email_falsch</span>} <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, <span style="color:#c3e88d">"Ungültige E-Mail-Adresse"</span>}
+      {<span style="color:#f07178">:error</span>, reason}        <span style="color:#89ddff">-&gt;</span> {<span style="color:#f07178">:error</span>, <span style="color:#c3e88d">"Unbekannt: #{inspect(reason)}"</span>}
+    <span style="color:#c792ea">end</span>
+  <span style="color:#c792ea">end</span>
+
+  <span style="color:#c792ea">defp</span> validiere_name(<span style="color:#c3e88d">""</span>), <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:name_leer</span>}
+  <span style="color:#c792ea">defp</span> validiere_name(n),  <span style="color:#c792ea">do</span>: {<span style="color:#f07178">:ok</span>, <span style="color:#ffcb6b">String</span>.trim(n)}
+
+  <span style="color:#c792ea">defp</span> validiere_email(e) <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">if</span> <span style="color:#ffcb6b">String</span>.contains?(e, <span style="color:#c3e88d">"@"</span>),
+      <span style="color:#c792ea">do</span>:   {<span style="color:#f07178">:ok</span>, e},
+      <span style="color:#c792ea">else</span>: {<span style="color:#f07178">:error</span>, <span style="color:#f07178">:email_falsch</span>}
+  <span style="color:#c792ea">end</span>
+<span style="color:#c792ea">end</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#a855f711;border:1px solid #a855f744;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#a855f7">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S elixir erlang</code><br><code style="color:#ffb347">mix local.hex &amp;&amp; mix local.rebar</code></div>
+<div style="background:#a855f711;border:1px solid #a855f744;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#a855f7">Debian / Ubuntu:</strong> <code style="color:#ffb347">sudo apt install esl-erlang elixir</code><br></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>⚙ Elixir installieren
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">System Elixir</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">elixir</span>
+  </div>
+  <code style="color:#ffb347">sudo pacman -S elixir erlang</code><br>
+  <code style="color:#ffb347">sudo apt install esl-erlang elixir</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">asdf</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">asdf-vm</span>
+  </div>
+  <code style="color:#ffb347">asdf plugin add elixir
+asdf plugin add erlang
+asdf install elixir 1.16.0</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">mise</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">mise (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S mise
+mise install elixir@1.16.0</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#e05252;font-weight:700">kiex</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">kiex (AUR)</span>
+  </div>
+  <code style="color:#ffb347">kiex install 1.16.0
+kiex use 1.16.0</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #a855f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a855f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#a855f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#a855f7;border-radius:50%;margin-right:2px"></span>⚙ Projektmanagement
+    </span>
+    <span class="aa" style="color:#a855f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#a855f7;font-weight:700">mix new</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">mix (stdlib)</span>
+  </div>
+  <code style="color:#ffb347">mix new mein_projekt
+mix new meine_api --sup</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#a855f7;font-weight:700">mix deps</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">mix</span>
+  </div>
+  <code style="color:#ffb347">mix deps.get
+mix deps.update --all
+mix deps.compile</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#a855f7;font-weight:700">mix test</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">mix</span>
+  </div>
+  <code style="color:#ffb347">mix test
+mix test test/user_test.exs:42
+mix test --stale</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#a855f7;font-weight:700">mix format</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">mix</span>
+  </div>
+  <code style="color:#ffb347">mix format
+mix format --check-formatted</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ REPL &amp; Debugging
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">iex</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">elixir</span>
+  </div>
+  <code style="color:#ffb347">iex
+iex -S mix
+iex --remsh node@host</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">dbg/1</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">Elixir 1.14+</span>
+  </div>
+  <code style="color:#ffb347">dbg(ausdruck)  # gibt Wert + Quelle aus
+dbg(1..10 |&gt; Enum.map(&amp;(&amp;1*2)))</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">IO.inspect</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">stdlib</span>
+  </div>
+  <code style="color:#ffb347">IO.inspect(wert, label: "debug")
+pipe |&gt; IO.inspect(label: "nach map")</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4fc3f7;font-weight:700">Observer</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">:observer</span>
+  </div>
+  <code style="color:#ffb347">:observer.start()  # in iex – GUI Prozess-Viewer</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Pakete
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Phoenix</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">phoenix</span>
+  </div>
+  <code style="color:#ffb347">mix phx.new meine_app
+mix phx.server</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Ecto</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">ecto_sql</span>
+  </div>
+  <code style="color:#ffb347">Datenbank-ORM/Query-DSL</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Jason</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">jason</span>
+  </div>
+  <code style="color:#ffb347">Jason.encode!(%{key: "val"})  # JSON</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Req</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">req</span>
+  </div>
+  <code style="color:#ffb347">Req.get!("https://api.example.com")</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">ExUnit</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">stdlib</span>
+  </div>
+  <code style="color:#ffb347">Eingebautes Test-Framework</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">Dialyxir</span> <span style="background:rgba(74,85,104,.2);color:#6c7a8e;border:1px solid rgba(68,80,106,.4);padding:1px 7px;border-radius:4px;font-size:11px">dialyxir</span>
+  </div>
+  <code style="color:#ffb347">mix dialyzer  # Typespec-Analyse</code>
+</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// Akkordeon auf- / zuklappen
+function tA(id) {
+  const el   = document.getElementById('ac-' + id);
+  const body = el.querySelector('.ab');
+  const open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+// Tab-Navigation
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Suche im Kontrollfluss-Tab
+document.getElementById('ctrl-s').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+    card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+  });
+  if (q) {
+    document.querySelectorAll('[id^="ac-ct"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  }
+});
+
+// Suche in den Enum-Tabellen (je Akkordeon)
+document.querySelectorAll('[id^="enum-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    const q     = this.value.toLowerCase();
+    const tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display =
+        !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+// Beispiel-Tabs
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach((panel, j) => {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach((btn, j) => {
+    if (j === index) {
+      btn.style.borderColor = '#a855f7';
+      btn.style.color       = '#a855f7';
+      btn.style.background  = 'rgba(168, 85, 247, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+</body>
+</html>

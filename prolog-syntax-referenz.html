@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prolog Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #e74c3c;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f0a0a, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(231,76,60,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(231,76,60,.03); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(231,76,60,.07); padding: 1px 5px; border-radius: 3px; color: #e74c3c; }
+.cd { background: rgba(0,0,0,.6); border: 1px solid rgba(231,76,60,.15); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#e74c3c">?-</span>
+      <span style="color:#e74c3c">Prolog</span> Syntax
+    </div>
+    <div id="hdr-sub">Prolog 1972 · SWI-Prolog · Unifikation · Backtracking · DCG · CLP(FD) · Logische Programmierung</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="kontrolle">Backtracking & Listen</button>
+    <button class="tb" data-tab="meta">Meta & Assert</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#e74c3c0e;border:1px solid #e74c3c44;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#e74c3c">Prolog – Logische Programmierung.</strong>
+  Beschreibe <em>was wahr ist</em>, nicht <em>wie man es berechnet</em>.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">.</code> nach jeder Klausel (Pflicht!) &nbsp;·&nbsp;
+    <code style="color:#f07178">X</code> = Variable (Großbuchstabe) &nbsp;·&nbsp;
+    <code style="color:#c3e88d">:-</code> = "wenn" &nbsp;·&nbsp;
+    <code style="color:#c3e88d">?-</code> = Anfrage &nbsp;·&nbsp;
+    <code style="color:#c3e88d">is</code> = Arithmetik &nbsp;·&nbsp;
+    <code style="color:#ffcb6b">!</code> = Cut &nbsp;·&nbsp;
+    Online: <a href="https://swish.swi-prolog.org" style="color:#d4a017">swish.swi-prolog.org</a>
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #e74c3c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e74c3c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e74c3c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e74c3c;border-radius:50%;margin-right:2px"></span>Das Prolog-Paradigma – komplett anders denken
+    </span>
+    <span class="aa" style="color:#e74c3c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="das prolog-paradigma – komplett anders denken">
+  <div style="color:#e74c3c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Das Prolog-Paradigma – komplett anders denken
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Prolog = LOGISCHE Programmierung</span>
+<span style="color:#546e7a">% Du beschreibst FAKTEN und REGELN.</span>
+<span style="color:#546e7a">% Prolog findet durch BACKTRACKING die Antworten.</span>
+<span style="color:#546e7a">%</span>
+<span style="color:#546e7a">% In anderen Sprachen: "Berechne X aus A und B"</span>
+<span style="color:#546e7a">% In Prolog:           "Was ist X, wenn A und B wahr sind?"</span>
+<span style="color:#546e7a">%</span>
+<span style="color:#546e7a">% Das Programm in SWI-Prolog starten:</span>
+<span style="color:#546e7a">%   swipl</span>
+<span style="color:#546e7a">%   swipl datei.pl</span>
+<span style="color:#546e7a">%   ?- [datei].        % Datei laden im REPL</span>
+
+<span style="color:#546e7a">% ── FAKTEN ────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% Ein Fakt ist eine bedingungslose Aussage.</span>
+<span style="color:#546e7a">% Syntax: praedikat(argumente).   &lt;-- Punkt am Ende ist PFLICHT!</span>
+
+<span style="color:#c792ea">mensch</span>(<span style="color:#c792ea">sokrates</span>).           <span style="color:#546e7a">% sokrates ist ein Mensch</span>
+<span style="color:#c792ea">mensch</span>(<span style="color:#c792ea">platon</span>).
+<span style="color:#c792ea">mensch</span>(<span style="color:#c792ea">aristoteles</span>).
+
+<span style="color:#c792ea">mag</span>(<span style="color:#c792ea">maria</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">pizza</span>).          <span style="color:#546e7a">% maria mag pizza</span>
+<span style="color:#c792ea">mag</span>(<span style="color:#c792ea">maria</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">sushi</span>).
+<span style="color:#c792ea">mag</span>(<span style="color:#c792ea">peter</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">pizza</span>).
+
+<span style="color:#c792ea">tier</span>(<span style="color:#c792ea">hund</span>).
+<span style="color:#c792ea">tier</span>(<span style="color:#c792ea">katze</span>).
+<span style="color:#c792ea">tier</span>(<span style="color:#c792ea">vogel</span>).
+
+<span style="color:#546e7a">% ── ANFRAGEN (Queries) ────────────────────────────────────────────</span>
+<span style="color:#546e7a">% Im REPL mit ?- stellen:</span>
+
+<span style="color:#546e7a">% ?- mensch(sokrates).</span>
+<span style="color:#546e7a">%    true.</span>
+
+<span style="color:#546e7a">% ?- mensch(zeus).</span>
+<span style="color:#546e7a">%    false.</span>
+
+<span style="color:#546e7a">% ?- mensch(X).           % X ist eine Variable (Großbuchstabe!)</span>
+<span style="color:#546e7a">%    X = sokrates ;        % Enter für erste Lösung, ; für weitere</span>
+<span style="color:#546e7a">%    X = platon ;</span>
+<span style="color:#546e7a">%    X = aristoteles.</span>
+
+<span style="color:#546e7a">% ── REGELN ────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% Syntax: Kopf :- Rumpf.</span>
+<span style="color:#546e7a">% Lies: "Kopf ist wahr, WENN Rumpf wahr ist"</span>
+
+<span style="color:#c792ea">sterblich</span>(<span style="color:#f07178">X</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">mensch</span>(<span style="color:#f07178">X</span>).   <span style="color:#546e7a">% X ist sterblich, wenn X ein Mensch ist</span>
+
+<span style="color:#c792ea">gross</span>(<span style="color:#f07178">X</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">mensch</span>(<span style="color:#f07178">X</span>)<span style="color:#89ddff">,</span> <span style="color:#c792ea">sterblich</span>(<span style="color:#f07178">X</span>).  <span style="color:#546e7a">% , bedeutet UND</span>
+
+<span style="color:#546e7a">% ?- sterblich(sokrates).</span>
+<span style="color:#546e7a">%    true.</span>
+
+<span style="color:#546e7a">% ?- sterblich(X).</span>
+<span style="color:#546e7a">%    X = sokrates ;</span>
+<span style="color:#546e7a">%    X = platon ;</span>
+<span style="color:#546e7a">%    X = aristoteles.</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Terme – alles in Prolog ist ein Term
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="terme – alles in prolog ist ein term">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Terme – alles in Prolog ist ein Term
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% In Prolog gibt es nur EINE Datenstruktur: den Term.</span>
+<span style="color:#546e7a">% Alles – Fakten, Regeln, Daten, Code – ist ein Term.</span>
+
+<span style="color:#546e7a">% ── TYPEN VON TERMEN ──────────────────────────────────────────────</span>
+
+<span style="color:#546e7a">% 1. ATOME – Konstanten (Kleinbuchstabe oder in Quotes)</span>
+<span style="color:#c792ea">hallo</span>               <span style="color:#546e7a">% Atom</span>
+<span style="color:#c792ea">sokrates</span>            <span style="color:#546e7a">% Atom</span>
+<span style="color:#4ec9b0">'Hallo Welt'</span>        <span style="color:#546e7a">% Atom mit Leerzeichen (Quotes nötig)</span>
+<span style="color:#4ec9b0">'it''s'</span>             <span style="color:#546e7a">% Atom mit Apostroph ('' escaped)</span>
+[]                  <span style="color:#546e7a">% Leere Liste – auch ein Atom!</span>
+
+<span style="color:#546e7a">% 2. ZAHLEN</span>
+<span style="color:#f78c6c">42</span>                  <span style="color:#546e7a">% Integer</span>
+-<span style="color:#f78c6c">7</span>                  <span style="color:#546e7a">% Negativ</span>
+<span style="color:#f78c6c">3.14</span>                <span style="color:#546e7a">% Float</span>
+<span style="color:#f78c6c">0'</span><span style="color:#f07178">A</span>                 <span style="color:#546e7a">% Char-Code von 'A' = 65</span>
+<span style="color:#f78c6c">0b1010</span>              <span style="color:#546e7a">% Binär: 10</span>
+<span style="color:#f78c6c">0x</span><span style="color:#c792ea">ff</span>                <span style="color:#546e7a">% Hex: 255</span>
+
+<span style="color:#546e7a">% 3. VARIABLEN – beginnen mit GROSSBUCHSTABE oder _</span>
+<span style="color:#f07178">X</span>                   <span style="color:#546e7a">% Variable</span>
+<span style="color:#f07178">Ergebnis</span>            <span style="color:#546e7a">% Variable</span>
+<span style="color:#f07178">_</span>                   <span style="color:#546e7a">% Anonyme Variable (interessiert uns nicht)</span>
+<span style="color:#f07178">_Hilfsvariable</span>      <span style="color:#546e7a">% Benannte anonyme Variable (kein Warning)</span>
+
+<span style="color:#546e7a">% WICHTIG: Variablen sind NICHT veränderlich!</span>
+<span style="color:#546e7a">% Wenn X einmal gebunden ist, bleibt es gebunden.</span>
+<span style="color:#546e7a">% X = 5, X = 6 → FEHLER (kein Zuweisen, nur Unifikation!)</span>
+
+<span style="color:#546e7a">% 4. ZUSAMMENGESETZTE TERME (Funktoren)</span>
+<span style="color:#c792ea">punkt</span>(<span style="color:#f78c6c">3</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">4</span>)         <span style="color:#546e7a">% Funktor 'punkt', Arität 2</span>
+<span style="color:#c792ea">datum</span>(<span style="color:#f78c6c">2024</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">15</span>)  <span style="color:#546e7a">% Funktor 'datum', Arität 3</span>
+<span style="color:#c792ea">baum</span>(<span style="color:#c792ea">links</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">wurzel</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">rechts</span>)  <span style="color:#546e7a">% Rekursiver Baum</span>
+
+<span style="color:#546e7a">% 5. LISTEN – syntaktischer Zucker für Terme</span>
+[<span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">2</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">3</span>]           <span style="color:#546e7a">% Liste</span>
+[<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]               <span style="color:#546e7a">% H = Kopf, T = Schwanz (Rest)</span>
+[<span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">2</span><span style="color:#89ddff">|</span><span style="color:#f07178">Rest</span>]         <span style="color:#546e7a">% Erste zwei + Rest</span>
+[]                  <span style="color:#546e7a">% Leere Liste</span>
+
+<span style="color:#546e7a">% [1, 2, 3] ist intern: '.'(1, '.'(2, '.'(3, [])))</span>
+<span style="color:#546e7a">% (Cons-Zellen wie in Lisp/Scheme!)</span>
+
+<span style="color:#546e7a">% 6. OPERATOREN (nur Notation für Terme!)</span>
+<span style="color:#f78c6c">1</span> + <span style="color:#f78c6c">2</span>               <span style="color:#546e7a">% ist: +(1, 2)</span>
+<span style="color:#f07178">X</span> = <span style="color:#f07178">Y</span>               <span style="color:#546e7a">% ist: =(X, Y)  – Unifikation!</span>
+<span style="color:#f07178">X</span> <span style="color:#89ddff">:-</span> <span style="color:#f07178">Y</span>              <span style="color:#546e7a">% ist: :-(X, Y) – Regel!</span>
+<span style="color:#546e7a">% Prolog behandelt alle Ausdrücke gleich.</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Unifikation – das Herzstück
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="unifikation – das herzstück">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Unifikation – das Herzstück
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% UNIFIKATION ist der fundamentalste Vorgang in Prolog.</span>
+<span style="color:#546e7a">% = bedeutet NICHT Zuweisung, sondern "kann gleichgemacht werden"?</span>
+
+<span style="color:#546e7a">% Im REPL:</span>
+<span style="color:#546e7a">% ?- X = 42.</span>
+<span style="color:#546e7a">%    X = 42.            % X wird an 42 gebunden</span>
+
+<span style="color:#546e7a">% ?- f(X, 2) = f(1, Y).</span>
+<span style="color:#546e7a">%    X = 1, Y = 2.      % Strukturell angeglichen!</span>
+
+<span style="color:#546e7a">% ?- [H|T] = [1, 2, 3].</span>
+<span style="color:#546e7a">%    H = 1, T = [2, 3]. % Listen-Dekonstruktion!</span>
+
+<span style="color:#546e7a">% ?- X = X.</span>
+<span style="color:#546e7a">%    true.              % Tautologie</span>
+
+<span style="color:#546e7a">% ?- 1 = 2.</span>
+<span style="color:#546e7a">%    false.             % Schlägt fehl</span>
+
+<span style="color:#546e7a">% ── VERSCHIEDENE GLEICHHEITSOPERATOREN ───────────────────────────</span>
+<span style="color:#546e7a">%</span>
+<span style="color:#546e7a">%  =     Unifikation (bindet Variablen)</span>
+<span style="color:#546e7a">%  \=    Unifikation schlägt fehl (nicht vereinbar)</span>
+<span style="color:#546e7a">%  ==    Strukturelle Gleichheit (ohne Bindung)</span>
+<span style="color:#546e7a">%  \==   Strukturelle Ungleichheit</span>
+<span style="color:#546e7a">%  is    Arithmetische Auswertung</span>
+<span style="color:#546e7a">%  =:=   Arithmetische Gleichheit</span>
+<span style="color:#546e7a">%  =\=   Arithmetische Ungleichheit</span>
+
+<span style="color:#546e7a">% Beispiele:</span>
+<span style="color:#546e7a">% ?- X = 1+2.        X = 1+2.      % X wird an den TERM 1+2 gebunden!</span>
+<span style="color:#546e7a">% ?- X is 1+2.       X = 3.        % X wird an den WERT 3 gebunden!</span>
+<span style="color:#546e7a">% ?- 1+2 == 1+2.     true.         % Strukturell gleich</span>
+<span style="color:#546e7a">% ?- 1+2 =:= 3.      true.         % Arithmetisch gleich</span>
+<span style="color:#546e7a">% ?- X == Y.         false.        % Zwei ungebundene Vars sind NICHT gleich!</span>
+
+<span style="color:#546e7a">% ── PATTERN MATCHING mit Unifikation ─────────────────────────────</span>
+<span style="color:#546e7a">% Prolog nutzt Unifikation für mächtiges Pattern Matching:</span>
+
+<span style="color:#c792ea">beschreibe</span>([]).
+<span style="color:#c792ea">beschreibe</span>([<span style="color:#f07178">_</span>]).
+<span style="color:#c792ea">beschreibe</span>([<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> <span style="color:#f07178">_</span>]).
+<span style="color:#c792ea">beschreibe</span>([<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">_</span>]) <span style="color:#89ddff">:-</span> <span style="color:#82aaff">number</span>(<span style="color:#f07178">H</span>)<span style="color:#89ddff">,</span> <span style="color:#f07178">H</span> &gt; <span style="color:#f78c6c">0.</span>
+
+<span style="color:#546e7a">% ?- beschreibe([1, 2, 3]).</span>
+<span style="color:#546e7a">% Prolog probiert alle Regeln durch!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-kontrolle" class="tp">
+
+<div class="ac open" id="ac-kf0"
+     style="border:1px solid #e74c3c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e74c3c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e74c3c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e74c3c;border-radius:50%;margin-right:2px"></span>Backtracking &amp; Kontrolle
+    </span>
+    <span class="aa" style="color:#e74c3c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="backtracking &amp; kontrolle">
+  <div style="color:#e74c3c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Backtracking &amp; Kontrolle
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% BACKTRACKING: Prolog probiert automatisch alle Möglichkeiten!</span>
+<span style="color:#546e7a">% Wenn eine Lösung fehlschlägt, geht Prolog zurück und versucht die nächste.</span>
+
+<span style="color:#546e7a">% Beispiel:</span>
+<span style="color:#c792ea">farbe</span>(<span style="color:#c792ea">rot</span>).
+<span style="color:#c792ea">farbe</span>(<span style="color:#c792ea">gruen</span>).
+<span style="color:#c792ea">farbe</span>(<span style="color:#c792ea">blau</span>).
+
+<span style="color:#546e7a">% ?- farbe(X), farbe(Y), X \== Y.</span>
+<span style="color:#546e7a">%    X = rot,   Y = gruen ;   % Prolog findet alle Paare!</span>
+<span style="color:#546e7a">%    X = rot,   Y = blau ;</span>
+<span style="color:#546e7a">%    X = gruen, Y = rot ;</span>
+<span style="color:#546e7a">%    ... usw.</span>
+
+<span style="color:#546e7a">% ── CUT (!) – Backtracking stoppen ───────────────────────────────</span>
+<span style="color:#546e7a">% ! sagt: "Hier nicht mehr zurückgehen!"</span>
+<span style="color:#546e7a">% Nützlich für Effizienz und um "erstes Ergebnis" zu erzwingen.</span>
+
+<span style="color:#82aaff">max</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span><span style="color:#89ddff">,</span> <span style="color:#f07178">X</span>) <span style="color:#89ddff">:-</span> <span style="color:#f07178">X</span> &gt;= <span style="color:#f07178">Y</span><span style="color:#89ddff">,</span> <span style="color:#ffcb6b">!</span>.   <span style="color:#546e7a">% Wenn X &gt;= Y: X ist Maximum, fertig!</span>
+<span style="color:#82aaff">max</span>(<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>).                  <span style="color:#546e7a">% Sonst: Y ist Maximum</span>
+
+<span style="color:#546e7a">% Ohne Cut würde Prolog auch die zweite Regel probieren.</span>
+
+<span style="color:#546e7a">% ── NEGATION ALS FAILURE (\+) ────────────────────────────────────</span>
+<span style="color:#546e7a">% \+ Goal = wahr, wenn Goal FEHLSCHLÄGT (Closed World Assumption!)</span>
+<span style="color:#546e7a">% NICHT logisches NOT – sondern "beweisbar falsch in dieser Datenbank"</span>
+
+<span style="color:#c792ea">vogel</span>(<span style="color:#c792ea">tweety</span>).
+<span style="color:#c792ea">vogel</span>(<span style="color:#c792ea">opus</span>).
+<span style="color:#c792ea">pinguin</span>(<span style="color:#c792ea">opus</span>).
+
+<span style="color:#c792ea">kann_fliegen</span>(<span style="color:#f07178">V</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">vogel</span>(<span style="color:#f07178">V</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">pinguin</span>(<span style="color:#f07178">V</span>).   <span style="color:#546e7a">% \+ = "es ist nicht beweisbar, dass V ein Pinguin ist"</span>
+
+<span style="color:#546e7a">% ?- kann_fliegen(tweety).   true.</span>
+<span style="color:#546e7a">% ?- kann_fliegen(opus).     false.  (opus ist Pinguin!)</span>
+
+<span style="color:#546e7a">% ── IF-THEN-ELSE mit -&gt; ; ─────────────────────────────────────────</span>
+<span style="color:#546e7a">% (Bedingung -&gt; Dann ; Sonst)</span>
+
+<span style="color:#c792ea">vorzeichen</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">pos</span>) <span style="color:#89ddff">:-</span> <span style="color:#f07178">X</span> &gt; <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">vorzeichen</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">neg</span>) <span style="color:#89ddff">:-</span> <span style="color:#f07178">X</span> &lt; <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">vorzeichen</span>(<span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">null</span>).
+
+<span style="color:#546e7a">% Alternativ mit -&gt;:</span>
+<span style="color:#c792ea">vorzeichen2</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">V</span>) <span style="color:#89ddff">:-</span>
+    (<span style="color:#f07178">X</span> &gt; <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f07178">V</span> = <span style="color:#c792ea">pos</span>
+    <span style="color:#89ddff">;</span> <span style="color:#f07178">X</span> &lt; <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f07178">V</span> = <span style="color:#c792ea">neg</span>
+    <span style="color:#89ddff">;</span>          <span style="color:#f07178">V</span> = <span style="color:#c792ea">null</span>
+    ).
+
+<span style="color:#546e7a">% ── ONCE/1 – genau eine Lösung ───────────────────────────────────</span>
+<span style="color:#546e7a">% once(Goal) = wie call(Goal) aber ohne Backtracking zurück ins Goal</span>
+<span style="color:#c792ea">erste_farbe</span>(<span style="color:#f07178">X</span>) <span style="color:#89ddff">:-</span> <span style="color:#82aaff">once</span>(<span style="color:#c792ea">farbe</span>(<span style="color:#f07178">X</span>)).
+
+<span style="color:#546e7a">% ?- erste_farbe(X).   X = rot.  (Nur eine Antwort!)</span>
+
+<span style="color:#546e7a">% ── BETWEEN für Schleifen ─────────────────────────────────────────</span>
+<span style="color:#546e7a">% between(Low, High, X) – erzeugt X von Low bis High</span>
+
+<span style="color:#c792ea">quadrate</span> <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">between</span>(<span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">5</span><span style="color:#89ddff">,</span> <span style="color:#f07178">X</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#f07178">Q</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">X</span> * <span style="color:#f07178">X</span><span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"~w^2 = ~w~n"</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Q</span>])<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">fail</span>.      <span style="color:#546e7a">% fail zwingt Backtracking = iteriert alle X!</span>
+<span style="color:#c792ea">quadrate</span>.      <span style="color:#546e7a">% Zweite Klausel: Erfolg nach Erschöpfung</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Listen &amp; Rekursion
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="listen &amp; rekursion">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Listen &amp; Rekursion
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Listen sind das wichtigste Werkzeug in Prolog!</span>
+<span style="color:#546e7a">% [Kopf|Schwanz]  =  cons(Kopf, Schwanz)</span>
+
+<span style="color:#546e7a">% ── GRUNDLEGENDE LISTEN-PRÄDIKATE ────────────────────────────────</span>
+
+<span style="color:#546e7a">% Länge (rekursiv definiert)</span>
+<span style="color:#c792ea">mein_length</span>([]<span style="color:#89ddff">,</span> <span style="color:#f78c6c">0</span>).
+<span style="color:#c792ea">mein_length</span>([<span style="color:#f07178">_</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">N</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">mein_length</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">N1</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#f07178">N</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N1</span> + <span style="color:#f78c6c">1.</span>
+
+<span style="color:#546e7a">% ?- mein_length([a, b, c], N).   N = 3.</span>
+
+<span style="color:#546e7a">% Mitgliedschaft</span>
+<span style="color:#c792ea">mein_member</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">X</span><span style="color:#89ddff">|</span><span style="color:#f07178">_</span>]).         <span style="color:#546e7a">% X ist Kopf: gefunden!</span>
+<span style="color:#c792ea">mein_member</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">_</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]) <span style="color:#89ddff">:-</span>       <span style="color:#546e7a">% Sonst: suche in Schwanz</span>
+    <span style="color:#c792ea">mein_member</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span>).
+
+<span style="color:#546e7a">% ?- mein_member(b, [a, b, c]).  true.</span>
+<span style="color:#546e7a">% ?- mein_member(X, [1, 2, 3]). X = 1 ; X = 2 ; X = 3.</span>
+
+<span style="color:#546e7a">% Anhängen – auch UMGEKEHRT benutzbar!</span>
+<span style="color:#c792ea">mein_append</span>([]<span style="color:#89ddff">,</span> <span style="color:#f07178">L</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L</span>).
+<span style="color:#c792ea">mein_append</span>([<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">L</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">R</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">mein_append</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L</span><span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>).
+
+<span style="color:#546e7a">% ?- mein_append([1,2], [3,4], X).  X = [1,2,3,4].</span>
+<span style="color:#546e7a">% ?- mein_append(X, Y, [1,2,3]).    % Alle Splits! Magic!</span>
+<span style="color:#546e7a">%    X = [],       Y = [1,2,3] ;</span>
+<span style="color:#546e7a">%    X = [1],      Y = [2,3] ;</span>
+<span style="color:#546e7a">%    X = [1,2],    Y = [3] ;</span>
+<span style="color:#546e7a">%    X = [1,2,3],  Y = [].</span>
+
+<span style="color:#546e7a">% Umkehren (Akkumulator-Stil)</span>
+<span style="color:#c792ea">mein_reverse</span>(<span style="color:#f07178">L</span><span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">mein_reverse</span>(<span style="color:#f07178">L</span><span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>).
+<span style="color:#c792ea">mein_reverse</span>([]<span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span>).
+<span style="color:#c792ea">mein_reverse</span>([<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span><span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">mein_reverse</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">Acc</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>).
+
+<span style="color:#546e7a">% Letztes Element</span>
+<span style="color:#c792ea">mein_last</span>([<span style="color:#f07178">X</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">X</span>).
+<span style="color:#c792ea">mein_last</span>([<span style="color:#f07178">_</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">X</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">mein_last</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">X</span>).
+
+<span style="color:#546e7a">% ── LISTEN ERZEUGEN ───────────────────────────────────────────────</span>
+<span style="color:#546e7a">% numlist(Low, High, List) – erzeugt Zahlenliste</span>
+<span style="color:#546e7a">% ?- numlist(1, 5, L).   L = [1,2,3,4,5].</span>
+
+<span style="color:#546e7a">% Eingebaute Prädikate (SWI-Prolog):</span>
+<span style="color:#546e7a">% append(L1, L2, L3)</span>
+<span style="color:#546e7a">% length(L, N)</span>
+<span style="color:#546e7a">% member(X, L)</span>
+<span style="color:#546e7a">% last(L, X)</span>
+<span style="color:#546e7a">% nth0(I, L, X)   – 0-basiert</span>
+<span style="color:#546e7a">% nth1(I, L, X)   – 1-basiert</span>
+<span style="color:#546e7a">% flatten(L, F)</span>
+<span style="color:#546e7a">% sort(L, Sorted)  – auch Duplikate entfernen!</span>
+<span style="color:#546e7a">% msort(L, Sorted) – sortieren ohne Duplikate zu entfernen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Arithmetik
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arithmetik">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arithmetik
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% WICHTIG: is/2 wertet Arithmetik aus!</span>
+<span style="color:#546e7a">% X = 1+2  →  X wird an den TERM 1+2 gebunden (nicht 3!)</span>
+<span style="color:#546e7a">% X is 1+2 →  X wird an den WERT 3 gebunden</span>
+
+<span style="color:#546e7a">% ── GRUNDLEGENDE ARITHMETIK ──────────────────────────────────────</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">2</span> + <span style="color:#f78c6c">3.</span>          <span style="color:#546e7a">% X = 5</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">10</span> - <span style="color:#f78c6c">4.</span>         <span style="color:#546e7a">% X = 6</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">3</span> * <span style="color:#f78c6c">7.</span>          <span style="color:#546e7a">% X = 21</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">17</span> / <span style="color:#f78c6c">5.</span>         <span style="color:#546e7a">% X = 3.4    (Float!)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">17</span> // <span style="color:#f78c6c">5.</span>        <span style="color:#546e7a">% X = 3      (Integer-Division)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">17</span> <span style="color:#c792ea">mod</span> <span style="color:#f78c6c">5.</span>       <span style="color:#546e7a">% X = 2      (Rest)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">2</span> ** <span style="color:#f78c6c">10.</span>        <span style="color:#546e7a">% X = 1024.0 (Potenz, gibt Float)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">2</span> ^ <span style="color:#f78c6c">10.</span>         <span style="color:#546e7a">% X = 1024   (Potenz, Integer)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">abs</span>(-<span style="color:#f78c6c">5</span>).        <span style="color:#546e7a">% X = 5</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">max</span>(<span style="color:#f78c6c">3</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">7</span>).      <span style="color:#546e7a">% X = 7</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">min</span>(<span style="color:#f78c6c">3</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">7</span>).      <span style="color:#546e7a">% X = 3</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">sqrt</span>(<span style="color:#f78c6c">9.0</span>).      <span style="color:#546e7a">% X = 3.0</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">floor</span>(<span style="color:#f78c6c">3.7</span>).     <span style="color:#546e7a">% X = 3</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">ceiling</span>(<span style="color:#f78c6c">3.2</span>).   <span style="color:#546e7a">% X = 4</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">round</span>(<span style="color:#f78c6c">3.5</span>).     <span style="color:#546e7a">% X = 4</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#82aaff">truncate</span>(<span style="color:#f78c6c">3.9</span>).  <span style="color:#546e7a">% X = 3</span>
+
+<span style="color:#546e7a">% Bitweise:</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">5</span> /\ <span style="color:#f78c6c">3.</span>         <span style="color:#546e7a">% X = 1     (AND)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">5</span> \/ <span style="color:#f78c6c">3.</span>         <span style="color:#546e7a">% X = 7     (OR)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">5</span> <span style="color:#c792ea">xor</span> <span style="color:#f78c6c">3.</span>        <span style="color:#546e7a">% X = 6</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> .             <span style="color:#546e7a">% Bitweise NOT</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">5</span> &gt;&gt; <span style="color:#f78c6c">1.</span>         <span style="color:#546e7a">% X = 2     (Rechtsshift)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f07178">X</span> <span style="color:#82aaff">is</span> <span style="color:#f78c6c">5</span> &lt;&lt; <span style="color:#f78c6c">1.</span>         <span style="color:#546e7a">% X = 10    (Linksshift)</span>
+
+<span style="color:#546e7a">% ── VERGLEICHE ────────────────────────────────────────────────────</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f78c6c">5</span> &gt; <span style="color:#f78c6c">3.</span>          <span style="color:#546e7a">% true</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f78c6c">5</span> &lt; <span style="color:#f78c6c">3.</span>          <span style="color:#546e7a">% false</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f78c6c">5</span> &gt;= <span style="color:#f78c6c">5.</span>         <span style="color:#546e7a">% true</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f78c6c">5</span> =&lt; <span style="color:#f78c6c">5.</span>         <span style="color:#546e7a">% true  (ACHTUNG: =&lt; nicht &lt;=!)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f78c6c">5</span> =:= <span style="color:#f78c6c">5.</span>        <span style="color:#546e7a">% true  (arithmetische Gleichheit)</span>
+<span style="color:#89ddff">?-</span> <span style="color:#f78c6c">5</span> =\= <span style="color:#f78c6c">3.</span>        <span style="color:#546e7a">% true  (arithmetische Ungleichheit)</span>
+
+<span style="color:#546e7a">% ── AKKUMULATOR-MUSTER ───────────────────────────────────────────</span>
+<span style="color:#546e7a">% Für effiziente rekursive Berechnungen</span>
+
+<span style="color:#c792ea">summe</span>(<span style="color:#f07178">L</span><span style="color:#89ddff">,</span> <span style="color:#f07178">S</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">summe</span>(<span style="color:#f07178">L</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#f07178">S</span>).
+<span style="color:#c792ea">summe</span>([]<span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span>).
+<span style="color:#c792ea">summe</span>([<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span><span style="color:#89ddff">,</span> <span style="color:#f07178">S</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">Neu</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">Acc</span> + <span style="color:#f07178">H</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">summe</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Neu</span><span style="color:#89ddff">,</span> <span style="color:#f07178">S</span>).
+
+<span style="color:#546e7a">% ?- summe([1,2,3,4,5], S).   S = 15.</span>
+
+<span style="color:#546e7a">% Fakultät (tail-recursive mit Akkumulator)</span>
+<span style="color:#c792ea">fak</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">fak</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>).
+<span style="color:#c792ea">fak</span>(<span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span>) <span style="color:#89ddff">:-</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">fak</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Acc</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">N</span> &gt; <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span>
+    <span style="color:#f07178">N1</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N</span> - <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span>
+    <span style="color:#f07178">Acc1</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">Acc</span> * <span style="color:#f07178">N</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">fak</span>(<span style="color:#f07178">N1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Acc1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>).
+
+<span style="color:#546e7a">% ?- fak(10, F).   F = 3628800.</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-meta" class="tp">
+
+<div class="ac open" id="ac-mt0"
+     style="border:1px solid #e74c3c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mt0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e74c3c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e74c3c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e74c3c;border-radius:50%;margin-right:2px"></span>Meta-Prädikate: findall, bagof, setof
+    </span>
+    <span class="aa" style="color:#e74c3c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="meta-prädikate: findall, bagof, setof">
+  <div style="color:#e74c3c;font-weight:700;font-size:12px;margin-bottom:8px">
+    Meta-Prädikate: findall, bagof, setof
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Meta-Prädikate sammeln ALLE Lösungen auf einmal!</span>
+
+<span style="color:#546e7a">% Daten für Beispiele:</span>
+<span style="color:#c792ea">alter</span>(<span style="color:#c792ea">alice</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">30</span>).
+<span style="color:#c792ea">alter</span>(<span style="color:#c792ea">bob</span><span style="color:#89ddff">,</span>   <span style="color:#f78c6c">25</span>).
+<span style="color:#c792ea">alter</span>(<span style="color:#c792ea">carol</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">35</span>).
+<span style="color:#c792ea">alter</span>(<span style="color:#c792ea">dave</span><span style="color:#89ddff">,</span>  <span style="color:#f78c6c">25</span>).
+
+<span style="color:#c792ea">stadt</span>(<span style="color:#c792ea">alice</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">berlin</span>).
+<span style="color:#c792ea">stadt</span>(<span style="color:#c792ea">bob</span><span style="color:#89ddff">,</span>   <span style="color:#c792ea">hamburg</span>).
+<span style="color:#c792ea">stadt</span>(<span style="color:#c792ea">carol</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">berlin</span>).
+<span style="color:#c792ea">stadt</span>(<span style="color:#c792ea">dave</span><span style="color:#89ddff">,</span>  <span style="color:#c792ea">muenchen</span>).
+
+<span style="color:#546e7a">% ── FINDALL ───────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% findall(Vorlage, Ziel, Liste)</span>
+<span style="color:#546e7a">% Sammelt ALLE Vorlage-Werte wo Ziel erfüllt ist.</span>
+<span style="color:#546e7a">% Wenn keine Lösung: leere Liste (kein Fehler!)</span>
+
+<span style="color:#546e7a">% Alle Namen:</span>
+<span style="color:#546e7a">% ?- findall(X, alter(X, _), Namen).</span>
+<span style="color:#546e7a">%    Namen = [alice, bob, carol, dave].</span>
+
+<span style="color:#546e7a">% Alle über 28:</span>
+<span style="color:#546e7a">% ?- findall(X, (alter(X, A), A &gt; 28), Ältere).</span>
+<span style="color:#546e7a">%    Ältere = [alice, carol].</span>
+
+<span style="color:#546e7a">% Als Paare:</span>
+<span style="color:#546e7a">% ?- findall(X-A, alter(X, A), Paare).</span>
+<span style="color:#546e7a">%    Paare = [alice-30, bob-25, carol-35, dave-25].</span>
+
+<span style="color:#546e7a">% ── BAGOF ─────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% bagof(Vorlage, Ziel, Liste)</span>
+<span style="color:#546e7a">% Wie findall, aber gruppiert nach freien Variablen.</span>
+<span style="color:#546e7a">% Schlägt FEHL wenn keine Lösung (anders als findall!)</span>
+
+<span style="color:#546e7a">% ?- bagof(X, alter(X, 25), Liste).</span>
+<span style="color:#546e7a">%    Liste = [bob, dave].         % Alle 25-Jährigen</span>
+
+<span style="color:#546e7a">% ?- bagof(X, A^alter(X, A), Liste).  % ^ = "existiert A sodass"</span>
+<span style="color:#546e7a">%    Liste = [alice, bob, carol, dave].</span>
+
+<span style="color:#546e7a">% ── SETOF ─────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% setof(Vorlage, Ziel, Liste)</span>
+<span style="color:#546e7a">% Wie bagof, aber sortiert und ohne Duplikate!</span>
+
+<span style="color:#546e7a">% ?- setof(A, X^alter(X, A), Alter).</span>
+<span style="color:#546e7a">%    Alter = [25, 30, 35].        % Eindeutige, sortierte Alter</span>
+
+<span style="color:#546e7a">% ── FORALL ────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% forall(Bedingung, Aktion)</span>
+<span style="color:#546e7a">% Wahr wenn Aktion für ALLE Lösungen von Bedingung wahr ist</span>
+
+<span style="color:#546e7a">% ?- forall(alter(X, A), A &gt; 20).  true. (Alle sind über 20)</span>
+<span style="color:#546e7a">% ?- forall(alter(X, A), A &gt; 30).  false. (Nicht alle über 30)</span>
+
+<span style="color:#546e7a">% ── AGGREGATE ─────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% aggregate_all(count, Goal, Count)  – Anzahl</span>
+<span style="color:#546e7a">% aggregate_all(max(X), alter(_, X), Max)  – Maximum</span>
+<span style="color:#546e7a">% aggregate_all(sum(X), alter(_, X), Sum)  – Summe</span>
+
+<span style="color:#546e7a">% ?- aggregate_all(count, alter(_, _), N).</span>
+<span style="color:#546e7a">%    N = 4.</span>
+
+<span style="color:#546e7a">% ?- aggregate_all(max(A), alter(_, A), Max).</span>
+<span style="color:#546e7a">%    Max = 35.</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mt1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mt1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Assert &amp; Retract – dynamische Fakten
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="assert &amp; retract – dynamische fakten">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Assert &amp; Retract – dynamische Fakten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Prolog-Programme können sich SELBST verändern!</span>
+<span style="color:#546e7a">% assert: Fakt hinzufügen</span>
+<span style="color:#546e7a">% retract: Fakt entfernen</span>
+
+<span style="color:#546e7a">% Dynamische Prädikate müssen deklariert werden:</span>
+<span style="color:#89ddff">:-</span> <span style="color:#c792ea">dynamic</span> <span style="color:#c792ea">counter</span>/<span style="color:#f78c6c">1.</span>
+<span style="color:#89ddff">:-</span> <span style="color:#c792ea">dynamic</span> <span style="color:#c792ea">besucht</span>/<span style="color:#f78c6c">1.</span>
+<span style="color:#89ddff">:-</span> <span style="color:#c792ea">dynamic</span> <span style="color:#c792ea">fact</span>/<span style="color:#f78c6c">2.</span>
+
+<span style="color:#546e7a">% Initialisieren</span>
+<span style="color:#89ddff">:-</span> <span style="color:#82aaff">assertz</span>(<span style="color:#c792ea">counter</span>(<span style="color:#f78c6c">0</span>)).
+
+<span style="color:#546e7a">% Zähler erhöhen</span>
+<span style="color:#c792ea">erhoehe_counter</span> <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">retract</span>(<span style="color:#c792ea">counter</span>(<span style="color:#f07178">N</span>))<span style="color:#89ddff">,</span>     <span style="color:#546e7a">% Alten Wert entfernen</span>
+    <span style="color:#f07178">N1</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N</span> + <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">assertz</span>(<span style="color:#c792ea">counter</span>(<span style="color:#f07178">N1</span>)).    <span style="color:#546e7a">% Neuen Wert hinzufügen</span>
+
+<span style="color:#546e7a">% ?- erhoehe_counter, erhoehe_counter, counter(N).</span>
+<span style="color:#546e7a">%    N = 2.</span>
+
+<span style="color:#546e7a">% ── ASSERTA vs ASSERTZ ────────────────────────────────────────────</span>
+<span style="color:#546e7a">% asserta: Am ANFANG der Datenbank einfügen (wird zuerst gefunden)</span>
+<span style="color:#546e7a">% assertz: Am ENDE der Datenbank einfügen  (wird zuletzt gefunden)</span>
+
+<span style="color:#89ddff">:-</span> <span style="color:#82aaff">assertz</span>(<span style="color:#c792ea">fact</span>(<span style="color:#c792ea">b</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">2</span>)).
+<span style="color:#89ddff">:-</span> <span style="color:#82aaff">asserta</span>(<span style="color:#c792ea">fact</span>(<span style="color:#c792ea">a</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">1</span>)).   <span style="color:#546e7a">% Wird VOR fact(b,2) eingefügt</span>
+<span style="color:#89ddff">:-</span> <span style="color:#82aaff">assertz</span>(<span style="color:#c792ea">fact</span>(<span style="color:#c792ea">c</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">3</span>)).
+
+<span style="color:#546e7a">% ?- fact(X, _).</span>
+<span style="color:#546e7a">%    X = a ;   (asserta: zuerst)</span>
+<span style="color:#546e7a">%    X = b ;</span>
+<span style="color:#546e7a">%    X = c.</span>
+
+<span style="color:#546e7a">% ── MEMOIZATION mit assert ────────────────────────────────────────</span>
+<span style="color:#546e7a">% Berechnete Werte speichern für Effizienz!</span>
+<span style="color:#89ddff">:-</span> <span style="color:#c792ea">dynamic</span> <span style="color:#c792ea">fib_memo</span>/<span style="color:#f78c6c">2.</span>
+
+<span style="color:#c792ea">fib</span>(<span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">:-</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">fib</span>(<span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">1</span>) <span style="color:#89ddff">:-</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">fib</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">:-</span>
+    (<span style="color:#c792ea">fib_memo</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">true</span>    <span style="color:#546e7a">% Schon berechnet? Direkt zurück!</span>
+    <span style="color:#89ddff">;</span>
+        <span style="color:#f07178">N1</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N</span> - <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span>
+        <span style="color:#f07178">N2</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N</span> - <span style="color:#f78c6c">2</span><span style="color:#89ddff">,</span>
+        <span style="color:#c792ea">fib</span>(<span style="color:#f07178">N1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F1</span>)<span style="color:#89ddff">,</span>
+        <span style="color:#c792ea">fib</span>(<span style="color:#f07178">N2</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F2</span>)<span style="color:#89ddff">,</span>
+        <span style="color:#f07178">F</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">F1</span> + <span style="color:#f07178">F2</span><span style="color:#89ddff">,</span>
+        <span style="color:#82aaff">assertz</span>(<span style="color:#c792ea">fib_memo</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>))  <span style="color:#546e7a">% Ergebnis merken</span>
+    ).
+
+<span style="color:#546e7a">% ?- fib(30, F).   F = 832040.  (Viel schneller als ohne Memo!)</span>
+
+<span style="color:#546e7a">% ── RETRACTALL ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% retractall(Head) – alle passenden Fakten löschen</span>
+<span style="color:#546e7a">% (Kein Fehler wenn nichts zum Löschen vorhanden)</span>
+<span style="color:#89ddff">:-</span> <span style="color:#82aaff">retractall</span>(<span style="color:#c792ea">fact</span>(<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> <span style="color:#f07178">_</span>)).   <span style="color:#546e7a">% Alle fact/2 löschen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mt2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mt2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>DCG – Definite Clause Grammars
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="dcg – definite clause grammars">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    DCG – Definite Clause Grammars
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% DCGs sind eine elegante Erweiterung für Grammatiken!</span>
+<span style="color:#546e7a">% --&gt; statt :- für Grammatikregeln</span>
+<span style="color:#546e7a">% Prolog kann damit Sätze PARSEN und GENERIEREN</span>
+
+<span style="color:#546e7a">% ── EINFACHE GRAMMATIK ────────────────────────────────────────────</span>
+<span style="color:#546e7a">% Definiere eine Sprache: Satz = Subjekt + Verb + Objekt</span>
+
+<span style="color:#c792ea">satz</span> -<span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">subjekt</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">verb</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">objekt</span>.
+
+<span style="color:#c792ea">subjekt</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">der</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">mann</span>].
+<span style="color:#c792ea">subjekt</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">die</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">frau</span>].
+<span style="color:#c792ea">subjekt</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">das</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">kind</span>].
+
+<span style="color:#c792ea">verb</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">sieht</span>].
+<span style="color:#c792ea">verb</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">liebt</span>].
+<span style="color:#c792ea">verb</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">kennt</span>].
+
+<span style="color:#c792ea">objekt</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">den</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">hund</span>].
+<span style="color:#c792ea">objekt</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">die</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">katze</span>].
+<span style="color:#c792ea">objekt</span> -<span style="color:#89ddff">-&gt;</span> [<span style="color:#c792ea">ein</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">buch</span>].
+
+<span style="color:#546e7a">% Parsen:</span>
+<span style="color:#546e7a">% ?- phrase(satz, [der, mann, sieht, die, katze]).</span>
+<span style="color:#546e7a">%    true.</span>
+
+<span style="color:#546e7a">% ?- phrase(satz, [die, frau, mag, den, hund]).</span>
+<span style="color:#546e7a">%    false.  (mag ist kein Verb in unserer Grammatik)</span>
+
+<span style="color:#546e7a">% Generieren (alle möglichen Sätze!):</span>
+<span style="color:#546e7a">% ?- phrase(satz, S).</span>
+<span style="color:#546e7a">%    S = [der, mann, sieht, den, hund] ;</span>
+<span style="color:#546e7a">%    S = [der, mann, sieht, die, katze] ;</span>
+<span style="color:#546e7a">%    ... (18 Kombinationen)</span>
+
+<span style="color:#546e7a">% ── DCG MIT AKTIONEN ─────────────────────────────────────────────</span>
+<span style="color:#546e7a">% {} für Prolog-Code innerhalb einer Grammatikregel</span>
+
+<span style="color:#546e7a">% Arithmetischer Ausdruck Parser</span>
+<span style="color:#c792ea">ausdruck</span>(<span style="color:#f07178">E</span>) -<span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">term</span>(<span style="color:#f07178">T</span>)<span style="color:#89ddff">,</span> <span style="color:#c792ea">ausdruck_rest</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>).
+
+<span style="color:#c792ea">ausdruck_rest</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>) -<span style="color:#89ddff">-&gt;</span> [+]<span style="color:#89ddff">,</span> <span style="color:#c792ea">term</span>(<span style="color:#f07178">T2</span>)<span style="color:#89ddff">,</span> { <span style="color:#f07178">T3</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">T</span> + <span style="color:#f07178">T2</span> }<span style="color:#89ddff">,</span> <span style="color:#c792ea">ausdruck_rest</span>(<span style="color:#f07178">T3</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>).
+<span style="color:#c792ea">ausdruck_rest</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>) -<span style="color:#89ddff">-&gt;</span> [-]<span style="color:#89ddff">,</span> <span style="color:#c792ea">term</span>(<span style="color:#f07178">T2</span>)<span style="color:#89ddff">,</span> { <span style="color:#f07178">T3</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">T</span> - <span style="color:#f07178">T2</span> }<span style="color:#89ddff">,</span> <span style="color:#c792ea">ausdruck_rest</span>(<span style="color:#f07178">T3</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>).
+<span style="color:#c792ea">ausdruck_rest</span>(<span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span>) -<span style="color:#89ddff">-&gt;</span> [].
+
+<span style="color:#c792ea">term</span>(<span style="color:#f07178">T</span>) -<span style="color:#89ddff">-&gt;</span> [<span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> { <span style="color:#82aaff">number</span>(<span style="color:#f07178">T</span>) }.
+
+<span style="color:#546e7a">% ?- phrase(ausdruck(E), [3, +, 4, -, 1]).</span>
+<span style="color:#546e7a">%    E = 6.</span>
+
+<span style="color:#546e7a">% ── DCG NUTZEN ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% phrase(Regel, Liste)           – parsen</span>
+<span style="color:#546e7a">% phrase(Regel, Liste, Rest)     – parsen mit Rest</span>
+<span style="color:#546e7a">% phrase(Regel, Liste)           – auch generieren wenn Liste var!</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #e74c3c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e74c3c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e74c3c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e74c3c;border-radius:50%;margin-right:2px"></span>Eingebaute Prädikate – Kontrolle
+    </span>
+    <span class="aa" style="color:#e74c3c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Prädikat</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="true" data-d="immer wahr">
+      <td style="width:230px"><code style="color:#e74c3c">true</code></td>
+      <td style="color:#6c7a8e">Immer wahr</td>
+      <td style="color:#c3e88d;font-size:11px">true.  % Trivial</td>
+    </tr>
+    <tr class="cr" data-m="fail / false" data-d="immer falsch – erzwingt backtracking">
+      <td style="width:230px"><code style="color:#e74c3c">fail / false</code></td>
+      <td style="color:#6c7a8e">Immer falsch – erzwingt Backtracking</td>
+      <td style="color:#c3e88d;font-size:11px">member(X, L), write(X), fail.</td>
+    </tr>
+    <tr class="cr" data-m="! (cut)" data-d="verhindert backtracking">
+      <td style="width:230px"><code style="color:#e74c3c">! (Cut)</code></td>
+      <td style="color:#6c7a8e">Verhindert Backtracking</td>
+      <td style="color:#c3e88d;font-size:11px">max(X,Y,X) :- X&gt;=Y, !.</td>
+    </tr>
+    <tr class="cr" data-m="call(goal)" data-d="ziel dynamisch aufrufen">
+      <td style="width:230px"><code style="color:#e74c3c">call(Goal)</code></td>
+      <td style="color:#6c7a8e">Ziel dynamisch aufrufen</td>
+      <td style="color:#c3e88d;font-size:11px">call(write, hallo)</td>
+    </tr>
+    <tr class="cr" data-m="call(goal, arg)" data-d="ziel mit extra argument aufrufen">
+      <td style="width:230px"><code style="color:#e74c3c">call(Goal, Arg)</code></td>
+      <td style="color:#6c7a8e">Ziel mit extra Argument aufrufen</td>
+      <td style="color:#c3e88d;font-size:11px">maplist(write, [1,2,3])</td>
+    </tr>
+    <tr class="cr" data-m="once(goal)" data-d="höchstens eine lösung">
+      <td style="width:230px"><code style="color:#e74c3c">once(Goal)</code></td>
+      <td style="color:#6c7a8e">Höchstens eine Lösung</td>
+      <td style="color:#c3e88d;font-size:11px">once(member(X, [1,2,3]))</td>
+    </tr>
+    <tr class="cr" data-m="ignore(goal)" data-d="ausführen, fehler ignorieren">
+      <td style="width:230px"><code style="color:#e74c3c">ignore(Goal)</code></td>
+      <td style="color:#6c7a8e">Ausführen, Fehler ignorieren</td>
+      <td style="color:#c3e88d;font-size:11px">ignore(retract(fact(_)))</td>
+    </tr>
+    <tr class="cr" data-m="\+ goal" data-d="negation als failure">
+      <td style="width:230px"><code style="color:#e74c3c">\+ Goal</code></td>
+      <td style="color:#6c7a8e">Negation als Failure</td>
+      <td style="color:#c3e88d;font-size:11px">\+ member(x, [a,b,c])</td>
+    </tr>
+    <tr class="cr" data-m="goal1 -&gt; goal2" data-d="if-then (kein backtracking in g1)">
+      <td style="width:230px"><code style="color:#e74c3c">Goal1 -&gt; Goal2</code></td>
+      <td style="color:#6c7a8e">If-Then (kein Backtracking in G1)</td>
+      <td style="color:#c3e88d;font-size:11px">(X&gt;0 -&gt; write(pos) ; write(neg))</td>
+    </tr>
+    <tr class="cr" data-m="g1 , g2" data-d="konjunktion: g1 und g2">
+      <td style="width:230px"><code style="color:#e74c3c">G1 , G2</code></td>
+      <td style="color:#6c7a8e">Konjunktion: G1 UND G2</td>
+      <td style="color:#c3e88d;font-size:11px">number(X), X &gt; 0</td>
+    </tr>
+    <tr class="cr" data-m="g1 ; g2" data-d="disjunktion: g1 oder g2">
+      <td style="width:230px"><code style="color:#e74c3c">G1 ; G2</code></td>
+      <td style="color:#6c7a8e">Disjunktion: G1 ODER G2</td>
+      <td style="color:#c3e88d;font-size:11px">(X=1 ; X=2)</td>
+    </tr>
+    <tr class="cr" data-m="forall(c, a)" data-d="für alle c gilt a">
+      <td style="width:230px"><code style="color:#e74c3c">forall(C, A)</code></td>
+      <td style="color:#6c7a8e">Für alle C gilt A</td>
+      <td style="color:#c3e88d;font-size:11px">forall(member(X,L),number(X))</td>
+    </tr>
+    <tr class="cr" data-m="between(l, h, x)" data-d="x zwischen l und h">
+      <td style="width:230px"><code style="color:#e74c3c">between(L, H, X)</code></td>
+      <td style="color:#6c7a8e">X zwischen L und H</td>
+      <td style="color:#c3e88d;font-size:11px">between(1, 10, X)</td>
+    </tr>
+    <tr class="cr" data-m="succ(x, y)" data-d="y = x + 1 (bidirektional!)">
+      <td style="width:230px"><code style="color:#e74c3c">succ(X, Y)</code></td>
+      <td style="color:#6c7a8e">Y = X + 1 (bidirektional!)</td>
+      <td style="color:#c3e88d;font-size:11px">succ(3, Y) → Y=4</td>
+    </tr>
+    <tr class="cr" data-m="plus(x, y, z)" data-d="z = x + y (bidirektional!)">
+      <td style="width:230px"><code style="color:#e74c3c">plus(X, Y, Z)</code></td>
+      <td style="color:#6c7a8e">Z = X + Y (bidirektional!)</td>
+      <td style="color:#c3e88d;font-size:11px">plus(X, 3, 5) → X=2</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Listen-Prädikate
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Prädikat</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="length(l, n)" data-d="länge / liste erzeugen">
+      <td style="width:230px"><code style="color:#4fc3f7">length(L, N)</code></td>
+      <td style="color:#6c7a8e">Länge / Liste erzeugen</td>
+      <td style="color:#c3e88d;font-size:11px">length([1,2,3], N) → N=3</td>
+    </tr>
+    <tr class="cr" data-m="append(l1, l2, l3)" data-d="verbinden / aufteilen">
+      <td style="width:230px"><code style="color:#4fc3f7">append(L1, L2, L3)</code></td>
+      <td style="color:#6c7a8e">Verbinden / Aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px">append([1],[2],[1,2])</td>
+    </tr>
+    <tr class="cr" data-m="member(x, l)" data-d="mitgliedschaft / iterieren">
+      <td style="width:230px"><code style="color:#4fc3f7">member(X, L)</code></td>
+      <td style="color:#6c7a8e">Mitgliedschaft / iterieren</td>
+      <td style="color:#c3e88d;font-size:11px">member(X, [a,b,c])</td>
+    </tr>
+    <tr class="cr" data-m="memberchk(x, l)" data-d="mitgliedschaft (kein backtrack)">
+      <td style="width:230px"><code style="color:#4fc3f7">memberchk(X, L)</code></td>
+      <td style="color:#6c7a8e">Mitgliedschaft (kein Backtrack)</td>
+      <td style="color:#c3e88d;font-size:11px">Schneller als member</td>
+    </tr>
+    <tr class="cr" data-m="last(l, x)" data-d="letztes element">
+      <td style="width:230px"><code style="color:#4fc3f7">last(L, X)</code></td>
+      <td style="color:#6c7a8e">Letztes Element</td>
+      <td style="color:#c3e88d;font-size:11px">last([1,2,3], X) → X=3</td>
+    </tr>
+    <tr class="cr" data-m="nth0(i, l, x)" data-d="element bei index (0-basiert)">
+      <td style="width:230px"><code style="color:#4fc3f7">nth0(I, L, X)</code></td>
+      <td style="color:#6c7a8e">Element bei Index (0-basiert)</td>
+      <td style="color:#c3e88d;font-size:11px">nth0(1, [a,b,c], X) → X=b</td>
+    </tr>
+    <tr class="cr" data-m="nth1(i, l, x)" data-d="element bei index (1-basiert)">
+      <td style="width:230px"><code style="color:#4fc3f7">nth1(I, L, X)</code></td>
+      <td style="color:#6c7a8e">Element bei Index (1-basiert)</td>
+      <td style="color:#c3e88d;font-size:11px">nth1(2, [a,b,c], X) → X=b</td>
+    </tr>
+    <tr class="cr" data-m="flatten(l, f)" data-d="verschachtelte liste flach">
+      <td style="width:230px"><code style="color:#4fc3f7">flatten(L, F)</code></td>
+      <td style="color:#6c7a8e">Verschachtelte Liste flach</td>
+      <td style="color:#c3e88d;font-size:11px">flatten([1,[2,3]], F)</td>
+    </tr>
+    <tr class="cr" data-m="sort(l, s)" data-d="sortieren + duplikate entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">sort(L, S)</code></td>
+      <td style="color:#6c7a8e">Sortieren + Duplikate entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">sort([3,1,2,1], S)</td>
+    </tr>
+    <tr class="cr" data-m="msort(l, s)" data-d="sortieren ohne duplikate entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">msort(L, S)</code></td>
+      <td style="color:#6c7a8e">Sortieren ohne Duplikate entfernen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="reverse(l, r)" data-d="umkehren">
+      <td style="width:230px"><code style="color:#4fc3f7">reverse(L, R)</code></td>
+      <td style="color:#6c7a8e">Umkehren</td>
+      <td style="color:#c3e88d;font-size:11px">reverse([1,2,3], R)</td>
+    </tr>
+    <tr class="cr" data-m="permutation(l, p)" data-d="alle permutationen">
+      <td style="width:230px"><code style="color:#4fc3f7">permutation(L, P)</code></td>
+      <td style="color:#6c7a8e">Alle Permutationen</td>
+      <td style="color:#c3e88d;font-size:11px">permutation([1,2,3], P)</td>
+    </tr>
+    <tr class="cr" data-m="select(x, l, rest)" data-d="element entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">select(X, L, Rest)</code></td>
+      <td style="color:#6c7a8e">Element entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">select(2, [1,2,3], R)</td>
+    </tr>
+    <tr class="cr" data-m="subtract(l1, l2, l)" data-d="differenz">
+      <td style="width:230px"><code style="color:#4fc3f7">subtract(L1, L2, L)</code></td>
+      <td style="color:#6c7a8e">Differenz</td>
+      <td style="color:#c3e88d;font-size:11px">subtract([1,2,3],[2],R)</td>
+    </tr>
+    <tr class="cr" data-m="intersection(l1,l2,l)" data-d="schnittmenge">
+      <td style="width:230px"><code style="color:#4fc3f7">intersection(L1,L2,L)</code></td>
+      <td style="color:#6c7a8e">Schnittmenge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="union(l1, l2, l)" data-d="vereinigung">
+      <td style="width:230px"><code style="color:#4fc3f7">union(L1, L2, L)</code></td>
+      <td style="color:#6c7a8e">Vereinigung</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="list_to_set(l, s)" data-d="duplikate entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">list_to_set(L, S)</code></td>
+      <td style="color:#6c7a8e">Duplikate entfernen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="numlist(l, h, list)" data-d="zahlenliste erzeugen">
+      <td style="width:230px"><code style="color:#4fc3f7">numlist(L, H, List)</code></td>
+      <td style="color:#6c7a8e">Zahlenliste erzeugen</td>
+      <td style="color:#c3e88d;font-size:11px">numlist(1, 5, L)</td>
+    </tr>
+    <tr class="cr" data-m="sum_list(l, s)" data-d="summe">
+      <td style="width:230px"><code style="color:#4fc3f7">sum_list(L, S)</code></td>
+      <td style="color:#6c7a8e">Summe</td>
+      <td style="color:#c3e88d;font-size:11px">sum_list([1,2,3], S) → 6</td>
+    </tr>
+    <tr class="cr" data-m="max_list(l, m)" data-d="maximum">
+      <td style="width:230px"><code style="color:#4fc3f7">max_list(L, M)</code></td>
+      <td style="color:#6c7a8e">Maximum</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="min_list(l, m)" data-d="minimum">
+      <td style="width:230px"><code style="color:#4fc3f7">min_list(L, M)</code></td>
+      <td style="color:#6c7a8e">Minimum</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="maplist(goal, l)" data-d="goal auf alle elemente">
+      <td style="width:230px"><code style="color:#4fc3f7">maplist(Goal, L)</code></td>
+      <td style="color:#6c7a8e">Goal auf alle Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">maplist(write, [1,2,3])</td>
+    </tr>
+    <tr class="cr" data-m="maplist(goal, l1, l2)" data-d="transformieren">
+      <td style="width:230px"><code style="color:#4fc3f7">maplist(Goal, L1, L2)</code></td>
+      <td style="color:#6c7a8e">Transformieren</td>
+      <td style="color:#c3e88d;font-size:11px">maplist(succ, [1,2], [2,3])</td>
+    </tr>
+    <tr class="cr" data-m="include(pred, l, r)" data-d="filtern (pred wahr)">
+      <td style="width:230px"><code style="color:#4fc3f7">include(Pred, L, R)</code></td>
+      <td style="color:#6c7a8e">Filtern (Pred wahr)</td>
+      <td style="color:#c3e88d;font-size:11px">include(number, L, R)</td>
+    </tr>
+    <tr class="cr" data-m="exclude(pred, l, r)" data-d="filtern (pred falsch)">
+      <td style="width:230px"><code style="color:#4fc3f7">exclude(Pred, L, R)</code></td>
+      <td style="color:#6c7a8e">Filtern (Pred falsch)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="foldl(goal, l, v0, v)" data-d="akkumulieren">
+      <td style="width:230px"><code style="color:#4fc3f7">foldl(Goal, L, V0, V)</code></td>
+      <td style="color:#6c7a8e">Akkumulieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>I/O &amp; Strings
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Prädikat</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="write(x)" data-d="term ausgeben">
+      <td style="width:230px"><code style="color:#c792ea">write(X)</code></td>
+      <td style="color:#6c7a8e">Term ausgeben</td>
+      <td style="color:#c3e88d;font-size:11px">write(hello)</td>
+    </tr>
+    <tr class="cr" data-m="writeln(x)" data-d="term + newline ausgeben">
+      <td style="width:230px"><code style="color:#c792ea">writeln(X)</code></td>
+      <td style="color:#6c7a8e">Term + Newline ausgeben</td>
+      <td style="color:#c3e88d;font-size:11px">writeln(hallo)</td>
+    </tr>
+    <tr class="cr" data-m="nl" data-d="newline">
+      <td style="width:230px"><code style="color:#c792ea">nl</code></td>
+      <td style="color:#6c7a8e">Newline</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="format(fmt, args)" data-d="formatierte ausgabe">
+      <td style="width:230px"><code style="color:#c792ea">format(Fmt, Args)</code></td>
+      <td style="color:#6c7a8e">Formatierte Ausgabe</td>
+      <td style="color:#c3e88d;font-size:11px">format("~w + ~w~n", [1,2])</td>
+    </tr>
+    <tr class="cr" data-m="format(atom(a),fmt,l)" data-d="in atom formatieren">
+      <td style="width:230px"><code style="color:#c792ea">format(atom(A),Fmt,L)</code></td>
+      <td style="color:#6c7a8e">In Atom formatieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="read(x)" data-d="term von stdin lesen">
+      <td style="width:230px"><code style="color:#c792ea">read(X)</code></td>
+      <td style="color:#6c7a8e">Term von stdin lesen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="atom_length(a, n)" data-d="länge eines atoms">
+      <td style="width:230px"><code style="color:#c792ea">atom_length(A, N)</code></td>
+      <td style="color:#6c7a8e">Länge eines Atoms</td>
+      <td style="color:#c3e88d;font-size:11px">atom_length(hello, N) → 5</td>
+    </tr>
+    <tr class="cr" data-m="atom_concat(a, b, c)" data-d="atome verbinden">
+      <td style="width:230px"><code style="color:#c792ea">atom_concat(A, B, C)</code></td>
+      <td style="color:#6c7a8e">Atome verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">atom_concat(he,llo,hello)</td>
+    </tr>
+    <tr class="cr" data-m="atom_chars(a, l)" data-d="atom ↔ zeichenliste">
+      <td style="width:230px"><code style="color:#c792ea">atom_chars(A, L)</code></td>
+      <td style="color:#6c7a8e">Atom ↔ Zeichenliste</td>
+      <td style="color:#c3e88d;font-size:11px">atom_chars(hi, [h,i])</td>
+    </tr>
+    <tr class="cr" data-m="atom_codes(a, l)" data-d="atom ↔ code-liste">
+      <td style="width:230px"><code style="color:#c792ea">atom_codes(A, L)</code></td>
+      <td style="color:#6c7a8e">Atom ↔ Code-Liste</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="atom_number(a, n)" data-d="atom ↔ zahl">
+      <td style="width:230px"><code style="color:#c792ea">atom_number(A, N)</code></td>
+      <td style="color:#6c7a8e">Atom ↔ Zahl</td>
+      <td style="color:#c3e88d;font-size:11px">atom_number("42", 42)</td>
+    </tr>
+    <tr class="cr" data-m="atom_string(a, s)" data-d="atom ↔ string (swi)">
+      <td style="width:230px"><code style="color:#c792ea">atom_string(A, S)</code></td>
+      <td style="color:#6c7a8e">Atom ↔ String (SWI)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="number_chars(n, l)" data-d="zahl ↔ zeichenliste">
+      <td style="width:230px"><code style="color:#c792ea">number_chars(N, L)</code></td>
+      <td style="color:#6c7a8e">Zahl ↔ Zeichenliste</td>
+      <td style="color:#c3e88d;font-size:11px">number_chars(42, L)</td>
+    </tr>
+    <tr class="cr" data-m="char_code(c, n)" data-d="zeichen ↔ code">
+      <td style="width:230px"><code style="color:#c792ea">char_code(C, N)</code></td>
+      <td style="color:#6c7a8e">Zeichen ↔ Code</td>
+      <td style="color:#c3e88d;font-size:11px">char_code(a, N) → 97</td>
+    </tr>
+    <tr class="cr" data-m="sub_atom(a,b,l,a2,s)" data-d="teilstring">
+      <td style="width:230px"><code style="color:#c792ea">sub_atom(A,B,L,A2,S)</code></td>
+      <td style="color:#6c7a8e">Teilstring</td>
+      <td style="color:#c3e88d;font-size:11px">sub_atom(hello,1,3,_,S) → ell</td>
+    </tr>
+    <tr class="cr" data-m="upcase_atom(a, u)" data-d="großbuchstaben">
+      <td style="width:230px"><code style="color:#c792ea">upcase_atom(A, U)</code></td>
+      <td style="color:#6c7a8e">Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">upcase_atom(hi, HI)</td>
+    </tr>
+    <tr class="cr" data-m="downcase_atom(a, d)" data-d="kleinbuchstaben">
+      <td style="width:230px"><code style="color:#c792ea">downcase_atom(A, D)</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="split_string(s,s1,s2,l)" data-d="string aufteilen">
+      <td style="width:230px"><code style="color:#c792ea">split_string(S,S1,S2,L)</code></td>
+      <td style="color:#6c7a8e">String aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="term_to_atom(t, a)" data-d="term ↔ atom">
+      <td style="width:230px"><code style="color:#c792ea">term_to_atom(T, A)</code></td>
+      <td style="color:#6c7a8e">Term ↔ Atom</td>
+      <td style="color:#c3e88d;font-size:11px">term_to_atom(1+2, A)</td>
+    </tr>
+    <tr class="cr" data-m="with_output_to(s, g)" data-d="ausgabe umlenken">
+      <td style="width:230px"><code style="color:#c792ea">with_output_to(S, G)</code></td>
+      <td style="color:#6c7a8e">Ausgabe umlenken</td>
+      <td style="color:#c3e88d;font-size:11px">with_output_to(atom(A), write(hi))</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #e74c3c;color:#e74c3c;background:rgba(231,76,60,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Familien-Datenbank</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Constraint-Solving: SEND + MORE = MONEY</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Quicksort &amp; Listenprogrammierung</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Expertensystem – Diagnose</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Klassisches Prolog-Beispiel: Familienverwaltung</span>
+<span style="color:#546e7a">% Zeigt Fakten, Regeln, Abfragen und rekursive Definitionen</span>
+
+<span style="color:#546e7a">% ── FAKTEN ────────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">elternteil</span>(<span style="color:#c792ea">tom</span><span style="color:#89ddff">,</span>   <span style="color:#c792ea">bob</span>).
+<span style="color:#c792ea">elternteil</span>(<span style="color:#c792ea">tom</span><span style="color:#89ddff">,</span>   <span style="color:#c792ea">liz</span>).
+<span style="color:#c792ea">elternteil</span>(<span style="color:#c792ea">bob</span><span style="color:#89ddff">,</span>   <span style="color:#c792ea">ann</span>).
+<span style="color:#c792ea">elternteil</span>(<span style="color:#c792ea">bob</span><span style="color:#89ddff">,</span>   <span style="color:#c792ea">pat</span>).
+<span style="color:#c792ea">elternteil</span>(<span style="color:#c792ea">pat</span><span style="color:#89ddff">,</span>   <span style="color:#c792ea">jim</span>).
+
+<span style="color:#c792ea">maennlich</span>(<span style="color:#c792ea">tom</span>).
+<span style="color:#c792ea">maennlich</span>(<span style="color:#c792ea">bob</span>).
+<span style="color:#c792ea">maennlich</span>(<span style="color:#c792ea">pat</span>).
+<span style="color:#c792ea">maennlich</span>(<span style="color:#c792ea">jim</span>).
+<span style="color:#c792ea">weiblich</span>(<span style="color:#c792ea">liz</span>).
+<span style="color:#c792ea">weiblich</span>(<span style="color:#c792ea">ann</span>).
+
+<span style="color:#546e7a">% ── ABGELEITETE REGELN ────────────────────────────────────────────</span>
+<span style="color:#c792ea">mutter</span>(<span style="color:#f07178">M</span><span style="color:#89ddff">,</span> <span style="color:#f07178">K</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">M</span><span style="color:#89ddff">,</span> <span style="color:#f07178">K</span>)<span style="color:#89ddff">,</span> <span style="color:#c792ea">weiblich</span>(<span style="color:#f07178">M</span>).
+<span style="color:#c792ea">vater</span>(<span style="color:#f07178">V</span><span style="color:#89ddff">,</span> <span style="color:#f07178">K</span>)  <span style="color:#89ddff">:-</span> <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">V</span><span style="color:#89ddff">,</span> <span style="color:#f07178">K</span>)<span style="color:#89ddff">,</span> <span style="color:#c792ea">maennlich</span>(<span style="color:#f07178">V</span>).
+
+<span style="color:#c792ea">grosselternteil</span>(<span style="color:#f07178">G</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">G</span><span style="color:#89ddff">,</span> <span style="color:#f07178">P</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">P</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span>).
+
+<span style="color:#c792ea">geschwister</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">P</span><span style="color:#89ddff">,</span> <span style="color:#f07178">X</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">P</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#f07178">X</span> \== <span style="color:#f07178">Y</span>.          <span style="color:#546e7a">% Nicht die eigene Person!</span>
+
+<span style="color:#c792ea">vorfahre</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>).           <span style="color:#546e7a">% Direkt</span>
+<span style="color:#c792ea">vorfahre</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>) <span style="color:#89ddff">:-</span>                              <span style="color:#546e7a">% Transitiv</span>
+    <span style="color:#c792ea">elternteil</span>(<span style="color:#f07178">X</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Z</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">vorfahre</span>(<span style="color:#f07178">Z</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>).
+
+<span style="color:#546e7a">% ── ABFRAGEN ──────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">% ?- mutter(M, bob).          M = liz. ... warte, liz ist weiblich?</span>
+<span style="color:#546e7a">%                              (tom ist Vater, kein Elternteil weiblich für bob)</span>
+
+<span style="color:#546e7a">% ?- grosselternteil(tom, ann).   true.</span>
+<span style="color:#546e7a">% ?- grosselternteil(G, jim).     G = bob.</span>
+
+<span style="color:#546e7a">% ?- geschwister(ann, pat).       true.</span>
+<span style="color:#546e7a">% ?- geschwister(X, ann).         X = pat.</span>
+
+<span style="color:#546e7a">% ?- vorfahre(tom, jim).          true.  (tom→bob→pat→jim)</span>
+
+<span style="color:#546e7a">% ?- findall(X, vorfahre(tom, X), Nachkommen).</span>
+<span style="color:#546e7a">%    Nachkommen = [bob, liz, ann, pat, jim].</span>
+
+<span style="color:#546e7a">% ── ANFRAGEN IN DATEI SCHREIBEN ──────────────────────────────────</span>
+<span style="color:#c792ea">zeige_nachkommen</span>(<span style="color:#f07178">Person</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"Nachkommen von ~w:~n"</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">Person</span>])<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">forall</span>(
+        <span style="color:#c792ea">vorfahre</span>(<span style="color:#f07178">Person</span><span style="color:#89ddff">,</span> <span style="color:#f07178">N</span>)<span style="color:#89ddff">,</span>
+        <span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"  ~w~n"</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">N</span>])
+    ).
+
+<span style="color:#546e7a">% ?- zeige_nachkommen(tom).</span>
+<span style="color:#546e7a">% Nachkommen von tom:</span>
+<span style="color:#546e7a">%   bob</span>
+<span style="color:#546e7a">%   liz</span>
+<span style="color:#546e7a">%   ann</span>
+<span style="color:#546e7a">%   pat</span>
+<span style="color:#546e7a">%   jim</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Das klassische Kryptarithmetik-Problem!</span>
+<span style="color:#546e7a">%   SEND</span>
+<span style="color:#546e7a">% + MORE</span>
+<span style="color:#546e7a">% ------</span>
+<span style="color:#546e7a">%  MONEY</span>
+<span style="color:#546e7a">%</span>
+<span style="color:#546e7a">% Jeder Buchstabe = eine andere Ziffer 0-9</span>
+<span style="color:#546e7a">% S und M dürfen nicht 0 sein (führende Stelle)</span>
+
+<span style="color:#89ddff">:-</span> <span style="color:#c792ea">use_module</span>(<span style="color:#c792ea">library</span>(<span style="color:#c792ea">clpfd</span>)).  <span style="color:#546e7a">% Constraint Logic Programming!</span>
+
+<span style="color:#c792ea">send_more_money</span>(<span style="color:#f07178">Vars</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">Vars</span> = [<span style="color:#f07178">S</span><span style="color:#89ddff">,</span> <span style="color:#f07178">E</span><span style="color:#89ddff">,</span> <span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">D</span><span style="color:#89ddff">,</span> <span style="color:#f07178">M</span><span style="color:#89ddff">,</span> <span style="color:#f07178">O</span><span style="color:#89ddff">,</span> <span style="color:#f07178">R</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Y</span>]<span style="color:#89ddff">,</span>
+
+    <span style="color:#546e7a">% Alle Variablen: Ziffern 0-9</span>
+    <span style="color:#f07178">Vars</span> <span style="color:#c792ea">ins</span> <span style="color:#f78c6c">0..9</span><span style="color:#89ddff">,</span>
+
+    <span style="color:#546e7a">% Alle verschieden!</span>
+    <span style="color:#c792ea">all_different</span>(<span style="color:#f07178">Vars</span>)<span style="color:#89ddff">,</span>
+
+    <span style="color:#546e7a">% Keine führenden Nullen</span>
+    <span style="color:#f07178">S</span> #\= <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span>
+    <span style="color:#f07178">M</span> #\= <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span>
+
+    <span style="color:#546e7a">% Die eigentliche Gleichung:</span>
+    <span style="color:#f07178">S</span>*<span style="color:#f78c6c">1000</span> + <span style="color:#f07178">E</span>*<span style="color:#f78c6c">100</span> + <span style="color:#f07178">N</span>*<span style="color:#f78c6c">10</span> + <span style="color:#f07178">D</span>
+  + <span style="color:#f07178">M</span>*<span style="color:#f78c6c">1000</span> + <span style="color:#f07178">O</span>*<span style="color:#f78c6c">100</span> + <span style="color:#f07178">R</span>*<span style="color:#f78c6c">10</span> + <span style="color:#f07178">E</span>
+  #= <span style="color:#f07178">M</span>*<span style="color:#f78c6c">10000</span> + <span style="color:#f07178">O</span>*<span style="color:#f78c6c">1000</span> + <span style="color:#f07178">N</span>*<span style="color:#f78c6c">100</span> + <span style="color:#f07178">E</span>*<span style="color:#f78c6c">10</span> + <span style="color:#f07178">Y</span><span style="color:#89ddff">,</span>
+
+    <span style="color:#546e7a">% Lösung suchen</span>
+    <span style="color:#c792ea">label</span>(<span style="color:#f07178">Vars</span>).
+
+<span style="color:#546e7a">% ?- send_more_money([S,E,N,D,M,O,R,Y]).</span>
+<span style="color:#546e7a">%    S=9, E=5, N=6, D=7, M=1, O=0, R=8, Y=2.</span>
+
+<span style="color:#546e7a">% ── N-DAMEN PROBLEM ───────────────────────────────────────────────</span>
+<span style="color:#546e7a">% Platziere N Damen auf einem NxN-Schachbrett</span>
+<span style="color:#546e7a">% ohne dass sich zwei gegenseitig bedrohen</span>
+
+<span style="color:#c792ea">n_damen</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Damen</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">numlist</span>(<span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Reihen</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">permutation</span>(<span style="color:#f07178">Reihen</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Damen</span>)<span style="color:#89ddff">,</span>      <span style="color:#546e7a">% Spalten als Permutation</span>
+    <span style="color:#c792ea">sicher</span>(<span style="color:#f07178">Damen</span>).
+
+<span style="color:#c792ea">sicher</span>([]).
+<span style="color:#c792ea">sicher</span>([<span style="color:#f07178">D</span><span style="color:#89ddff">|</span><span style="color:#f07178">Ds</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">kein_angriff</span>(<span style="color:#f07178">D</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Ds</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">1</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">sicher</span>(<span style="color:#f07178">Ds</span>).
+
+<span style="color:#c792ea">kein_angriff</span>(<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> <span style="color:#f07178">_</span>).
+<span style="color:#c792ea">kein_angriff</span>(<span style="color:#f07178">D</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">D1</span><span style="color:#89ddff">|</span><span style="color:#f07178">Ds</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Dist</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">D1</span> - <span style="color:#f07178">D</span> =\= <span style="color:#f07178">Dist</span><span style="color:#89ddff">,</span>
+    <span style="color:#f07178">D</span>  - <span style="color:#f07178">D1</span> =\= <span style="color:#f07178">Dist</span><span style="color:#89ddff">,</span>               <span style="color:#546e7a">% Keine Diagonale</span>
+    <span style="color:#f07178">Dist1</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">Dist</span> + <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">kein_angriff</span>(<span style="color:#f07178">D</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Ds</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Dist1</span>).
+
+<span style="color:#546e7a">% ?- n_damen(8, L).</span>
+<span style="color:#546e7a">%    L = [1,5,8,6,3,7,2,4] ; ...   (92 Lösungen!)</span>
+
+<span style="color:#546e7a">% ?- aggregate_all(count, n_damen(8,_), N).</span>
+<span style="color:#546e7a">%    N = 92.</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Prolog glänzt bei Listen-Algorithmen</span>
+<span style="color:#546e7a">% Rekursion ist hier natürlich, nicht erzwungen</span>
+
+<span style="color:#546e7a">% ── QUICKSORT ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">quicksort</span>([]<span style="color:#89ddff">,</span> []).
+<span style="color:#c792ea">quicksort</span>([<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">partition</span>(<span style="color:#f07178">H</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Kleiner</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Groesser</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">quicksort</span>(<span style="color:#f07178">Kleiner</span><span style="color:#89ddff">,</span> <span style="color:#f07178">SortKleiner</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">quicksort</span>(<span style="color:#f07178">Groesser</span><span style="color:#89ddff">,</span> <span style="color:#f07178">SortGroesser</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">append</span>(<span style="color:#f07178">SortKleiner</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">SortGroesser</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted</span>).
+
+<span style="color:#c792ea">partition</span>(<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> []).
+<span style="color:#c792ea">partition</span>(<span style="color:#f07178">Pivot</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">Kleiner</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Groesser</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">H</span> =&lt; <span style="color:#f07178">Pivot</span><span style="color:#89ddff">,</span> <span style="color:#ffcb6b">!</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">partition</span>(<span style="color:#f07178">Pivot</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Kleiner</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Groesser</span>).
+<span style="color:#c792ea">partition</span>(<span style="color:#f07178">Pivot</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Kleiner</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">Groesser</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">partition</span>(<span style="color:#f07178">Pivot</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Kleiner</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Groesser</span>).
+
+<span style="color:#546e7a">% ?- quicksort([3,1,4,1,5,9,2,6], S).</span>
+<span style="color:#546e7a">%    S = [1,1,2,3,4,5,6,9].</span>
+
+<span style="color:#546e7a">% ── MERGESORT ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">mergesort</span>([]<span style="color:#89ddff">,</span> []) <span style="color:#89ddff">:-</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">mergesort</span>([<span style="color:#f07178">X</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">X</span>]) <span style="color:#89ddff">:-</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">mergesort</span>(<span style="color:#f07178">Liste</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">halve</span>(<span style="color:#f07178">Liste</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L2</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">mergesort</span>(<span style="color:#f07178">L1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted1</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">mergesort</span>(<span style="color:#f07178">L2</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted2</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">merge_sorted</span>(<span style="color:#f07178">Sorted1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted2</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Sorted</span>).
+
+<span style="color:#c792ea">halve</span>(<span style="color:#f07178">Liste</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L2</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">length</span>(<span style="color:#f07178">Liste</span><span style="color:#89ddff">,</span> <span style="color:#f07178">N</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#f07178">Half</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N</span> // <span style="color:#f78c6c">2</span><span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">length</span>(<span style="color:#f07178">L1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Half</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">append</span>(<span style="color:#f07178">L1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L2</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Liste</span>).
+
+<span style="color:#c792ea">merge_sorted</span>([]<span style="color:#89ddff">,</span> <span style="color:#f07178">L</span><span style="color:#89ddff">,</span> <span style="color:#f07178">L</span>).
+<span style="color:#c792ea">merge_sorted</span>(<span style="color:#f07178">L</span><span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> <span style="color:#f07178">L</span>).
+<span style="color:#c792ea">merge_sorted</span>([<span style="color:#f07178">H1</span><span style="color:#89ddff">|</span><span style="color:#f07178">T1</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H2</span><span style="color:#89ddff">|</span><span style="color:#f07178">T2</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H1</span><span style="color:#89ddff">|</span><span style="color:#f07178">Rest</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">H1</span> =&lt; <span style="color:#f07178">H2</span><span style="color:#89ddff">,</span> <span style="color:#ffcb6b">!</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">merge_sorted</span>(<span style="color:#f07178">T1</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H2</span><span style="color:#89ddff">|</span><span style="color:#f07178">T2</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">Rest</span>).
+<span style="color:#c792ea">merge_sorted</span>([<span style="color:#f07178">H1</span><span style="color:#89ddff">|</span><span style="color:#f07178">T1</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H2</span><span style="color:#89ddff">|</span><span style="color:#f07178">T2</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H2</span><span style="color:#89ddff">|</span><span style="color:#f07178">Rest</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">merge_sorted</span>([<span style="color:#f07178">H1</span><span style="color:#89ddff">|</span><span style="color:#f07178">T1</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">T2</span><span style="color:#89ddff">,</span> <span style="color:#f07178">Rest</span>).
+
+<span style="color:#546e7a">% ── FIBONACCI (tail-recursive) ────────────────────────────────────</span>
+<span style="color:#c792ea">fib</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">:-</span> <span style="color:#c792ea">fib</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>).
+<span style="color:#c792ea">fib</span>(<span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span><span style="color:#89ddff">,</span> <span style="color:#f07178">_</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">:-</span> <span style="color:#ffcb6b">!</span>.
+<span style="color:#c792ea">fib</span>(<span style="color:#f07178">N</span><span style="color:#89ddff">,</span> <span style="color:#f07178">A</span><span style="color:#89ddff">,</span> <span style="color:#f07178">B</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#f07178">N</span> &gt; <span style="color:#f78c6c">0</span><span style="color:#89ddff">,</span>
+    <span style="color:#f07178">N1</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">N</span> - <span style="color:#f78c6c">1</span><span style="color:#89ddff">,</span>
+    <span style="color:#f07178">C</span> <span style="color:#82aaff">is</span> <span style="color:#f07178">A</span> + <span style="color:#f07178">B</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">fib</span>(<span style="color:#f07178">N1</span><span style="color:#89ddff">,</span> <span style="color:#f07178">B</span><span style="color:#89ddff">,</span> <span style="color:#f07178">C</span><span style="color:#89ddff">,</span> <span style="color:#f07178">F</span>).
+
+<span style="color:#546e7a">% ?- fib(20, F).   F = 6765.</span>
+
+<span style="color:#546e7a">% ── PROLOG ALS FUNKTIONALER STIL ──────────────────────────────────</span>
+<span style="color:#546e7a">% map/3</span>
+<span style="color:#c792ea">my_map</span>(<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> []).
+<span style="color:#c792ea">my_map</span>(<span style="color:#f07178">Goal</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H2</span><span style="color:#89ddff">|</span><span style="color:#f07178">T2</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">call</span>(<span style="color:#f07178">Goal</span><span style="color:#89ddff">,</span> <span style="color:#f07178">H</span><span style="color:#89ddff">,</span> <span style="color:#f07178">H2</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">my_map</span>(<span style="color:#f07178">Goal</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T2</span>).
+
+<span style="color:#546e7a">% ?- my_map([X,Y]&gt;&gt;(Y is X*X), [1,2,3,4], Sq).</span>
+<span style="color:#546e7a">%    Sq = [1,4,9,16].</span>
+
+<span style="color:#546e7a">% filter/3</span>
+<span style="color:#c792ea">my_filter</span>(<span style="color:#f07178">_</span><span style="color:#89ddff">,</span> []<span style="color:#89ddff">,</span> []).
+<span style="color:#c792ea">my_filter</span>(<span style="color:#f07178">Pred</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> [<span style="color:#f07178">H</span><span style="color:#89ddff">|</span><span style="color:#f07178">R</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">call</span>(<span style="color:#f07178">Pred</span><span style="color:#89ddff">,</span> <span style="color:#f07178">H</span>)<span style="color:#89ddff">,</span> <span style="color:#ffcb6b">!</span><span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">my_filter</span>(<span style="color:#f07178">Pred</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>).
+<span style="color:#c792ea">my_filter</span>(<span style="color:#f07178">Pred</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">_</span><span style="color:#89ddff">|</span><span style="color:#f07178">T</span>]<span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">my_filter</span>(<span style="color:#f07178">Pred</span><span style="color:#89ddff">,</span> <span style="color:#f07178">T</span><span style="color:#89ddff">,</span> <span style="color:#f07178">R</span>).
+
+<span style="color:#546e7a">% ?- my_filter([X]&gt;&gt;(X&gt;3), [1,2,3,4,5], R).</span>
+<span style="color:#546e7a">%    R = [4,5].</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre"><span style="color:#546e7a">% Ein einfaches regelbasiertes Expertensystem in Prolog</span>
+<span style="color:#546e7a">% Zeigt: warum Prolog für AI/Logik ideal ist</span>
+
+<span style="color:#546e7a">% ── SYMPTOM-DATEN ─────────────────────────────────────────────────</span>
+<span style="color:#89ddff">:-</span> <span style="color:#c792ea">dynamic</span> <span style="color:#c792ea">hat_symptom</span>/<span style="color:#f78c6c">1.</span>
+
+<span style="color:#546e7a">% ── DIAGNOSE-REGELN ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">erkältung</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">husten</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">schnupfen</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">fieber</span>).
+
+<span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">grippe</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">husten</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">fieber</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">muskelschmerzen</span>).
+
+<span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">allergie</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">schnupfen</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">niesen</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">fieber</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">husten</span>).
+
+<span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">covid</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">fieber</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">husten</span>)<span style="color:#89ddff">,</span>
+    (<span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">geruchsverlust</span>) <span style="color:#89ddff">;</span> <span style="color:#c792ea">hat_symptom</span>(<span style="color:#c792ea">atemnot</span>)).
+
+<span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">unbekannt</span>) <span style="color:#89ddff">:-</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">erkältung</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">grippe</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">allergie</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#ffcb6b">\+</span> <span style="color:#c792ea">diagnose</span>(<span style="color:#c792ea">covid</span>).
+
+<span style="color:#546e7a">% ── INTERAKTIVE DIAGNOSE ──────────────────────────────────────────</span>
+<span style="color:#c792ea">diagnostiziere</span> <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">retractall</span>(<span style="color:#c792ea">hat_symptom</span>(<span style="color:#f07178">_</span>))<span style="color:#89ddff">,</span>   <span style="color:#546e7a">% Vorherige Symptome löschen</span>
+    <span style="color:#c792ea">frage_symptome</span>([
+        <span style="color:#c792ea">husten</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">schnupfen</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">fieber</span><span style="color:#89ddff">,</span>
+        <span style="color:#c792ea">muskelschmerzen</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">niesen</span><span style="color:#89ddff">,</span>
+        <span style="color:#c792ea">geruchsverlust</span><span style="color:#89ddff">,</span> <span style="color:#c792ea">atemnot</span>
+    ])<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">nl</span><span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">write</span>(<span style="color:#4ec9b0">'Diagnose: '</span>)<span style="color:#89ddff">,</span>
+    (<span style="color:#c792ea">diagnose</span>(<span style="color:#f07178">K</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">writeln</span>(<span style="color:#f07178">K</span>) <span style="color:#89ddff">;</span> <span style="color:#82aaff">writeln</span>(<span style="color:#c792ea">unklar</span>)).
+
+<span style="color:#c792ea">frage_symptome</span>([]).
+<span style="color:#c792ea">frage_symptome</span>([<span style="color:#f07178">S</span><span style="color:#89ddff">|</span><span style="color:#f07178">Rest</span>]) <span style="color:#89ddff">:-</span>
+    <span style="color:#82aaff">format</span>(<span style="color:#c3e88d">"Haben Sie ~w? (j/n): "</span><span style="color:#89ddff">,</span> [<span style="color:#f07178">S</span>])<span style="color:#89ddff">,</span>
+    <span style="color:#82aaff">read</span>(<span style="color:#f07178">Antwort</span>)<span style="color:#89ddff">,</span>
+    (<span style="color:#f07178">Antwort</span> = <span style="color:#c792ea">j</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">assertz</span>(<span style="color:#c792ea">hat_symptom</span>(<span style="color:#f07178">S</span>)) <span style="color:#89ddff">;</span> <span style="color:#82aaff">true</span>)<span style="color:#89ddff">,</span>
+    <span style="color:#c792ea">frage_symptome</span>(<span style="color:#f07178">Rest</span>).
+
+<span style="color:#546e7a">% Direkte Verwendung ohne Interaktion:</span>
+<span style="color:#546e7a">% ?- assertz(hat_symptom(husten)),</span>
+<span style="color:#546e7a">%    assertz(hat_symptom(fieber)),</span>
+<span style="color:#546e7a">%    assertz(hat_symptom(muskelschmerzen)),</span>
+<span style="color:#546e7a">%    diagnose(K).</span>
+<span style="color:#546e7a">%    K = grippe.</span>
+
+<span style="color:#546e7a">% ?- assertz(hat_symptom(schnupfen)),</span>
+<span style="color:#546e7a">%    assertz(hat_symptom(niesen)),</span>
+<span style="color:#546e7a">%    diagnose(K).</span>
+<span style="color:#546e7a">%    K = allergie.</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#e74c3c0e;border:1px solid #e74c3c44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#e74c3c">Schnellstart:</strong> <a href="https://swish.swi-prolog.org" style="color:#d4a017">swish.swi-prolog.org</a> – Prolog direkt im Browser, keine Installation!<br>Oder: <code style="color:#ffb347">sudo pacman -S swi-prolog && swipl</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e74c3c44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e74c3c0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e74c3c">
+      <span style="display:inline-block;width:8px;height:8px;background:#e74c3c;border-radius:50%;margin-right:2px"></span>⚙ SWI-Prolog installieren
+    </span>
+    <span class="aa" style="color:#e74c3c;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#e74c3c">Arch/CachyOS</code></td><td style="color:#cdd6f4">swi-prolog</td><td style="color:#6c7a8e">sudo pacman -S swi-prolog
+swipl --version</td></tr><tr><td style="width:240px"><code style="color:#e74c3c">Ubuntu/Debian</code></td><td style="color:#cdd6f4">swi-prolog</td><td style="color:#6c7a8e">sudo apt install swi-prolog
+swipl</td></tr><tr><td style="width:240px"><code style="color:#e74c3c">macOS (Homebrew)</code></td><td style="color:#cdd6f4">brew</td><td style="color:#6c7a8e">brew install swi-prolog</td></tr><tr><td style="width:240px"><code style="color:#e74c3c">Windows</code></td><td style="color:#cdd6f4">swi-prolog.org</td><td style="color:#6c7a8e">Installer von swi-prolog.org</td></tr><tr><td style="width:240px"><code style="color:#e74c3c">Docker</code></td><td style="color:#cdd6f4">swipl</td><td style="color:#6c7a8e">docker run -it swipl</td></tr><tr><td style="width:240px"><code style="color:#e74c3c">SWISH (Browser!)</code></td><td style="color:#cdd6f4">swish.swi-prolog.org</td><td style="color:#6c7a8e">https://swish.swi-prolog.org
+Prolog direkt im Browser!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ SWI-Prolog REPL &amp; Befehle
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">swipl</code></td><td style="color:#cdd6f4">REPL starten</td><td style="color:#6c7a8e">Interaktive Sitzung</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swipl datei.pl</code></td><td style="color:#cdd6f4">Datei laden und REPL starten</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- [datei].</code></td><td style="color:#cdd6f4">Datei im REPL laden</td><td style="color:#6c7a8e">oder: ?- consult(datei).</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- halt.</code></td><td style="color:#cdd6f4">Beenden</td><td style="color:#6c7a8e">Ctrl+D geht auch</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- listing(praedikat/2).</code></td><td style="color:#cdd6f4">Prädikats-Definition zeigen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- trace.</code></td><td style="color:#cdd6f4">Debugger aktivieren</td><td style="color:#6c7a8e">Schritt für Schritt</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- notrace.</code></td><td style="color:#cdd6f4">Debugger deaktivieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- spy(praedikat).</code></td><td style="color:#cdd6f4">Spy-Point setzen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- help(praedikat).</code></td><td style="color:#cdd6f4">Dokumentation anzeigen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- apropos(wort).</code></td><td style="color:#cdd6f4">Nach Prädikaten suchen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">:- use_module(library(lists)).</code></td><td style="color:#cdd6f4">Bibliothek laden</td><td style="color:#6c7a8e">lists, clpfd, apply...</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">?- X is 1+2.</code></td><td style="color:#cdd6f4">Berechnung testen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">; (Semikolon)</code></td><td style="color:#cdd6f4">Nächste Lösung anfordern</td><td style="color:#6c7a8e">Nach einer Antwort</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Bibliotheken
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">library(lists)</code></td><td style="color:#cdd6f4">Listen-Prädikate</td><td style="color:#6c7a8e">use_module(library(lists))</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(apply)</code></td><td style="color:#cdd6f4">maplist, foldl, include...</td><td style="color:#6c7a8e">use_module(library(apply))</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(clpfd)</code></td><td style="color:#cdd6f4">Constraint Logic Programming</td><td style="color:#6c7a8e">Sudoku, N-Damen, SEND+MORE=MONEY</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(aggregate)</code></td><td style="color:#cdd6f4">Aggregat-Funktionen</td><td style="color:#6c7a8e">aggregate_all(count, ...)</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(assoc)</code></td><td style="color:#cdd6f4">Assoziations-Listen (Hash-Map)</td><td style="color:#6c7a8e">get_assoc, put_assoc</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(pairs)</code></td><td style="color:#cdd6f4">Schlüssel-Wert-Paare</td><td style="color:#6c7a8e">pairs_keys_values</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(string)</code></td><td style="color:#cdd6f4">String-Operationen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(csv)</code></td><td style="color:#cdd6f4">CSV-Dateien lesen/schreiben</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(http/...)</code></td><td style="color:#cdd6f4">HTTP-Server!</td><td style="color:#6c7a8e">http_server, http_dispatch</td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(dcg/basics)</code></td><td style="color:#cdd6f4">DCG-Hilfsprädikate</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#c792ea">library(debug)</code></td><td style="color:#cdd6f4">Debug-Ausgaben</td><td style="color:#6c7a8e">debug(topic, "msg ~w", [val])</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Prolog lernen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">Learn Prolog Now!</code></td><td style="color:#cdd6f4">lpn.swi-prolog.org</td><td style="color:#6c7a8e">Kostenlos online! Der beste Einstieg</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">SWI-Prolog Docs</code></td><td style="color:#cdd6f4">swi-prolog.org/pldoc</td><td style="color:#6c7a8e">Vollständige Referenz aller Prädikate</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">SWISH Playground</code></td><td style="color:#cdd6f4">swish.swi-prolog.org</td><td style="color:#6c7a8e">Prolog im Browser, keine Installation!</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">The Art of Prolog</code></td><td style="color:#cdd6f4">MIT Press</td><td style="color:#6c7a8e">Sterling &amp; Shapiro – Klassiker</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Programming in Prolog</code></td><td style="color:#cdd6f4">Clocksin &amp; Mellish</td><td style="color:#6c7a8e">Der Standard-Lehrbuch</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Prolog Problems</code></td><td style="color:#cdd6f4">github.com/99-problems</td><td style="color:#6c7a8e">99 Prolog-Aufgaben zum Üben</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">SICP (Kapitel 4)</code></td><td style="color:#cdd6f4">mitpress.mit.edu/sicp</td><td style="color:#6c7a8e">Logic Programming Kapitel – exzellent</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">scryer-prolog.github.io</code></td><td style="color:#cdd6f4">Scryer Prolog</td><td style="color:#6c7a8e">Moderne ISO-konforme Implementierung</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Prolog vs. andere Sprachen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">Keine Schleifen</code></td><td style="color:#cdd6f4">nur Rekursion</td><td style="color:#6c7a8e">for/while gibt es nicht – alles ist Rekursion</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Keine Zuweisung</code></td><td style="color:#cdd6f4">nur Unifikation</td><td style="color:#6c7a8e">X = 5 bindet X, ändert nicht</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Reihenfolge wichtig</code></td><td style="color:#cdd6f4">Klauseln werden der Reihe nach</td><td style="color:#6c7a8e">Linksregel zuerst, dann nächste</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Backtracking</code></td><td style="color:#cdd6f4">automatisch</td><td style="color:#6c7a8e">Prolog sucht selbst nach Lösungen</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Bidirektional</code></td><td style="color:#cdd6f4">viele Prädikate</td><td style="color:#6c7a8e">append([1],[2],X) und append(X,Y,[1,2])</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Closed World</code></td><td style="color:#cdd6f4">\+ = "nicht beweisbar"</td><td style="color:#6c7a8e">Nicht logisches NOT!</td></tr><tr><td style="width:240px"><code style="color:#ffb347">CLP(FD)</code></td><td style="color:#cdd6f4">Constraint Solving</td><td style="color:#6c7a8e">Gleichungen lösen statt berechnen</td></tr><tr><td style="width:240px"><code style="color:#ffb347">DCG</code></td><td style="color:#cdd6f4">Grammatiken eingebaut</td><td style="color:#6c7a8e">Parser schreiben ohne Extra-Tool</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#e74c3c';
+      btn.style.color       = '#e74c3c';
+      btn.style.background  = 'rgba(231,76,60,.08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

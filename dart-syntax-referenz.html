@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dart Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #00b4d8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+/* ── Tabs ── */
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(0, 180, 216, .07);
+}
+
+/* ── Content ── */
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+/* ── Search ── */
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+/* ── Accordion ── */
+.ac   { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+/* ── Tables ── */
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Cards ── */
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 720px) {
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#00b4d8">&#x25C8;</span>
+      <span style="color:#00b4d8">Dart</span> Syntax
+    </div>
+    <div id="hdr-sub">Dart 3.x · Null Safety · Flutter · Arch Linux / CachyOS</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="operators">Operatoren</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="classes">Klassen & OOP</button>
+    <button class="tb" data-tab="collections">Collections</button>
+    <button class="tb" data-tab="async">Async & Streams</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<!-- ═══════════ INHALT ═══════════ -->
+<div class="con">
+
+  <div id="tp-types" class="tp active">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>Skalare Typen
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00b4d8">int</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">42  |  -7  |  0xFF  |  0b1010  |  0o17</td>
+      <td style="color:#6c7a8e">Ganzzahl – in Dart/Web 64-Bit; in Dart/Native: unbegrenzt per BigInt</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00b4d8">double</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">3.14  |  1.5e10  |  double.infinity  |  double.nan</td>
+      <td style="color:#6c7a8e">IEEE 754 64-Bit Gleitkomma</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00b4d8">num</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">Oberklasse von int und double</td>
+      <td style="color:#6c7a8e">Wenn Typ int oder double sein kann</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00b4d8">bool</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Kein truthy/falsy – nur literal true/false!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00b4d8">String</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  'Welt'  |  """mehrzeilig"""</td>
+      <td style="color:#6c7a8e">UTF-16 String – immutablel</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#00b4d8">Null</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">null  – der einzige Wert des Typs Null</td>
+      <td style="color:#6c7a8e">In Sound Null Safety niemals implizit!</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Null Safety (Dart 2.12+)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">String</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">String name = "Alice"  – nie null!</td>
+      <td style="color:#6c7a8e">Non-nullable – Dart garantiert zur Compile-Zeit</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">String?</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">String? name = null  – kann null sein</td>
+      <td style="color:#6c7a8e">Nullable – muss vor Verwendung geprüft werden</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">late</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">late String name;  – später initialisiert</td>
+      <td style="color:#6c7a8e">Non-nullable aber lazy – Laufzeitfehler wenn uninitialisiert</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">!</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">name!  – assert not null (null assertion)</td>
+      <td style="color:#6c7a8e">Wirft LateInitializationError wenn null – sparsam nutzen!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">??</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">name ?? "Standard"  – null coalescing</td>
+      <td style="color:#6c7a8e">Gibt rechten Wert wenn linker null</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">??=</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">name ??= "Standard"  – assign if null</td>
+      <td style="color:#6c7a8e">Nur zuweisen wenn Variable null ist</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">?.</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">user?.name  – null-aware access</td>
+      <td style="color:#6c7a8e">Gibt null zurück wenn user null – kein NullPointerException</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#c792ea">?..</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">builder?..method()..other()</td>
+      <td style="color:#6c7a8e">Null-aware cascade</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Collections
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4ec9b0">List&lt;T&gt;</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[1, 2, 3]  |  List.filled(3, 0)  |  List.generate(5, (i) =&gt; i)</td>
+      <td style="color:#6c7a8e">Geordnet, indiziert ab 0. Mutable oder const.</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4ec9b0">Set&lt;T&gt;</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{1, 2, 3}  |  &lt;int&gt;{}  |  Set.from([1,2,2,3])</td>
+      <td style="color:#6c7a8e">Ungeordnete Menge ohne Duplikate</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4ec9b0">Map&lt;K,V&gt;</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">{"key": "val"}  |  &lt;String,int&gt;{}</td>
+      <td style="color:#6c7a8e">Key-Value-Paare. Keys eindeutig.</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4ec9b0">List spread</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[...liste1, ...liste2]  |  [...?nullableListe]</td>
+      <td style="color:#6c7a8e">Spread mit ...? für nullable Listen</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#4ec9b0">if/for in Collection</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">[if (debug) "debug-item", for (x in xs) x*2]</td>
+      <td style="color:#6c7a8e">Conditionals und Loops direkt im Literal</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Variablen &amp; Typisierung
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">var</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">var name = "Alice"  – Typ wird inferiert</td>
+      <td style="color:#6c7a8e">Typ ist String, nicht dynamic!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">final</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">final name = "Alice"  – einmal setzen</td>
+      <td style="color:#6c7a8e">Zur Laufzeit gesetzt, danach immutablel</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">const</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">const pi = 3.14159  – Compile-Zeit Konstante</td>
+      <td style="color:#6c7a8e">Tiefer immutablel – auch Objekt-Inhalt!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">dynamic</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">dynamic x = "Hallo";  x = 42;</td>
+      <td style="color:#6c7a8e">Deaktiviert statische Typprüfung – vermeiden!</td>
+    </tr>
+    <tr>
+      <td style="width:140px">
+        <code style="color:#ffb347">Object?</code>
+      </td>
+      <td style="color:#c3e88d;font-size:11px">Gemeinsame Basis aller Nullable-Typen</td>
+      <td style="color:#6c7a8e">Wie dynamic aber type-safe</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-operators" class="tp">
+
+<div class="ac open" id="ac-op0"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>Arithmetik &amp; Vergleich
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00b4d8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">+  -  *  /  %  ~/</code></div>
+  <div style="color:#6c7a8e;font-size:12px">~/ = Integer-Division: 7 ~/ 2 → 3</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00b4d8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">**</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Potenz (NICHT in Dart! Nutze pow(a,b) aus dart:math)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#00b4d8;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">==  !=  &lt;  &gt;  &lt;=  &gt;=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Vergleich – == prüft Wert, nicht Referenz (außer bei identical())</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op1"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Null-Aware Operatoren
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">??</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null Coalescing: a ?? b  →  a wenn nicht null, sonst b</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">??=</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null-aware Zuweisung: a ??= b  →  nur setzen wenn a null</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">?.</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null-aware Access: obj?.prop  →  null wenn obj null</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">?..</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null-aware Cascade: obj?..method()..other()</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">!</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null Assertion: expr!  →  wirft wenn null (unsafe!)</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#c792ea;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">... / ...?</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Spread: [...list]  |  Null-aware: [...?nullableList]</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Type-Operatoren
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4ec9b0;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">is</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Type-Test: obj is String  →  true/false</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4ec9b0;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">is!</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Negierter Type-Test: obj is! int</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4ec9b0;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">as</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Type-Cast: obj as String  →  wirft wenn falsch</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#4ec9b0;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">switch expr</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Pattern-basiertes Matching (Dart 3.0+)</div>
+</div></div>
+  </div>
+</div>
+
+<div class="ac" id="ac-op3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('op3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Cascade &amp; Spread
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">..</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Cascade: obj..method1()..method2()  →  gibt obj zurück</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">?..</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null-aware Cascade: obj?..method()</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">...</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Spread in Collections: [1, ...andereList, 5]</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">...?</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Null-aware Spread: [1, ...?nullableList]</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">=&gt;</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Arrow Function: (x) =&gt; x * 2</div>
+</div>
+<div style="display:flex;gap:12px;padding:7px 4px;
+            border-bottom:1px solid rgba(30,37,48,.3);align-items:flex-start">
+  <div style="min-width:220px;flex-shrink:0"><code style="color:#ffb347;font-family:Courier New,monospace;font-size:12px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">~</code></div>
+  <div style="color:#6c7a8e;font-size:12px">Bitweise NOT: ~0  →  -1</div>
+</div></div>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-ct0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / else / switch
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / else / switch">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / else / switch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// if – Klammern Pflicht, {} empfohlen</span>
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">10</span>) {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'groß'</span>);
+} <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">5</span>) {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'mittel'</span>);
+} <span style="color:#c792ea">else</span> {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'klein'</span>);
+}
+
+<span style="color:#546e7a">// switch (klassisch)</span>
+<span style="color:#c792ea">switch</span> (farbe) {
+  <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'rot'</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Stop'</span>);
+    <span style="color:#c792ea">break</span>;
+  <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'grün'</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Go'</span>);
+    <span style="color:#c792ea">break</span>;
+  <span style="color:#c792ea">default</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'?'</span>);
+}
+
+<span style="color:#546e7a">// switch Expression (Dart 3.0+) – kein break nötig!</span>
+<span style="color:#c792ea">final</span> beschreibung = <span style="color:#c792ea">switch</span> (farbe) {
+  <span style="color:#c3e88d">'rot'</span>  <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Stop'</span>,
+  <span style="color:#c3e88d">'grün'</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Go'</span>,
+  _      <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Unbekannt'</span>,
+};
+
+<span style="color:#546e7a">// Pattern Matching im switch (Dart 3.0+)</span>
+<span style="color:#c792ea">switch</span> (objekt) {
+  <span style="color:#c792ea">case</span> <span style="color:#c792ea">int</span> n when n &gt; <span style="color:#f78c6c">0</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Positive Zahl: $n'</span>);
+  <span style="color:#c792ea">case</span> <span style="color:#c792ea">String</span> s:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'String: $s'</span>);
+  <span style="color:#c792ea">case</span> [<span style="color:#c792ea">int</span> x, <span style="color:#c792ea">int</span> y]:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Liste: $x, $y'</span>);
+  <span style="color:#c792ea">case</span> {<span style="color:#c3e88d">'name'</span>: <span style="color:#c792ea">var</span> name}:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Map mit name: $name'</span>);
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct1"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>Schleifen
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="schleifen">
+  <div style="color:#00b4d8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Schleifen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// for – klassisch</span>
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) {
+  <span style="color:#82aaff">print</span>(i);
+}
+
+<span style="color:#546e7a">// for-in – über Iterables</span>
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> item <span style="color:#c792ea">in</span> liste) {
+  <span style="color:#82aaff">print</span>(item);
+}
+
+<span style="color:#546e7a">// forEach – mit Lambda</span>
+liste.forEach((item) <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(item));
+
+<span style="color:#546e7a">// while</span>
+<span style="color:#c792ea">while</span> (n &lt; <span style="color:#f78c6c">100</span>) {
+  n *= <span style="color:#f78c6c">2</span>;
+}
+
+<span style="color:#546e7a">// do-while – mindestens einmal</span>
+<span style="color:#c792ea">do</span> {
+  eingabe = stdin.readLineSync()!;
+} <span style="color:#c792ea">while</span> (eingabe.isEmpty);
+
+<span style="color:#546e7a">// break / continue</span>
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> n <span style="color:#c792ea">in</span> zahlen) {
+  <span style="color:#c792ea">if</span> (n == <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">continue</span>;   <span style="color:#546e7a">// überspringen</span>
+  <span style="color:#c792ea">if</span> (n &lt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">break</span>;       <span style="color:#546e7a">// abbrechen</span>
+  <span style="color:#82aaff">print</span>(n);
+}
+
+<span style="color:#546e7a">// Labeled break (für verschachtelte Schleifen)</span>
+outer:
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">5</span>; i++) {
+  <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> j = <span style="color:#f78c6c">0</span>; j &lt; <span style="color:#f78c6c">5</span>; j++) {
+    <span style="color:#c792ea">if</span> (i + j &gt; <span style="color:#f78c6c">6</span>) <span style="color:#c792ea">break</span> outer;
+  }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ct2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('ct2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>try / catch / finally
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="try / catch / finally">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    try / catch / finally
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Einfaches try-catch</span>
+<span style="color:#c792ea">try</span> {
+  <span style="color:#c792ea">final</span> result = <span style="color:#c792ea">int</span>.parse(eingabe);
+  <span style="color:#82aaff">print</span>(result);
+} <span style="color:#c792ea">on</span> <span style="color:#ffcb6b">FormatException</span> <span style="color:#c792ea">catch</span> (e) {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Kein Integer: $e'</span>);
+} <span style="color:#c792ea">on</span> <span style="color:#ffcb6b">RangeError</span> <span style="color:#c792ea">catch</span> (e, stackTrace) {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Bereich: $e'</span>);
+  <span style="color:#82aaff">print</span>(stackTrace);
+} <span style="color:#c792ea">catch</span> (e) {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Unbekannt: $e'</span>);
+} <span style="color:#c792ea">finally</span> {
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Wird immer ausgeführt'</span>);
+}
+
+<span style="color:#546e7a">// throw – Exception werfen</span>
+<span style="color:#c792ea">throw</span> <span style="color:#ffcb6b">FormatException</span>(<span style="color:#c3e88d">'Ungültiges Format'</span>);
+<span style="color:#c792ea">throw</span> <span style="color:#82aaff">Exception</span>(<span style="color:#c3e88d">'Allgemeiner Fehler'</span>);
+<span style="color:#c792ea">throw</span> <span style="color:#c3e88d">'Auch Strings sind throwable'</span>;
+
+<span style="color:#546e7a">// rethrow – weiterwerfen</span>
+<span style="color:#c792ea">try</span> {
+  verarbeite();
+} <span style="color:#c792ea">catch</span> (e) {
+  log(e);
+  <span style="color:#c792ea">rethrow</span>;   <span style="color:#546e7a">// nicht throw e – rethrow erhält den Stack-Trace!</span>
+}
+
+<span style="color:#546e7a">// assert – nur im Debug-Modus</span>
+<span style="color:#82aaff">assert</span>(x &gt; <span style="color:#f78c6c">0</span>, <span style="color:#c3e88d">'x muss positiv sein'</span>);
+<span style="color:#82aaff">assert</span>(name.isNotEmpty);</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Funktionen definieren
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen definieren">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen definieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Einfache Funktion</span>
+<span style="color:#c792ea">int</span> addiere(<span style="color:#c792ea">int</span> a, <span style="color:#c792ea">int</span> b) {
+  <span style="color:#c792ea">return</span> a + b;
+}
+
+<span style="color:#546e7a">// Arrow Function (Einzeiler)</span>
+<span style="color:#c792ea">int</span> quadrat(<span style="color:#c792ea">int</span> x) <span style="color:#89ddff">=&gt;</span> x * x;
+
+<span style="color:#546e7a">// void – kein Rückgabewert</span>
+<span style="color:#c792ea">void</span> drucke(<span style="color:#c792ea">String</span> text) <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(text);
+
+<span style="color:#546e7a">// Optionale Parameter (positional)</span>
+<span style="color:#c792ea">String</span> begrüsse(<span style="color:#c792ea">String</span> name, [<span style="color:#c792ea">String</span>? titel]) {
+  <span style="color:#c792ea">return</span> <span style="color:#c3e88d">'Hallo, ${titel != null ? '</span>$titel <span style="color:#c3e88d">' : '</span><span style="color:#c3e88d">'}$name!'</span>;
+}
+begrüsse(<span style="color:#c3e88d">'Alice'</span>);            <span style="color:#546e7a">// "Hallo, Alice!"</span>
+begrüsse(<span style="color:#c3e88d">'Alice'</span>, <span style="color:#c3e88d">'Dr.'</span>);    <span style="color:#546e7a">// "Hallo, Dr. Alice!"</span>
+
+<span style="color:#546e7a">// Benannte Parameter (named) – Standard in Flutter!</span>
+<span style="color:#ffcb6b">Widget</span> baueButton({
+  required <span style="color:#c792ea">String</span> text,   <span style="color:#546e7a">// required = Pflicht</span>
+  <span style="color:#ffcb6b">VoidCallback</span>? onPressed,
+  <span style="color:#ffcb6b">Color</span> color = <span style="color:#ffcb6b">Colors</span>.blue,
+}) {
+  <span style="color:#546e7a">// ...</span>
+}
+baueButton(text: <span style="color:#c3e88d">'Klick mich'</span>, onPressed: () <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'!'</span>));
+
+<span style="color:#546e7a">// Generische Funktion</span>
+<span style="color:#ffcb6b">T</span> ersteElement&lt;<span style="color:#ffcb6b">T</span>&gt;(<span style="color:#c792ea">List</span>&lt;<span style="color:#ffcb6b">T</span>&gt; liste) <span style="color:#89ddff">=&gt;</span> liste.first;
+ersteElement([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>]);      <span style="color:#546e7a">// 1</span>
+ersteElement([<span style="color:#c3e88d">'a'</span>, <span style="color:#c3e88d">'b'</span>]);     <span style="color:#546e7a">// 'a'</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>Closures &amp; Higher-Order Functions
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="closures &amp; higher-order functions">
+  <div style="color:#00b4d8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Closures &amp; Higher-Order Functions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Funktionen sind First-Class Objects</span>
+<span style="color:#c792ea">void</span> macheMitListe(<span style="color:#c792ea">List</span>&lt;<span style="color:#c792ea">int</span>&gt; list, <span style="color:#c792ea">void</span> <span style="color:#c792ea">Function</span>(<span style="color:#c792ea">int</span>) aktion) {
+  <span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> item <span style="color:#c792ea">in</span> list) {
+    aktion(item);
+  }
+}
+macheMitListe([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>], <span style="color:#82aaff">print</span>);
+
+<span style="color:#546e7a">// Closure – captured variables</span>
+<span style="color:#c792ea">Function</span> macheAddierer(<span style="color:#c792ea">int</span> n) {
+  <span style="color:#c792ea">return</span> (<span style="color:#c792ea">int</span> x) <span style="color:#89ddff">=&gt;</span> x + n;   <span style="color:#546e7a">// n wird gecaptured</span>
+}
+<span style="color:#c792ea">final</span> plus5 = macheAddierer(<span style="color:#f78c6c">5</span>);
+<span style="color:#82aaff">print</span>(plus5(<span style="color:#f78c6c">3</span>));   <span style="color:#546e7a">// 8</span>
+
+<span style="color:#546e7a">// Anonyme Funktionen</span>
+<span style="color:#c792ea">final</span> sortiert = zahlen
+  ..sort((a, b) <span style="color:#89ddff">=&gt;</span> a.compareTo(b));
+
+<span style="color:#546e7a">// typedef für Funktionstypen</span>
+<span style="color:#c792ea">typedef</span> <span style="color:#ffcb6b">Predicate</span>&lt;<span style="color:#ffcb6b">T</span>&gt; = <span style="color:#c792ea">bool</span> <span style="color:#c792ea">Function</span>(<span style="color:#ffcb6b">T</span>);
+<span style="color:#c792ea">typedef</span> <span style="color:#ffcb6b">Transformer</span>&lt;<span style="color:#ffcb6b">T</span>, <span style="color:#ffcb6b">R</span>&gt; = <span style="color:#ffcb6b">R</span> <span style="color:#c792ea">Function</span>(<span style="color:#ffcb6b">T</span>);
+
+<span style="color:#c792ea">bool</span> istGerade(<span style="color:#c792ea">int</span> n) <span style="color:#89ddff">=&gt;</span> n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>;
+<span style="color:#ffcb6b">Predicate</span>&lt;<span style="color:#c792ea">int</span>&gt; test = istGerade;
+<span style="color:#82aaff">print</span>(test(<span style="color:#f78c6c">4</span>));   <span style="color:#546e7a">// true</span>
+
+<span style="color:#546e7a">// Iterable-Methoden mit Lambdas</span>
+<span style="color:#c792ea">final</span> zahlen = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>];
+
+<span style="color:#c792ea">final</span> quadrate  = zahlen.map((n) <span style="color:#89ddff">=&gt;</span> n * n);
+<span style="color:#c792ea">final</span> gerade    = zahlen.where((n) <span style="color:#89ddff">=&gt;</span> n.isEven);
+<span style="color:#c792ea">final</span> summe     = zahlen.fold(<span style="color:#f78c6c">0</span>, (acc, n) <span style="color:#89ddff">=&gt;</span> acc + n);
+<span style="color:#c792ea">final</span> irgendein = zahlen.any((n) <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">4</span>);
+<span style="color:#c792ea">final</span> alle      = zahlen.every((n) <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">0</span>);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Async / Await
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="async / await">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Async / Await
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Future – ein Wert der in der Zukunft verfügbar ist</span>
+<span style="color:#82aaff">Future</span>&lt;<span style="color:#c792ea">String</span>&gt; holeDaten(<span style="color:#c792ea">String</span> url) <span style="color:#c792ea">async</span> {
+  <span style="color:#c792ea">final</span> response = <span style="color:#c792ea">await</span> http.<span style="color:#c792ea">get</span>(<span style="color:#82aaff">Uri</span>.parse(url));
+  <span style="color:#c792ea">if</span> (response.statusCode != <span style="color:#f78c6c">200</span>) {
+    <span style="color:#c792ea">throw</span> <span style="color:#82aaff">Exception</span>(<span style="color:#c3e88d">'HTTP ${response.statusCode}'</span>);
+  }
+  <span style="color:#c792ea">return</span> response.body;
+}
+
+<span style="color:#546e7a">// async/await – wie synchroner Code lesen</span>
+<span style="color:#82aaff">Future</span>&lt;<span style="color:#c792ea">void</span>&gt; main() <span style="color:#c792ea">async</span> {
+  <span style="color:#c792ea">try</span> {
+    <span style="color:#c792ea">final</span> daten = <span style="color:#c792ea">await</span> holeDaten(<span style="color:#c3e88d">'https://api.example.com/data'</span>);
+    <span style="color:#82aaff">print</span>(daten);
+  } <span style="color:#c792ea">on</span> <span style="color:#82aaff">Exception</span> <span style="color:#c792ea">catch</span> (e) {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Fehler: $e'</span>);
+  }
+}
+
+<span style="color:#546e7a">// Future.wait – parallel ausführen</span>
+<span style="color:#c792ea">final</span> [user, orders] = <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.wait([
+  holeUser(id),
+  holeBestellungen(id),
+]);
+
+<span style="color:#546e7a">// Stream – mehrere Werte über Zeit</span>
+<span style="color:#82aaff">Stream</span>&lt;<span style="color:#c792ea">int</span>&gt; zaehle(<span style="color:#c792ea">int</span> bis) <span style="color:#c792ea">async</span>* {
+  <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt;= bis; i++) {
+    <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.delayed(<span style="color:#82aaff">Duration</span>(seconds: <span style="color:#f78c6c">1</span>));
+    <span style="color:#c792ea">yield</span> i;
+  }
+}
+
+<span style="color:#546e7a">// Stream konsumieren</span>
+<span style="color:#c792ea">await</span> <span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> zahl <span style="color:#c792ea">in</span> zaehle(<span style="color:#f78c6c">5</span>)) {
+  <span style="color:#82aaff">print</span>(zahl);
+}
+
+<span style="color:#546e7a">// Stream-Methoden (wie Iterable, aber async)</span>
+<span style="color:#c792ea">final</span> summe = <span style="color:#c792ea">await</span> zaehle(<span style="color:#f78c6c">10</span>).fold(<span style="color:#f78c6c">0</span>, (a, b) <span style="color:#89ddff">=&gt;</span> a + b);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Generatoren
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="generatoren">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Generatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Synchroner Generator – gibt Iterable zurück</span>
+<span style="color:#82aaff">Iterable</span>&lt;<span style="color:#c792ea">int</span>&gt; fibonacci() <span style="color:#c792ea">sync</span>* {
+  <span style="color:#c792ea">int</span> a = <span style="color:#f78c6c">0</span>, b = <span style="color:#f78c6c">1</span>;
+  <span style="color:#c792ea">while</span> (<span style="color:#c792ea">true</span>) {
+    <span style="color:#c792ea">yield</span> a;
+    <span style="color:#c792ea">final</span> temp = a + b;
+    a = b;
+    b = temp;
+  }
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#82aaff">print</span>(fibonacci().take(<span style="color:#f78c6c">10</span>).toList());
+<span style="color:#546e7a">// [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</span>
+
+<span style="color:#82aaff">print</span>(fibonacci().firstWhere((n) <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">1000</span>));
+<span style="color:#546e7a">// 1597</span>
+
+<span style="color:#546e7a">// Asynchroner Generator – gibt Stream zurück</span>
+<span style="color:#82aaff">Stream</span>&lt;<span style="color:#c792ea">String</span>&gt; leseZeilen(<span style="color:#c792ea">String</span> pfad) <span style="color:#c792ea">async</span>* {
+  <span style="color:#c792ea">final</span> datei = <span style="color:#ffcb6b">File</span>(pfad);
+  <span style="color:#c792ea">await</span> <span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> zeile <span style="color:#c792ea">in</span> datei.openRead()
+      .transform(utf8.decoder)
+      .transform(<span style="color:#c792ea">const</span> <span style="color:#ffcb6b">LineSplitter</span>())) {
+    <span style="color:#c792ea">yield</span> zeile;
+  }
+}
+
+<span style="color:#546e7a">// yield* – delegiert an anderen Iterable/Stream</span>
+<span style="color:#82aaff">Iterable</span>&lt;<span style="color:#c792ea">int</span>&gt; verbinde(<span style="color:#c792ea">List</span>&lt;<span style="color:#82aaff">Iterable</span>&lt;<span style="color:#c792ea">int</span>&gt;&gt; listen) <span style="color:#c792ea">sync</span>* {
+  <span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> liste <span style="color:#c792ea">in</span> listen) {
+    <span style="color:#c792ea">yield</span>* liste;
+  }
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-classes" class="tp">
+
+<div class="ac open" id="ac-cls0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cls0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>class – Grundstruktur
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="class – grundstruktur">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    class – Grundstruktur
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Person</span> {
+  <span style="color:#546e7a">// Instanz-Felder (final = immutablel nach Konstruktor)</span>
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">String</span> name;
+  <span style="color:#c792ea">int</span> alter;
+
+  <span style="color:#546e7a">// Statisches Feld</span>
+  <span style="color:#c792ea">static</span> <span style="color:#c792ea">int</span> anzahl = <span style="color:#f78c6c">0</span>;
+
+  <span style="color:#546e7a">// Generativer Konstruktor</span>
+  <span style="color:#ffcb6b">Person</span>(<span style="color:#c792ea">this</span>.name, <span style="color:#c792ea">this</span>.alter) {
+    anzahl++;
+  }
+
+  <span style="color:#546e7a">// Named Konstruktor</span>
+  <span style="color:#ffcb6b">Person</span>.anonym() : name = <span style="color:#c3e88d">'Anonym'</span>, alter = <span style="color:#f78c6c">0</span>;
+
+  <span style="color:#546e7a">// Factory Konstruktor – kann bestehende Instanz zurückgeben</span>
+  <span style="color:#c792ea">factory</span> <span style="color:#ffcb6b">Person</span>.fromJson(<span style="color:#c792ea">Map</span>&lt;<span style="color:#c792ea">String</span>, <span style="color:#c792ea">dynamic</span>&gt; json) {
+    <span style="color:#c792ea">return</span> <span style="color:#ffcb6b">Person</span>(json[<span style="color:#c3e88d">'name'</span>] <span style="color:#c792ea">as</span> <span style="color:#c792ea">String</span>, json[<span style="color:#c3e88d">'alter'</span>] <span style="color:#c792ea">as</span> <span style="color:#c792ea">int</span>);
+  }
+
+  <span style="color:#546e7a">// Getter</span>
+  <span style="color:#c792ea">String</span> <span style="color:#c792ea">get</span> vollName <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Person: $name'</span>;
+
+  <span style="color:#546e7a">// Setter mit Validierung</span>
+  <span style="color:#c792ea">set</span> neuesAlter(<span style="color:#c792ea">int</span> wert) {
+    <span style="color:#c792ea">if</span> (wert &lt; <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">throw</span> <span style="color:#ffcb6b">ArgumentError</span>(<span style="color:#c3e88d">'Alter negativ'</span>);
+    alter = wert;
+  }
+
+  <span style="color:#546e7a">// Methode</span>
+  <span style="color:#c792ea">String</span> vorstellen() <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Hallo, ich bin $name, $alter Jahre alt.'</span>;
+
+  <span style="color:#546e7a">// toString überschreiben</span>
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">String</span> toString() <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Person($name, $alter)'</span>;
+
+  <span style="color:#546e7a">// == und hashCode überschreiben</span>
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">bool</span> <span style="color:#c792ea">operator</span> ==(<span style="color:#c792ea">Object</span> other) <span style="color:#89ddff">=&gt;</span>
+    other <span style="color:#c792ea">is</span> <span style="color:#ffcb6b">Person</span> &amp;&amp; other.name == name &amp;&amp; other.alter == alter;
+
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">int</span> <span style="color:#c792ea">get</span> <span style="color:#82aaff">hashCode</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">Object</span>.hash(name, alter);
+}
+
+<span style="color:#546e7a">// Nutzung</span>
+<span style="color:#c792ea">final</span> alice = <span style="color:#ffcb6b">Person</span>(<span style="color:#c3e88d">'Alice'</span>, <span style="color:#f78c6c">30</span>);
+<span style="color:#c792ea">final</span> bob   = <span style="color:#ffcb6b">Person</span>.fromJson({<span style="color:#c3e88d">'name'</span>: <span style="color:#c3e88d">'Bob'</span>, <span style="color:#c3e88d">'alter'</span>: <span style="color:#f78c6c">25</span>});
+<span style="color:#82aaff">print</span>(alice.vollName);    <span style="color:#546e7a">// "Person: Alice"</span>
+alice.neuesAlter = <span style="color:#f78c6c">31</span>;</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cls1"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cls1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>Vererbung &amp; Interfaces
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="vererbung &amp; interfaces">
+  <div style="color:#00b4d8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Vererbung &amp; Interfaces
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// abstract class – kann nicht instanziiert werden</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Tier</span> {
+  <span style="color:#c792ea">String</span> <span style="color:#c792ea">get</span> name;      <span style="color:#546e7a">// Abstrakte Getter (kein Body)</span>
+  <span style="color:#c792ea">void</span> spreche();       <span style="color:#546e7a">// Abstrakte Methode</span>
+
+  <span style="color:#546e7a">// Konkrete Methode</span>
+  <span style="color:#c792ea">String</span> beschreibung() <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Ich bin ${name}'</span>;
+}
+
+<span style="color:#546e7a">// extends – Einfachvererbung</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Hund</span> <span style="color:#c792ea">extends</span> <span style="color:#ffcb6b">Tier</span> {
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">String</span> name;
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">String</span> rasse;
+
+  <span style="color:#ffcb6b">Hund</span>(<span style="color:#c792ea">this</span>.name, <span style="color:#c792ea">this</span>.rasse);
+
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">void</span> spreche() <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'$name: Wuff!'</span>);
+
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">String</span> beschreibung() <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'${super.beschreibung()}, ein $rasse'</span>;
+}
+
+<span style="color:#546e7a">// implements – Interface (alle Methoden müssen überschrieben werden)</span>
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Roboter</span> <span style="color:#c792ea">implements</span> <span style="color:#ffcb6b">Tier</span> {
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">String</span> name = <span style="color:#c3e88d">'R2D2'</span>;
+
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">void</span> spreche() <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Beep boop!'</span>);
+}
+
+<span style="color:#546e7a">// interface (Dart 3.0+) – explizites Interface</span>
+<span style="color:#c792ea">interface</span> <span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Serializable</span> {
+  <span style="color:#c792ea">Map</span>&lt;<span style="color:#c792ea">String</span>, <span style="color:#c792ea">dynamic</span>&gt; toJson();
+}
+
+<span style="color:#546e7a">// sealed (Dart 3.0+) – für exhaustive switch</span>
+<span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Form</span> {}
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Kreis</span> <span style="color:#c792ea">extends</span> <span style="color:#ffcb6b">Form</span> { <span style="color:#c792ea">final</span> <span style="color:#c792ea">double</span> radius; <span style="color:#ffcb6b">Kreis</span>(<span style="color:#c792ea">this</span>.radius); }
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Rechteck</span> <span style="color:#c792ea">extends</span> <span style="color:#ffcb6b">Form</span> { <span style="color:#c792ea">final</span> <span style="color:#c792ea">double</span> breite, hoehe; <span style="color:#ffcb6b">Rechteck</span>(<span style="color:#c792ea">this</span>.breite, <span style="color:#c792ea">this</span>.hoehe); }
+
+<span style="color:#c792ea">double</span> flaeche(<span style="color:#ffcb6b">Form</span> f) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">switch</span> (f) {
+  <span style="color:#ffcb6b">Kreis</span>(:<span style="color:#c792ea">final</span> radius)              <span style="color:#89ddff">=&gt;</span> <span style="color:#f78c6c">3.14159</span> * radius * radius,
+  <span style="color:#ffcb6b">Rechteck</span>(:<span style="color:#c792ea">final</span> breite, :<span style="color:#c792ea">final</span> hoehe) <span style="color:#89ddff">=&gt;</span> breite * hoehe,
+};</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cls2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cls2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Mixins &amp; Extensions
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="mixins &amp; extensions">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Mixins &amp; Extensions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Mixin – Wiederverwendbare Methoden ohne Vererbung</span>
+<span style="color:#c792ea">mixin</span> <span style="color:#ffcb6b">Schwimmbar</span> {
+  <span style="color:#c792ea">void</span> schwimme() <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'$this schwimmt!'</span>);
+  <span style="color:#c792ea">bool</span> <span style="color:#c792ea">get</span> kannSchwimmen <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">true</span>;
+}
+
+<span style="color:#c792ea">mixin</span> <span style="color:#ffcb6b">Fliegbar</span> {
+  <span style="color:#c792ea">void</span> fliege() <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'$this fliegt!'</span>);
+}
+
+<span style="color:#546e7a">// on: Einschränkung auf bestimmte Klassen</span>
+<span style="color:#c792ea">mixin</span> <span style="color:#ffcb6b">Tiergeräusch</span> <span style="color:#c792ea">on</span> <span style="color:#ffcb6b">Tier</span> {
+  <span style="color:#c792ea">void</span> geraeuschMachen() <span style="color:#89ddff">=&gt;</span> spreche();  <span style="color:#546e7a">// kann Tier-Methoden nutzen</span>
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Ente</span> <span style="color:#c792ea">extends</span> <span style="color:#ffcb6b">Tier</span> <span style="color:#c792ea">with</span> <span style="color:#ffcb6b">Schwimmbar</span>, <span style="color:#ffcb6b">Fliegbar</span> {
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">String</span> <span style="color:#c792ea">get</span> name <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Ente'</span>;
+
+  <span style="color:#ff9800">@override</span>
+  <span style="color:#c792ea">void</span> spreche() <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Quak!'</span>);
+}
+
+<span style="color:#c792ea">final</span> ente = <span style="color:#ffcb6b">Ente</span>();
+ente.schwimme();   <span style="color:#546e7a">// "Ente schwimmt!"</span>
+ente.fliege();     <span style="color:#546e7a">// "Ente fliegt!"</span>
+
+<span style="color:#546e7a">// Extension – Methoden zu bestehenden Klassen hinzufügen</span>
+<span style="color:#c792ea">extension</span> <span style="color:#ffcb6b">StringExtension</span> <span style="color:#c792ea">on</span> <span style="color:#c792ea">String</span> {
+  <span style="color:#c792ea">String</span> capitalize() <span style="color:#89ddff">=&gt;</span>
+    isEmpty ? <span style="color:#c792ea">this</span> : <span style="color:#c3e88d">'${this[0].toUpperCase()}${substring(1)}'</span>;
+
+  <span style="color:#c792ea">bool</span> <span style="color:#c792ea">get</span> istPalindrom <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">this</span> == split(<span style="color:#c3e88d">''</span>).reversed.join();
+}
+
+<span style="color:#c792ea">extension</span> <span style="color:#ffcb6b">ListExtension</span>&lt;<span style="color:#ffcb6b">T</span>&gt; <span style="color:#c792ea">on</span> <span style="color:#c792ea">List</span>&lt;<span style="color:#ffcb6b">T</span>&gt; {
+  <span style="color:#ffcb6b">T</span>? <span style="color:#c792ea">get</span> zweites <span style="color:#89ddff">=&gt;</span> length &gt; <span style="color:#f78c6c">1</span> ? <span style="color:#c792ea">this</span>[<span style="color:#f78c6c">1</span>] : <span style="color:#c792ea">null</span>;
+}
+
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'hallo'</span>.capitalize());    <span style="color:#546e7a">// "Hallo"</span>
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'racecar'</span>.istPalindrom);  <span style="color:#546e7a">// true</span>
+<span style="color:#82aaff">print</span>([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>].zweites);       <span style="color:#546e7a">// 2</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cls3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cls3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Enums &amp; Records (Dart 3.0+)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="enums &amp; records (dart 3.0+)">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Enums &amp; Records (Dart 3.0+)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Einfaches Enum</span>
+<span style="color:#c792ea">enum</span> <span style="color:#ffcb6b">Richtung</span> { nord, sued, ost, west }
+
+<span style="color:#546e7a">// Erweitertes Enum (Dart 2.17+)</span>
+<span style="color:#c792ea">enum</span> <span style="color:#ffcb6b">Planet</span> {
+  merkur(<span style="color:#f78c6c">3.303e</span>+<span style="color:#f78c6c">23</span>, <span style="color:#f78c6c">2.4397e6</span>),
+  erde  (<span style="color:#f78c6c">5.976e</span>+<span style="color:#f78c6c">24</span>, <span style="color:#f78c6c">6.37814e6</span>),
+  mars  (<span style="color:#f78c6c">6.421e</span>+<span style="color:#f78c6c">23</span>, <span style="color:#f78c6c">3.3972e6</span>);
+
+  <span style="color:#c792ea">const</span> <span style="color:#ffcb6b">Planet</span>(<span style="color:#c792ea">this</span>.masse, <span style="color:#c792ea">this</span>.radius);
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">double</span> masse;
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">double</span> radius;
+
+  <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> oberflaechenGravitation <span style="color:#89ddff">=&gt;</span>
+    <span style="color:#f78c6c">6.67430e</span>-<span style="color:#f78c6c">11</span> * masse / (radius * radius);
+}
+
+<span style="color:#82aaff">print</span>(<span style="color:#ffcb6b">Planet</span>.erde.oberflaechenGravitation.toStringAsFixed(<span style="color:#f78c6c">2</span>));
+
+<span style="color:#546e7a">// switch auf Enum (exhaustiv)</span>
+<span style="color:#c792ea">final</span> text = <span style="color:#c792ea">switch</span> (richtung) {
+  <span style="color:#ffcb6b">Richtung</span>.nord <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Norden'</span>,
+  <span style="color:#ffcb6b">Richtung</span>.sued <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Süden'</span>,
+  <span style="color:#ffcb6b">Richtung</span>.ost  <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Osten'</span>,
+  <span style="color:#ffcb6b">Richtung</span>.west <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Westen'</span>,
+};
+
+<span style="color:#546e7a">// Records (Dart 3.0+) – anonyme immutabler Wert-Typen</span>
+(<span style="color:#c792ea">String</span>, <span style="color:#c792ea">int</span>) person = (<span style="color:#c3e88d">'Alice'</span>, <span style="color:#f78c6c">30</span>);
+<span style="color:#82aaff">print</span>(person.$<span style="color:#f78c6c">1</span>);   <span style="color:#546e7a">// 'Alice'</span>
+<span style="color:#82aaff">print</span>(person.$<span style="color:#f78c6c">2</span>);   <span style="color:#546e7a">// 30</span>
+
+<span style="color:#546e7a">// Benannte Record-Felder</span>
+({<span style="color:#c792ea">String</span> name, <span style="color:#c792ea">int</span> alter}) benutzer = (name: <span style="color:#c3e88d">'Alice'</span>, alter: <span style="color:#f78c6c">30</span>);
+<span style="color:#82aaff">print</span>(benutzer.name);   <span style="color:#546e7a">// 'Alice'</span>
+
+<span style="color:#546e7a">// Record Destructuring</span>
+<span style="color:#c792ea">final</span> (name, alter) = person;
+<span style="color:#c792ea">final</span> (:name, :alter) = benutzer;</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-collections" class="tp">
+
+<div class="ac open" id="ac-col0"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('col0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>List&lt;T&gt;
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-0" type="text" placeholder="🔍 Methode suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr"
+        data-m="add(element)"
+        data-d="element anhängen">
+      <td style="width:200px">
+        <code style="color:#00b4d8">add(element)</code>
+      </td>
+      <td style="color:#6c7a8e">Element anhängen</td>
+      <td style="color:#c3e88d;font-size:11px">liste.add(4)</td>
+    </tr>
+    <tr class="cr"
+        data-m="addall(iterable)"
+        data-d="mehrere elemente anhängen">
+      <td style="width:200px">
+        <code style="color:#00b4d8">addAll(iterable)</code>
+      </td>
+      <td style="color:#6c7a8e">Mehrere Elemente anhängen</td>
+      <td style="color:#c3e88d;font-size:11px">liste.addAll([4, 5])</td>
+    </tr>
+    <tr class="cr"
+        data-m="insert(index, elem)"
+        data-d="an position einfügen">
+      <td style="width:200px">
+        <code style="color:#00b4d8">insert(index, elem)</code>
+      </td>
+      <td style="color:#6c7a8e">An Position einfügen</td>
+      <td style="color:#c3e88d;font-size:11px">liste.insert(0, 99)</td>
+    </tr>
+    <tr class="cr"
+        data-m="remove(element)"
+        data-d="erstes vorkommen entfernen → bool">
+      <td style="width:200px">
+        <code style="color:#00b4d8">remove(element)</code>
+      </td>
+      <td style="color:#6c7a8e">Erstes Vorkommen entfernen → bool</td>
+      <td style="color:#c3e88d;font-size:11px">liste.remove(3)</td>
+    </tr>
+    <tr class="cr"
+        data-m="removeat(index)"
+        data-d="an position entfernen → t">
+      <td style="width:200px">
+        <code style="color:#00b4d8">removeAt(index)</code>
+      </td>
+      <td style="color:#6c7a8e">An Position entfernen → T</td>
+      <td style="color:#c3e88d;font-size:11px">liste.removeAt(0)</td>
+    </tr>
+    <tr class="cr"
+        data-m="map((e) =&gt; ...)"
+        data-d="transformieren → iterable">
+      <td style="width:200px">
+        <code style="color:#00b4d8">map((e) =&gt; ...)</code>
+      </td>
+      <td style="color:#6c7a8e">Transformieren → Iterable</td>
+      <td style="color:#c3e88d;font-size:11px">liste.map((x) =&gt; x * 2)</td>
+    </tr>
+    <tr class="cr"
+        data-m="where((e) =&gt; bool)"
+        data-d="filtern → iterable">
+      <td style="width:200px">
+        <code style="color:#00b4d8">where((e) =&gt; bool)</code>
+      </td>
+      <td style="color:#6c7a8e">Filtern → Iterable</td>
+      <td style="color:#c3e88d;font-size:11px">liste.where((x) =&gt; x &gt; 2)</td>
+    </tr>
+    <tr class="cr"
+        data-m="fold(init, fn)"
+        data-d="akkumulieren → wert">
+      <td style="width:200px">
+        <code style="color:#00b4d8">fold(init, fn)</code>
+      </td>
+      <td style="color:#6c7a8e">Akkumulieren → Wert</td>
+      <td style="color:#c3e88d;font-size:11px">liste.fold(0, (a, b) =&gt; a + b)</td>
+    </tr>
+    <tr class="cr"
+        data-m="reduce(fn)"
+        data-d="wie fold ohne startwert">
+      <td style="width:200px">
+        <code style="color:#00b4d8">reduce(fn)</code>
+      </td>
+      <td style="color:#6c7a8e">Wie fold ohne Startwert</td>
+      <td style="color:#c3e88d;font-size:11px">liste.reduce((a, b) =&gt; a + b)</td>
+    </tr>
+    <tr class="cr"
+        data-m="firstwhere((e) =&gt; b)"
+        data-d="erstes element das pred erfüllt">
+      <td style="width:200px">
+        <code style="color:#00b4d8">firstWhere((e) =&gt; b)</code>
+      </td>
+      <td style="color:#6c7a8e">Erstes Element das pred erfüllt</td>
+      <td style="color:#c3e88d;font-size:11px">liste.firstWhere((x) =&gt; x &gt; 2)</td>
+    </tr>
+    <tr class="cr"
+        data-m="any((e) =&gt; bool)"
+        data-d="mindestens ein element erfüllt pred">
+      <td style="width:200px">
+        <code style="color:#00b4d8">any((e) =&gt; bool)</code>
+      </td>
+      <td style="color:#6c7a8e">Mindestens ein Element erfüllt pred</td>
+      <td style="color:#c3e88d;font-size:11px">liste.any((x) =&gt; x &gt; 4)</td>
+    </tr>
+    <tr class="cr"
+        data-m="every((e) =&gt; bool)"
+        data-d="alle elemente erfüllen pred">
+      <td style="width:200px">
+        <code style="color:#00b4d8">every((e) =&gt; bool)</code>
+      </td>
+      <td style="color:#6c7a8e">Alle Elemente erfüllen pred</td>
+      <td style="color:#c3e88d;font-size:11px">liste.every((x) =&gt; x &gt; 0)</td>
+    </tr>
+    <tr class="cr"
+        data-m="sort([comparator])"
+        data-d="in-place sortieren">
+      <td style="width:200px">
+        <code style="color:#00b4d8">sort([comparator])</code>
+      </td>
+      <td style="color:#6c7a8e">In-place sortieren</td>
+      <td style="color:#c3e88d;font-size:11px">liste.sort((a, b) =&gt; a - b)</td>
+    </tr>
+    <tr class="cr"
+        data-m="reversed"
+        data-d="umgekehrte reihenfolge → iterable">
+      <td style="width:200px">
+        <code style="color:#00b4d8">reversed</code>
+      </td>
+      <td style="color:#6c7a8e">Umgekehrte Reihenfolge → Iterable</td>
+      <td style="color:#c3e88d;font-size:11px">liste.reversed.toList()</td>
+    </tr>
+    <tr class="cr"
+        data-m="sublist(start, end)"
+        data-d="teilausschnitt → neue list">
+      <td style="width:200px">
+        <code style="color:#00b4d8">sublist(start, end)</code>
+      </td>
+      <td style="color:#6c7a8e">Teilausschnitt → neue List</td>
+      <td style="color:#c3e88d;font-size:11px">liste.sublist(1, 3)</td>
+    </tr>
+    <tr class="cr"
+        data-m="contains(element)"
+        data-d="enthält element?">
+      <td style="width:200px">
+        <code style="color:#00b4d8">contains(element)</code>
+      </td>
+      <td style="color:#6c7a8e">Enthält Element?</td>
+      <td style="color:#c3e88d;font-size:11px">liste.contains(3)</td>
+    </tr>
+    <tr class="cr"
+        data-m="indexof(element)"
+        data-d="index des ersten treffers">
+      <td style="width:200px">
+        <code style="color:#00b4d8">indexOf(element)</code>
+      </td>
+      <td style="color:#6c7a8e">Index des ersten Treffers</td>
+      <td style="color:#c3e88d;font-size:11px">liste.indexOf(3)</td>
+    </tr>
+    <tr class="cr"
+        data-m="length"
+        data-d="anzahl elemente">
+      <td style="width:200px">
+        <code style="color:#00b4d8">length</code>
+      </td>
+      <td style="color:#6c7a8e">Anzahl Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">liste.length</td>
+    </tr>
+    <tr class="cr"
+        data-m="isempty / isnotempty"
+        data-d="leerprüfung">
+      <td style="width:200px">
+        <code style="color:#00b4d8">isEmpty / isNotEmpty</code>
+      </td>
+      <td style="color:#6c7a8e">Leerprüfung</td>
+      <td style="color:#c3e88d;font-size:11px">liste.isEmpty</td>
+    </tr>
+    <tr class="cr"
+        data-m="toset()"
+        data-d="duplikate entfernen">
+      <td style="width:200px">
+        <code style="color:#00b4d8">toSet()</code>
+      </td>
+      <td style="color:#6c7a8e">Duplikate entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">liste.toSet()</td>
+    </tr>
+    <tr class="cr"
+        data-m="expand((e) =&gt; list)"
+        data-d="flatmap">
+      <td style="width:200px">
+        <code style="color:#00b4d8">expand((e) =&gt; list)</code>
+      </td>
+      <td style="color:#6c7a8e">flatMap</td>
+      <td style="color:#c3e88d;font-size:11px">liste.expand((x) =&gt; [x, x])</td>
+    </tr>
+    <tr class="cr"
+        data-m="take(n)"
+        data-d="erste n elemente">
+      <td style="width:200px">
+        <code style="color:#00b4d8">take(n)</code>
+      </td>
+      <td style="color:#6c7a8e">Erste n Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">liste.take(3).toList()</td>
+    </tr>
+    <tr class="cr"
+        data-m="skip(n)"
+        data-d="erste n überspringen">
+      <td style="width:200px">
+        <code style="color:#00b4d8">skip(n)</code>
+      </td>
+      <td style="color:#6c7a8e">Erste n überspringen</td>
+      <td style="color:#c3e88d;font-size:11px">liste.skip(2).toList()</td>
+    </tr>
+    <tr class="cr"
+        data-m="tolist()"
+        data-d="iterable → list">
+      <td style="width:200px">
+        <code style="color:#00b4d8">toList()</code>
+      </td>
+      <td style="color:#6c7a8e">Iterable → List</td>
+      <td style="color:#c3e88d;font-size:11px">.map(...).toList()</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-col1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('col1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Map&lt;K,V&gt;
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-1" type="text" placeholder="🔍 Methode suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr"
+        data-m="map[key] = value"
+        data-d="eintrag setzen">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">map[key] = value</code>
+      </td>
+      <td style="color:#6c7a8e">Eintrag setzen</td>
+      <td style="color:#c3e88d;font-size:11px">map["name"] = "Alice"</td>
+    </tr>
+    <tr class="cr"
+        data-m="map[key]"
+        data-d="wert lesen → v?">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">map[key]</code>
+      </td>
+      <td style="color:#6c7a8e">Wert lesen → V?</td>
+      <td style="color:#c3e88d;font-size:11px">map["name"]  →  "Alice" oder null</td>
+    </tr>
+    <tr class="cr"
+        data-m="putifabsent(k, fn)"
+        data-d="nur setzen wenn fehlt">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">putIfAbsent(k, fn)</code>
+      </td>
+      <td style="color:#6c7a8e">Nur setzen wenn fehlt</td>
+      <td style="color:#c3e88d;font-size:11px">map.putIfAbsent("cnt", () =&gt; 0)</td>
+    </tr>
+    <tr class="cr"
+        data-m="remove(key)"
+        data-d="eintrag entfernen → v?">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">remove(key)</code>
+      </td>
+      <td style="color:#6c7a8e">Eintrag entfernen → V?</td>
+      <td style="color:#c3e88d;font-size:11px">map.remove("name")</td>
+    </tr>
+    <tr class="cr"
+        data-m="containskey(key)"
+        data-d="key vorhanden?">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">containsKey(key)</code>
+      </td>
+      <td style="color:#6c7a8e">Key vorhanden?</td>
+      <td style="color:#c3e88d;font-size:11px">map.containsKey("name")</td>
+    </tr>
+    <tr class="cr"
+        data-m="containsvalue(val)"
+        data-d="wert vorhanden?">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">containsValue(val)</code>
+      </td>
+      <td style="color:#6c7a8e">Wert vorhanden?</td>
+      <td style="color:#c3e88d;font-size:11px">map.containsValue("Alice")</td>
+    </tr>
+    <tr class="cr"
+        data-m="keys"
+        data-d="alle keys → iterable&lt;k&gt;">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">keys</code>
+      </td>
+      <td style="color:#6c7a8e">Alle Keys → Iterable&lt;K&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">map.keys.toList()</td>
+    </tr>
+    <tr class="cr"
+        data-m="values"
+        data-d="alle werte → iterable&lt;v&gt;">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">values</code>
+      </td>
+      <td style="color:#6c7a8e">Alle Werte → Iterable&lt;V&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">map.values.toList()</td>
+    </tr>
+    <tr class="cr"
+        data-m="entries"
+        data-d="alle mapentry → iterable">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">entries</code>
+      </td>
+      <td style="color:#6c7a8e">Alle MapEntry → Iterable</td>
+      <td style="color:#c3e88d;font-size:11px">for (final e in map.entries)</td>
+    </tr>
+    <tr class="cr"
+        data-m="map((k,v) =&gt; ...)"
+        data-d="transformieren → neue map">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">map((k,v) =&gt; ...)</code>
+      </td>
+      <td style="color:#6c7a8e">Transformieren → neue Map</td>
+      <td style="color:#c3e88d;font-size:11px">map.map((k, v) =&gt; MapEntry(k, v*2))</td>
+    </tr>
+    <tr class="cr"
+        data-m="foreach((k,v) =&gt; )"
+        data-d="iteration">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">forEach((k,v) =&gt; )</code>
+      </td>
+      <td style="color:#6c7a8e">Iteration</td>
+      <td style="color:#c3e88d;font-size:11px">map.forEach((k, v) =&gt; print("$k: $v"))</td>
+    </tr>
+    <tr class="cr"
+        data-m="update(k, fn)"
+        data-d="wert aktualisieren">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">update(k, fn)</code>
+      </td>
+      <td style="color:#6c7a8e">Wert aktualisieren</td>
+      <td style="color:#c3e88d;font-size:11px">map.update("cnt", (v) =&gt; v + 1)</td>
+    </tr>
+    <tr class="cr"
+        data-m="length"
+        data-d="anzahl einträge">
+      <td style="width:200px">
+        <code style="color:#4ec9b0">length</code>
+      </td>
+      <td style="color:#6c7a8e">Anzahl Einträge</td>
+      <td style="color:#c3e88d;font-size:11px">map.length</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-col2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('col2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>String
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<input class="sb" id="coll-s-2" type="text" placeholder="🔍 Methode suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr"
+        data-m="length"
+        data-d="anzahl utf-16 code-units">
+      <td style="width:200px">
+        <code style="color:#c792ea">length</code>
+      </td>
+      <td style="color:#6c7a8e">Anzahl UTF-16 Code-Units</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".length  →  5</td>
+    </tr>
+    <tr class="cr"
+        data-m="isempty / isnotempty"
+        data-d="leerprüfung">
+      <td style="width:200px">
+        <code style="color:#c792ea">isEmpty / isNotEmpty</code>
+      </td>
+      <td style="color:#6c7a8e">Leerprüfung</td>
+      <td style="color:#c3e88d;font-size:11px">"".isEmpty  →  true</td>
+    </tr>
+    <tr class="cr"
+        data-m="contains(s)"
+        data-d="enthält substring?">
+      <td style="width:200px">
+        <code style="color:#c792ea">contains(s)</code>
+      </td>
+      <td style="color:#6c7a8e">Enthält Substring?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".contains("all")  →  true</td>
+    </tr>
+    <tr class="cr"
+        data-m="startswith(s)"
+        data-d="beginnt mit?">
+      <td style="width:200px">
+        <code style="color:#c792ea">startsWith(s)</code>
+      </td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".startsWith("Ha")  →  true</td>
+    </tr>
+    <tr class="cr"
+        data-m="endswith(s)"
+        data-d="endet mit?">
+      <td style="width:200px">
+        <code style="color:#c792ea">endsWith(s)</code>
+      </td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".endsWith("lo")  →  true</td>
+    </tr>
+    <tr class="cr"
+        data-m="indexof(s)"
+        data-d="position des ersten treffers">
+      <td style="width:200px">
+        <code style="color:#c792ea">indexOf(s)</code>
+      </td>
+      <td style="color:#6c7a8e">Position des ersten Treffers</td>
+      <td style="color:#c3e88d;font-size:11px">"abcabc".indexOf("b")  →  1</td>
+    </tr>
+    <tr class="cr"
+        data-m="substring(s,e)"
+        data-d="ausschnitt">
+      <td style="width:200px">
+        <code style="color:#c792ea">substring(s,e)</code>
+      </td>
+      <td style="color:#6c7a8e">Ausschnitt</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".substring(1, 4)  →  "all"</td>
+    </tr>
+    <tr class="cr"
+        data-m="touppercase()"
+        data-d="großbuchstaben">
+      <td style="width:200px">
+        <code style="color:#c792ea">toUpperCase()</code>
+      </td>
+      <td style="color:#6c7a8e">Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo".toUpperCase()  →  "HALLO"</td>
+    </tr>
+    <tr class="cr"
+        data-m="tolowercase()"
+        data-d="kleinbuchstaben">
+      <td style="width:200px">
+        <code style="color:#c792ea">toLowerCase()</code>
+      </td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">"HALLO".toLowerCase()  →  "hallo"</td>
+    </tr>
+    <tr class="cr"
+        data-m="trim()"
+        data-d="whitespace vorne/hinten">
+      <td style="width:200px">
+        <code style="color:#c792ea">trim()</code>
+      </td>
+      <td style="color:#6c7a8e">Whitespace vorne/hinten</td>
+      <td style="color:#c3e88d;font-size:11px">"  hallo  ".trim()  →  "hallo"</td>
+    </tr>
+    <tr class="cr"
+        data-m="split(sep)"
+        data-d="aufteilen → list&lt;string&gt;">
+      <td style="width:200px">
+        <code style="color:#c792ea">split(sep)</code>
+      </td>
+      <td style="color:#6c7a8e">Aufteilen → List&lt;String&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">"a,b,c".split(",")  →  ["a","b","c"]</td>
+    </tr>
+    <tr class="cr"
+        data-m="replaceall(s,r)"
+        data-d="ersetzen">
+      <td style="width:200px">
+        <code style="color:#c792ea">replaceAll(s,r)</code>
+      </td>
+      <td style="color:#6c7a8e">Ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo".replaceAll("l","L")  →  "haLLo"</td>
+    </tr>
+    <tr class="cr"
+        data-m="replacefirst(s,r)"
+        data-d="erstes vorkommen ersetzen">
+      <td style="width:200px">
+        <code style="color:#c792ea">replaceFirst(s,r)</code>
+      </td>
+      <td style="color:#6c7a8e">Erstes Vorkommen ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">"aaa".replaceFirst("a","b")  →  "baa"</td>
+    </tr>
+    <tr class="cr"
+        data-m="padleft(w,p)"
+        data-d="linksbündig auffüllen">
+      <td style="width:200px">
+        <code style="color:#c792ea">padLeft(w,p)</code>
+      </td>
+      <td style="color:#6c7a8e">Linksbündig auffüllen</td>
+      <td style="color:#c3e88d;font-size:11px">"42".padLeft(5,"0")  →  "00042"</td>
+    </tr>
+    <tr class="cr"
+        data-m="padright(w,p)"
+        data-d="rechtsbündig auffüllen">
+      <td style="width:200px">
+        <code style="color:#c792ea">padRight(w,p)</code>
+      </td>
+      <td style="color:#6c7a8e">Rechtsbündig auffüllen</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".padRight(5)  →  "Hi   "</td>
+    </tr>
+    <tr class="cr"
+        data-m="codeunitat(i)"
+        data-d="utf-16 code-unit an position">
+      <td style="width:200px">
+        <code style="color:#c792ea">codeUnitAt(i)</code>
+      </td>
+      <td style="color:#6c7a8e">UTF-16 Code-Unit an Position</td>
+      <td style="color:#c3e88d;font-size:11px">"A".codeUnitAt(0)  →  65</td>
+    </tr>
+    <tr class="cr"
+        data-m="characters"
+        data-d="graphem-cluster (package:characters)">
+      <td style="width:200px">
+        <code style="color:#c792ea">characters</code>
+      </td>
+      <td style="color:#6c7a8e">Graphem-Cluster (package:characters)</td>
+      <td style="color:#c3e88d;font-size:11px">Für Emoji/Unicode korrekt</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-async" class="tp">
+
+<div class="ac open" id="ac-as0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('as0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Future – Basis
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="future – basis">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Future – Basis
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Future erstellen</span>
+<span style="color:#c792ea">final</span> f1 = <span style="color:#82aaff">Future</span>.value(<span style="color:#f78c6c">42</span>);                  <span style="color:#546e7a">// Sofort resolved</span>
+<span style="color:#c792ea">final</span> f2 = <span style="color:#82aaff">Future</span>.error(<span style="color:#82aaff">Exception</span>(<span style="color:#c3e88d">'Oh no'</span>)); <span style="color:#546e7a">// Sofort rejected</span>
+<span style="color:#c792ea">final</span> f3 = <span style="color:#82aaff">Future</span>.delayed(               <span style="color:#546e7a">// Nach Delay</span>
+  <span style="color:#82aaff">Duration</span>(seconds: <span style="color:#f78c6c">1</span>),
+  () <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Hallo nach 1 Sekunde'</span>,
+);
+
+<span style="color:#546e7a">// Future-Methoden</span>
+f1.then((wert) <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(wert));
+f1.catchError((e) <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Fehler: $e'</span>));
+f1.whenComplete(() <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Fertig (immer)'</span>));
+
+<span style="color:#546e7a">// Transformieren</span>
+<span style="color:#c792ea">final</span> verdoppelt = f1.then((n) <span style="color:#89ddff">=&gt;</span> n * <span style="color:#f78c6c">2</span>);
+
+<span style="color:#546e7a">// Parallel warten</span>
+<span style="color:#c792ea">final</span> ergebnisse = <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.wait([f1, f2, f3]);
+
+<span style="color:#546e7a">// Erstes das fertig wird</span>
+<span style="color:#c792ea">final</span> schnellstes = <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.any([langsam(), schnell()]);
+
+<span style="color:#546e7a">// Alle – auch Fehler</span>
+<span style="color:#c792ea">final</span> alle = <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.wait(
+  [f1, f2],
+  eagerError: <span style="color:#c792ea">false</span>,   <span style="color:#546e7a">// false = alle abwarten auch bei Fehler</span>
+);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-as1"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('as1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>Stream – Mehrere Werte
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="stream – mehrere werte">
+  <div style="color:#00b4d8;font-weight:700;font-size:12px;margin-bottom:8px">
+    Stream – Mehrere Werte
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Stream erstellen</span>
+<span style="color:#c792ea">final</span> stream1 = <span style="color:#82aaff">Stream</span>.fromIterable([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]);
+<span style="color:#c792ea">final</span> stream2 = <span style="color:#82aaff">Stream</span>.periodic(
+  <span style="color:#82aaff">Duration</span>(seconds: <span style="color:#f78c6c">1</span>),
+  (i) <span style="color:#89ddff">=&gt;</span> i,            <span style="color:#546e7a">// Zähler alle 1 Sekunde</span>
+);
+
+<span style="color:#546e7a">// StreamController – manuell</span>
+<span style="color:#c792ea">final</span> controller = <span style="color:#ffcb6b">StreamController</span>&lt;<span style="color:#c792ea">int</span>&gt;();
+controller.add(<span style="color:#f78c6c">1</span>);
+controller.add(<span style="color:#f78c6c">2</span>);
+controller.close();
+<span style="color:#c792ea">final</span> stream3 = controller.stream;
+
+<span style="color:#546e7a">// Stream konsumieren</span>
+<span style="color:#c792ea">await</span> <span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> wert <span style="color:#c792ea">in</span> stream1) {
+  <span style="color:#82aaff">print</span>(wert);
+}
+
+<span style="color:#546e7a">// Stream-Methoden (wie List, aber async)</span>
+<span style="color:#c792ea">final</span> summe    = <span style="color:#c792ea">await</span> stream1.fold(<span style="color:#f78c6c">0</span>, (a, b) <span style="color:#89ddff">=&gt;</span> a + b);
+<span style="color:#c792ea">final</span> verdoppl = stream1.map((x) <span style="color:#89ddff">=&gt;</span> x * <span style="color:#f78c6c">2</span>);
+<span style="color:#c792ea">final</span> gerade   = stream1.where((x) <span style="color:#89ddff">=&gt;</span> x.isEven);
+<span style="color:#c792ea">final</span> ersteFünf = stream2.take(<span style="color:#f78c6c">5</span>);
+
+<span style="color:#546e7a">// listen() – low-level</span>
+<span style="color:#c792ea">final</span> sub = stream1.listen(
+  (daten) <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(daten),
+  onError: (e) <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Fehler: $e'</span>),
+  onDone: () <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Fertig'</span>),
+  cancelOnError: <span style="color:#c792ea">false</span>,
+);
+<span style="color:#c792ea">await</span> sub.cancel();   <span style="color:#546e7a">// Abbestellen</span>
+
+<span style="color:#546e7a">// Broadcast-Stream (mehrere Listener erlaubt)</span>
+<span style="color:#c792ea">final</span> broadcast = stream1.asBroadcastStream();</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-as2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('as2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Isolates – echte Parallelität
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="isolates – echte parallelität">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Isolates – echte Parallelität
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> <span style="color:#c3e88d">'dart:isolate'</span>;
+
+<span style="color:#546e7a">// Dart hat keinen shared memory zwischen Threads!</span>
+<span style="color:#546e7a">// Isolates kommunizieren via Nachrichten (Messages).</span>
+
+<span style="color:#546e7a">// Einfacher Isolate-Aufruf (Dart 2.15+)</span>
+<span style="color:#c792ea">final</span> ergebnis = <span style="color:#c792ea">await</span> <span style="color:#ffcb6b">Isolate</span>.run(() {
+  <span style="color:#546e7a">// Läuft in eigenem Isolate</span>
+  <span style="color:#c792ea">return</span> schwereBerechnung(<span style="color:#f78c6c">10000000</span>);
+});
+
+<span style="color:#546e7a">// Manueller Isolate mit Ports</span>
+<span style="color:#82aaff">Future</span>&lt;<span style="color:#c792ea">void</span>&gt; mitIsolate() <span style="color:#c792ea">async</span> {
+  <span style="color:#c792ea">final</span> receivePort = <span style="color:#ffcb6b">ReceivePort</span>();
+
+  <span style="color:#c792ea">await</span> <span style="color:#ffcb6b">Isolate</span>.spawn(
+    isolateFunktion,
+    receivePort.sendPort,   <span style="color:#546e7a">// SendPort übergeben</span>
+  );
+
+  <span style="color:#546e7a">// Auf Nachricht warten</span>
+  <span style="color:#c792ea">final</span> antwort = <span style="color:#c792ea">await</span> receivePort.first;
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Antwort: $antwort'</span>);
+}
+
+<span style="color:#c792ea">void</span> isolateFunktion(<span style="color:#ffcb6b">SendPort</span> sendPort) {
+  <span style="color:#546e7a">// Wird im neuen Isolate ausgeführt</span>
+  <span style="color:#c792ea">final</span> ergebnis = schwereBerechnung(<span style="color:#f78c6c">10000000</span>);
+  sendPort.send(ergebnis);   <span style="color:#546e7a">// Nachricht zurücksenden</span>
+}
+
+<span style="color:#546e7a">// Compute-Funktion (Flutter-Wrapper für Isolate.run)</span>
+<span style="color:#546e7a">// final ergebnis = await compute(schwereBerechnung, 10000000);</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button id="exb0" onclick="switchEx(0)" style="border:1px solid #00b4d8;color:#00b4d8;background:rgba(0,180,216,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">FizzBuzz</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Klassen &amp; sealed</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Async &amp; Streams</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Records &amp; Pattern Matching</button>
+  
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">void</span> main() {
+  <span style="color:#546e7a">// Klassisch</span>
+  <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">1</span>; i &lt;= <span style="color:#f78c6c">100</span>; i++) {
+    <span style="color:#c792ea">final</span> text = <span style="color:#c792ea">switch</span> ((i % <span style="color:#f78c6c">3</span>, i % <span style="color:#f78c6c">5</span>)) {
+      (<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'FizzBuzz'</span>,
+      (<span style="color:#f78c6c">0</span>, _) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Fizz'</span>,
+      (_, <span style="color:#f78c6c">0</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Buzz'</span>,
+      _      <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'$i'</span>,
+    };
+    <span style="color:#82aaff">print</span>(text);
+  }
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// sealed class + exhaustiver switch (Dart 3.0+)</span>
+<span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Form</span> {
+  <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> flaeche;
+  <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> umfang;
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Kreis</span> <span style="color:#c792ea">extends</span> <span style="color:#ffcb6b">Form</span> {
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">double</span> radius;
+  <span style="color:#ffcb6b">Kreis</span>(<span style="color:#c792ea">this</span>.radius);
+
+  <span style="color:#ff9800">@override</span> <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> flaeche <span style="color:#89ddff">=&gt;</span> <span style="color:#f78c6c">3.14159</span> * radius * radius;
+  <span style="color:#ff9800">@override</span> <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> umfang  <span style="color:#89ddff">=&gt;</span> <span style="color:#f78c6c">2</span> * <span style="color:#f78c6c">3.14159</span> * radius;
+  <span style="color:#ff9800">@override</span> <span style="color:#c792ea">String</span> toString()  <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Kreis(r=$radius)'</span>;
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#ffcb6b">Rechteck</span> <span style="color:#c792ea">extends</span> <span style="color:#ffcb6b">Form</span> {
+  <span style="color:#c792ea">final</span> <span style="color:#c792ea">double</span> breite, hoehe;
+  <span style="color:#ffcb6b">Rechteck</span>(<span style="color:#c792ea">this</span>.breite, <span style="color:#c792ea">this</span>.hoehe);
+
+  <span style="color:#ff9800">@override</span> <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> flaeche <span style="color:#89ddff">=&gt;</span> breite * hoehe;
+  <span style="color:#ff9800">@override</span> <span style="color:#c792ea">double</span> <span style="color:#c792ea">get</span> umfang  <span style="color:#89ddff">=&gt;</span> <span style="color:#f78c6c">2</span> * (breite + hoehe);
+  <span style="color:#ff9800">@override</span> <span style="color:#c792ea">String</span> toString()  <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Rechteck(${breite}x$hoehe)'</span>;
+}
+
+<span style="color:#c792ea">String</span> beschreibe(<span style="color:#ffcb6b">Form</span> f) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">switch</span> (f) {
+  <span style="color:#ffcb6b">Kreis</span>(:<span style="color:#c792ea">final</span> radius) when radius &gt; <span style="color:#f78c6c">10</span> <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Großer Kreis (r=$radius)'</span>,
+  <span style="color:#ffcb6b">Kreis</span>(:<span style="color:#c792ea">final</span> radius)                   <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Kleiner Kreis (r=$radius)'</span>,
+  <span style="color:#ffcb6b">Rechteck</span>(:<span style="color:#c792ea">final</span> breite, :<span style="color:#c792ea">final</span> hoehe)  <span style="color:#89ddff">=&gt;</span> <span style="color:#c3e88d">'Rechteck ${breite}x$hoehe'</span>,
+  <span style="color:#546e7a">// Kein default nötig – Compiler prüft Vollständigkeit!</span>
+};
+
+<span style="color:#c792ea">void</span> main() {
+  <span style="color:#c792ea">final</span> formen = &lt;<span style="color:#ffcb6b">Form</span>&gt;[
+    <span style="color:#ffcb6b">Kreis</span>(<span style="color:#f78c6c">5</span>),
+    <span style="color:#ffcb6b">Kreis</span>(<span style="color:#f78c6c">15</span>),
+    <span style="color:#ffcb6b">Rechteck</span>(<span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">6</span>),
+  ];
+
+  <span style="color:#c792ea">for</span> (<span style="color:#c792ea">final</span> f <span style="color:#c792ea">in</span> formen) {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'${beschreibe(f)}: Fläche=${f.flaeche.toStringAsFixed(2)}'</span>);
+  }
+}</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> <span style="color:#c3e88d">'dart:async'</span>;
+
+<span style="color:#546e7a">// Fibonacci als lazy Stream</span>
+<span style="color:#82aaff">Stream</span>&lt;<span style="color:#c792ea">int</span>&gt; fibonacci() <span style="color:#c792ea">async</span>* {
+  <span style="color:#c792ea">int</span> a = <span style="color:#f78c6c">0</span>, b = <span style="color:#f78c6c">1</span>;
+  <span style="color:#c792ea">while</span> (<span style="color:#c792ea">true</span>) {
+    <span style="color:#c792ea">yield</span> a;
+    <span style="color:#c792ea">final</span> temp = a + b;
+    a = b;
+    b = temp;
+  }
+}
+
+<span style="color:#546e7a">// API-Simulation mit Future</span>
+<span style="color:#82aaff">Future</span>&lt;<span style="color:#c792ea">Map</span>&lt;<span style="color:#c792ea">String</span>, <span style="color:#c792ea">dynamic</span>&gt;&gt; holeUser(<span style="color:#c792ea">int</span> id) <span style="color:#c792ea">async</span> {
+  <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.delayed(<span style="color:#82aaff">Duration</span>(milliseconds: <span style="color:#f78c6c">100</span>));
+  <span style="color:#c792ea">return</span> {<span style="color:#c3e88d">'id'</span>: id, <span style="color:#c3e88d">'name'</span>: <span style="color:#c3e88d">'User $id'</span>, <span style="color:#c3e88d">'aktiv'</span>: id % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>};
+}
+
+<span style="color:#82aaff">Future</span>&lt;<span style="color:#c792ea">void</span>&gt; main() <span style="color:#c792ea">async</span> {
+  <span style="color:#546e7a">// Erste 10 Fibonacci-Zahlen</span>
+  <span style="color:#c792ea">final</span> fibs = <span style="color:#c792ea">await</span> fibonacci().take(<span style="color:#f78c6c">10</span>).toList();
+  <span style="color:#82aaff">print</span>(fibs);
+  <span style="color:#546e7a">// [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</span>
+
+  <span style="color:#546e7a">// Erste Fibonacci &gt; 1000</span>
+  <span style="color:#c792ea">final</span> groß = <span style="color:#c792ea">await</span> fibonacci().firstWhere((n) <span style="color:#89ddff">=&gt;</span> n &gt; <span style="color:#f78c6c">1000</span>);
+  <span style="color:#82aaff">print</span>(groß);   <span style="color:#546e7a">// 1597</span>
+
+  <span style="color:#546e7a">// Parallel laden</span>
+  <span style="color:#c792ea">final</span> users = <span style="color:#c792ea">await</span> <span style="color:#82aaff">Future</span>.wait(
+    <span style="color:#c792ea">List</span>.generate(<span style="color:#f78c6c">5</span>, (i) <span style="color:#89ddff">=&gt;</span> holeUser(i + <span style="color:#f78c6c">1</span>)),
+  );
+
+  <span style="color:#546e7a">// Nur aktive User</span>
+  <span style="color:#c792ea">final</span> aktive = users
+    .where((u) <span style="color:#89ddff">=&gt;</span> u[<span style="color:#c3e88d">'aktiv'</span>] <span style="color:#c792ea">as</span> <span style="color:#c792ea">bool</span>)
+    .map((u) <span style="color:#89ddff">=&gt;</span> u[<span style="color:#c3e88d">'name'</span>] <span style="color:#c792ea">as</span> <span style="color:#c792ea">String</span>)
+    .toList();
+
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Aktive User: $aktive'</span>);
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Records (Dart 3.0+) – typsichere Tupel</span>
+(<span style="color:#c792ea">String</span>, <span style="color:#c792ea">int</span>) parseUser(<span style="color:#c792ea">String</span> input) {
+  <span style="color:#c792ea">final</span> parts = input.split(<span style="color:#c3e88d">':'</span>);
+  <span style="color:#c792ea">return</span> (parts[<span style="color:#f78c6c">0</span>], <span style="color:#c792ea">int</span>.parse(parts[<span style="color:#f78c6c">1</span>]));
+}
+
+<span style="color:#546e7a">// Named Records</span>
+({<span style="color:#c792ea">String</span> name, <span style="color:#c792ea">int</span> alter, <span style="color:#c792ea">String</span>? email}) erstelleUser({
+  required <span style="color:#c792ea">String</span> name,
+  required <span style="color:#c792ea">int</span> alter,
+  <span style="color:#c792ea">String</span>? email,
+}) <span style="color:#89ddff">=&gt;</span> (name: name, alter: alter, email: email);
+
+<span style="color:#546e7a">// Pattern Matching</span>
+<span style="color:#c792ea">void</span> verarbeite(<span style="color:#c792ea">Object</span>? wert) {
+  <span style="color:#c792ea">switch</span> (wert) {
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">null</span>:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Null'</span>);
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">int</span> n when n &lt; <span style="color:#f78c6c">0</span>:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Negativ: $n'</span>);
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">int</span> n:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Integer: $n'</span>);
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">String</span> s when s.isEmpty:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Leerer String'</span>);
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">String</span> s:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'String: $s (Länge: ${s.length})'</span>);
+    <span style="color:#c792ea">case</span> [<span style="color:#c792ea">int</span> x, <span style="color:#c792ea">int</span> y]:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'2D-Punkt: ($x, $y)'</span>);
+    <span style="color:#c792ea">case</span> {<span style="color:#c3e88d">'name'</span>: <span style="color:#c792ea">String</span> name, <span style="color:#c3e88d">'alter'</span>: <span style="color:#c792ea">int</span> alter}:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'User: $name ($alter Jahre)'</span>);
+    <span style="color:#c792ea">case</span> _:
+      <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'Unbekannt: ${wert.runtimeType}'</span>);
+  }
+}
+
+<span style="color:#c792ea">void</span> main() {
+  <span style="color:#c792ea">final</span> user = erstelleUser(name: <span style="color:#c3e88d">'Alice'</span>, alter: <span style="color:#f78c6c">30</span>, email: <span style="color:#c3e88d">'a@b.com'</span>);
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'${user.name} (${user.alter})  – ${user.email ?? "keine Email"}'</span>);
+
+  <span style="color:#c792ea">final</span> (name, alter) = parseUser(<span style="color:#c3e88d">'Bob:25'</span>);
+  <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">'$name ist $alter Jahre alt'</span>);
+
+  verarbeite(<span style="color:#c792ea">null</span>);
+  verarbeite(-<span style="color:#f78c6c">5</span>);
+  verarbeite(<span style="color:#c3e88d">'Hallo'</span>);
+  verarbeite([<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>]);
+  verarbeite({<span style="color:#c3e88d">'name'</span>: <span style="color:#c3e88d">'Charlie'</span>, <span style="color:#c3e88d">'alter'</span>: <span style="color:#f78c6c">35</span>});
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#00b4d811;border:1px solid #00b4d844;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#00b4d8">Arch / CachyOS:</strong> <code style="color:#ffb347">yay -S dart flutter</code><br><code style="color:#ffb347">dart create mein_projekt &amp;&amp; cd mein_projekt &amp;&amp; dart run</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #00b4d844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00b4d80e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00b4d8">
+      <span style="display:inline-block;width:8px;height:8px;background:#00b4d8;border-radius:50%;margin-right:2px"></span>⚙ Dart &amp; Flutter installieren (Arch)
+    </span>
+    <span class="aa" style="color:#00b4d8;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00b4d8;font-weight:700">Dart SDK</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S dart
+dart --version</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00b4d8;font-weight:700">Flutter</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S flutter
+flutter doctor</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00b4d8;font-weight:700">via FVM</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">fvm (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S fvm
+fvm install stable
+fvm use stable</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00b4d8;font-weight:700">via mise</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">mise (AUR)</span>
+  </div>
+  <code style="color:#ffb347">yay -S mise
+mise install dart@latest</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ dart CLI – Projektmanagement
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart create</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart create mein_projekt
+dart create -t console-full mein_projekt</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart run</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart run  |  dart run bin/main.dart</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart compile</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart compile exe bin/main.dart -o main
+dart compile js web/main.dart</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart pub</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart pub get
+dart pub add paket
+dart pub upgrade</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart test</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart test
+dart test test/main_test.dart</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart fix</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart fix --apply  # automatische Korrekturen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart format</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart format .  |  dart format --set-exit-if-changed .</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#4ec9b0;font-weight:700">dart analyze</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart</span>
+  </div>
+  <code style="color:#ffb347">dart analyze  # statische Analyse</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Linting &amp; Analyse
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">dart analyze</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">dart SDK</span>
+  </div>
+  <code style="color:#ffb347">dart analyze  # eingebaut, keine Installation</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">dart_code_metrics</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub</span>
+  </div>
+  <code style="color:#ffb347">dart pub add dart_code_metrics --dev</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">custom_lint</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub</span>
+  </div>
+  <code style="color:#ffb347">dart pub add custom_lint --dev</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#c792ea;font-weight:700">analysis_options.yaml</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">-</span>
+  </div>
+  <code style="color:#ffb347">include: package:lints/recommended.yaml</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Packages
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">http</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add http  # HTTP-Requests</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">dio</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add dio   # Umfangreicher HTTP-Client</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">json_serializable</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add json_serializable  # JSON Code-Gen</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">freezed</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add freezed  # Immutabler Klassen + Pattern Match</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">riverpod</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add flutter_riverpod  # State Management (Flutter)</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">drift</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add drift  # SQLite ORM</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">test</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add test --dev  # Test-Framework</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#ffb347;font-weight:700">mocktail</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">pub.dev</span>
+  </div>
+  <code style="color:#ffb347">dart pub add mocktail --dev  # Mocking</code>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #00ff8844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#00ff880e">
+    <span style="display:flex;align-items:center;gap:6px;color:#00ff88">
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff88;border-radius:50%;margin-right:2px"></span>⚙ Flutter-spezifisch
+    </span>
+    <span class="aa" style="color:#00ff88;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">flutter run</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter</span>
+  </div>
+  <code style="color:#ffb347">flutter run  # auf verbundenem Gerät</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">flutter build</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter</span>
+  </div>
+  <code style="color:#ffb347">flutter build apk  |  flutter build ios  |  flutter build web</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">flutter test</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter</span>
+  </div>
+  <code style="color:#ffb347">flutter test  |  flutter test --coverage</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">flutter pub</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter</span>
+  </div>
+  <code style="color:#ffb347">flutter pub get  |  flutter pub add paket</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">flutter gen-l10n</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter</span>
+  </div>
+  <code style="color:#ffb347">Lokalisierung generieren</code>
+</div>
+<div class="tc">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+    <span style="color:#00ff88;font-weight:700">flutter devices</span>
+    <span style="background:rgba(74,85,104,.2);color:#6c7a8e;
+                 border:1px solid rgba(68,80,106,.4);padding:1px 7px;
+                 border-radius:4px;font-size:11px">flutter</span>
+  </div>
+  <code style="color:#ffb347">Verfügbare Geräte/Emulatoren anzeigen</code>
+</div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// Akkordeon auf- / zuklappen
+function tA(id) {
+  const el   = document.getElementById('ac-' + id);
+  const body = el.querySelector('.ab');
+  const open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+// Tab-Navigation
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Suche im Kontrollfluss-Tab
+const ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-ct"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+// Suche in Collections-Tabellen
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    const q     = this.value.toLowerCase();
+    const tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display =
+        !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+// Beispiel-Tabs
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach((panel, j) => {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach((btn, j) => {
+    if (j === index) {
+      btn.style.borderColor = '#00b4d8';
+      btn.style.color       = '#00b4d8';
+      btn.style.background  = 'rgba(0, 180, 216, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uiua Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #5f8f9e;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(95, 143, 158, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+/* Glyph-Tabelle: größere Glyphen */
+.glyph-cell { font-size: 20px !important; text-align: center; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#5f8f9e">&#x25C7;</span>
+      <span style="color:#5f8f9e">Uiua</span> Referenz
+    </div>
+    <div id="hdr-sub">Array-Programmierung · Stack-basiert · Unicode-Glyphen · Rechts-nach-links</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="glyphen">Glyphen</button>
+    <button class="tb" data-tab="modifiers">Modifikatoren</button>
+    <button class="tb" data-tab="strings">Strings & I/O</button>
+    <button class="tb" data-tab="patterns">Patterns & Idiome</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#5f8f9e0e;border:1px solid #5f8f9e44;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#5f8f9e">Uiua ist anders als alles andere im DevRef.</strong><br>
+  <span style="color:#cdd6f4">
+    Kein Kontrollfluss → <code style="color:#7ec8e3">⍥</code> (repeat) &amp;
+    <code style="color:#c792ea">⍣</code> (try) &nbsp;·&nbsp;
+    Keine Variablen → <code style="color:#82aaff">x ← wert</code> Bindings &nbsp;·&nbsp;
+    Kein for-loop → <code style="color:#c792ea">/</code> <code style="color:#c792ea"></code>
+    <code style="color:#7ec8e3">∵</code> <code style="color:#7ec8e3">≡</code> &nbsp;·&nbsp;
+    Alles ist ein Array
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #5f8f9e44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5f8f9e0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5f8f9e">
+      <span style="display:inline-block;width:8px;height:8px;background:#5f8f9e;border-radius:50%;margin-right:2px"></span>Wie Uiua funktioniert – Stack &amp; Auswertung
+    </span>
+    <span class="aa" style="color:#5f8f9e;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="wie uiua funktioniert – stack &amp; auswertung">
+  <div style="color:#5f8f9e;font-weight:700;font-size:12px;margin-bottom:8px">
+    Wie Uiua funktioniert – Stack &amp; Auswertung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Uiua wird VON RECHTS NACH LINKS ausgewertet!</span>
+<span style="color:#546e7a"># Jeder Ausdruck legt Werte auf einen Stack (Stapel).</span>
+<span style="color:#546e7a"># Funktionen nehmen Werte vom Stack und legen Ergebnisse darauf.</span>
+
+<span style="color:#546e7a"># Einfaches Beispiel: 1 liegt auf dem Stack, + addiert 2 dazu</span>
++ <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span>           <span style="color:#546e7a"># Stack: [3]</span>
+                <span style="color:#546e7a"># Lies: "addiere 1 und 2" → 3</span>
+
+<span style="color:#546e7a"># Rechts-nach-links: zuerst wird 3 ausgewertet, dann ×</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#f78c6c">2</span> + <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span>       <span style="color:#546e7a"># = × 2 3 = 6</span>
+                <span style="color:#546e7a"># Lies: "verdopple die Summe von 1 und 2"</span>
+
+<span style="color:#546e7a"># Stack-Kommentare erklären den Zustand:</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (vorher -- nachher</span>)</span>
+<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>           <span style="color:#546e7a"># Stack: [1 2 3] (3 ist oben)</span>
+
+<span style="color:#546e7a"># . (dup) – dupliziert den obersten Wert</span>
+. <span style="color:#f78c6c">5</span>             <span style="color:#546e7a"># Stack: [5 5]</span>
+
+<span style="color:#546e7a"># , (flip) – vertauscht die zwei obersten Werte</span>
+, <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span>           <span style="color:#546e7a"># Stack: [1 2] → Werte getauscht: [2 1]</span>
+
+<span style="color:#546e7a"># ; (pop) – entfernt den obersten Wert</span>
+; <span style="color:#f78c6c">42</span>            <span style="color:#546e7a"># Stack: []</span>
+
+<span style="color:#546e7a"># Bindings – Werte benennen</span>
+<span style="color:#82aaff">x</span> <span style="color:#82aaff">←</span> <span style="color:#f78c6c">42</span>          <span style="color:#546e7a"># x ist jetzt 42</span>
+<span style="color:#82aaff">verdopple</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>  <span style="color:#546e7a"># verdopple ist eine Funktion</span>
+
+<span style="color:#546e7a"># Bindings aufrufen</span>
+<span style="color:#82aaff">verdopple</span> <span style="color:#82aaff">x</span>     <span style="color:#546e7a"># 84</span>
+
+<span style="color:#546e7a"># Alles ist ein Array – auch Skalare!</span>
+<span style="color:#f78c6c">5</span>               <span style="color:#546e7a"># ist ein 0-dimensionales Array</span>
+[<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]         <span style="color:#546e7a"># ist ein 1-dimensionales Array (Vektor)</span>
+[<span style="color:#f78c6c">1_2_3</span> <span style="color:#f78c6c">4_5_6</span>]   <span style="color:#546e7a"># ist ein 2-dimensionales Array (Matrix)</span>
+                <span style="color:#546e7a"># _ trennt Zeilen im Array-Literal</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Arrays erstellen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arrays erstellen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arrays erstellen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Array-Literal mit []</span>
+[<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]     <span style="color:#546e7a"># Vektor: [1 2 3 4 5]</span>
+[<span style="color:#c3e88d">"a"</span> <span style="color:#c3e88d">"b"</span> <span style="color:#c3e88d">"c"</span>]   <span style="color:#546e7a"># String-Array</span>
+
+<span style="color:#546e7a"># ⇡ (range) – Zahlenfolge 0..n-1</span>
+<span style="color:#7ec8e3">⇡</span> <span style="color:#f78c6c">5</span>             <span style="color:#546e7a"># [0 1 2 3 4]</span>
+<span style="color:#7ec8e3">⇡</span> <span style="color:#f78c6c">10</span>            <span style="color:#546e7a"># [0 1 2 3 4 5 6 7 8 9]</span>
+
+<span style="color:#546e7a"># Reshape ↯ – Array in neues Muster bringen</span>
+<span style="color:#7ec8e3">↯</span> <span style="color:#f78c6c">3_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">9</span>        <span style="color:#546e7a"># 3×3 Matrix aus [0..8]</span>
+<span style="color:#546e7a"># [[0 1 2]</span>
+<span style="color:#546e7a">#  [3 4 5]</span>
+<span style="color:#546e7a">#  [6 7 8]]</span>
+
+<span style="color:#7ec8e3">↯</span> <span style="color:#f78c6c">2_3_2</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">12</span>     <span style="color:#546e7a"># 3D: 2×3×2 Tensor</span>
+
+<span style="color:#546e7a"># ⬚ (fill) – mit Standardwert füllen</span>
+<span style="color:#7ec8e3">⬚</span><span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">↯</span> <span style="color:#f78c6c">3_4</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">5</span>    <span style="color:#546e7a"># Fehlende Werte mit 0 füllen</span>
+
+<span style="color:#546e7a"># ⊂ (join) – Arrays zusammenfügen</span>
+<span style="color:#7ec8e3">⊂</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>] [<span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">6</span>]  <span style="color:#546e7a"># [1 2 3 4 5 6]</span>
+
+<span style="color:#546e7a"># △ (shape) – Form eines Arrays</span>
+<span style="color:#7ec8e3">△</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]       <span style="color:#546e7a"># [3]</span>
+<span style="color:#7ec8e3">△</span> <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">2_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">6</span>       <span style="color:#546e7a"># [2 3]</span>
+
+<span style="color:#546e7a"># ⧻ (length) – Länge der ersten Dimension</span>
+<span style="color:#7ec8e3">⧻</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]   <span style="color:#546e7a"># 5</span>
+
+<span style="color:#546e7a"># ⊢ (first) – erstes Element</span>
+<span style="color:#7ec8e3">⊢</span> [<span style="color:#f78c6c">10</span> <span style="color:#f78c6c">20</span> <span style="color:#f78c6c">30</span>]    <span style="color:#546e7a"># 10</span>
+
+<span style="color:#546e7a"># ⊣ (last) – letztes Element</span>
+<span style="color:#7ec8e3">⊣</span> [<span style="color:#f78c6c">10</span> <span style="color:#f78c6c">20</span> <span style="color:#f78c6c">30</span>]    <span style="color:#546e7a"># 30</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Arithmetik &amp; Vergleiche
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arithmetik &amp; vergleiche">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arithmetik &amp; Vergleiche
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Alle Operatoren arbeiten elementweise auf Arrays!</span>
+
++ <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span>           <span style="color:#546e7a"># 3</span>
+- <span style="color:#f78c6c">10</span> <span style="color:#f78c6c">3</span>          <span style="color:#546e7a"># 7</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span>           <span style="color:#546e7a"># 12</span>
+<span style="color:#7ec8e3">÷</span> <span style="color:#f78c6c">10</span> <span style="color:#f78c6c">2</span>          <span style="color:#546e7a"># 5 (immer Float-Division!)</span>
+
+<span style="color:#546e7a"># Modulo</span>
+<span style="color:#7ec8e3">◿</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">7</span>           <span style="color:#546e7a"># 1  (7 mod 3)</span>
+
+<span style="color:#546e7a"># Potenz / Wurzel</span>
+<span style="color:#82aaff">ⁿ</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">8</span>           <span style="color:#546e7a"># 64  (8^2)</span>
+√ <span style="color:#f78c6c">9</span>             <span style="color:#546e7a"># 3.0</span>
+
+<span style="color:#546e7a"># Auf Arrays – JEDES Element!</span>
++ <span style="color:#f78c6c">10</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]    <span style="color:#546e7a"># [11 12 13]</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#f78c6c">2</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span>]   <span style="color:#546e7a"># [2 4 6 8]</span>
+<span style="color:#7ec8e3">×</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>] [<span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">6</span>]  <span style="color:#546e7a"># [4 10 18]  (elementweise)</span>
+
+<span style="color:#546e7a"># Vergleiche (geben 0 oder 1 zurück)</span>
+= <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">3</span>           <span style="color:#546e7a"># 1</span>
+&lt; <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">5</span>           <span style="color:#546e7a"># 1  (5 &lt; 2? Nein → 0... warte)</span>
+                <span style="color:#546e7a"># Achtung: Uiua-Ordnung! &lt; a b = b &lt; a</span>
+                <span style="color:#546e7a"># &lt; 2 5 bedeutet "ist 5 &lt; 2?" → 0</span>
+
+<span style="color:#546e7a"># Logisch</span>
+<span style="color:#7ec8e3">¬</span> <span style="color:#f78c6c">1</span>             <span style="color:#546e7a"># 0  (NOT)</span>
+<span style="color:#7ec8e3">¬</span> <span style="color:#f78c6c">0</span>             <span style="color:#546e7a"># 1</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">1</span>           <span style="color:#546e7a"># UND (in Arrays: elementweise)</span>
+
+<span style="color:#546e7a"># Auf Arrays:</span>
+= [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>] [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">3</span>]  <span style="color:#546e7a"># [1 0 1]</span>
+&lt; <span style="color:#f78c6c">3</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]    <span style="color:#546e7a"># [0 0 1 1 1]  (welche Elemente &gt; 3?)</span>
+                    <span style="color:#546e7a"># Weil &lt; a b = b &lt; a: ist jedes Element &lt; 3?</span>
+                    <span style="color:#546e7a"># Nein: [1&lt;3=1 2&lt;3=1 3&lt;3=0 4&lt;3=0 5&lt;3=0]</span>
+                    <span style="color:#546e7a"># → [1 1 0 0 0]  (welche &lt; 3?)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Stack-Operationen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="stack-operationen">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Stack-Operationen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Der Stack in Uiua – die wichtigsten Primitiven</span>
+
+<span style="color:#546e7a"># . (dup) – dupliziere oberstes Element</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (a -- a a</span>)</span>
+. <span style="color:#f78c6c">5</span>                 <span style="color:#546e7a"># [5 5]</span>
+<span style="color:#7ec8e3">×</span> . <span style="color:#f78c6c">3</span>               <span style="color:#546e7a"># 9  (3*3 = Quadrat)</span>
+
+<span style="color:#546e7a"># , (flip) – tausche die zwei obersten</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (a b -- b a</span>)</span>
+, <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">10</span>              <span style="color:#546e7a"># [10 3] statt [3 10]</span>
+- , <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">10</span>            <span style="color:#546e7a"># = - 10 3 = 7</span>
+
+<span style="color:#546e7a"># ; (pop) – entferne oberstes Element</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (a --</span>)</span>
+; <span style="color:#f78c6c">42</span>                <span style="color:#546e7a"># []</span>
+
+<span style="color:#546e7a"># ∘ (identity) – tue nichts (nützlich als Platzhalter)</span>
+<span style="color:#7ec8e3">∘</span> <span style="color:#f78c6c">5</span>                 <span style="color:#546e7a"># [5]</span>
+
+<span style="color:#546e7a"># ⊙ (dip) – wende Funktion auf zweites Element an</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (a b f -- a f(b</span>))</span>
+<span style="color:#7ec8e3">⊙</span>(<span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>) <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">5</span>           <span style="color:#546e7a"># [3 10]  (5×2=10, 3 bleibt)</span>
+
+<span style="color:#546e7a"># ⊙∘ – sehr häufig: zweites behalten, erstes verarbeiten</span>
+<span style="color:#7ec8e3">⊙</span><span style="color:#7ec8e3">∘</span>                  <span style="color:#546e7a"># wie "swap dann dup"</span>
+
+<span style="color:#546e7a"># Mehrere Werte auf Stack gleichzeitig</span>
+<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>               <span style="color:#546e7a"># Stack: [1 2 3]</span>
++ <span style="color:#7ec8e3">⊙</span>+                <span style="color:#546e7a"># (1+2)+3? Nein...</span>
+                    <span style="color:#546e7a"># ⊙+ addiert 1+2=3, dann + 3 3 = 6</span>
+                    <span style="color:#546e7a"># Lies: "addiere die Summe der ersten zwei"</span>
+
+<span style="color:#546e7a"># gap ⋅ – ignoriere oberstes Element</span>
+<span style="color:#7ec8e3">⋅</span><span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>              <span style="color:#546e7a"># [1 2] – 3 ignoriert, 1 bleibt, 2 bleibt</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-glyphen" class="tp">
+
+<div style="background:#7ec8e311;border:1px solid #7ec8e333;border-radius:8px;
+            padding:10px 14px;margin-bottom:12px;font-size:12px;color:#6c7a8e">
+  <strong style="color:#7ec8e3">Stack-Signatur Notation:</strong>
+  <code style="color:#ffcb6b">(inputs -- outputs)</code> &nbsp;·&nbsp;
+  <code style="color:#ffcb6b">a b</code> = Stack-Werte (b ist oben) &nbsp;·&nbsp;
+  <code style="color:#ffcb6b">f</code> = Funktion &nbsp;·&nbsp;
+  <code style="color:#ffcb6b">¯</code> = negativ (Uiua-Notation für negative Zahlen)
+</div>
+
+<div class="ac open" id="ac-gm0"
+     style="border:1px solid #7ec8e344;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gm0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7ec8e30e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7ec8e3">
+      <span style="display:inline-block;width:8px;height:8px;background:#7ec8e3;border-radius:50%;margin-right:2px"></span>Monadische Funktionen (1 Eingabe)
+    </span>
+    <span class="aa" style="color:#7ec8e3;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Glyph</th><th>Name</th><th>Signatur</th>
+    <th>Beschreibung</th><th>Beispiel</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">¬</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">not</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Logisches NOT / bitweises Komplement</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">¬ 1 → 0</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">±</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">sign</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Vorzeichen: -1, 0, oder 1</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">± ¯5 → ¯1</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⌵</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">absolute value</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Absolutwert</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⌵ ¯3 → 3</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⌈</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">ceiling</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Aufrunden</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⌈ 3.2 → 4</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⌊</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">floor</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Abrunden</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⌊ 3.9 → 3</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⁅</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">round</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Runden</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⁅ 3.5 → 4</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">√</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">sqrt</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Quadratwurzel</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">√ 9 → 3</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⧻</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">length</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Länge der ersten Dimension</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⧻ [1 2 3] → 3</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">△</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">shape</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Form (Shape) als Array</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">△ ↯2_3 . → [2 3]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⊢</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">first</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Erstes Element</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊢ [10 20 30] → 10</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⊣</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">last</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Letztes Element</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊣ [10 20 30] → 30</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⇡</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">range</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">0..n-1 Array</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⇡ 5 → [0 1 2 3 4]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⇣</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">range reverse</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">0..n-1 rückwärts dann flip</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace"></td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">♭</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">deshape</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Array flatten (1D machen)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">♭ ↯2_3 ⇡6 → [0 1 2 3 4 5]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⊕</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">classify</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Eindeutige Werte als Indizes</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊕ [1 1 2 3 2] → [0 0 1 2 1]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⍏</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">rise</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Aufsteigende Sortier-Indizes</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⍏ [3 1 2] → [1 2 0]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⍖</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">fall</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Absteigende Sortier-Indizes</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⍖ [3 1 2] → [0 2 1]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⍉</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">transpose</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Transponieren (Achsen tauschen)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⍉ ↯2_3 ⇡6 → [[0 3][1 4][2 5]]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⊔</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">unbox</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Box-Wert auspacken</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊔ □5 → 5</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">□</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">box</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Wert in Box einpacken</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">□ [1 2 3] → Box</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">°</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">un</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(f -- f')</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Inverse einer Funktion</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">°⊚ → uncouple</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#7ec8e3;font-weight:900">⍣</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">try</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(f g -- h)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Fehlerbehandlung</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⍣(÷)(0)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gm1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gm1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Dyadische Funktionen (2 Eingaben)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Glyph</th><th>Name</th><th>Signatur</th>
+    <th>Beschreibung</th><th>Beispiel</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">+</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">add</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Addition (elementweise)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">+ 3 4 → 7</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">-</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">subtract</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Subtraktion</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">- 3 10 → 7</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">×</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">multiply</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Multiplikation</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">× 3 4 → 12</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">÷</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">divide</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Division (immer Float)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">÷ 2 7 → 3.5</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">◿</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">modulo</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Rest (b mod a)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">◿ 3 7 → 1</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">ⁿ</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">power</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Potenz (b^a)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">ⁿ 2 3 → 9</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">ₙ</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">logarithm</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Logarithmus (log_a(b))</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">ₙ 2 8 → 3</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">↧</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">minimum</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Minimum zweier Werte</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">↧ 3 7 → 3</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">↥</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">maximum</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Maximum zweier Werte</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">↥ 3 7 → 7</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">=</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">equals</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Gleichheit (0 oder 1)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">= 3 3 → 1</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">≠</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">not equals</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Ungleichheit</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">≠ 3 4 → 1</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">&lt;</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">less than</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Kleiner als (b &lt; a)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">&lt; 5 3 → 1 (3&lt;5)</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">≤</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">less or eq</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Kleiner gleich</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">≤ 5 5 → 1</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">&gt;</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">greater</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Größer als (b &gt; a)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">&gt; 3 5 → 1 (5&gt;3)</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">≥</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">greater eq</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Größer gleich</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">≥ 3 5 → 1</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">↙</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">take</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Erste n Elemente nehmen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">↙ 3 [1 2 3 4 5] → [1 2 3]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">↘</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">drop</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Erste n Elemente weglassen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">↘ 2 [1 2 3 4 5] → [3 4 5]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">↯</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">reshape</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Array in neue Form bringen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">↯ 2_3 ⇡6 → [[0 1 2][3 4 5]]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">⊡</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">pick</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Element/Zeile nach Index</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊡ 1 [10 20 30] → 20</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">⊂</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">join</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Arrays zusammenfügen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊂ [1 2] [3 4] → [1 2 3 4]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">⊏</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">select</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- c)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Elemente nach Indizes auswählen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊏ [2 0 1] [10 20 30] → [30 10 20]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#4fc3f7;font-weight:900">⍤</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">assert</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b --)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Fehler wenn a falsch</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⍤ "msg" 1 → ok</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gm2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gm2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Stack-Operationen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Glyph</th><th>Name</th><th>Signatur</th>
+    <th>Beschreibung</th><th>Beispiel</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">.</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">dup</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- a a)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Oberstes Element duplizieren</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">. 5 → [5 5]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">,</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">flip</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- b a)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Zwei oberste Elemente tauschen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">, 1 2 → [2 1]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">;</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">pop</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a --)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Oberstes Element verwerfen</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">; 42 → []</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">∘</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">identity</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a -- a)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Nichts tun (nützlich als Platzhalter)</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">∘ 5 → 5</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">⊙</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">dip</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b f -- a f(b))</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">f auf zweites Element anwenden</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊙(+1) 3 5 → [3 6]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">⋅</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">gap</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b -- b)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Oberstes verwerfen, zweites behalten</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⋅1 2 3 → [1 2]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">∩</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">both</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b f -- fa fb)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">f auf beide obersten Werte</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">∩(×2) 3 4 → [6 8]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">⊃</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">fork</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a f g -- fa ga)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">Beide Fns auf selbe Eingabe</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊃(+1)(×2) 5 → [6 10]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">⊸</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">on</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a f -- a fa)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">f anwenden, Original behalten</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace">⊸(×2) 5 → [5 10]</td>
+    </tr>
+    <tr>
+      <td style="width:48px;text-align:center;font-size:18px">
+        <span style="color:#c792ea;font-weight:900">⟜</span>
+      </td>
+      <td style="width:120px">
+        <code style="color:#4fc3f7;font-size:11px">with</code>
+      </td>
+      <td style="width:110px">
+        <code style="color:#ffcb6b;font-size:10px">(a b f -- fa(b) a)</code>
+      </td>
+      <td style="color:#6c7a8e;font-size:12px">wie dip aber andersrum</td>
+      <td style="color:#c3e88d;font-size:11px;font-family:Courier New,monospace"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-modifiers" class="tp">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Reduce &amp; Scan – Aggregation
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="reduce &amp; scan – aggregation">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Reduce &amp; Scan – Aggregation
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># / (reduce) – Funktion zwischen allen Elementen</span>
+<span style="color:#546e7a"># Wie fold/inject – kombiniert alle Werte zu einem</span>
+<span style="color:#c792ea">/</span>+ [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]      <span style="color:#546e7a"># 15  (1+2+3+4+5)</span>
+<span style="color:#c792ea">/</span><span style="color:#7ec8e3">×</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]      <span style="color:#546e7a"># 120</span>
+<span style="color:#c792ea">/</span><span style="color:#7ec8e3">↧</span> [<span style="color:#f78c6c">3</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">9</span>]    <span style="color:#546e7a"># 1   (Minimum aller Werte)</span>
+<span style="color:#c792ea">/</span><span style="color:#7ec8e3">↥</span> [<span style="color:#f78c6c">3</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">9</span>]    <span style="color:#546e7a"># 9   (Maximum aller Werte)</span>
+<span style="color:#c792ea">/</span><span style="color:#7ec8e3">⊂</span> [[<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span>] [<span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span>]]    <span style="color:#546e7a"># [1 2 3 4] (join aller Zeilen)</span>
+
+<span style="color:#546e7a">#  (scan) – wie reduce aber behält alle Zwischenergebnisse</span>
++ [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]      <span style="color:#546e7a"># [1 3 6 10 15]  (kumulierte Summen)</span>
+<span style="color:#7ec8e3">×</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]      <span style="color:#546e7a"># [1 2 6 24 120]</span>
+<span style="color:#7ec8e3">↥</span> [<span style="color:#f78c6c">3</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">9</span>]    <span style="color:#546e7a"># [3 3 4 4 5 9]  (laufendes Maximum)</span>
+
+<span style="color:#546e7a"># Fibonacci mit scan!</span>
++ <span style="color:#7ec8e3">⊂</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">1_1</span>          <span style="color:#546e7a"># Fibonacci-Folge (die ersten Schritte)</span>
++. <span style="color:#f78c6c">1</span>               <span style="color:#546e7a"># Fibonacci mit dup-Trick</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #5f8f9e44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5f8f9e0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5f8f9e">
+      <span style="display:inline-block;width:8px;height:8px;background:#5f8f9e;border-radius:50%;margin-right:2px"></span>each &amp; rows – Mapping
+    </span>
+    <span class="aa" style="color:#5f8f9e;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="each &amp; rows – mapping">
+  <div style="color:#5f8f9e;font-weight:700;font-size:12px;margin-bottom:8px">
+    each &amp; rows – Mapping
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># ∵ (each) – Funktion auf jedes Element anwenden</span>
+<span style="color:#546e7a"># (wie map aber für skalare Funktionen)</span>
+∵(<span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]   <span style="color:#546e7a"># [2 4 6 8 10]</span>
+∵√ [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">9</span> <span style="color:#f78c6c">16</span> <span style="color:#f78c6c">25</span>]    <span style="color:#546e7a"># [1 2 3 4 5]</span>
+∵(+<span style="color:#f78c6c">1</span>) <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">2_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">6</span>       <span style="color:#546e7a"># [[1 2 3] [4 5 6]]</span>
+
+<span style="color:#546e7a"># ≡ (rows) – Funktion auf jede Zeile anwenden</span>
+≡(<span style="color:#c792ea">/</span>+) <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">3_4</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">12</span>      <span style="color:#546e7a"># Summe jeder Zeile</span>
+<span style="color:#546e7a"># [6 22 38]</span>
+
+≡(⇌) <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">3_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">9</span>        <span style="color:#546e7a"># Jede Zeile umkehren</span>
+
+<span style="color:#546e7a"># Verschachtelt: each über rows</span>
+∵∵(<span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>) <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">2_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">6</span>      <span style="color:#546e7a"># Jedes Element verdoppeln (2D)</span>
+
+<span style="color:#546e7a"># ⊜ (partition) – gruppieren und Funktion anwenden</span>
+<span style="color:#546e7a"># Teilt Array anhand einer Maske in Gruppen</span>
+⊜<span style="color:#7ec8e3">∘</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">0</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">0</span> <span style="color:#f78c6c">1</span>] [<span style="color:#f78c6c">10</span> <span style="color:#f78c6c">20</span> <span style="color:#f78c6c">30</span> <span style="color:#f78c6c">40</span> <span style="color:#f78c6c">50</span> <span style="color:#f78c6c">60</span> <span style="color:#f78c6c">70</span>]
+<span style="color:#546e7a"># Gibt Gruppen zurück wo Maske = 1</span>
+
+<span style="color:#546e7a"># ⊞ (table) – alle Paare-Kombinationen</span>
+<span style="color:#546e7a"># Wie kartesisches Produkt mit Funktion</span>
+<span style="color:#7ec8e3">⊞</span>+ [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>] [<span style="color:#f78c6c">10</span> <span style="color:#f78c6c">20</span>]
+<span style="color:#546e7a"># [[11 21]</span>
+<span style="color:#546e7a">#  [12 22]</span>
+<span style="color:#546e7a">#  [13 23]]</span>
+
+<span style="color:#7ec8e3">⊞</span>= [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>] [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]  <span style="color:#546e7a"># 3×3 Identitätsmatrix!</span>
+<span style="color:#546e7a"># [[1 0 0]</span>
+<span style="color:#546e7a">#  [0 1 0]</span>
+<span style="color:#546e7a">#  [0 0 1]]</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>repeat &amp; fill – Iteration
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="repeat &amp; fill – iteration">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    repeat &amp; fill – Iteration
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># ⍥ (repeat) – Funktion n-mal wiederholen</span>
+<span style="color:#7ec8e3">⍥</span>(<span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>) <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">1</span>           <span style="color:#546e7a"># 8  (1 → 2 → 4 → 8)</span>
+<span style="color:#7ec8e3">⍥</span>(+<span style="color:#f78c6c">1</span>) <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">0</span>           <span style="color:#546e7a"># 5  (0 → 1 → 2 → 3 → 4 → 5)</span>
+
+<span style="color:#546e7a"># Mit Array als Zähler:</span>
+<span style="color:#7ec8e3">⍥</span>(<span style="color:#7ec8e3">⊂</span><span style="color:#f78c6c">0</span>) <span style="color:#f78c6c">5</span> []          <span style="color:#546e7a"># [0 0 0 0 0]</span>
+
+<span style="color:#546e7a"># ⍜ (under) – transformieren, Operation, zurücktransformieren</span>
+<span style="color:#546e7a"># ⍜f g  bedeutet: °f dann g dann f</span>
+<span style="color:#7ec8e3">⍜</span>⇌(<span style="color:#c792ea">/</span>+) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># Summe des umgekehrten Arrays = 15</span>
+<span style="color:#546e7a"># Erst umkehren, dann summieren, dann zurückkehren</span>
+
+<span style="color:#7ec8e3">⍜</span>(<span style="color:#7ec8e3">↙</span><span style="color:#f78c6c">3</span>)(<span style="color:#7ec8e3">×</span><span style="color:#f78c6c">10</span>) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># Erste 3 Elemente ×10</span>
+<span style="color:#546e7a"># [10 20 30 4 5]</span>
+
+<span style="color:#546e7a"># ⬚ (fill) – Standardwert für fehlende Elemente</span>
+<span style="color:#7ec8e3">⬚</span><span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">↙</span> <span style="color:#f78c6c">7</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]      <span style="color:#546e7a"># [1 2 3 0 0 0 0]  (mit 0 aufgefüllt)</span>
+<span style="color:#7ec8e3">⬚</span><span style="color:#c3e88d">" "</span> <span style="color:#7ec8e3">↙</span> <span style="color:#f78c6c">8</span> <span style="color:#c3e88d">"Hallo"</span>    <span style="color:#546e7a"># "Hallo   "  (mit Leerzeichen)</span>
+
+<span style="color:#546e7a"># ∧ (fold) – wie reduce aber mit Akkumulator</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (akku array f -- ergebnis</span>)</span>
+<span style="color:#7ec8e3">∧</span>(+) <span style="color:#f78c6c">0</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># 15 (startet mit 0)</span>
+<span style="color:#7ec8e3">∧</span>(<span style="color:#7ec8e3">⊂</span>) [] [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]     <span style="color:#546e7a"># [1 2 3] (Liste aufbauen)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Prüfungen &amp; Bedingungen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="prüfungen &amp; bedingungen">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Prüfungen &amp; Bedingungen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># ? (check) und Bedingungsfluss</span>
+
+<span style="color:#546e7a"># ⍣ (try) – Fehlerbehandlung</span>
+<span style="color:#546e7a"># ⍣ haupt fehler</span>
+<span style="color:#7ec8e3">⍣</span>(<span style="color:#7ec8e3">÷</span>)(<span style="color:#f78c6c">0</span>) <span style="color:#f78c6c">0</span> <span style="color:#f78c6c">5</span>          <span style="color:#546e7a"># Versuche 5÷0, bei Fehler → 0</span>
+<span style="color:#7ec8e3">⍣</span>(<span style="color:#7ec8e3">⍤</span><span style="color:#c3e88d">"msg"</span> <span style="color:#f78c6c">0</span>)(<span style="color:#f78c6c">42</span>)      <span style="color:#546e7a"># Fehler → 42</span>
+
+<span style="color:#546e7a"># Bedingungen mit if-Funktion: ⨬ (switch)</span>
+<span style="color:#546e7a"># oder mit select: ⊡</span>
+
+<span style="color:#546e7a"># Wenn-Dann-Sonst via select:</span>
+<span style="color:#546e7a"><span style="color:#ffcb6b"># (cond [dann sonst] --</span>)</span>
+<span style="color:#7ec8e3">⊡</span> <span style="color:#f78c6c">1</span> [<span style="color:#c3e88d">"Wahr"</span> <span style="color:#c3e88d">"Falsch"</span>]  <span style="color:#546e7a"># "Wahr"  (Index 1 = zweites)</span>
+<span style="color:#7ec8e3">⊡</span> <span style="color:#f78c6c">0</span> [<span style="color:#c3e88d">"Wahr"</span> <span style="color:#c3e88d">"Falsch"</span>]  <span style="color:#546e7a"># "Wahr"  (Index 0 = erstes!)</span>
+<span style="color:#546e7a"># Achtung: Uiua-Arrays sind 0-indiziert</span>
+<span style="color:#546e7a"># 0 = erstes Element = "Wahr"</span>
+
+<span style="color:#546e7a"># Bedingte Logik mit Multiplikation (idiomatisch!):</span>
+<span style="color:#546e7a"># × cond wert  →  wert wenn cond=1, sonst 0</span>
+<span style="color:#7ec8e3">×</span> (&gt; <span style="color:#f78c6c">5</span> <span style="color:#82aaff">x</span>) <span style="color:#82aaff">x</span>         <span style="color:#546e7a"># x wenn x&gt;5 sonst 0</span>
+
+<span style="color:#546e7a"># partition für bedingte Auswahl:</span>
+<span style="color:#546e7a"># ⊜∘ maske array → Elemente wo maske=1</span>
+⊜<span style="color:#7ec8e3">∘</span> (&gt; <span style="color:#f78c6c">3</span>) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># [4 5]  (Elemente &gt; 3)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-strings" class="tp">
+
+<div class="ac open" id="ac-si0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('si0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Strings in Uiua
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="strings in uiua">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Strings in Uiua
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Strings sind Arrays von Zeichen!</span>
+<span style="color:#546e7a"># "Hallo" = ['H' 'a' 'l' 'l' 'o']</span>
+
+<span style="color:#546e7a"># @-Notation für einzelne Zeichen</span>
+<span style="color:#f07178">@H</span> <span style="color:#f07178">@i</span>               <span style="color:#546e7a"># 'H' 'i'</span>
++ <span style="color:#f07178">@A</span> <span style="color:#f78c6c">1</span>              <span style="color:#546e7a"># 'B'  (Zeichen-Arithmetik!)</span>
+- <span style="color:#f07178">@a</span> <span style="color:#f07178">@A</span>             <span style="color:#546e7a"># 32   (Differenz Groß/Klein)</span>
+
+<span style="color:#546e7a"># ⧻ für Länge</span>
+<span style="color:#7ec8e3">⧻</span> <span style="color:#c3e88d">"Hallo, Welt!"</span>   <span style="color:#546e7a"># 13</span>
+
+<span style="color:#546e7a"># ↙ ↘ für Teilstrings</span>
+<span style="color:#7ec8e3">↙</span> <span style="color:#f78c6c">5</span> <span style="color:#c3e88d">"Hallo, Welt!"</span> <span style="color:#546e7a"># "Hallo"</span>
+<span style="color:#7ec8e3">↘</span> <span style="color:#f78c6c">7</span> <span style="color:#c3e88d">"Hallo, Welt!"</span> <span style="color:#546e7a"># "Welt!"</span>
+
+<span style="color:#546e7a"># /⊂ zum Verbinden (wie join/concat)</span>
+<span style="color:#c792ea">/</span><span style="color:#7ec8e3">⊂</span> [<span style="color:#c3e88d">"Hallo"</span> <span style="color:#c3e88d">", "</span> <span style="color:#c3e88d">"Welt!"</span>]  <span style="color:#546e7a"># "Hallo, Welt!"</span>
+
+<span style="color:#546e7a"># = zum Vergleichen (zeichenweise)</span>
+= <span style="color:#c3e88d">"Hallo"</span> <span style="color:#c3e88d">"Hallo"</span>  <span style="color:#546e7a"># [1 1 1 1 1]</span>
+<span style="color:#c792ea">/</span><span style="color:#7ec8e3">×</span> = <span style="color:#c3e88d">"Hallo"</span> <span style="color:#c3e88d">"Hallo"</span>  <span style="color:#546e7a"># 1  (alle gleich)</span>
+
+<span style="color:#546e7a"># String-Suche</span>
+<span style="color:#7ec8e3">⌕</span> <span style="color:#c3e88d">"ll"</span> <span style="color:#c3e88d">"Hallo Welt"</span>   <span style="color:#546e7a"># [2]  (Position)</span>
+
+<span style="color:#546e7a"># Groß/Kleinschreibung über Zeichen-Arithmetik</span>
+<span style="color:#546e7a"># (Differenz A-a = 32)</span>
++ <span style="color:#f78c6c">32</span> <span style="color:#c3e88d">"HALLO"</span>        <span style="color:#546e7a"># "hallo"  (zu Klein)</span>
+- <span style="color:#f78c6c">32</span> <span style="color:#c3e88d">"hallo"</span>        <span style="color:#546e7a"># "HALLO"  (zu Groß)</span>
+
+<span style="color:#546e7a"># Zahlen parsen</span>
+<span style="color:#7ec8e3">parse</span> <span style="color:#c3e88d">"42"</span>          <span style="color:#546e7a"># 42</span>
+<span style="color:#7ec8e3">parse</span> <span style="color:#c3e88d">"3.14"</span>        <span style="color:#546e7a"># 3.14</span>
+
+<span style="color:#546e7a"># Zu String konvertieren</span>
+<span style="color:#7ec8e3">string</span> <span style="color:#f78c6c">42</span>           <span style="color:#546e7a"># "42"</span>
+<span style="color:#7ec8e3">repr</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]        <span style="color:#546e7a"># "[1 2 3]"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-si1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('si1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>I/O &amp; Ausgabe
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="i/o &amp; ausgabe">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    I/O &amp; Ausgabe
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># &amp;p (print) – Ausgabe ohne Newline</span>
+&amp;<span style="color:#82aaff">p</span> <span style="color:#c3e88d">"Hallo!"</span>
+
+<span style="color:#546e7a"># &amp;pf (print formatted / show) – mit Newline</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"Hallo, Welt!"</span>
+
+<span style="color:#546e7a"># show – Debug-Ausgabe (zeigt Typ und Wert)</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">△</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]       <span style="color:#546e7a"># Ausgabe: [3]</span>
+
+<span style="color:#546e7a"># Mehrere Werte ausgeben</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"Ergebnis: "</span> &amp;<span style="color:#82aaff">p</span> <span style="color:#c792ea">/</span>+ [<span style="color:#f78c6c">1..5</span>]
+
+<span style="color:#546e7a"># &amp;i (input) – Eingabe einlesen</span>
+<span style="color:#82aaff">name</span> <span style="color:#82aaff">←</span> &amp;<span style="color:#82aaff">i</span>           <span style="color:#546e7a"># Wartet auf Eingabe</span>
+
+<span style="color:#546e7a"># &amp;fras (file read all string)</span>
+<span style="color:#82aaff">inhalt</span> <span style="color:#82aaff">←</span> &amp;<span style="color:#82aaff">fras</span> <span style="color:#c3e88d">"datei.txt"</span>
+
+<span style="color:#546e7a"># &amp;fwa (file write all)</span>
+&amp;<span style="color:#82aaff">fwa</span> <span style="color:#c3e88d">"ausgabe.txt"</span> <span style="color:#c3e88d">"Inhalt..."</span>
+
+<span style="color:#546e7a"># Existenz prüfen</span>
+&amp;<span style="color:#82aaff">fe</span> <span style="color:#c3e88d">"datei.txt"</span>     <span style="color:#546e7a"># 1 wenn existiert, 0 sonst</span>
+
+<span style="color:#546e7a"># Dateien auflisten</span>
+&amp;<span style="color:#82aaff">fld</span> <span style="color:#c3e88d">"verzeichnis"</span>  <span style="color:#546e7a"># Array von Dateinamen</span>
+
+<span style="color:#546e7a"># HTTP (über das &amp;http-Modul)</span>
+<span style="color:#546e7a"># &amp;httpsw "https://api.example.com/data"</span>
+
+<span style="color:#546e7a"># Aktuelle Zeit</span>
+&amp;<span style="color:#82aaff">cd</span>                 <span style="color:#546e7a"># Datum und Zeit als String</span>
+<span style="color:#7ec8e3">now</span>                 <span style="color:#546e7a"># Zeit als Float (Sekunden)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-patterns" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Idiom suchen…">
+
+<div class="ac open" id="ac-pt0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pt0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Häufige Idiome
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="häufige idiome">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Häufige Idiome
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># ── Quadrat einer Zahl ────────────────────────────────────────</span>
+<span style="color:#7ec8e3">×</span>. <span style="color:#f78c6c">5</span>                <span style="color:#546e7a"># 25  (5 dup, dann ×)</span>
+
+<span style="color:#546e7a"># ── Mittelwert ────────────────────────────────────────────────</span>
+<span style="color:#7ec8e3">÷</span> <span style="color:#7ec8e3">⧻</span>. <span style="color:#c792ea">/</span>+ [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># 3  (Summe / Länge)</span>
+<span style="color:#546e7a"># Lies: dividiere (Länge des Arrays) durch (Summe)</span>
+<span style="color:#546e7a"># .dup macht Kopie für ⧻</span>
+
+<span style="color:#546e7a"># ── Bereich prüfen (a ≤ x ≤ b) ───────────────────────────────</span>
+<span style="color:#546e7a"># × (≤ min) (≥ max)  x</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#7ec8e3">≥</span><span style="color:#f78c6c">5</span> <span style="color:#7ec8e3">≤</span><span style="color:#f78c6c">10</span> <span style="color:#f78c6c">7</span>          <span style="color:#546e7a"># 1  (5 ≤ 7 ≤ 10)</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#7ec8e3">≥</span><span style="color:#f78c6c">5</span> <span style="color:#7ec8e3">≤</span><span style="color:#f78c6c">10</span> <span style="color:#f78c6c">3</span>          <span style="color:#546e7a"># 0  (3 nicht im Bereich)</span>
+
+<span style="color:#546e7a"># ── Fibonacci-Folge (lazy/elegant!) ──────────────────────────</span>
+[<span style="color:#f78c6c">0</span> <span style="color:#f78c6c">1</span>]
+<span style="color:#7ec8e3">⍥</span>(<span style="color:#7ec8e3">⊂</span> <span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">↘</span>¯<span style="color:#f78c6c">2.</span>) <span style="color:#f78c6c">8</span> .   <span style="color:#546e7a"># Nicht-idiomatisch, aber zeigt Konzepte</span>
+<span style="color:#546e7a"># Besser: Scan-Trick</span>
++ <span style="color:#f78c6c">1_1</span>              <span style="color:#546e7a"># [1 1 2 3 5 8 13]</span>
+
+<span style="color:#546e7a"># ── FizzBuzz ──────────────────────────────────────────────────</span>
+<span style="color:#546e7a"># (Uiua-Stil: sehr deklarativ)</span>
+<span style="color:#82aaff">f</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⊛</span>(<span style="color:#7ec8e3">÷</span><span style="color:#7ec8e3">⟜</span><span style="color:#7ec8e3">◿</span><span style="color:#f78c6c">3</span> <span style="color:#7ec8e3">⊙</span>(<span style="color:#7ec8e3">÷</span><span style="color:#7ec8e3">⟜</span><span style="color:#7ec8e3">◿</span><span style="color:#f78c6c">5</span>))
+
+<span style="color:#546e7a"># ── Duplikate entfernen ───────────────────────────────────────</span>
+<span style="color:#7ec8e3">⍖</span>. [<span style="color:#f78c6c">3</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">4</span>]  <span style="color:#546e7a"># Aufsteigend sortieren + deduplizieren</span>
+<span style="color:#546e7a"># Direkt: ◌ (deduplicate) in manchen Versionen</span>
+
+<span style="color:#546e7a"># ── Häufigste Elemente zählen ─────────────────────────────────</span>
+<span style="color:#82aaff">arr</span> <span style="color:#82aaff">←</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">3</span>]
+<span style="color:#7ec8e3">⊕</span><span style="color:#82aaff">arr</span>                <span style="color:#546e7a"># Klassifizieren → Indizes</span>
+<span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">⊞</span>= <span style="color:#7ec8e3">⊕</span>. <span style="color:#82aaff">arr</span>       <span style="color:#546e7a"># Vorkommen zählen</span>
+
+<span style="color:#546e7a"># ── Matrix-Multiplikation ────────────────────────────────────</span>
+<span style="color:#546e7a"># (A × B)</span>
+≡(<span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">×</span>) <span style="color:#7ec8e3">⊙</span><span style="color:#7ec8e3">⍉</span>         <span style="color:#546e7a"># Zeilen von A × Spalten von B</span>
+<span style="color:#546e7a"># Anwenden:</span>
+<span style="color:#82aaff">A</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">2_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">6</span>
+<span style="color:#82aaff">B</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">3_2</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">6</span>
+≡(<span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">×</span>) <span style="color:#82aaff">A</span> <span style="color:#7ec8e3">⊙</span><span style="color:#7ec8e3">⍉</span> <span style="color:#82aaff">B</span>     <span style="color:#546e7a"># 2×2 Ergebnis-Matrix</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pt1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pt1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Funktionen als Werte (Tacit)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen als werte (tacit)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen als Werte (Tacit)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Uiua ist tacit/point-free – Funktionen werden ohne Argumente kombiniert</span>
+
+<span style="color:#546e7a"># Einfache Komposition (von rechts nach links)</span>
+(+<span style="color:#f78c6c">1</span> <span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>)             <span style="color:#546e7a"># x → (x×2)+1  (Funktion, kein Aufruf!)</span>
+(+<span style="color:#f78c6c">1</span> <span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>) <span style="color:#f78c6c">5</span>           <span style="color:#546e7a"># 11</span>
+
+<span style="color:#546e7a"># ⊃ (fork) – zwei Funktionen auf dieselbe Eingabe</span>
+<span style="color:#7ec8e3">⊃</span>(<span style="color:#c792ea">/</span>+)(<span style="color:#7ec8e3">⧻</span>) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># [15 5]  (Summe und Länge)</span>
+<span style="color:#546e7a"># Dann dividieren für Mittelwert:</span>
+<span style="color:#7ec8e3">÷</span> <span style="color:#7ec8e3">⊃</span>(<span style="color:#c792ea">/</span>+)(<span style="color:#7ec8e3">⧻</span>) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]  <span style="color:#546e7a"># 3.0</span>
+
+<span style="color:#546e7a"># ⊸ (on) – Funktion anwenden, Original behalten</span>
+<span style="color:#7ec8e3">⊸</span>(<span style="color:#c792ea">/</span>+) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]        <span style="color:#546e7a"># [[1 2 3] 6]  (Array bleibt, Summe dazu)</span>
+
+<span style="color:#546e7a"># ⟜ (with) – ähnlich wie on aber Stack-Reihenfolge anders</span>
+<span style="color:#7ec8e3">⟜</span>(<span style="color:#c792ea">/</span>+) [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>]        <span style="color:#546e7a"># [6 [1 2 3]]</span>
+
+<span style="color:#546e7a"># Bindings für wiederverwendbare Funktionen</span>
+<span style="color:#82aaff">mittelwert</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">÷</span><span style="color:#7ec8e3">⊃</span>(<span style="color:#c792ea">/</span>+)<span style="color:#7ec8e3">⧻</span>
+<span style="color:#82aaff">mittelwert</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>]   <span style="color:#546e7a"># 3.0</span>
+<span style="color:#82aaff">mittelwert</span> [<span style="color:#f78c6c">10</span> <span style="color:#f78c6c">20</span> <span style="color:#f78c6c">30</span>]    <span style="color:#546e7a"># 20.0</span>
+
+<span style="color:#546e7a"># Partiell angewendete Funktionen</span>
+<span style="color:#82aaff">mal2</span>  <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">×</span><span style="color:#f78c6c">2</span>
+<span style="color:#82aaff">plus5</span> <span style="color:#82aaff">←</span> +<span style="color:#f78c6c">5</span>
+<span style="color:#7ec8e3">⊃</span><span style="color:#82aaff">mal2</span> <span style="color:#82aaff">plus5</span> <span style="color:#f78c6c">10</span>           <span style="color:#546e7a"># [20 15]</span>
+
+<span style="color:#546e7a"># Pipe-ähnlich (in Uiua natürlich durch Stack-Fluss)</span>
+<span style="color:#546e7a"># Das folgende "liest sich" als Pipeline:</span>
+[<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">6</span> <span style="color:#f78c6c">7</span> <span style="color:#f78c6c">8</span> <span style="color:#f78c6c">9</span> <span style="color:#f78c6c">10</span>]
+⊜<span style="color:#7ec8e3">∘</span>(&gt;<span style="color:#f78c6c">5</span>)                   <span style="color:#546e7a"># Filter: Elemente &gt; 5</span>
+<span style="color:#c792ea">/</span>+                        <span style="color:#546e7a"># Summe</span>
+<span style="color:#546e7a"># = 40  (6+7+8+9+10)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pt2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pt2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Mehrdimensionale Arrays
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="mehrdimensionale arrays">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Mehrdimensionale Arrays
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Matrix aus Range erstellen</span>
+<span style="color:#82aaff">M</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">3_3</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">9</span>
+<span style="color:#546e7a"># [[0 1 2]</span>
+<span style="color:#546e7a">#  [3 4 5]</span>
+<span style="color:#546e7a">#  [6 7 8]]</span>
+
+<span style="color:#546e7a"># Zeile holen (Index von vorne)</span>
+<span style="color:#7ec8e3">⊡</span> <span style="color:#f78c6c">1</span> <span style="color:#82aaff">M</span>               <span style="color:#546e7a"># [3 4 5]  (Zeile 1)</span>
+
+<span style="color:#546e7a"># Spalte holen (transponieren dann Zeile holen)</span>
+<span style="color:#7ec8e3">⊡</span> <span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">⍉</span> <span style="color:#82aaff">M</span>             <span style="color:#546e7a"># [0 3 6]  (Spalte 0)</span>
+
+<span style="color:#546e7a"># Element holen</span>
+<span style="color:#7ec8e3">⊡</span> <span style="color:#f78c6c">1_2</span> <span style="color:#82aaff">M</span>             <span style="color:#546e7a"># 5  (Zeile 1, Spalte 2)</span>
+
+<span style="color:#546e7a"># Zeilen summieren</span>
+≡(<span style="color:#c792ea">/</span>+) <span style="color:#82aaff">M</span>             <span style="color:#546e7a"># [3 12 21]</span>
+
+<span style="color:#546e7a"># Spalten summieren</span>
+≡(<span style="color:#c792ea">/</span>+) <span style="color:#7ec8e3">⍉</span> <span style="color:#82aaff">M</span>           <span style="color:#546e7a"># [9 12 15]</span>
+
+<span style="color:#546e7a"># Gesamtsumme</span>
+<span style="color:#c792ea">/</span>+<span style="color:#7ec8e3">♭</span> <span style="color:#82aaff">M</span>               <span style="color:#546e7a"># 36</span>
+
+<span style="color:#546e7a"># Matrixtransposition</span>
+<span style="color:#7ec8e3">⍉</span> <span style="color:#82aaff">M</span>
+<span style="color:#546e7a"># [[0 3 6]</span>
+<span style="color:#546e7a">#  [1 4 7]</span>
+<span style="color:#546e7a">#  [2 5 8]]</span>
+
+<span style="color:#546e7a"># Broadcasted Operationen</span>
++ <span style="color:#f78c6c">10</span> <span style="color:#82aaff">M</span>              <span style="color:#546e7a"># Jedes Element +10</span>
+<span style="color:#7ec8e3">×</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>] <span style="color:#82aaff">M</span>         <span style="color:#546e7a"># Jede Zeile mit [1 2 3] multiplizieren</span>
+                    <span style="color:#546e7a"># Spaltenweises Broadcasting</span>
+
+<span style="color:#546e7a"># Reshape tricks</span>
+<span style="color:#7ec8e3">↯</span> <span style="color:#f78c6c">9</span> <span style="color:#82aaff">M</span>               <span style="color:#546e7a"># Zu 1D flatten</span>
+<span style="color:#7ec8e3">↯</span> ¯<span style="color:#f78c6c">1_3</span> <span style="color:#7ec8e3">♭</span><span style="color:#82aaff">M</span>           <span style="color:#546e7a"># ¯1 = "rest" – zu n×3 reshape</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #5f8f9e;color:#5f8f9e;background:rgba(95,143,158,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">FizzBuzz</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Primzahlen</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Matrix-Operationen</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Statistik &amp; Analyse</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># FizzBuzz in Uiua – mehrere Stile</span>
+
+<span style="color:#546e7a"># Stil 1: Array-Ansatz (deklarativ)</span>
+<span style="color:#82aaff">FizzBuzz</span> <span style="color:#82aaff">←</span> (
+    <span style="color:#546e7a"># Erzeuge Array der Teilbarkeiten für 1..15</span>
+    <span style="color:#82aaff">n</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⇡</span> + <span style="color:#f78c6c">1</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">15</span>    <span style="color:#546e7a"># [1 2 3 ... 15]</span>
+    <span style="color:#82aaff">f</span> <span style="color:#82aaff">←</span> = <span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">◿</span><span style="color:#f78c6c">3</span> <span style="color:#82aaff">n</span>      <span style="color:#546e7a"># Teilbar durch 3?</span>
+    <span style="color:#82aaff">b</span> <span style="color:#82aaff">←</span> = <span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">◿</span><span style="color:#f78c6c">5</span> <span style="color:#82aaff">n</span>      <span style="color:#546e7a"># Teilbar durch 5?</span>
+    <span style="color:#82aaff">fb</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">×</span> <span style="color:#82aaff">f</span> <span style="color:#82aaff">b</span>         <span style="color:#546e7a"># Durch beide?</span>
+
+    <span style="color:#546e7a"># Strings zusammenbauen (vereinfacht)</span>
+    <span style="color:#7ec8e3">⊏</span> <span style="color:#7ec8e3">⊃</span>(<span style="color:#7ec8e3">×</span> <span style="color:#82aaff">f</span>)(+ <span style="color:#7ec8e3">×</span> <span style="color:#82aaff">b</span> <span style="color:#f78c6c">2</span>) <span style="color:#82aaff">n</span>
+)
+
+<span style="color:#546e7a"># Stil 2: Kompakter (Golf-Stil)</span>
+<span style="color:#546e7a"># /⊂ ≡(⊡ ⊃(×(=0◿3))(+×(=0◿5)2)) ⇡15</span>
+
+<span style="color:#546e7a"># Stil 3: Lesbar mit Bindings</span>
+<span style="color:#82aaff">fb</span> <span style="color:#82aaff">←</span> (
+    <span style="color:#82aaff">n</span>  <span style="color:#82aaff">←</span> .           <span style="color:#546e7a"># dup für mehrfache Nutzung</span>
+    <span style="color:#82aaff">f3</span> <span style="color:#82aaff">←</span> = <span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">◿</span><span style="color:#f78c6c">3</span> <span style="color:#82aaff">n</span>    <span style="color:#546e7a"># Durch 3?</span>
+    <span style="color:#82aaff">f5</span> <span style="color:#82aaff">←</span> = <span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">◿</span><span style="color:#f78c6c">5</span> <span style="color:#82aaff">n</span>    <span style="color:#546e7a"># Durch 5?</span>
+
+    <span style="color:#546e7a"># Ergebnis: 0=zahl 1=fizz 2=buzz 3=fizzbuzz</span>
+    + <span style="color:#82aaff">f3</span> <span style="color:#7ec8e3">×</span> <span style="color:#f78c6c">2</span> <span style="color:#82aaff">f5</span>
+)
+
+<span style="color:#546e7a"># Auf [1..20] anwenden</span>
+<span style="color:#82aaff">result</span> <span style="color:#82aaff">←</span> <span style="color:#82aaff">fb</span> <span style="color:#7ec8e3">⇡</span><span style="color:#f78c6c">20</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">result</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Primzahlen bis N – Sieb des Eratosthenes in Uiua</span>
+
+<span style="color:#82aaff">primZahlen</span> <span style="color:#82aaff">←</span> (
+    <span style="color:#82aaff">n</span> <span style="color:#82aaff">←</span> .                        <span style="color:#546e7a"># Maximum dup</span>
+    <span style="color:#82aaff">zahlen</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⇡</span> <span style="color:#82aaff">n</span>                  <span style="color:#546e7a"># [0 1 2 ... n-1]</span>
+
+    <span style="color:#546e7a"># Für jede Zahl: ist sie durch keine kleinere teilbar?</span>
+    <span style="color:#546e7a"># (außer 1 und sich selbst)</span>
+    <span style="color:#82aaff">sieb</span> <span style="color:#82aaff">←</span> ≡(
+        <span style="color:#82aaff">i</span> <span style="color:#82aaff">←</span> .
+        <span style="color:#546e7a"># i ist prim wenn kein j ∈ [2..i-1] i teilt</span>
+        <span style="color:#7ec8e3">×</span> &gt; <span style="color:#f78c6c">1</span> <span style="color:#82aaff">i</span>                  <span style="color:#546e7a"># Nur Zahlen &gt; 1 prüfen</span>
+          <span style="color:#c792ea">/</span><span style="color:#7ec8e3">×</span> <span style="color:#7ec8e3">≠</span> <span style="color:#f78c6c">0</span> <span style="color:#7ec8e3">◿</span> <span style="color:#7ec8e3">⊙</span>. <span style="color:#7ec8e3">↙</span>. <span style="color:#7ec8e3">↘</span><span style="color:#f78c6c">2</span> <span style="color:#7ec8e3">⇡</span><span style="color:#82aaff">i</span>  <span style="color:#546e7a"># Kein Teiler?</span>
+    ) <span style="color:#82aaff">zahlen</span>
+
+    <span style="color:#546e7a"># Zahlen wo sieb=1 behalten</span>
+    <span style="color:#c792ea">/</span><span style="color:#7ec8e3">⊂</span> ⊜(□.) <span style="color:#82aaff">sieb</span> <span style="color:#82aaff">zahlen</span>
+)
+
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">primZahlen</span> <span style="color:#f78c6c">30</span>
+<span style="color:#546e7a"># [2 3 5 7 11 13 17 19 23 29]</span>
+
+<span style="color:#546e7a"># Kompakter: Eratosthenes mit repeat</span>
+<span style="color:#546e7a"># (vereinfachte Version)</span>
+<span style="color:#82aaff">p</span> <span style="color:#82aaff">←</span> (
+    <span style="color:#7ec8e3">↙</span>¯<span style="color:#f78c6c">1</span> ⊜<span style="color:#7ec8e3">∘</span> ≡(<span style="color:#7ec8e3">÷</span><span style="color:#7ec8e3">⟜</span><span style="color:#7ec8e3">◿</span>) <span style="color:#7ec8e3">⟜</span>(<span style="color:#c792ea">/</span><span style="color:#7ec8e3">×</span>) <span style="color:#7ec8e3">↘</span><span style="color:#f78c6c">2</span> <span style="color:#7ec8e3">⇡</span>
+)
+
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">p</span> <span style="color:#f78c6c">50</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Lineare Algebra in Uiua – alles mit Array-Primitiven</span>
+
+<span style="color:#546e7a"># Matrices erstellen</span>
+<span style="color:#82aaff">A</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">3_3</span> [<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">6</span> <span style="color:#f78c6c">7</span> <span style="color:#f78c6c">8</span> <span style="color:#f78c6c">9</span>]
+<span style="color:#82aaff">B</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">↯</span><span style="color:#f78c6c">3_3</span> [<span style="color:#f78c6c">9</span> <span style="color:#f78c6c">8</span> <span style="color:#f78c6c">7</span> <span style="color:#f78c6c">6</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">1</span>]
+
+<span style="color:#546e7a"># Elementweise Addition</span>
++ <span style="color:#82aaff">A</span> <span style="color:#82aaff">B</span>
+<span style="color:#546e7a"># [[10 10 10]</span>
+<span style="color:#546e7a">#  [10 10 10]</span>
+<span style="color:#546e7a">#  [10 10 10]]</span>
+
+<span style="color:#546e7a"># Elementweise Multiplikation (NICHT Matrix-Multiplikation)</span>
+<span style="color:#7ec8e3">×</span> <span style="color:#82aaff">A</span> <span style="color:#82aaff">B</span>
+
+<span style="color:#546e7a"># Matrix-Multiplikation (Zeilen × Spalten)</span>
+<span style="color:#82aaff">matMul</span> <span style="color:#82aaff">←</span> ≡(<span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">×</span>) <span style="color:#7ec8e3">⊙</span><span style="color:#7ec8e3">⍉</span>
+<span style="color:#82aaff">matMul</span> <span style="color:#82aaff">A</span> <span style="color:#82aaff">B</span>
+
+<span style="color:#546e7a"># Spur (Summe der Diagonalen)</span>
+<span style="color:#82aaff">spur</span> <span style="color:#82aaff">←</span> <span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">⊡</span> <span style="color:#7ec8e3">⊞</span>= . <span style="color:#7ec8e3">⇡</span> <span style="color:#7ec8e3">⊢</span><span style="color:#7ec8e3">△</span>
+<span style="color:#82aaff">spur</span> <span style="color:#82aaff">A</span>  <span style="color:#546e7a"># 1+5+9 = 15</span>
+
+<span style="color:#546e7a"># Zeilensummen und Spaltensummen</span>
+≡(<span style="color:#c792ea">/</span>+) <span style="color:#82aaff">A</span>      <span style="color:#546e7a"># [6 15 24]    (Zeilensummen)</span>
+≡(<span style="color:#c792ea">/</span>+) <span style="color:#7ec8e3">⍉</span> <span style="color:#82aaff">A</span>   <span style="color:#546e7a"># [12 15 18]   (Spaltensummen)</span>
+
+<span style="color:#546e7a"># Frobenius-Norm (Wurzel der Summe der Quadrate)</span>
+√ <span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">♭</span> <span style="color:#7ec8e3">×</span>. <span style="color:#82aaff">A</span>   <span style="color:#546e7a"># sqrt(285)</span>
+
+<span style="color:#546e7a"># Identitätsmatrix N×N</span>
+<span style="color:#82aaff">ident</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⊞</span>= . <span style="color:#7ec8e3">⇡</span>
+<span style="color:#82aaff">ident</span> <span style="color:#f78c6c">4</span>
+<span style="color:#546e7a"># [[1 0 0 0]</span>
+<span style="color:#546e7a">#  [0 1 0 0]</span>
+<span style="color:#546e7a">#  [0 0 1 0]</span>
+<span style="color:#546e7a">#  [0 0 0 1]]</span>
+
+<span style="color:#546e7a"># Ausgabe</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"A ="</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">A</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"B ="</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">B</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"A×B ="</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">matMul</span> <span style="color:#82aaff">A</span> <span style="color:#82aaff">B</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:13px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.9;white-space:pre">
+<span style="color:#546e7a"># Statistik-Funktionen in Uiua – alles aus Primitiven</span>
+
+<span style="color:#82aaff">daten</span> <span style="color:#82aaff">←</span> [<span style="color:#f78c6c">23.5</span> <span style="color:#f78c6c">19.2</span> <span style="color:#f78c6c">31.4</span> <span style="color:#f78c6c">25.1</span> <span style="color:#f78c6c">18.7</span> <span style="color:#f78c6c">29.8</span> <span style="color:#f78c6c">22.3</span> <span style="color:#f78c6c">26.6</span> <span style="color:#f78c6c">21.9</span> <span style="color:#f78c6c">24.8</span>]
+
+<span style="color:#546e7a"># Grundstatistik</span>
+<span style="color:#82aaff">n</span>       <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⧻</span> <span style="color:#82aaff">daten</span>
+<span style="color:#82aaff">summe</span>   <span style="color:#82aaff">←</span> <span style="color:#c792ea">/</span>+ <span style="color:#82aaff">daten</span>
+<span style="color:#82aaff">min_val</span> <span style="color:#82aaff">←</span> <span style="color:#c792ea">/</span><span style="color:#7ec8e3">↧</span> <span style="color:#82aaff">daten</span>
+<span style="color:#82aaff">max_val</span> <span style="color:#82aaff">←</span> <span style="color:#c792ea">/</span><span style="color:#7ec8e3">↥</span> <span style="color:#82aaff">daten</span>
+<span style="color:#82aaff">bereich</span> <span style="color:#82aaff">←</span> - <span style="color:#82aaff">min_val</span> <span style="color:#82aaff">max_val</span>
+
+<span style="color:#546e7a"># Mittelwert</span>
+<span style="color:#82aaff">mu</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">÷</span> <span style="color:#82aaff">n</span> <span style="color:#82aaff">summe</span>
+
+<span style="color:#546e7a"># Varianz: Mittelwert der quadrierten Abweichungen</span>
+<span style="color:#82aaff">varianz</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">÷</span> <span style="color:#82aaff">n</span> <span style="color:#c792ea">/</span>+ <span style="color:#7ec8e3">×</span>. - <span style="color:#82aaff">mu</span> <span style="color:#82aaff">daten</span>
+
+<span style="color:#546e7a"># Standardabweichung</span>
+<span style="color:#82aaff">sigma</span> <span style="color:#82aaff">←</span> √ <span style="color:#82aaff">varianz</span>
+
+<span style="color:#546e7a"># Median (sortieren, mittleres Element)</span>
+<span style="color:#82aaff">sorted</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⊏</span> <span style="color:#7ec8e3">⍏</span> . <span style="color:#82aaff">daten</span>     <span style="color:#546e7a"># Sortieren via rise-Indizes</span>
+<span style="color:#82aaff">halb</span>   <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⌊</span> <span style="color:#7ec8e3">÷</span> <span style="color:#f78c6c">2</span> <span style="color:#82aaff">n</span>
+<span style="color:#82aaff">median</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">⊡</span> <span style="color:#82aaff">halb</span> <span style="color:#82aaff">sorted</span>
+
+<span style="color:#546e7a"># Ausgabe</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"Statistik-Analyse"</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#c3e88d">"─────────────────────"</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Anzahl:   "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">n</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Summe:    "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">summe</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Min:      "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">min_val</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Max:      "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">max_val</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Mittelw.: "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">mu</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Median:   "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">median</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Varianz:  "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">varianz</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#7ec8e3">⊂</span> <span style="color:#c3e88d">"Std.Abw.: "</span> <span style="color:#7ec8e3">string</span> <span style="color:#82aaff">sigma</span>
+
+<span style="color:#546e7a"># Normalisieren auf [0, 1]</span>
+<span style="color:#82aaff">normiert</span> <span style="color:#82aaff">←</span> <span style="color:#7ec8e3">÷</span> <span style="color:#82aaff">bereich</span> - <span style="color:#82aaff">min_val</span> <span style="color:#82aaff">daten</span>
+&amp;<span style="color:#82aaff">pf</span> <span style="color:#82aaff">normiert</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#5f8f9e0e;border:1px solid #5f8f9e44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#5f8f9e">Schnellstart:</strong> Einfach <a href="https://uiua-lang.org/pad" style="color:#ffb347">uiua-lang.org/pad</a> öffnen – kein Install nötig!<br>Lokal: <code style="color:#ffb347">cargo install uiua</code> &nbsp; dann &nbsp;<code style="color:#ffb347">uiua</code> für REPL</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #5f8f9e44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#5f8f9e0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#5f8f9e">
+      <span style="display:inline-block;width:8px;height:8px;background:#5f8f9e;border-radius:50%;margin-right:2px"></span>⚙ Uiua installieren (Linux)
+    </span>
+    <span class="aa" style="color:#5f8f9e;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center"><span style="color:#5f8f9e;font-size:16px;font-weight:900">Cargo (Rust)</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">cargo</code></td><td style="color:#6c7a8e;font-size:12px">cargo install uiua
+uiua --version</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#5f8f9e;font-size:16px;font-weight:900">Arch/CachyOS</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">AUR</code></td><td style="color:#6c7a8e;font-size:12px">yay -S uiua
+# oder: yay -S uiua-bin</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#5f8f9e;font-size:16px;font-weight:900">Direkt (Linux)</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">GitHub Releases</code></td><td style="color:#6c7a8e;font-size:12px">wget https://github.com/uiua-lang/uiua/releases/latest/download/uiua-linux
+chmod +x uiua-linux &amp;&amp; mv uiua-linux ~/.local/bin/uiua</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#5f8f9e;font-size:16px;font-weight:900">Updaten</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">cargo</code></td><td style="color:#6c7a8e;font-size:12px">cargo install uiua --force</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ uiua CLI
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">REPL starten</code></td><td style="color:#6c7a8e;font-size:12px">Interaktive Shell – Code direkt testen</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua run datei.ua</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Datei ausführen</code></td><td style="color:#6c7a8e;font-size:12px"></td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua fmt datei.ua</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Automatisch formatieren</code></td><td style="color:#6c7a8e;font-size:12px">Konvertiert Namen zu Glyphen! z.B. "add" → +</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua check datei.ua</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Syntax prüfen</code></td><td style="color:#6c7a8e;font-size:12px"></td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua test datei.ua</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Tests ausführen</code></td><td style="color:#6c7a8e;font-size:12px"># Teste Zeilen werden geprüft</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua doc funktion</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Dokumentation anzeigen</code></td><td style="color:#6c7a8e;font-size:12px">uiua doc reduce</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua eval "1 2 +"</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Ausdruck auswerten</code></td><td style="color:#6c7a8e;font-size:12px">Schneller Test</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4fc3f7;font-size:16px;font-weight:900">uiua lsp</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Language Server starten</code></td><td style="color:#6c7a8e;font-size:12px">Für Editor-Integration</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Editoren &amp; LSP
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center"><span style="color:#c792ea;font-size:16px;font-weight:900">VS Code</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Extension</code></td><td style="color:#6c7a8e;font-size:12px">uiua-lang.uiua  – offizielle Extension
+Syntax-Highlighting + LSP + Glyph-Eingabe</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#c792ea;font-size:16px;font-weight:900">Neovim</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">nvim-lspconfig</code></td><td style="color:#6c7a8e;font-size:12px">require("lspconfig").uiua.setup{}
+# uiua lsp muss laufen</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#c792ea;font-size:16px;font-weight:900">Helix</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">helix</code></td><td style="color:#6c7a8e;font-size:12px">Eingebaut – uiua lsp als server konfigurieren</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#c792ea;font-size:16px;font-weight:900">Online</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">uiua-lang.org</code></td><td style="color:#6c7a8e;font-size:12px">Playground: uiua-lang.org
+# Direkt im Browser, kein Install nötig!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Glyphen tippen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center"><span style="color:#ffb347;font-size:16px;font-weight:900">Strg+A in VS Code</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Alle Glyphen anzeigen</code></td><td style="color:#6c7a8e;font-size:12px">Extension bietet Glyph-Picker</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#ffb347;font-size:16px;font-weight:900">uiua fmt</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Namen zu Glyphen</code></td><td style="color:#6c7a8e;font-size:12px">"add" → +, "reduce" → /, "each" → ∵</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#ffb347;font-size:16px;font-weight:900">vim digraphs</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">In Vim/Neovim</code></td><td style="color:#6c7a8e;font-size:12px">:help digraph, dann Strg+K + Code</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#ffb347;font-size:16px;font-weight:900">Compose-Key</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Linux XKB</code></td><td style="color:#6c7a8e;font-size:12px">Für Unicode-Eingabe systemweit</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#ffb347;font-size:16px;font-weight:900">ibus/fcitx</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Linux IME</code></td><td style="color:#6c7a8e;font-size:12px">Unicode-Eingabe über Hex-Code: Strg+Shift+U dann Codepoint</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>⚙ Lernressourcen
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:60px;text-align:center"><span style="color:#4caf50;font-size:16px;font-weight:900">Offizielle Docs</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">uiua-lang.org</code></td><td style="color:#6c7a8e;font-size:12px">uiua-lang.org/docs – sehr gut und interaktiv</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4caf50;font-size:16px;font-weight:900">Tour</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">uiua-lang.org</code></td><td style="color:#6c7a8e;font-size:12px">uiua-lang.org/tour – Schritt-für-Schritt Einführung</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4caf50;font-size:16px;font-weight:900">Pad (Online-REPL)</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">uiua-lang.org</code></td><td style="color:#6c7a8e;font-size:12px">uiua-lang.org/pad – Code direkt ausprobieren</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4caf50;font-size:16px;font-weight:900">Glyph-Referenz</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">uiua-lang.org</code></td><td style="color:#6c7a8e;font-size:12px">uiua-lang.org/docs/all-functions</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4caf50;font-size:16px;font-weight:900">Beispiele</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">GitHub</code></td><td style="color:#6c7a8e;font-size:12px">github.com/uiua-lang/uiua/tree/main/examples</td></tr><tr><td style="width:60px;text-align:center"><span style="color:#4caf50;font-size:16px;font-weight:900">Discord</span></td><td style="width:130px"><code style="color:#4fc3f7;font-size:11px">Community</code></td><td style="color:#6c7a8e;font-size:12px">Aktive Community auf dem offiziellen Discord</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-pt"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#5f8f9e';
+      btn.style.color       = '#5f8f9e';
+      btn.style.background  = 'rgba(95, 143, 158, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

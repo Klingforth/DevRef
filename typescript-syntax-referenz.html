@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeScript Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #3178c6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(49, 120, 198, .07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#3178c6">&#x25B6;</span>
+      <span style="color:#3178c6">TypeScript</span> Syntax
+    </div>
+    <div id="hdr-sub">TypeScript 5.x · Generics · Utility Types · Mapped Types · async/await</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Typen</button>
+    <button class="tb" data-tab="interfaces">Interfaces & Generics</button>
+    <button class="tb" data-tab="classes">Klassen</button>
+    <button class="tb" data-tab="functional">Funktional & Async</button>
+    <button class="tb" data-tab="modern">Modernes TS</button>
+    <button class="tb" data-tab="collections">Collections</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-types" class="tp active">
+
+<div style="background:#3178c60e;border:1px solid #3178c644;border-radius:8px;
+            padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.8">
+  <strong style="color:#4fc3f7">TypeScript = JavaScript + statische Typen.</strong>
+  Strukturelles Typsystem – kompatibel wenn die Struktur passt, nicht der Name.<br>
+  <span style="color:#cdd6f4">
+    Wichtigste tsconfig-Flags: <code style="color:#c3e88d">"strict": true</code> &nbsp;·&nbsp;
+    <code style="color:#c3e88d">"noUncheckedIndexedAccess": true</code> &nbsp;·&nbsp;
+    Vermeide <code style="color:#e05252">any</code> – nutze <code style="color:#c3e88d">unknown</code>
+  </span>
+</div>
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #3178c644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3178c60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3178c6">
+      <span style="display:inline-block;width:8px;height:8px;background:#3178c6;border-radius:50%;margin-right:2px"></span>Primitive &amp; eingebaute Typen
+    </span>
+    <span class="aa" style="color:#3178c6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">string</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  'Welt'  |  `Template`</td>
+      <td style="color:#6c7a8e">UTF-16 String. Unveraenderlich.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">number</code></td>
+      <td style="color:#c3e88d;font-size:11px">42  |  3.14  |  NaN  |  Infinity</td>
+      <td style="color:#6c7a8e">IEEE 754 Double. Ganzzahlen und Floats zusammen.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">bigint</code></td>
+      <td style="color:#c3e88d;font-size:11px">42n  |  9007199254740993n</td>
+      <td style="color:#6c7a8e">Beliebig grosse Ganzzahlen. Literal mit n.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">boolean</code></td>
+      <td style="color:#c3e88d;font-size:11px">true  |  false</td>
+      <td style="color:#6c7a8e">Kein truthy/falsy! (ausser als Bedingung)</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">symbol</code></td>
+      <td style="color:#c3e88d;font-size:11px">Symbol("beschreibung")</td>
+      <td style="color:#6c7a8e">Eindeutiger, unveraenderbarer Wert.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">undefined</code></td>
+      <td style="color:#c3e88d;font-size:11px">undeclared variable</td>
+      <td style="color:#6c7a8e">Nicht initialisierter Wert.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">null</code></td>
+      <td style="color:#c3e88d;font-size:11px">null</td>
+      <td style="color:#6c7a8e">Bewusst kein Wert. typeof null == "object" (historischer Bug!)</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">any</code></td>
+      <td style="color:#c3e88d;font-size:11px">let x: any = 42; x = "Hallo";</td>
+      <td style="color:#6c7a8e">Deaktiviert Typprüfung. VERMEIDEN!</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">unknown</code></td>
+      <td style="color:#c3e88d;font-size:11px">let x: unknown = holeVonAussen();</td>
+      <td style="color:#6c7a8e">Wie any aber sicher – muss erst genarrowen werden.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">never</code></td>
+      <td style="color:#c3e88d;font-size:11px">function wirft(): never { throw new Error(); }</td>
+      <td style="color:#6c7a8e">Kein Wert moeglich. Fuer exhaustive checks.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">void</code></td>
+      <td style="color:#c3e88d;font-size:11px">function ohneReturn(): void {}</td>
+      <td style="color:#6c7a8e">Fuer Funktionen ohne Rueckgabewert.</td>
+    </tr>
+    <tr>
+      <td style="width:170px"><code style="color:#3178c6">object</code></td>
+      <td style="color:#c3e88d;font-size:11px">{}  |  []  |  function(){}</td>
+      <td style="color:#6c7a8e">Alles ausser Primitiven. Selten direkt nutzen.</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Type Annotations &amp; Inferenz
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="type annotations &amp; inferenz">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Type Annotations &amp; Inferenz
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// TypeScript INFERIERT Typen – Annotationen oft optional</span>
+<span style="color:#c792ea">let</span> x = <span style="color:#f78c6c">42</span>           <span style="color:#546e7a">// Inferiert: number</span>
+<span style="color:#c792ea">let</span> s = <span style="color:#c3e88d">"Hallo"</span>      <span style="color:#546e7a">// Inferiert: string</span>
+<span style="color:#c792ea">let</span> b = <span style="color:#c792ea">true</span>         <span style="color:#546e7a">// Inferiert: boolean</span>
+<span style="color:#c792ea">let</span> arr = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>]  <span style="color:#546e7a">// Inferiert: number[]</span>
+
+<span style="color:#546e7a">// Explizite Annotationen (wo noetig oder zur Klarheit)</span>
+<span style="color:#c792ea">let</span> name: <span style="color:#4ec9b0">string</span> = <span style="color:#c3e88d">"Alice"</span>
+<span style="color:#c792ea">let</span> alter: <span style="color:#4ec9b0">number</span> = <span style="color:#f78c6c">30</span>
+<span style="color:#c792ea">let</span> aktiv: <span style="color:#4ec9b0">boolean</span> = <span style="color:#c792ea">true</span>
+
+<span style="color:#546e7a">// Arrays</span>
+<span style="color:#c792ea">let</span> zahlen: <span style="color:#4ec9b0">number</span>[] = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>]
+<span style="color:#c792ea">let</span> namen: <span style="color:#4ec9b0">Array</span>&lt;<span style="color:#4ec9b0">string</span>&gt; = [<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Bob"</span>]  <span style="color:#546e7a">// Alternativschreibweise</span>
+<span style="color:#c792ea">let</span> matrix: <span style="color:#4ec9b0">number</span>[][] = [[<span style="color:#f78c6c">1</span>,<span style="color:#f78c6c">2</span>],[<span style="color:#f78c6c">3</span>,<span style="color:#f78c6c">4</span>]]
+
+<span style="color:#546e7a">// Tuples – feste Laenge, feste Typen</span>
+<span style="color:#c792ea">let</span> punkt: [<span style="color:#4ec9b0">number</span>, <span style="color:#4ec9b0">number</span>] = [<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>]
+<span style="color:#c792ea">let</span> person: [<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">number</span>] = [<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>]
+<span style="color:#c792ea">let</span> [pName, pAlter] = person              <span style="color:#546e7a">// Destructuring</span>
+
+<span style="color:#546e7a">// Labeled Tuple (TS 4.0+)</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Range</span> = [start: <span style="color:#4ec9b0">number</span>, end: <span style="color:#4ec9b0">number</span>]
+<span style="color:#c792ea">let</span> r: <span style="color:#4ec9b0">Range</span> = [<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">100</span>]
+
+<span style="color:#546e7a">// Type Assertions (Vorsicht! kein Laufzeit-Check)</span>
+<span style="color:#c792ea">const</span> el = document.getElementById(<span style="color:#c3e88d">"app"</span>) <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">HTMLElement</span>
+<span style="color:#c792ea">const</span> el2 = document.getElementById(<span style="color:#c3e88d">"app"</span>)<span style="color:#89ddff">!</span>  <span style="color:#546e7a">// non-null assertion</span>
+
+<span style="color:#546e7a">// satisfies (TS 4.9+) – prueft ohne Typ zu veraendern</span>
+<span style="color:#c792ea">const</span> farben = {
+  rot:   <span style="color:#c3e88d">"#ff0000"</span>,
+  gruen: <span style="color:#c3e88d">"#00ff00"</span>,
+} <span style="color:#c792ea">satisfies</span> <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">string</span>&gt;
+<span style="color:#546e7a">// farben.rot ist immer noch "#ff0000" (nicht nur string)</span>
+
+<span style="color:#546e7a">// as const – Werte als Literale einfrieren</span>
+<span style="color:#c792ea">const</span> richtungen = [<span style="color:#c3e88d">"Nord"</span>, <span style="color:#c3e88d">"Sued"</span>, <span style="color:#c3e88d">"Ost"</span>, <span style="color:#c3e88d">"West"</span>] <span style="color:#c792ea">as</span> <span style="color:#c792ea">const</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Richtung</span> = <span style="color:#c792ea">typeof</span> richtungen[<span style="color:#4ec9b0">number</span>]  <span style="color:#546e7a">// "Nord" | "Sued" | "Ost" | "West"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Union, Intersection &amp; Literal Types
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="union, intersection &amp; literal types">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Union, Intersection &amp; Literal Types
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Union Types – A oder B</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ID</span> = <span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Status</span> = <span style="color:#c3e88d">"aktiv"</span> | <span style="color:#c3e88d">"inaktiv"</span> | <span style="color:#c3e88d">"gesperrt"</span>  <span style="color:#546e7a">// String Literal Union!</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Ergebnis</span> = <span style="color:#4ec9b0">string</span> | <span style="color:#c792ea">null</span> | <span style="color:#c792ea">undefined</span>
+
+<span style="color:#c792ea">let</span> id: <span style="color:#4ec9b0">ID</span> = <span style="color:#c3e88d">"abc"</span>
+id = <span style="color:#f78c6c">42</span>   <span style="color:#546e7a">// auch OK!</span>
+
+<span style="color:#546e7a">// Narrowing – TypeScript verengt den Typ</span>
+<span style="color:#c792ea">function</span> verarbeite(wert: <span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span>) {
+  <span style="color:#c792ea">if</span> (<span style="color:#c792ea">typeof</span> wert === <span style="color:#c3e88d">"string"</span>) {
+    <span style="color:#82aaff">console</span>.log(wert.toUpperCase())  <span style="color:#546e7a">// TS weiß: wert ist string</span>
+  } <span style="color:#c792ea">else</span> {
+    <span style="color:#82aaff">console</span>.log(wert.toFixed(<span style="color:#f78c6c">2</span>))     <span style="color:#546e7a">// TS weiß: wert ist number</span>
+  }
+}
+
+<span style="color:#546e7a">// Intersection Types – A und B gleichzeitig</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Named</span>    = { name: <span style="color:#4ec9b0">string</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Aged</span>     = { alter: <span style="color:#4ec9b0">number</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Person</span>   = <span style="color:#4ec9b0">Named</span> &amp; <span style="color:#4ec9b0">Aged</span>      <span style="color:#546e7a">// hat name UND alter</span>
+
+<span style="color:#c792ea">const</span> p: <span style="color:#4ec9b0">Person</span> = { name: <span style="color:#c3e88d">"Alice"</span>, alter: <span style="color:#f78c6c">30</span> }
+
+<span style="color:#546e7a">// Discriminated Unions (sehr mächtig!)</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Kreis</span>     = { art: <span style="color:#c3e88d">"kreis"</span>;     radius: <span style="color:#4ec9b0">number</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Rechteck</span>  = { art: <span style="color:#c3e88d">"rechteck"</span>;  breite: <span style="color:#4ec9b0">number</span>; hoehe: <span style="color:#4ec9b0">number</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Form</span>      = <span style="color:#4ec9b0">Kreis</span> | <span style="color:#4ec9b0">Rechteck</span>
+
+<span style="color:#c792ea">function</span> flaeche(f: <span style="color:#4ec9b0">Form</span>): <span style="color:#4ec9b0">number</span> {
+  <span style="color:#c792ea">switch</span> (f.art) {            <span style="color:#546e7a">// art ist der Diskriminator</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"kreis"</span>:
+      <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * f.radius ** <span style="color:#f78c6c">2</span>   <span style="color:#546e7a">// f ist Kreis</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"rechteck"</span>:
+      <span style="color:#c792ea">return</span> f.breite * f.hoehe        <span style="color:#546e7a">// f ist Rechteck</span>
+  }
+}
+
+<span style="color:#546e7a">// Template Literal Types (TS 4.1+)</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">EventName</span> = <span style="color:#c3e88d">"click"</span> | <span style="color:#c3e88d">"focus"</span> | <span style="color:#c3e88d">"blur"</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Handler</span>   = <span style="color:#c3e88d">`on${Capitalize&lt;EventName&gt;}`</span>  <span style="color:#546e7a">// "onClick" | "onFocus" | "onBlur"</span>
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">CSSProperty</span> = <span style="color:#c3e88d">`${string}-${string}`</span>       <span style="color:#546e7a">// "background-color" etc.</span>
+
+<span style="color:#546e7a">// Conditional Types</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">IsArray</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">any</span>[] ? <span style="color:#c792ea">true</span> : <span style="color:#c792ea">false</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">IsString</span>   = <span style="color:#4ec9b0">IsArray</span>&lt;<span style="color:#4ec9b0">string</span>[]&gt;  <span style="color:#546e7a">// true</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">IsNotArray</span> = <span style="color:#4ec9b0">IsArray</span>&lt;<span style="color:#4ec9b0">number</span>&gt;    <span style="color:#546e7a">// false</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-interfaces" class="tp">
+
+<div class="ac open" id="ac-if0"
+     style="border:1px solid #3178c644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('if0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3178c60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3178c6">
+      <span style="display:inline-block;width:8px;height:8px;background:#3178c6;border-radius:50%;margin-right:2px"></span>interface vs type
+    </span>
+    <span class="aa" style="color:#3178c6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="interface vs type">
+  <div style="color:#3178c6;font-weight:700;font-size:12px;margin-bottom:8px">
+    interface vs type
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// interface – fuer Objektformen, erweiterbar</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">User</span> {
+  <span style="color:#c792ea">readonly</span> id: <span style="color:#4ec9b0">number</span>     <span style="color:#546e7a">// unveraenderlich</span>
+  name: <span style="color:#4ec9b0">string</span>
+  email?: <span style="color:#4ec9b0">string</span>          <span style="color:#546e7a">// optional (string | undefined)</span>
+  alter: <span style="color:#4ec9b0">number</span>
+}
+
+<span style="color:#546e7a">// type – fuer alles, nicht erweiterbar via declaration merging</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">UserType</span> = {
+  id: <span style="color:#4ec9b0">number</span>
+  name: <span style="color:#4ec9b0">string</span>
+}
+
+<span style="color:#546e7a">// Interface erweitern</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">AdminUser</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">User</span> {
+  rolle: <span style="color:#c3e88d">"admin"</span> | <span style="color:#c3e88d">"superadmin"</span>
+  permissions: <span style="color:#4ec9b0">string</span>[]
+}
+
+<span style="color:#546e7a">// Mehrfaches Erweitern</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">FullUser</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">User</span>, <span style="color:#4ec9b0">Timestamps</span> {
+  profil: <span style="color:#4ec9b0">UserProfile</span>
+}
+
+<span style="color:#546e7a">// Declaration Merging (nur bei interface!)</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Window</span> {
+  myCustomProperty: <span style="color:#4ec9b0">string</span>   <span style="color:#546e7a">// Zu globalem Window hinzufuegen</span>
+}
+
+<span style="color:#546e7a">// Methodendeklarationen</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Repository</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  findById(id: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">T</span> | <span style="color:#c792ea">null</span>&gt;
+  findAll(): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">T</span>[]&gt;
+  save(entity: <span style="color:#4ec9b0">T</span>): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">T</span>&gt;
+  <span style="color:#c792ea">delete</span>(id: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#c792ea">void</span>&gt;
+}
+
+<span style="color:#546e7a">// Call &amp; Construct Signatures</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Fabrik</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  (): <span style="color:#4ec9b0">T</span>                    <span style="color:#546e7a">// Call Signature</span>
+  <span style="color:#c792ea">new</span>(arg: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">T</span>      <span style="color:#546e7a">// Construct Signature</span>
+}
+
+<span style="color:#546e7a">// Index Signatures</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">StringMap</span> {
+  [key: <span style="color:#4ec9b0">string</span>]: <span style="color:#4ec9b0">string</span>    <span style="color:#546e7a">// Beliebige Keys, aber alle Werte string</span>
+}
+
+<span style="color:#546e7a">// Wann interface, wann type?</span>
+<span style="color:#546e7a">// interface: Objekte, Klassen, wenn Erweiterung noetig</span>
+<span style="color:#546e7a">// type:      Unions, Intersections, Tupel, Primitiv-Aliase, computed</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-if1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('if1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Generics – der TypeScript-Superpower
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="generics – der typescript-superpower">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Generics – der TypeScript-Superpower
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Generische Funktion</span>
+<span style="color:#c792ea">function</span> identitaet&lt;<span style="color:#4ec9b0">T</span>&gt;(wert: <span style="color:#4ec9b0">T</span>): <span style="color:#4ec9b0">T</span> {
+  <span style="color:#c792ea">return</span> wert
+}
+
+identitaet(<span style="color:#f78c6c">42</span>)          <span style="color:#546e7a">// number</span>
+identitaet(<span style="color:#c3e88d">"Hallo"</span>)     <span style="color:#546e7a">// string</span>
+identitaet&lt;<span style="color:#4ec9b0">boolean</span>&gt;(<span style="color:#c792ea">true</span>) <span style="color:#546e7a">// explizit</span>
+
+<span style="color:#546e7a">// Generisch mit Constraints</span>
+<span style="color:#c792ea">function</span> laengeSuchen&lt;<span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> { length: <span style="color:#4ec9b0">number</span> }&gt;(arr: <span style="color:#4ec9b0">T</span>): <span style="color:#4ec9b0">number</span> {
+  <span style="color:#c792ea">return</span> arr.length
+}
+
+laengeSuchen([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>])    <span style="color:#546e7a">// 3</span>
+laengeSuchen(<span style="color:#c3e88d">"Hallo"</span>)      <span style="color:#546e7a">// 5</span>
+
+<span style="color:#546e7a">// Mehrere Typparameter</span>
+<span style="color:#c792ea">function</span> zip&lt;<span style="color:#4ec9b0">A</span>, <span style="color:#4ec9b0">B</span>&gt;(<span style="color:#c792ea">as</span>: <span style="color:#4ec9b0">A</span>[], bs: <span style="color:#4ec9b0">B</span>[]): [<span style="color:#4ec9b0">A</span>, <span style="color:#4ec9b0">B</span>][] {
+  <span style="color:#c792ea">return</span> <span style="color:#c792ea">as</span>.map((a, i) <span style="color:#89ddff">=&gt;</span> [a, bs[i]])
+}
+
+zip([<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>], [<span style="color:#c3e88d">"a"</span>, <span style="color:#c3e88d">"b"</span>, <span style="color:#c3e88d">"c"</span>])  <span style="color:#546e7a">// [[1,"a"],[2,"b"],[3,"c"]]</span>
+
+<span style="color:#546e7a">// Generische Interfaces</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">ApiResponse</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  data: <span style="color:#4ec9b0">T</span>
+  status: <span style="color:#4ec9b0">number</span>
+  message: <span style="color:#4ec9b0">string</span>
+  timestamp: <span style="color:#4ec9b0">Date</span>
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">UserResponse</span> = <span style="color:#4ec9b0">ApiResponse</span>&lt;<span style="color:#4ec9b0">User</span>&gt;
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ListResponse</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">ApiResponse</span>&lt;<span style="color:#4ec9b0">T</span>[]&gt;
+
+<span style="color:#546e7a">// Generische Klassen</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Stack</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  <span style="color:#c792ea">private</span> items: <span style="color:#4ec9b0">T</span>[] = []
+
+  push(item: <span style="color:#4ec9b0">T</span>): <span style="color:#c792ea">void</span>    { <span style="color:#c792ea">this</span>.items.push(item) }
+  pop(): <span style="color:#4ec9b0">T</span> | <span style="color:#c792ea">undefined</span>   { <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.items.pop() }
+  peek(): <span style="color:#4ec9b0">T</span> | <span style="color:#c792ea">undefined</span>  { <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.items.at(-<span style="color:#f78c6c">1</span>) }
+  get size()             { <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.items.length }
+  isEmpty()              { <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.items.length === <span style="color:#f78c6c">0</span> }
+}
+
+<span style="color:#c792ea">const</span> stack = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Stack</span>&lt;<span style="color:#4ec9b0">number</span>&gt;()
+stack.push(<span style="color:#f78c6c">1</span>); stack.push(<span style="color:#f78c6c">2</span>)
+<span style="color:#82aaff">console</span>.log(stack.pop())   <span style="color:#546e7a">// 2</span>
+
+<span style="color:#546e7a">// Default Type Parameters (TS 2.3+)</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Container</span>&lt;<span style="color:#4ec9b0">T</span> = <span style="color:#4ec9b0">string</span>&gt; {
+  wert: <span style="color:#4ec9b0">T</span>
+}
+
+<span style="color:#c792ea">const</span> c: <span style="color:#4ec9b0">Container</span> = { wert: <span style="color:#c3e88d">"Standard"</span> }   <span style="color:#546e7a">// T = string (default)</span>
+<span style="color:#c792ea">const</span> n: <span style="color:#4ec9b0">Container</span>&lt;<span style="color:#4ec9b0">number</span>&gt; = { wert: <span style="color:#f78c6c">42</span> }
+
+<span style="color:#546e7a">// keyof &amp; Indexed Access</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Person</span> { name: <span style="color:#4ec9b0">string</span>; alter: <span style="color:#4ec9b0">number</span>; aktiv: <span style="color:#4ec9b0">boolean</span> }
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">PersonKey</span> = <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Person</span>           <span style="color:#546e7a">// "name" | "alter" | "aktiv"</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">NameType</span>  = <span style="color:#4ec9b0">Person</span>[<span style="color:#c3e88d">"name"</span>]         <span style="color:#546e7a">// string</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">AnyField</span>  = <span style="color:#4ec9b0">Person</span>[<span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Person</span>]   <span style="color:#546e7a">// string | number | boolean</span>
+
+<span style="color:#c792ea">function</span> holeEigenschaft&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">K</span> <span style="color:#c792ea">extends</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>&gt;(obj: <span style="color:#4ec9b0">T</span>, key: <span style="color:#4ec9b0">K</span>): <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>] {
+  <span style="color:#c792ea">return</span> obj[key]
+}
+
+holeEigenschaft({ name: <span style="color:#c3e88d">"Alice"</span>, alter: <span style="color:#f78c6c">30</span> }, <span style="color:#c3e88d">"name"</span>)  <span style="color:#546e7a">// "Alice" (string)</span>
+holeEigenschaft({ name: <span style="color:#c3e88d">"Alice"</span>, alter: <span style="color:#f78c6c">30</span> }, <span style="color:#c3e88d">"alter"</span>) <span style="color:#546e7a">// 30 (number)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-if2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('if2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Utility Types
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="utility types">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Utility Types
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">User</span> {
+  id: <span style="color:#4ec9b0">number</span>
+  name: <span style="color:#4ec9b0">string</span>
+  email: <span style="color:#4ec9b0">string</span>
+  alter: <span style="color:#4ec9b0">number</span>
+  passwort: <span style="color:#4ec9b0">string</span>
+}
+
+<span style="color:#546e7a">// Partial&lt;T&gt; – alle Properties optional</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">UserUpdate</span> = <span style="color:#4ec9b0">Partial</span>&lt;<span style="color:#4ec9b0">User</span>&gt;
+<span style="color:#546e7a">// { id?: number; name?: string; ... }</span>
+
+<span style="color:#546e7a">// Required&lt;T&gt; – alle Properties pflicht</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">UserRequired</span> = <span style="color:#4ec9b0">Required</span>&lt;<span style="color:#4ec9b0">Partial</span>&lt;<span style="color:#4ec9b0">User</span>&gt;&gt;
+
+<span style="color:#546e7a">// Readonly&lt;T&gt; – alle Properties unveraenderlich</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">FrozenUser</span> = <span style="color:#4ec9b0">Readonly</span>&lt;<span style="color:#4ec9b0">User</span>&gt;
+<span style="color:#c792ea">const</span> u: <span style="color:#4ec9b0">FrozenUser</span> = { id: <span style="color:#f78c6c">1</span>, name: <span style="color:#c3e88d">"Alice"</span>, email: <span style="color:#c3e88d">"a@b.de"</span>, alter: <span style="color:#f78c6c">30</span>, passwort: <span style="color:#c3e88d">"x"</span> }
+<span style="color:#546e7a">// u.name = "Bob"  // Fehler!</span>
+
+<span style="color:#546e7a">// Pick&lt;T, K&gt; – nur bestimmte Properties</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">PublicUser</span> = <span style="color:#4ec9b0">Pick</span>&lt;<span style="color:#4ec9b0">User</span>, <span style="color:#c3e88d">"id"</span> | <span style="color:#c3e88d">"name"</span> | <span style="color:#c3e88d">"email"</span>&gt;
+
+<span style="color:#546e7a">// Omit&lt;T, K&gt; – Properties weglassen</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">SafeUser</span> = <span style="color:#4ec9b0">Omit</span>&lt;<span style="color:#4ec9b0">User</span>, <span style="color:#c3e88d">"passwort"</span>&gt;  <span style="color:#546e7a">// { id, name, email, alter }</span>
+
+<span style="color:#546e7a">// Record&lt;K, V&gt; – Map-Objekt</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">StatusMap</span> = <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">boolean</span>&gt;
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ColorHex</span>  = <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#c3e88d">"rot"</span> | <span style="color:#c3e88d">"gruen"</span> | <span style="color:#c3e88d">"blau"</span>, <span style="color:#4ec9b0">string</span>&gt;
+
+<span style="color:#546e7a">// Exclude&lt;T, U&gt; – Typen ausschliessen</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">OhneNull</span> = <span style="color:#4ec9b0">Exclude</span>&lt;<span style="color:#4ec9b0">string</span> | <span style="color:#c792ea">null</span> | <span style="color:#c792ea">undefined</span>, <span style="color:#c792ea">null</span> | <span style="color:#c792ea">undefined</span>&gt;  <span style="color:#546e7a">// string</span>
+
+<span style="color:#546e7a">// Extract&lt;T, U&gt; – nur passende behalten</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">NurStrings</span> = <span style="color:#4ec9b0">Extract</span>&lt;<span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span> | <span style="color:#4ec9b0">boolean</span>, <span style="color:#4ec9b0">string</span>&gt;   <span style="color:#546e7a">// string</span>
+
+<span style="color:#546e7a">// NonNullable&lt;T&gt;</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Definiert</span> = <span style="color:#4ec9b0">NonNullable</span>&lt;<span style="color:#4ec9b0">string</span> | <span style="color:#c792ea">null</span> | <span style="color:#c792ea">undefined</span>&gt;   <span style="color:#546e7a">// string</span>
+
+<span style="color:#546e7a">// ReturnType&lt;T&gt;</span>
+<span style="color:#c792ea">function</span> gibZahl(): <span style="color:#4ec9b0">number</span> { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">42</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">MeinRueckgabetyp</span> = <span style="color:#4ec9b0">ReturnType</span>&lt;<span style="color:#c792ea">typeof</span> gibZahl&gt;   <span style="color:#546e7a">// number</span>
+
+<span style="color:#546e7a">// Parameters&lt;T&gt;</span>
+<span style="color:#c792ea">function</span> grüsse(name: <span style="color:#4ec9b0">string</span>, alter: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">string</span> { <span style="color:#c792ea">return</span> <span style="color:#c3e88d">""</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">GruessParams</span> = <span style="color:#4ec9b0">Parameters</span>&lt;<span style="color:#c792ea">typeof</span> grüsse&gt;  <span style="color:#546e7a">// [string, number]</span>
+
+<span style="color:#546e7a">// Awaited&lt;T&gt; (TS 4.5+)</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">EntpacktesPromise</span> = <span style="color:#4ec9b0">Awaited</span>&lt;<span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">string</span>&gt;&gt;&gt;  <span style="color:#546e7a">// string</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-if3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('if3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Mapped &amp; Conditional Types
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="mapped &amp; conditional types">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Mapped &amp; Conditional Types
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Mapped Types – alle Properties transformieren</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Optional</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = {
+  [<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">in</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>]?: <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>]           <span style="color:#546e7a">// wie Partial</span>
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Nullable</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = {
+  [<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">in</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>]: <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>] | <span style="color:#c792ea">null</span>
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Getter</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = {
+  [<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">in</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">as</span> <span style="color:#c3e88d">`get${Capitalize&lt;string &amp; K&gt;}`</span>]: () <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>]
+}
+
+<span style="color:#546e7a">// Conditional Types</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Flatten</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Array</span>&lt;<span style="color:#c792ea">infer</span> <span style="color:#4ec9b0">Item</span>&gt; ? <span style="color:#4ec9b0">Item</span> : <span style="color:#4ec9b0">T</span>
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">NumArr</span>   = <span style="color:#4ec9b0">Flatten</span>&lt;<span style="color:#4ec9b0">number</span>[]&gt;   <span style="color:#546e7a">// number</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">JustStr</span>  = <span style="color:#4ec9b0">Flatten</span>&lt;<span style="color:#4ec9b0">string</span>&gt;     <span style="color:#546e7a">// string</span>
+
+<span style="color:#546e7a">// infer – Typ extrahieren</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ReturnOf</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> (...args: <span style="color:#4ec9b0">any</span>[]) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">infer</span> <span style="color:#4ec9b0">R</span> ? <span style="color:#4ec9b0">R</span> : <span style="color:#c792ea">never</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Unpromise</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#c792ea">infer</span> <span style="color:#4ec9b0">U</span>&gt; ? <span style="color:#4ec9b0">U</span> : <span style="color:#4ec9b0">T</span>
+
+<span style="color:#546e7a">// Distributive Conditional Types</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ToArray</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">any</span> ? <span style="color:#4ec9b0">T</span>[] : <span style="color:#c792ea">never</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">StrOrNum</span> = <span style="color:#4ec9b0">ToArray</span>&lt;<span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span>&gt;  <span style="color:#546e7a">// string[] | number[]</span>
+
+<span style="color:#546e7a">// Template Literal + Mapped</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">EventMap</span>&lt;<span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">string</span>&gt; = {
+  [<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">in</span> <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">as</span> <span style="color:#c3e88d">`on${Capitalize&lt;K&gt;}`</span>]: (event: <span style="color:#4ec9b0">Event</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ButtonEvents</span> = <span style="color:#4ec9b0">EventMap</span>&lt;<span style="color:#c3e88d">"click"</span> | <span style="color:#c3e88d">"focus"</span> | <span style="color:#c3e88d">"blur"</span>&gt;
+<span style="color:#546e7a">// { onClick: ..., onFocus: ..., onBlur: ... }</span>
+
+<span style="color:#546e7a">// Discriminated Union Helper</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ExtractByType</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">D</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">string</span>&gt; =
+  <span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> { <span style="color:#c792ea">type</span>: <span style="color:#4ec9b0">D</span> } ? <span style="color:#4ec9b0">T</span> : <span style="color:#c792ea">never</span>
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Action</span> = { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"ADD"</span>; payload: <span style="color:#4ec9b0">string</span> }
+           | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"REMOVE"</span>; id: <span style="color:#4ec9b0">number</span> }
+           | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"CLEAR"</span> }
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">AddAction</span> = <span style="color:#4ec9b0">ExtractByType</span>&lt;<span style="color:#4ec9b0">Action</span>, <span style="color:#c3e88d">"ADD"</span>&gt;  <span style="color:#546e7a">// { type: "ADD"; payload: string }</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-classes" class="tp">
+
+<div class="ac open" id="ac-cl0"
+     style="border:1px solid #3178c644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3178c60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3178c6">
+      <span style="display:inline-block;width:8px;height:8px;background:#3178c6;border-radius:50%;margin-right:2px"></span>Klassen in TypeScript
+    </span>
+    <span class="aa" style="color:#3178c6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="klassen in typescript">
+  <div style="color:#3178c6;font-weight:700;font-size:12px;margin-bottom:8px">
+    Klassen in TypeScript
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Person</span> {
+  <span style="color:#546e7a">// Properties mit Sichtbarkeit (TS 2.0+)</span>
+  <span style="color:#c792ea">readonly</span> id: <span style="color:#4ec9b0">number</span>
+  <span style="color:#c792ea">public</span>   name: <span style="color:#4ec9b0">string</span>
+  <span style="color:#c792ea">protected</span> email: <span style="color:#4ec9b0">string</span>
+  <span style="color:#c792ea">private</span>  _passwort: <span style="color:#4ec9b0">string</span>
+
+  <span style="color:#546e7a">// Statische Property</span>
+  <span style="color:#c792ea">static</span> anzahl = <span style="color:#f78c6c">0</span>
+
+  <span style="color:#546e7a">// Constructor Shorthand (sehr praktisch!)</span>
+  constructor(
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">readonly</span> vorname: <span style="color:#4ec9b0">string</span>,   <span style="color:#546e7a">// public + readonly automatisch!</span>
+    <span style="color:#c792ea">private</span> nachname: <span style="color:#4ec9b0">string</span>,
+    <span style="color:#c792ea">public</span> alter: <span style="color:#4ec9b0">number</span> = <span style="color:#f78c6c">0</span>          <span style="color:#546e7a">// Defaultwert</span>
+  ) {
+    <span style="color:#c792ea">this</span>.id = ++<span style="color:#4ec9b0">Person</span>.anzahl
+    <span style="color:#c792ea">this</span>.name = <span style="color:#c3e88d">`${vorname} ${nachname}`</span>
+    <span style="color:#c792ea">this</span>.email = <span style="color:#c3e88d">""</span>
+    <span style="color:#c792ea">this</span>._passwort = <span style="color:#c3e88d">""</span>
+  }
+
+  <span style="color:#546e7a">// Getter / Setter</span>
+  get vollname(): <span style="color:#4ec9b0">string</span> { <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.name }
+  set vollname(v: <span style="color:#4ec9b0">string</span>) {
+    <span style="color:#c792ea">const</span> teile = v.split(<span style="color:#c3e88d">" "</span>)
+    <span style="color:#c792ea">this</span>.vorname = teile[<span style="color:#f78c6c">0</span>]  <span style="color:#546e7a">// Fehler! readonly</span>
+  }
+
+  <span style="color:#546e7a">// Statische Fabrik</span>
+  <span style="color:#c792ea">static</span> erstelle(name: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">Person</span> {
+    <span style="color:#c792ea">const</span> [v, n] = name.split(<span style="color:#c3e88d">" "</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(v <span style="color:#89ddff">??</span> name, n <span style="color:#89ddff">??</span> <span style="color:#c3e88d">""</span>)
+  }
+
+  <span style="color:#546e7a">// Methode</span>
+  vorstellen(): <span style="color:#4ec9b0">string</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`Ich bin ${this.vorname}, ${this.alter} Jahre alt.`</span>
+  }
+
+  toString(): <span style="color:#4ec9b0">string</span> {
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`Person(${this.name})`</span>
+  }
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">const</span> alice = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Person</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Muster"</span>, <span style="color:#f78c6c">30</span>)
+<span style="color:#82aaff">console</span>.log(alice.vorname)     <span style="color:#546e7a">// "Alice"</span>
+<span style="color:#82aaff">console</span>.log(alice.vorstellen())
+<span style="color:#82aaff">console</span>.log(<span style="color:#4ec9b0">Person</span>.anzahl)     <span style="color:#546e7a">// 1</span>
+
+<span style="color:#c792ea">const</span> bob = <span style="color:#4ec9b0">Person</span>.erstelle(<span style="color:#c3e88d">"Bob Beispiel"</span>)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Vererbung &amp; abstrakte Klassen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="vererbung &amp; abstrakte klassen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Vererbung &amp; abstrakte Klassen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Abstrakte Basisklasse</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Form</span> {
+  <span style="color:#c792ea">abstract</span> <span style="color:#c792ea">readonly</span> art: <span style="color:#4ec9b0">string</span>
+  <span style="color:#c792ea">abstract</span> flaeche(): <span style="color:#4ec9b0">number</span>
+  <span style="color:#c792ea">abstract</span> umfang(): <span style="color:#4ec9b0">number</span>
+
+  <span style="color:#546e7a">// Konkrete Methode</span>
+  drucke(): <span style="color:#c792ea">void</span> {
+    <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">`${this.art}: Fläche=${this.flaeche().toFixed(2)}`</span>)
+  }
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Kreis</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Form</span> {
+  <span style="color:#c792ea">readonly</span> art = <span style="color:#c3e88d">"Kreis"</span>
+  constructor(<span style="color:#c792ea">private</span> radius: <span style="color:#4ec9b0">number</span>) { <span style="color:#c792ea">super</span>() }
+
+  flaeche(): <span style="color:#4ec9b0">number</span> { <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * <span style="color:#c792ea">this</span>.radius ** <span style="color:#f78c6c">2</span> }
+  umfang(): <span style="color:#4ec9b0">number</span>  { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> * <span style="color:#4ec9b0">Math</span>.<span style="color:#4ec9b0">PI</span> * <span style="color:#c792ea">this</span>.radius }
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Rechteck</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Form</span> {
+  <span style="color:#c792ea">readonly</span> art = <span style="color:#c3e88d">"Rechteck"</span>
+  constructor(<span style="color:#c792ea">private</span> b: <span style="color:#4ec9b0">number</span>, <span style="color:#c792ea">private</span> h: <span style="color:#4ec9b0">number</span>) { <span style="color:#c792ea">super</span>() }
+
+  flaeche(): <span style="color:#4ec9b0">number</span> { <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.b * <span style="color:#c792ea">this</span>.h }
+  umfang(): <span style="color:#4ec9b0">number</span>  { <span style="color:#c792ea">return</span> <span style="color:#f78c6c">2</span> * (<span style="color:#c792ea">this</span>.b + <span style="color:#c792ea">this</span>.h) }
+}
+
+<span style="color:#546e7a">// Interface implementieren</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Serializable</span> {
+  serialize(): <span style="color:#4ec9b0">string</span>
+  <span style="color:#c792ea">static</span> deserialize(data: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">Serializable</span>
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Punkt</span> <span style="color:#c792ea">implements</span> <span style="color:#4ec9b0">Serializable</span> {
+  constructor(<span style="color:#c792ea">public</span> x: <span style="color:#4ec9b0">number</span>, <span style="color:#c792ea">public</span> y: <span style="color:#4ec9b0">number</span>) {}
+  serialize(): <span style="color:#4ec9b0">string</span> { <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">JSON</span>.stringify({ x: <span style="color:#c792ea">this</span>.x, y: <span style="color:#c792ea">this</span>.y }) }
+}
+
+<span style="color:#546e7a">// instanceof mit Type Guard</span>
+<span style="color:#c792ea">function</span> istKreis(f: <span style="color:#4ec9b0">Form</span>): f <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Kreis</span> {
+  <span style="color:#c792ea">return</span> f <span style="color:#c792ea">instanceof</span> <span style="color:#4ec9b0">Kreis</span>
+}
+
+<span style="color:#c792ea">const</span> formen: <span style="color:#4ec9b0">Form</span>[] = [<span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Kreis</span>(<span style="color:#f78c6c">5</span>), <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Rechteck</span>(<span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">6</span>)]
+formen.forEach(f <span style="color:#89ddff">=&gt;</span> {
+  f.drucke()                             <span style="color:#546e7a">// Polymorphismus</span>
+  <span style="color:#c792ea">if</span> (istKreis(f)) {
+    <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">"Radius:"</span>, f[<span style="color:#c3e88d">"radius"</span>])  <span style="color:#546e7a">// f ist jetzt Kreis</span>
+  }
+})</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Decorators (TS 5.0 / Stage 3)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="decorators (ts 5.0 / stage 3)">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Decorators (TS 5.0 / Stage 3)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Decorators transformieren Klassen/Methoden/Properties</span>
+<span style="color:#546e7a">// tsconfig: "experimentalDecorators": true  (legacy)</span>
+<span style="color:#546e7a">// Oder: Native Stage-3 Decorators (TS 5.0+)</span>
+
+<span style="color:#546e7a">// Klassen-Decorator</span>
+<span style="color:#c792ea">function</span> singleton&lt;<span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> { <span style="color:#c792ea">new</span>(...args: <span style="color:#4ec9b0">any</span>[]): {} }&gt;(<span style="color:#4ec9b0">Base</span>: <span style="color:#4ec9b0">T</span>) {
+  <span style="color:#c792ea">let</span> instanz: <span style="color:#4ec9b0">InstanceType</span>&lt;<span style="color:#4ec9b0">T</span>&gt; | <span style="color:#c792ea">null</span> = <span style="color:#c792ea">null</span>
+  <span style="color:#c792ea">return</span> <span style="color:#c792ea">class</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Base</span> {
+    constructor(...args: <span style="color:#4ec9b0">any</span>[]) {
+      <span style="color:#c792ea">super</span>(...args)
+      <span style="color:#c792ea">if</span> (instanz) <span style="color:#c792ea">return</span> instanz
+      instanz = <span style="color:#c792ea">this</span> <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">any</span>
+    }
+  }
+}
+
+<span style="color:#ff9800">@singleton</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Config</span> {
+  wert = <span style="color:#4ec9b0">Math</span>.random()
+}
+
+<span style="color:#82aaff">console</span>.log(<span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Config</span>().wert === <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Config</span>().wert)  <span style="color:#546e7a">// true!</span>
+
+<span style="color:#546e7a">// Methoden-Decorator</span>
+<span style="color:#c792ea">function</span> logge(target: <span style="color:#4ec9b0">any</span>, key: <span style="color:#4ec9b0">string</span>, desc: <span style="color:#4ec9b0">PropertyDescriptor</span>) {
+  <span style="color:#c792ea">const</span> original = desc.value
+  desc.value = <span style="color:#c792ea">function</span>(...args: <span style="color:#4ec9b0">any</span>[]) {
+    <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">`${key} aufgerufen mit`</span>, args)
+    <span style="color:#c792ea">const</span> ergebnis = original.apply(<span style="color:#c792ea">this</span>, args)
+    <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">`${key} gibt zurück:`</span>, ergebnis)
+    <span style="color:#c792ea">return</span> ergebnis
+  }
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Rechner</span> {
+  <span style="color:#ff9800">@logge</span>
+  addiere(a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">number</span> {
+    <span style="color:#c792ea">return</span> a + b
+  }
+}
+
+<span style="color:#546e7a">// Property Decorator</span>
+<span style="color:#c792ea">function</span> pflicht(target: <span style="color:#4ec9b0">any</span>, key: <span style="color:#4ec9b0">string</span>) {
+  <span style="color:#c792ea">let</span> wert: <span style="color:#4ec9b0">any</span>
+  <span style="color:#4ec9b0">Object</span>.defineProperty(target, key, {
+    get: () <span style="color:#89ddff">=&gt;</span> wert,
+    set: (v) <span style="color:#89ddff">=&gt;</span> {
+      <span style="color:#c792ea">if</span> (v === <span style="color:#c792ea">null</span> || v === <span style="color:#c792ea">undefined</span>)
+        <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(<span style="color:#c3e88d">`${key} darf nicht null sein`</span>)
+      wert = v
+    }
+  })
+}
+
+<span style="color:#546e7a">// Parameter Decorator</span>
+<span style="color:#c792ea">function</span> validiere(
+  target: <span style="color:#4ec9b0">any</span>, key: <span style="color:#4ec9b0">string</span>, index: <span style="color:#4ec9b0">number</span>
+) {
+  <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">`Parameter ${index} von ${key} wird validiert`</span>)
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functional" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Funktionen &amp; Lambdas
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen &amp; lambdas">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen &amp; Lambdas
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Funktionsdeklaration</span>
+<span style="color:#c792ea">function</span> addiere(a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">number</span> {
+  <span style="color:#c792ea">return</span> a + b
+}
+
+<span style="color:#546e7a">// Arrow Function</span>
+<span style="color:#c792ea">const</span> multipliziere = (a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">number</span> <span style="color:#89ddff">=&gt;</span> a * b
+<span style="color:#c792ea">const</span> verdopple = (x: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> x * <span style="color:#f78c6c">2</span>    <span style="color:#546e7a">// ein Parameter: keine ()</span>
+<span style="color:#c792ea">const</span> sagHallo  = () <span style="color:#89ddff">=&gt;</span> <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">"Hallo!"</span>)
+
+<span style="color:#546e7a">// Function Type</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">BinareFn</span>  = (a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">number</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Predicate</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = (item: <span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">boolean</span>
+
+<span style="color:#c792ea">const</span> istGerade: <span style="color:#4ec9b0">Predicate</span>&lt;<span style="color:#4ec9b0">number</span>&gt; = n <span style="color:#89ddff">=&gt;</span> n % <span style="color:#f78c6c">2</span> === <span style="color:#f78c6c">0</span>
+
+<span style="color:#546e7a">// Optionale und Default-Parameter</span>
+<span style="color:#c792ea">function</span> verbinde(
+  host: <span style="color:#4ec9b0">string</span>,
+  port: <span style="color:#4ec9b0">number</span> = <span style="color:#f78c6c">80</span>,
+  ssl?: <span style="color:#4ec9b0">boolean</span>
+): <span style="color:#4ec9b0">string</span> {
+  <span style="color:#c792ea">const</span> schema = ssl ? <span style="color:#c3e88d">"https"</span> : <span style="color:#c3e88d">"http"</span>
+  <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`${schema}://${host}:${port}`</span>
+}
+
+verbinde(<span style="color:#c3e88d">"example.com"</span>)           <span style="color:#546e7a">// "http://example.com:80"</span>
+verbinde(<span style="color:#c3e88d">"example.com"</span>, <span style="color:#f78c6c">443</span>, <span style="color:#c792ea">true</span>) <span style="color:#546e7a">// "https://example.com:443"</span>
+
+<span style="color:#546e7a">// Rest Parameter</span>
+<span style="color:#c792ea">function</span> summe(...zahlen: <span style="color:#4ec9b0">number</span>[]): <span style="color:#4ec9b0">number</span> {
+  <span style="color:#c792ea">return</span> zahlen.reduce((a, b) <span style="color:#89ddff">=&gt;</span> a + b, <span style="color:#f78c6c">0</span>)
+}
+
+<span style="color:#546e7a">// Overloads</span>
+<span style="color:#c792ea">function</span> verarbeite(x: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">string</span>
+<span style="color:#c792ea">function</span> verarbeite(x: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">number</span>
+<span style="color:#c792ea">function</span> verarbeite(x: <span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span> {
+  <span style="color:#c792ea">if</span> (<span style="color:#c792ea">typeof</span> x === <span style="color:#c3e88d">"string"</span>) <span style="color:#c792ea">return</span> x.toUpperCase()
+  <span style="color:#c792ea">return</span> x * <span style="color:#f78c6c">2</span>
+}
+
+<span style="color:#546e7a">// Higher-Order Functions</span>
+<span style="color:#c792ea">const</span> pipe = &lt;<span style="color:#4ec9b0">T</span>&gt;(...fns: <span style="color:#4ec9b0">Array</span>&lt;(x: <span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">T</span>&gt;) <span style="color:#89ddff">=&gt;</span> (x: <span style="color:#4ec9b0">T</span>): <span style="color:#4ec9b0">T</span> <span style="color:#89ddff">=&gt;</span>
+  fns.reduce((acc, fn) <span style="color:#89ddff">=&gt;</span> fn(acc), x)
+
+<span style="color:#c792ea">const</span> transform = pipe(
+  (x: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> x * <span style="color:#f78c6c">2</span>,
+  (x: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> x + <span style="color:#f78c6c">1</span>,
+  (x: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> x ** <span style="color:#f78c6c">2</span>
+)
+
+<span style="color:#82aaff">console</span>.log(transform(<span style="color:#f78c6c">3</span>))   <span style="color:#546e7a">// ((3*2)+1)^2 = 49</span>
+
+<span style="color:#546e7a">// Currying</span>
+<span style="color:#c792ea">const</span> curry = &lt;<span style="color:#4ec9b0">A</span>, <span style="color:#4ec9b0">B</span>, <span style="color:#4ec9b0">C</span>&gt;(f: (a: <span style="color:#4ec9b0">A</span>, b: <span style="color:#4ec9b0">B</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">C</span>) <span style="color:#89ddff">=&gt;</span>
+  (a: <span style="color:#4ec9b0">A</span>) <span style="color:#89ddff">=&gt;</span> (b: <span style="color:#4ec9b0">B</span>): <span style="color:#4ec9b0">C</span> <span style="color:#89ddff">=&gt;</span> f(a, b)
+
+<span style="color:#c792ea">const</span> add = curry((a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> a + b)
+<span style="color:#c792ea">const</span> add5 = add(<span style="color:#f78c6c">5</span>)
+<span style="color:#82aaff">console</span>.log(add5(<span style="color:#f78c6c">3</span>))   <span style="color:#546e7a">// 8</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>async / await &amp; Promises
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="async / await &amp; promises">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    async / await &amp; Promises
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Promise – asynchrone Werte</span>
+<span style="color:#c792ea">const</span> versprechen: <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">string</span>&gt; = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Promise</span>((resolve, reject) <span style="color:#89ddff">=&gt;</span> {
+  <span style="color:#82aaff">setTimeout</span>(() <span style="color:#89ddff">=&gt;</span> resolve(<span style="color:#c3e88d">"Fertig!"</span>), <span style="color:#f78c6c">1000</span>)
+})
+
+<span style="color:#546e7a">// async/await – sauberere Syntax</span>
+<span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span> holeDaten(url: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">string</span>&gt; {
+  <span style="color:#c792ea">const</span> response = <span style="color:#c792ea">await</span> <span style="color:#82aaff">fetch</span>(url)
+  <span style="color:#c792ea">if</span> (!response.ok) {
+    <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(<span style="color:#c3e88d">`HTTP ${response.status}`</span>)
+  }
+  <span style="color:#c792ea">return</span> response.text()
+}
+
+<span style="color:#546e7a">// Promise.all – parallel warten</span>
+<span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span> ladeMehrere(urls: <span style="color:#4ec9b0">string</span>[]): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">string</span>[]&gt; {
+  <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Promise</span>.all(urls.map(url <span style="color:#89ddff">=&gt;</span> holeDaten(url)))
+}
+
+<span style="color:#546e7a">// Promise.allSettled – alle, auch wenn manche scheitern</span>
+<span style="color:#c792ea">const</span> ergebnisse = <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">Promise</span>.allSettled([
+  holeDaten(<span style="color:#c3e88d">"https://api1.example.com"</span>),
+  holeDaten(<span style="color:#c3e88d">"https://api2.example.com"</span>),
+])
+
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">const</span> res <span style="color:#c792ea">of</span> ergebnisse) {
+  <span style="color:#c792ea">if</span> (res.status === <span style="color:#c3e88d">"fulfilled"</span>) <span style="color:#82aaff">console</span>.log(res.value)
+  <span style="color:#c792ea">else</span> <span style="color:#82aaff">console</span>.error(res.reason)
+}
+
+<span style="color:#546e7a">// Promise.race – erstes Ergebnis</span>
+<span style="color:#c792ea">const</span> schnellste = <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">Promise</span>.race([
+  holeDaten(<span style="color:#c3e88d">"https://api1.example.com"</span>),
+  holeDaten(<span style="color:#c3e88d">"https://api2.example.com"</span>),
+])
+
+<span style="color:#546e7a">// Fehlerbehandlung</span>
+<span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span> sicher&lt;<span style="color:#4ec9b0">T</span>&gt;(fn: () <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">T</span>&gt;): <span style="color:#4ec9b0">Promise</span>&lt;[<span style="color:#4ec9b0">T</span>, <span style="color:#c792ea">null</span>] | [<span style="color:#c792ea">null</span>, <span style="color:#4ec9b0">Error</span>]&gt; {
+  <span style="color:#c792ea">try</span> {
+    <span style="color:#c792ea">return</span> [<span style="color:#c792ea">await</span> fn(), <span style="color:#c792ea">null</span>]
+  } <span style="color:#c792ea">catch</span> (err) {
+    <span style="color:#c792ea">return</span> [<span style="color:#c792ea">null</span>, err <span style="color:#c792ea">instanceof</span> <span style="color:#4ec9b0">Error</span> ? err : <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(<span style="color:#82aaff">String</span>(err))]
+  }
+}
+
+<span style="color:#c792ea">const</span> [daten, fehler] = <span style="color:#c792ea">await</span> sicher(() <span style="color:#89ddff">=&gt;</span> holeDaten(<span style="color:#c3e88d">"https://api.example.com"</span>))
+<span style="color:#c792ea">if</span> (fehler) { <span style="color:#82aaff">console</span>.error(fehler.message); <span style="color:#c792ea">return</span> }
+<span style="color:#82aaff">console</span>.log(daten)
+
+<span style="color:#546e7a">// Async Generator</span>
+<span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span>* seitenweise(url: <span style="color:#4ec9b0">string</span>) {
+  <span style="color:#c792ea">let</span> seite = <span style="color:#f78c6c">1</span>
+  <span style="color:#c792ea">while</span> (<span style="color:#c792ea">true</span>) {
+    <span style="color:#c792ea">const</span> daten = <span style="color:#c792ea">await</span> holeDaten(<span style="color:#c3e88d">`${url}?page=${seite}`</span>)
+    <span style="color:#c792ea">const</span> parsed = <span style="color:#4ec9b0">JSON</span>.parse(daten)
+    <span style="color:#c792ea">if</span> (!parsed.items.length) <span style="color:#c792ea">break</span>
+    <span style="color:#c792ea">yield</span> parsed.items
+    seite++
+  }
+}
+
+<span style="color:#c792ea">for</span> <span style="color:#c792ea">await</span> (<span style="color:#c792ea">const</span> items <span style="color:#c792ea">of</span> seitenweise(<span style="color:#c3e88d">"https://api.example.com/items"</span>)) {
+  <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">"Seite:"</span>, items.length, <span style="color:#c3e88d">"Items"</span>)
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Type Guards &amp; Narrowing
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="type guards &amp; narrowing">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Type Guards &amp; Narrowing
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// typeof Narrowing</span>
+<span style="color:#c792ea">function</span> verarbeiteDaten(x: <span style="color:#4ec9b0">string</span> | <span style="color:#4ec9b0">number</span>) {
+  <span style="color:#c792ea">if</span> (<span style="color:#c792ea">typeof</span> x === <span style="color:#c3e88d">"string"</span>) {
+    <span style="color:#c792ea">return</span> x.toUpperCase()   <span style="color:#546e7a">// x: string</span>
+  }
+  <span style="color:#c792ea">return</span> x.toFixed(<span style="color:#f78c6c">2</span>)        <span style="color:#546e7a">// x: number</span>
+}
+
+<span style="color:#546e7a">// instanceof Narrowing</span>
+<span style="color:#c792ea">function</span> formBeschreiben(f: <span style="color:#4ec9b0">Kreis</span> | <span style="color:#4ec9b0">Rechteck</span>) {
+  <span style="color:#c792ea">if</span> (f <span style="color:#c792ea">instanceof</span> <span style="color:#4ec9b0">Kreis</span>) {
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`Kreis mit r=${f.radius}`</span>  <span style="color:#546e7a">// f: Kreis</span>
+  }
+  <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`Rechteck ${f.b}x${f.h}`</span>    <span style="color:#546e7a">// f: Rechteck</span>
+}
+
+<span style="color:#546e7a">// Custom Type Guards (is)</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Katze</span> { miau(): <span style="color:#c792ea">void</span> }
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Hund</span>  { wuff(): <span style="color:#c792ea">void</span> }
+
+<span style="color:#c792ea">function</span> istKatze(tier: <span style="color:#4ec9b0">Katze</span> | <span style="color:#4ec9b0">Hund</span>): tier <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Katze</span> {
+  <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"miau"</span> <span style="color:#c792ea">in</span> tier
+}
+
+<span style="color:#546e7a">// Assertion Functions (TS 3.7+)</span>
+<span style="color:#c792ea">function</span> behaupte(bedingung: <span style="color:#4ec9b0">boolean</span>, msg: <span style="color:#4ec9b0">string</span>): <span style="color:#c792ea">asserts</span> bedingung {
+  <span style="color:#c792ea">if</span> (!bedingung) <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(msg)
+}
+
+<span style="color:#c792ea">function</span> istString(x: <span style="color:#4ec9b0">unknown</span>): <span style="color:#c792ea">asserts</span> x <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">string</span> {
+  <span style="color:#c792ea">if</span> (<span style="color:#c792ea">typeof</span> x !== <span style="color:#c3e88d">"string"</span>) <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">TypeError</span>(<span style="color:#c3e88d">"Kein String!"</span>)
+}
+
+<span style="color:#546e7a">// in Narrowing</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Admin</span>  = { rolle: <span style="color:#c3e88d">"admin"</span>; permissions: <span style="color:#4ec9b0">string</span>[] }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Guest</span>  = { name: <span style="color:#4ec9b0">string</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Nutzer</span> = <span style="color:#4ec9b0">Admin</span> | <span style="color:#4ec9b0">Guest</span>
+
+<span style="color:#c792ea">function</span> begruesse(n: <span style="color:#4ec9b0">Nutzer</span>) {
+  <span style="color:#c792ea">if</span> (<span style="color:#c3e88d">"permissions"</span> <span style="color:#c792ea">in</span> n) {
+    <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">"Admin mit"</span>, n.permissions.length, <span style="color:#c3e88d">"Rechten"</span>)
+  } <span style="color:#c792ea">else</span> {
+    <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">"Gast:"</span>, n.name)
+  }
+}
+
+<span style="color:#546e7a">// Exhaustiveness Check mit never</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Tier</span> = <span style="color:#c3e88d">"katze"</span> | <span style="color:#c3e88d">"hund"</span> | <span style="color:#c3e88d">"vogel"</span>
+<span style="color:#c792ea">function</span> tierLaut(t: <span style="color:#4ec9b0">Tier</span>): <span style="color:#4ec9b0">string</span> {
+  <span style="color:#c792ea">switch</span> (t) {
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"katze"</span>: <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Miau"</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"hund"</span>:  <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Wuff"</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"vogel"</span>: <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Zwitscher"</span>
+    <span style="color:#c792ea">default</span>:
+      <span style="color:#c792ea">const</span> exhaustiveCheck: <span style="color:#c792ea">never</span> = t   <span style="color:#546e7a">// Fehler wenn Tier erweitert wird!</span>
+      <span style="color:#c792ea">return</span> exhaustiveCheck
+  }
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-modern" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Feature suchen…">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #3178c644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3178c60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3178c6">
+      <span style="display:inline-block;width:8px;height:8px;background:#3178c6;border-radius:50%;margin-right:2px"></span>Strukturelles Typsystem &amp; Duck Typing
+    </span>
+    <span class="aa" style="color:#3178c6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="strukturelles typsystem &amp; duck typing">
+  <div style="color:#3178c6;font-weight:700;font-size:12px;margin-bottom:8px">
+    Strukturelles Typsystem &amp; Duck Typing
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// TypeScript ist STRUKTURELL – nicht nominal!</span>
+<span style="color:#546e7a">// Typen sind kompatibel wenn sie dieselbe Struktur haben</span>
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Punkt</span> { x: <span style="color:#4ec9b0">number</span>; y: <span style="color:#4ec9b0">number</span> }
+
+<span style="color:#c792ea">function</span> druckePunkt(p: <span style="color:#4ec9b0">Punkt</span>) {
+  <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">`(${p.x}, ${p.y})`</span>)
+}
+
+<span style="color:#c792ea">const</span> meinObjekt = { x: <span style="color:#f78c6c">1</span>, y: <span style="color:#f78c6c">2</span>, z: <span style="color:#f78c6c">3</span> }   <span style="color:#546e7a">// hat MEHR als Punkt</span>
+druckePunkt(meinObjekt)   <span style="color:#546e7a">// OK! Struktur ist kompatibel</span>
+
+<span style="color:#546e7a">// Excess Property Checking (nur bei direkten Literalen)</span>
+<span style="color:#546e7a">// druckePunkt({ x: 1, y: 2, z: 3 })  // Fehler! z erwartet nicht</span>
+
+<span style="color:#546e7a">// Branding – nominale Typen simulieren</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">UserID</span> = <span style="color:#4ec9b0">number</span> &amp; { <span style="color:#c792ea">readonly</span> brand: unique <span style="color:#4ec9b0">symbol</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">PostID</span> = <span style="color:#4ec9b0">number</span> &amp; { <span style="color:#c792ea">readonly</span> brand: unique <span style="color:#4ec9b0">symbol</span> }
+
+<span style="color:#c792ea">function</span> erstelleUserID(n: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">UserID</span> {
+  <span style="color:#c792ea">return</span> n <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">UserID</span>
+}
+
+<span style="color:#c792ea">const</span> uid: <span style="color:#4ec9b0">UserID</span> = erstelleUserID(<span style="color:#f78c6c">1</span>)
+<span style="color:#c792ea">const</span> pid: <span style="color:#4ec9b0">PostID</span> = erstelleUserID(<span style="color:#f78c6c">2</span>) <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">unknown</span> <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">PostID</span>  <span style="color:#546e7a">// explizit</span>
+
+<span style="color:#546e7a">// uid = pid   // Fehler! Unterschiedliche "brands"</span>
+
+<span style="color:#546e7a">// Variance – Covariant &amp; Contravariant</span>
+<span style="color:#546e7a">// Covariant: Producer&lt;Cat&gt; ist subtype von Producer&lt;Animal&gt;</span>
+<span style="color:#546e7a">// Contravariant: Consumer&lt;Animal&gt; ist subtype von Consumer&lt;Cat&gt;</span>
+<span style="color:#546e7a">// (Relevant bei Funktionstypen)</span>
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Covariant</span>&lt;out <span style="color:#4ec9b0">T</span>&gt;     = { wert: <span style="color:#4ec9b0">T</span> }   <span style="color:#546e7a">// TS 4.7+</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Contravariant</span>&lt;<span style="color:#c792ea">in</span> <span style="color:#4ec9b0">T</span>&gt;  = { setze(wert: <span style="color:#4ec9b0">T</span>): <span style="color:#c792ea">void</span> }</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Module &amp; Namespaces
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="module &amp; namespaces">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Module &amp; Namespaces
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ES Modules (Standard)</span>
+<span style="color:#546e7a">// math.ts</span>
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">function</span> addiere(a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>): <span style="color:#4ec9b0">number</span> {
+  <span style="color:#c792ea">return</span> a + b
+}
+
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">const</span> <span style="color:#4ec9b0">PI</span> = <span style="color:#f78c6c">3.14159</span>
+
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">default</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Rechner</span> {
+  addiere = (a: <span style="color:#4ec9b0">number</span>, b: <span style="color:#4ec9b0">number</span>) <span style="color:#89ddff">=&gt;</span> a + b
+}
+
+<span style="color:#546e7a">// main.ts</span>
+<span style="color:#c792ea">import</span> <span style="color:#4ec9b0">Rechner</span>, { addiere, <span style="color:#4ec9b0">PI</span> } <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"./math"</span>
+<span style="color:#c792ea">import</span> * <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">MathUtils</span> <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"./math"</span>
+
+<span style="color:#546e7a">// Type-only Import (TS 3.8+)</span>
+<span style="color:#c792ea">import</span> <span style="color:#c792ea">type</span> { <span style="color:#4ec9b0">User</span> } <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"./types"</span>  <span style="color:#546e7a">// Nur fuer Typen – kein JS-Output!</span>
+<span style="color:#c792ea">import</span> { <span style="color:#c792ea">type</span> <span style="color:#4ec9b0">User</span>, createUser } <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"./types"</span>  <span style="color:#546e7a">// Mixed</span>
+
+<span style="color:#546e7a">// Re-Export</span>
+<span style="color:#c792ea">export</span> { <span style="color:#4ec9b0">User</span> <span style="color:#c792ea">as</span> <span style="color:#c792ea">default</span> } <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"./types"</span>
+<span style="color:#c792ea">export</span> <span style="color:#c792ea">type</span> { <span style="color:#4ec9b0">User</span> } <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"./types"</span>
+
+<span style="color:#546e7a">// Dynamic Import (Lazy Loading)</span>
+<span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span> ladeModul() {
+  <span style="color:#c792ea">const</span> { standard } = <span style="color:#c792ea">await</span> <span style="color:#c792ea">import</span>(<span style="color:#c3e88d">"./schwer"</span>)
+  standard()
+}
+
+<span style="color:#546e7a">// tsconfig Paths (@ Alias)</span>
+<span style="color:#546e7a">// tsconfig.json: { "paths": { "@/*": ["./src/*"] } }</span>
+<span style="color:#c792ea">import</span> { <span style="color:#4ec9b0">User</span> } <span style="color:#c792ea">from</span> <span style="color:#c3e88d">"@/models/user"</span>
+
+<span style="color:#546e7a">// Declaration Files (.d.ts)</span>
+<span style="color:#546e7a">// Typen fuer JavaScript-Bibliotheken</span>
+<span style="color:#c792ea">declare</span> <span style="color:#c792ea">module</span> <span style="color:#c3e88d">"meine-js-lib"</span> {
+  <span style="color:#c792ea">export</span> <span style="color:#c792ea">function</span> helper(x: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">number</span>
+  <span style="color:#c792ea">export</span> <span style="color:#c792ea">const</span> <span style="color:#4ec9b0">VERSION</span>: <span style="color:#4ec9b0">string</span>
+}
+
+<span style="color:#546e7a">// Ambient Module (global)</span>
+<span style="color:#c792ea">declare</span> global {
+  <span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Window</span> {
+    meineApp: { version: <span style="color:#4ec9b0">string</span> }
+  }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>tsconfig.json – wichtige Optionen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="tsconfig.json – wichtige optionen">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    tsconfig.json – wichtige Optionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// tsconfig.json – empfohlene Einstellungen</span>
+{
+  <span style="color:#c3e88d">"compilerOptions"</span>: {
+    <span style="color:#546e7a">// JavaScript-Zielversion</span>
+    <span style="color:#c3e88d">"target"</span>: <span style="color:#c3e88d">"ES2022"</span>,            <span style="color:#546e7a">// ES6, ES2020, ESNext...</span>
+
+    <span style="color:#546e7a">// Modulformat</span>
+    <span style="color:#c3e88d">"module"</span>: <span style="color:#c3e88d">"NodeNext"</span>,          <span style="color:#546e7a">// CommonJS, ESNext, NodeNext</span>
+    <span style="color:#c3e88d">"moduleResolution"</span>: <span style="color:#c3e88d">"NodeNext"</span>,
+
+    <span style="color:#546e7a">// Striktheit (IMMER aktivieren!)</span>
+    <span style="color:#c3e88d">"strict"</span>: <span style="color:#c792ea">true</span>,                <span style="color:#546e7a">// Aktiviert alle strict-Flags:</span>
+    <span style="color:#546e7a">// "noImplicitAny": true,      // Kein implizites any</span>
+    <span style="color:#546e7a">// "strictNullChecks": true,   // null/undefined explizit</span>
+    <span style="color:#546e7a">// "strictFunctionTypes": true,</span>
+    <span style="color:#546e7a">// "strictBindCallApply": true,</span>
+
+    <span style="color:#546e7a">// Weitere empfohlene Flags</span>
+    <span style="color:#c3e88d">"noUncheckedIndexedAccess"</span>: <span style="color:#c792ea">true</span>,  <span style="color:#546e7a">// arr[0] ist T | undefined</span>
+    <span style="color:#c3e88d">"exactOptionalPropertyTypes"</span>: <span style="color:#c792ea">true</span>, <span style="color:#546e7a">// undefined != fehlendes Property</span>
+    <span style="color:#c3e88d">"noImplicitReturns"</span>: <span style="color:#c792ea">true</span>,         <span style="color:#546e7a">// Alle Codepfade brauchen return</span>
+    <span style="color:#c3e88d">"noFallthroughCasesInSwitch"</span>: <span style="color:#c792ea">true</span>,
+    <span style="color:#c3e88d">"forceConsistentCasingInFileNames"</span>: <span style="color:#c792ea">true</span>,
+
+    <span style="color:#546e7a">// Ausgabe</span>
+    <span style="color:#c3e88d">"outDir"</span>: <span style="color:#c3e88d">"./dist"</span>,
+    <span style="color:#c3e88d">"rootDir"</span>: <span style="color:#c3e88d">"./src"</span>,
+    <span style="color:#c3e88d">"declaration"</span>: <span style="color:#c792ea">true</span>,           <span style="color:#546e7a">// .d.ts generieren</span>
+    <span style="color:#c3e88d">"declarationMap"</span>: <span style="color:#c792ea">true</span>,
+    <span style="color:#c3e88d">"sourceMap"</span>: <span style="color:#c792ea">true</span>,
+
+    <span style="color:#546e7a">// Bibliotheken</span>
+    <span style="color:#c3e88d">"lib"</span>: [<span style="color:#c3e88d">"ES2022"</span>, <span style="color:#c3e88d">"DOM"</span>],
+    <span style="color:#c3e88d">"types"</span>: [<span style="color:#c3e88d">"node"</span>],
+
+    <span style="color:#546e7a">// Interop</span>
+    <span style="color:#c3e88d">"esModuleInterop"</span>: <span style="color:#c792ea">true</span>,
+    <span style="color:#c3e88d">"allowSyntheticDefaultImports"</span>: <span style="color:#c792ea">true</span>,
+
+    <span style="color:#546e7a">// Pfad-Aliase</span>
+    <span style="color:#c3e88d">"paths"</span>: {
+      <span style="color:#c3e88d">"@/*"</span>: [<span style="color:#c3e88d">"./src/*"</span>],
+      <span style="color:#c3e88d">"@types/*"</span>: [<span style="color:#c3e88d">"./src/types/*"</span>]
+    }
+  },
+  <span style="color:#c3e88d">"include"</span>: [<span style="color:#c3e88d">"src/**/*"</span>],
+  <span style="color:#c3e88d">"exclude"</span>: [<span style="color:#c3e88d">"node_modules"</span>, <span style="color:#c3e88d">"dist"</span>]
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Type-Safe Patterns in der Praxis
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="type-safe patterns in der praxis">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Type-Safe Patterns in der Praxis
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── BUILDER PATTERN ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">QueryBuilder</span>&lt;<span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">unknown</span>&gt;&gt; {
+  <span style="color:#c792ea">private</span> bedingungen: <span style="color:#4ec9b0">string</span>[] = []
+  <span style="color:#c792ea">private</span> _limit?: <span style="color:#4ec9b0">number</span>
+  <span style="color:#c792ea">private</span> _offset?: <span style="color:#4ec9b0">number</span>
+
+  where(feld: <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>, wert: <span style="color:#4ec9b0">T</span>[<span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>]): <span style="color:#c792ea">this</span> {
+    <span style="color:#c792ea">this</span>.bedingungen.push(<span style="color:#c3e88d">`${String(feld)} = '${wert}'`</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>  <span style="color:#546e7a">// Gibt this zurück fuer Chaining!</span>
+  }
+
+  limit(n: <span style="color:#4ec9b0">number</span>): <span style="color:#c792ea">this</span>    { <span style="color:#c792ea">this</span>._limit = n; <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> }
+  offset(n: <span style="color:#4ec9b0">number</span>): <span style="color:#c792ea">this</span>   { <span style="color:#c792ea">this</span>._offset = n; <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span> }
+
+  build(): <span style="color:#4ec9b0">string</span> {
+    <span style="color:#c792ea">let</span> sql = <span style="color:#c3e88d">"SELECT * FROM tabelle"</span>
+    <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span>.bedingungen.length)
+      sql += <span style="color:#c3e88d">` WHERE ${this.bedingungen.join(" AND ")}`</span>
+    <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span>._limit)  sql += <span style="color:#c3e88d">` LIMIT ${this._limit}`</span>
+    <span style="color:#c792ea">if</span> (<span style="color:#c792ea">this</span>._offset) sql += <span style="color:#c3e88d">` OFFSET ${this._offset}`</span>
+    <span style="color:#c792ea">return</span> sql
+  }
+}
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">User</span> { name: <span style="color:#4ec9b0">string</span>; alter: <span style="color:#4ec9b0">number</span> }
+<span style="color:#c792ea">const</span> query = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">QueryBuilder</span>&lt;<span style="color:#4ec9b0">User</span>&gt;()
+  .where(<span style="color:#c3e88d">"name"</span>, <span style="color:#c3e88d">"Alice"</span>)
+  .where(<span style="color:#c3e88d">"alter"</span>, <span style="color:#f78c6c">30</span>)
+  .limit(<span style="color:#f78c6c">10</span>)
+  .build()
+
+<span style="color:#546e7a">// ── OPAQUE TYPES ─────────────────────────────────────────────────</span>
+<span style="color:#c792ea">declare</span> <span style="color:#c792ea">const</span> userIdBrand: unique <span style="color:#4ec9b0">symbol</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">UserID</span> = <span style="color:#4ec9b0">string</span> &amp; { [userIdBrand]: <span style="color:#c792ea">never</span> }
+
+<span style="color:#c792ea">const</span> toUserID = (s: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">UserID</span> <span style="color:#89ddff">=&gt;</span> s <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">UserID</span>
+
+<span style="color:#546e7a">// ── EXHAUSTIVE SWITCH ─────────────────────────────────────────────</span>
+<span style="color:#c792ea">function</span> assertNever(x: <span style="color:#c792ea">never</span>): <span style="color:#c792ea">never</span> {
+  <span style="color:#c792ea">throw</span> <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(<span style="color:#c3e88d">"Unbehandelter Fall: "</span> + <span style="color:#4ec9b0">JSON</span>.stringify(x))
+}
+
+<span style="color:#546e7a">// ── RESULT TYPE ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">E</span> = <span style="color:#4ec9b0">Error</span>&gt; =
+  | { ok: <span style="color:#c792ea">true</span>;  value: <span style="color:#4ec9b0">T</span> }
+  | { ok: <span style="color:#c792ea">false</span>; error: <span style="color:#4ec9b0">E</span> }
+
+<span style="color:#c792ea">const</span> ok  = &lt;<span style="color:#4ec9b0">T</span>&gt;(value: <span style="color:#4ec9b0">T</span>):  <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>&gt;         <span style="color:#89ddff">=&gt;</span> ({ ok: <span style="color:#c792ea">true</span>, value })
+<span style="color:#c792ea">const</span> err = &lt;<span style="color:#4ec9b0">E</span>&gt;(error: <span style="color:#4ec9b0">E</span>):  <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#c792ea">never</span>, <span style="color:#4ec9b0">E</span>&gt;   <span style="color:#89ddff">=&gt;</span> ({ ok: <span style="color:#c792ea">false</span>, error })
+
+<span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span> parseJSON&lt;<span style="color:#4ec9b0">T</span>&gt;(text: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">T</span>&gt;&gt; {
+  <span style="color:#c792ea">try</span> { <span style="color:#c792ea">return</span> ok(<span style="color:#4ec9b0">JSON</span>.parse(text) <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">T</span>) }
+  <span style="color:#c792ea">catch</span> (e) { <span style="color:#c792ea">return</span> err(e <span style="color:#c792ea">instanceof</span> <span style="color:#4ec9b0">Error</span> ? e : <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(<span style="color:#82aaff">String</span>(e))) }
+}
+
+<span style="color:#c792ea">const</span> result = <span style="color:#c792ea">await</span> parseJSON&lt;<span style="color:#4ec9b0">User</span>&gt;(<span style="color:#c3e88d">'{"name":"Alice","alter":30}'</span>)
+<span style="color:#c792ea">if</span> (result.ok) <span style="color:#82aaff">console</span>.log(result.value.name)
+<span style="color:#c792ea">else</span>           <span style="color:#82aaff">console</span>.error(result.error.message)</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-collections" class="tp">
+
+<div class="ac open" id="ac-col0"
+     style="border:1px solid #3178c644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('col0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3178c60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3178c6">
+      <span style="display:inline-block;width:8px;height:8px;background:#3178c6;border-radius:50%;margin-right:2px"></span>Array &amp; Tuple
+    </span>
+    <span class="aa" style="color:#3178c6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="[...spread]" data-d="array kopieren oder zusammenfuehren">
+      <td style="width:220px"><code style="color:#3178c6">[...spread]</code></td>
+      <td style="color:#6c7a8e">Array kopieren oder zusammenfuehren</td>
+      <td style="color:#c3e88d;font-size:11px">[...a, ...b]  →  neues Array</td>
+    </tr>
+    <tr class="cr" data-m=".push(...items)" data-d="elemente am ende anfuegen">
+      <td style="width:220px"><code style="color:#3178c6">.push(...items)</code></td>
+      <td style="color:#6c7a8e">Elemente am Ende anfuegen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.push(1, 2, 3)</td>
+    </tr>
+    <tr class="cr" data-m=".pop()" data-d="letztes element entfernen">
+      <td style="width:220px"><code style="color:#3178c6">.pop()</code></td>
+      <td style="color:#6c7a8e">Letztes Element entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.pop()  →  letztes Element</td>
+    </tr>
+    <tr class="cr" data-m=".shift()" data-d="erstes element entfernen">
+      <td style="width:220px"><code style="color:#3178c6">.shift()</code></td>
+      <td style="color:#6c7a8e">Erstes Element entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.shift()</td>
+    </tr>
+    <tr class="cr" data-m=".unshift(...items)" data-d="am anfang einfuegen">
+      <td style="width:220px"><code style="color:#3178c6">.unshift(...items)</code></td>
+      <td style="color:#6c7a8e">Am Anfang einfuegen</td>
+      <td style="color:#c3e88d;font-size:11px">arr.unshift(0)</td>
+    </tr>
+    <tr class="cr" data-m=".slice(s, e)" data-d="teilarray (nicht in-place)">
+      <td style="width:220px"><code style="color:#3178c6">.slice(s, e)</code></td>
+      <td style="color:#6c7a8e">Teilarray (nicht in-place)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3,4].slice(1,3)  →  [2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".splice(i, n, ...new)" data-d="in-place aendern">
+      <td style="width:220px"><code style="color:#3178c6">.splice(i, n, ...new)</code></td>
+      <td style="color:#6c7a8e">In-place aendern</td>
+      <td style="color:#c3e88d;font-size:11px">arr.splice(1, 2, "x", "y")</td>
+    </tr>
+    <tr class="cr" data-m=".concat(...arrs)" data-d="verbinden (nicht in-place)">
+      <td style="width:220px"><code style="color:#3178c6">.concat(...arrs)</code></td>
+      <td style="color:#6c7a8e">Verbinden (nicht in-place)</td>
+      <td style="color:#c3e88d;font-size:11px">[1].concat([2],[3])  →  [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".flat(depth)" data-d="verschachtelte arrays flatten">
+      <td style="width:220px"><code style="color:#3178c6">.flat(depth)</code></td>
+      <td style="color:#6c7a8e">Verschachtelte Arrays flatten</td>
+      <td style="color:#c3e88d;font-size:11px">[[1],[2,[3]]].flat()  →  [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".flatmap(fn)" data-d="map + flat in einem">
+      <td style="width:220px"><code style="color:#3178c6">.flatMap(fn)</code></td>
+      <td style="color:#6c7a8e">map + flat in einem</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2].flatMap(x=&gt;[x,x])  →  [1,1,2,2]</td>
+    </tr>
+    <tr class="cr" data-m=".indexof(x)" data-d="index von wert (-1 wenn fehlt)">
+      <td style="width:220px"><code style="color:#3178c6">.indexOf(x)</code></td>
+      <td style="color:#6c7a8e">Index von Wert (-1 wenn fehlt)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].indexOf(2)  →  1</td>
+    </tr>
+    <tr class="cr" data-m=".find(fn)" data-d="erstes passendes element">
+      <td style="width:220px"><code style="color:#3178c6">.find(fn)</code></td>
+      <td style="color:#6c7a8e">Erstes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].find(x=&gt;x&gt;1)  →  2</td>
+    </tr>
+    <tr class="cr" data-m=".findindex(fn)" data-d="index des ersten treffers">
+      <td style="width:220px"><code style="color:#3178c6">.findIndex(fn)</code></td>
+      <td style="color:#6c7a8e">Index des ersten Treffers</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].findIndex(x=&gt;x&gt;1)  →  1</td>
+    </tr>
+    <tr class="cr" data-m=".findlast(fn)" data-d="letztes passendes element (es2023)">
+      <td style="width:220px"><code style="color:#3178c6">.findLast(fn)</code></td>
+      <td style="color:#6c7a8e">Letztes passendes Element (ES2023)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].findLast(x=&gt;x&gt;1)  →  3</td>
+    </tr>
+    <tr class="cr" data-m=".includes(x)" data-d="enthaelt x?">
+      <td style="width:220px"><code style="color:#3178c6">.includes(x)</code></td>
+      <td style="color:#6c7a8e">Enthaelt x?</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].includes(2)  →  true</td>
+    </tr>
+    <tr class="cr" data-m=".some(fn)" data-d="mindestens eines erfuellt pred?">
+      <td style="width:220px"><code style="color:#3178c6">.some(fn)</code></td>
+      <td style="color:#6c7a8e">Mindestens eines erfuellt Pred?</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].some(x=&gt;x&gt;2)  →  true</td>
+    </tr>
+    <tr class="cr" data-m=".every(fn)" data-d="alle erfuellen pred?">
+      <td style="width:220px"><code style="color:#3178c6">.every(fn)</code></td>
+      <td style="color:#6c7a8e">Alle erfuellen Pred?</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].every(x=&gt;x&gt;0)  →  true</td>
+    </tr>
+    <tr class="cr" data-m=".filter(fn)" data-d="filtern (neues array)">
+      <td style="width:220px"><code style="color:#3178c6">.filter(fn)</code></td>
+      <td style="color:#6c7a8e">Filtern (neues Array)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].filter(x=&gt;x&gt;1)  →  [2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".map(fn)" data-d="transformieren (neues array)">
+      <td style="width:220px"><code style="color:#3178c6">.map(fn)</code></td>
+      <td style="color:#6c7a8e">Transformieren (neues Array)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].map(x=&gt;x*2)  →  [2,4,6]</td>
+    </tr>
+    <tr class="cr" data-m=".reduce(fn, init)" data-d="akkumulieren">
+      <td style="width:220px"><code style="color:#3178c6">.reduce(fn, init)</code></td>
+      <td style="color:#6c7a8e">Akkumulieren</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].reduce((a,b)=&gt;a+b,0)  →  6</td>
+    </tr>
+    <tr class="cr" data-m=".sort(fn)" data-d="in-place sortieren (string-sort standard!)">
+      <td style="width:220px"><code style="color:#3178c6">.sort(fn)</code></td>
+      <td style="color:#6c7a8e">In-place sortieren (String-Sort standard!)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.sort((a,b)=&gt;a-b)</td>
+    </tr>
+    <tr class="cr" data-m=".tosorted(fn)" data-d="sort ohne mutation (es2023)">
+      <td style="width:220px"><code style="color:#3178c6">.toSorted(fn)</code></td>
+      <td style="color:#6c7a8e">Sort ohne Mutation (ES2023)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.toSorted()  →  neues Array</td>
+    </tr>
+    <tr class="cr" data-m=".reverse()" data-d="in-place umkehren">
+      <td style="width:220px"><code style="color:#3178c6">.reverse()</code></td>
+      <td style="color:#6c7a8e">In-place umkehren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".toreversed()" data-d="reverse ohne mutation (es2023)">
+      <td style="width:220px"><code style="color:#3178c6">.toReversed()</code></td>
+      <td style="color:#6c7a8e">Reverse ohne Mutation (ES2023)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.toReversed()</td>
+    </tr>
+    <tr class="cr" data-m=".at(i)" data-d="element bei index (neg. = von hinten)">
+      <td style="width:220px"><code style="color:#3178c6">.at(i)</code></td>
+      <td style="color:#6c7a8e">Element bei Index (neg. = von hinten)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.at(-1)  →  letztes Element</td>
+    </tr>
+    <tr class="cr" data-m=".join(sep)" data-d="zu string verbinden">
+      <td style="width:220px"><code style="color:#3178c6">.join(sep)</code></td>
+      <td style="color:#6c7a8e">Zu String verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].join("-")  →  "1-2-3"</td>
+    </tr>
+    <tr class="cr" data-m=".array.from(iter)" data-d="aus iterable erstellen">
+      <td style="width:220px"><code style="color:#3178c6">.Array.from(iter)</code></td>
+      <td style="color:#6c7a8e">Aus Iterable erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">Array.from("abc")  →  ["a","b","c"]</td>
+    </tr>
+    <tr class="cr" data-m=".array.isarray(x)" data-d="ist x ein array?">
+      <td style="width:220px"><code style="color:#3178c6">.Array.isArray(x)</code></td>
+      <td style="color:#6c7a8e">Ist x ein Array?</td>
+      <td style="color:#c3e88d;font-size:11px">Array.isArray([])  →  true</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-col1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('col1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Map &amp; Set
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="new map&lt;k,v&gt;()" data-d="typsichere key-value map">
+      <td style="width:220px"><code style="color:#4fc3f7">new Map&lt;K,V&gt;()</code></td>
+      <td style="color:#6c7a8e">Typsichere Key-Value Map</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="map.set(key, val)" data-d="eintrag setzen (gibt map zurueck)">
+      <td style="width:220px"><code style="color:#4fc3f7">map.set(key, val)</code></td>
+      <td style="color:#6c7a8e">Eintrag setzen (gibt Map zurueck)</td>
+      <td style="color:#c3e88d;font-size:11px">map.set("a", 1)</td>
+    </tr>
+    <tr class="cr" data-m="map.get(key)" data-d="wert holen (undefined wenn fehlt)">
+      <td style="width:220px"><code style="color:#4fc3f7">map.get(key)</code></td>
+      <td style="color:#6c7a8e">Wert holen (undefined wenn fehlt)</td>
+      <td style="color:#c3e88d;font-size:11px">map.get("a")  →  1</td>
+    </tr>
+    <tr class="cr" data-m="map.has(key)" data-d="key vorhanden?">
+      <td style="width:220px"><code style="color:#4fc3f7">map.has(key)</code></td>
+      <td style="color:#6c7a8e">Key vorhanden?</td>
+      <td style="color:#c3e88d;font-size:11px">map.has("a")  →  true</td>
+    </tr>
+    <tr class="cr" data-m="map.delete(key)" data-d="eintrag loeschen">
+      <td style="width:220px"><code style="color:#4fc3f7">map.delete(key)</code></td>
+      <td style="color:#6c7a8e">Eintrag loeschen</td>
+      <td style="color:#c3e88d;font-size:11px">map.delete("a")</td>
+    </tr>
+    <tr class="cr" data-m="map.size" data-d="anzahl eintraege">
+      <td style="width:220px"><code style="color:#4fc3f7">map.size</code></td>
+      <td style="color:#6c7a8e">Anzahl Eintraege</td>
+      <td style="color:#c3e88d;font-size:11px">map.size</td>
+    </tr>
+    <tr class="cr" data-m="map.clear()" data-d="alle eintraege loeschen">
+      <td style="width:220px"><code style="color:#4fc3f7">map.clear()</code></td>
+      <td style="color:#6c7a8e">Alle Eintraege loeschen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="for (const [k,v] of map)" data-d="iteration in einfuegereihenfolge">
+      <td style="width:220px"><code style="color:#4fc3f7">for (const [k,v] of map)</code></td>
+      <td style="color:#6c7a8e">Iteration in Einfuegereihenfolge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="new set&lt;t&gt;()" data-d="typsichere menge ohne duplikate">
+      <td style="width:220px"><code style="color:#4fc3f7">new Set&lt;T&gt;()</code></td>
+      <td style="color:#6c7a8e">Typsichere Menge ohne Duplikate</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="set.add(val)" data-d="element hinzufuegen">
+      <td style="width:220px"><code style="color:#4fc3f7">set.add(val)</code></td>
+      <td style="color:#6c7a8e">Element hinzufuegen</td>
+      <td style="color:#c3e88d;font-size:11px">set.add(42)</td>
+    </tr>
+    <tr class="cr" data-m="set.has(val)" data-d="enthaelt?">
+      <td style="width:220px"><code style="color:#4fc3f7">set.has(val)</code></td>
+      <td style="color:#6c7a8e">Enthaelt?</td>
+      <td style="color:#c3e88d;font-size:11px">set.has(42)  →  true</td>
+    </tr>
+    <tr class="cr" data-m="set.delete(val)" data-d="element entfernen">
+      <td style="width:220px"><code style="color:#4fc3f7">set.delete(val)</code></td>
+      <td style="color:#6c7a8e">Element entfernen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="set.size" data-d="groesse">
+      <td style="width:220px"><code style="color:#4fc3f7">set.size</code></td>
+      <td style="color:#6c7a8e">Groesse</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="[...new set(arr)]" data-d="duplikate aus array entfernen">
+      <td style="width:220px"><code style="color:#4fc3f7">[...new Set(arr)]</code></td>
+      <td style="color:#6c7a8e">Duplikate aus Array entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">Idiomatisch!</td>
+    </tr>
+    <tr class="cr" data-m="new weakmap&lt;k,v&gt;()" data-d="schwache referenzen (kein memory leak)">
+      <td style="width:220px"><code style="color:#4fc3f7">new WeakMap&lt;K,V&gt;()</code></td>
+      <td style="color:#6c7a8e">Schwache Referenzen (kein Memory Leak)</td>
+      <td style="color:#c3e88d;font-size:11px">Key muss Objekt sein</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-col2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('col2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>String-Methoden
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-2" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m=".length" data-d="anzahl zeichen (utf-16)">
+      <td style="width:220px"><code style="color:#4ec9b0">.length</code></td>
+      <td style="color:#6c7a8e">Anzahl Zeichen (UTF-16)</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".length  →  5</td>
+    </tr>
+    <tr class="cr" data-m=".touppercase()" data-d="grossbuchstaben">
+      <td style="width:220px"><code style="color:#4ec9b0">.toUpperCase()</code></td>
+      <td style="color:#6c7a8e">Grossbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo".toUpperCase()  →  "HALLO"</td>
+    </tr>
+    <tr class="cr" data-m=".tolowercase()" data-d="kleinbuchstaben">
+      <td style="width:220px"><code style="color:#4ec9b0">.toLowerCase()</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".trim() / trimstart/end" data-d="whitespace entfernen">
+      <td style="width:220px"><code style="color:#4ec9b0">.trim() / trimStart/End</code></td>
+      <td style="color:#6c7a8e">Whitespace entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">"  hi  ".trim()  →  "hi"</td>
+    </tr>
+    <tr class="cr" data-m=".includes(s)" data-d="substring enthalten?">
+      <td style="width:220px"><code style="color:#4ec9b0">.includes(s)</code></td>
+      <td style="color:#6c7a8e">Substring enthalten?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".includes("all")  →  true</td>
+    </tr>
+    <tr class="cr" data-m=".startswith(s)" data-d="beginnt mit?">
+      <td style="width:220px"><code style="color:#4ec9b0">.startsWith(s)</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".startsWith("H")  →  true</td>
+    </tr>
+    <tr class="cr" data-m=".endswith(s)" data-d="endet mit?">
+      <td style="width:220px"><code style="color:#4ec9b0">.endsWith(s)</code></td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".endsWith("i")  →  true</td>
+    </tr>
+    <tr class="cr" data-m=".indexof(s)" data-d="position (-1 wenn nicht gefunden)">
+      <td style="width:220px"><code style="color:#4ec9b0">.indexOf(s)</code></td>
+      <td style="color:#6c7a8e">Position (-1 wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px">"abcabc".indexOf("b")  →  1</td>
+    </tr>
+    <tr class="cr" data-m=".slice(s, e)" data-d="teilstring">
+      <td style="width:220px"><code style="color:#4ec9b0">.slice(s, e)</code></td>
+      <td style="color:#6c7a8e">Teilstring</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".slice(1, 4)  →  "all"</td>
+    </tr>
+    <tr class="cr" data-m=".at(i)" data-d="zeichen (negativ = von hinten)">
+      <td style="width:220px"><code style="color:#4ec9b0">.at(i)</code></td>
+      <td style="color:#6c7a8e">Zeichen (negativ = von hinten)</td>
+      <td style="color:#c3e88d;font-size:11px">"abc".at(-1)  →  "c"</td>
+    </tr>
+    <tr class="cr" data-m=".split(sep)" data-d="aufteilen -&gt; string[]">
+      <td style="width:220px"><code style="color:#4ec9b0">.split(sep)</code></td>
+      <td style="color:#6c7a8e">Aufteilen -&gt; string[]</td>
+      <td style="color:#c3e88d;font-size:11px">"a,b".split(",")  →  ["a","b"]</td>
+    </tr>
+    <tr class="cr" data-m=".replace(a, b)" data-d="erstes vorkommen ersetzen">
+      <td style="width:220px"><code style="color:#4ec9b0">.replace(a, b)</code></td>
+      <td style="color:#6c7a8e">Erstes Vorkommen ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">"aaa".replace("a","b")  →  "baa"</td>
+    </tr>
+    <tr class="cr" data-m=".replaceall(a, b)" data-d="alle ersetzen">
+      <td style="width:220px"><code style="color:#4ec9b0">.replaceAll(a, b)</code></td>
+      <td style="color:#6c7a8e">Alle ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">"aaa".replaceAll("a","b")  →  "bbb"</td>
+    </tr>
+    <tr class="cr" data-m=".padstart(n, c)" data-d="links auffuellen">
+      <td style="width:220px"><code style="color:#4ec9b0">.padStart(n, c)</code></td>
+      <td style="color:#6c7a8e">Links auffuellen</td>
+      <td style="color:#c3e88d;font-size:11px">"42".padStart(5,"0")  →  "00042"</td>
+    </tr>
+    <tr class="cr" data-m=".padend(n, c)" data-d="rechts auffuellen">
+      <td style="width:220px"><code style="color:#4ec9b0">.padEnd(n, c)</code></td>
+      <td style="color:#6c7a8e">Rechts auffuellen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".repeat(n)" data-d="n-mal wiederholen">
+      <td style="width:220px"><code style="color:#4ec9b0">.repeat(n)</code></td>
+      <td style="color:#6c7a8e">n-mal wiederholen</td>
+      <td style="color:#c3e88d;font-size:11px">"ab".repeat(3)  →  "ababab"</td>
+    </tr>
+    <tr class="cr" data-m=".match(regex)" data-d="regex-match -&gt; regexpmatcharray | null">
+      <td style="width:220px"><code style="color:#4ec9b0">.match(regex)</code></td>
+      <td style="color:#6c7a8e">Regex-Match -&gt; RegExpMatchArray | null</td>
+      <td style="color:#c3e88d;font-size:11px">"ab12".match(/\d+/)</td>
+    </tr>
+    <tr class="cr" data-m=".matchall(regex)" data-d="alle regex-matches (g-flag noetig)">
+      <td style="width:220px"><code style="color:#4ec9b0">.matchAll(regex)</code></td>
+      <td style="color:#6c7a8e">Alle Regex-Matches (g-Flag noetig)</td>
+      <td style="color:#c3e88d;font-size:11px">Gibt Iterator</td>
+    </tr>
+    <tr class="cr" data-m=".search(regex)" data-d="regex-index (-1 wenn nicht gefunden)">
+      <td style="width:220px"><code style="color:#4ec9b0">.search(regex)</code></td>
+      <td style="color:#6c7a8e">Regex-Index (-1 wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".string.raw`...`" data-d="raw template literal (kein escaping)">
+      <td style="width:220px"><code style="color:#4ec9b0">.String.raw`...`</code></td>
+      <td style="color:#6c7a8e">Raw Template Literal (kein Escaping)</td>
+      <td style="color:#c3e88d;font-size:11px">String.raw`\n`  →  "\\n"</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #3178c6;color:#3178c6;background:rgba(49,120,198,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Type-Safe Event Emitter</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generischer API-Client</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">State Machine mit Discriminated Unions</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">React-ahnliche Hook-Typen</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Vollstaendig typsicherer Event Emitter</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">EventMap</span> = <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">unknown</span>&gt;
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">TypedEmitter</span>&lt;<span style="color:#4ec9b0">Events</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">EventMap</span>&gt; {
+  <span style="color:#c792ea">private</span> listeners = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Map</span>&lt;
+    <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Events</span>,
+    <span style="color:#4ec9b0">Array</span>&lt;(data: <span style="color:#4ec9b0">Events</span>[<span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Events</span>]) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>&gt;
+  &gt;()
+
+  on&lt;<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">extends</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Events</span>&gt;(
+    event: <span style="color:#4ec9b0">K</span>,
+    listener: (data: <span style="color:#4ec9b0">Events</span>[<span style="color:#4ec9b0">K</span>]) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+  ): <span style="color:#c792ea">this</span> {
+    <span style="color:#c792ea">const</span> existing = <span style="color:#c792ea">this</span>.listeners.get(event) <span style="color:#89ddff">??</span> []
+    <span style="color:#c792ea">this</span>.listeners.set(event, [...existing, listener <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">any</span>])
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>
+  }
+
+  off&lt;<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">extends</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Events</span>&gt;(
+    event: <span style="color:#4ec9b0">K</span>,
+    listener: (data: <span style="color:#4ec9b0">Events</span>[<span style="color:#4ec9b0">K</span>]) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+  ): <span style="color:#c792ea">this</span> {
+    <span style="color:#c792ea">const</span> existing = <span style="color:#c792ea">this</span>.listeners.get(event) <span style="color:#89ddff">??</span> []
+    <span style="color:#c792ea">this</span>.listeners.set(event, existing.filter(l <span style="color:#89ddff">=&gt;</span> l !== listener))
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>
+  }
+
+  emit&lt;<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">extends</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Events</span>&gt;(event: <span style="color:#4ec9b0">K</span>, data: <span style="color:#4ec9b0">Events</span>[<span style="color:#4ec9b0">K</span>]): <span style="color:#c792ea">this</span> {
+    <span style="color:#c792ea">const</span> listeners = <span style="color:#c792ea">this</span>.listeners.get(event) <span style="color:#89ddff">??</span> []
+    listeners.forEach(l <span style="color:#89ddff">=&gt;</span> l(data <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">any</span>))
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>
+  }
+
+  once&lt;<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">extends</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">Events</span>&gt;(
+    event: <span style="color:#4ec9b0">K</span>,
+    listener: (data: <span style="color:#4ec9b0">Events</span>[<span style="color:#4ec9b0">K</span>]) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+  ): <span style="color:#c792ea">this</span> {
+    <span style="color:#c792ea">const</span> wrapper = (data: <span style="color:#4ec9b0">Events</span>[<span style="color:#4ec9b0">K</span>]) <span style="color:#89ddff">=&gt;</span> {
+      listener(data)
+      <span style="color:#c792ea">this</span>.off(event, wrapper)
+    }
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.on(event, wrapper)
+  }
+}
+
+<span style="color:#546e7a">// Verwendung – vollstaendig typsicher!</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">AppEvents</span> {
+  <span style="color:#c3e88d">"user:login"</span>:   { userId: <span style="color:#4ec9b0">string</span>; timestamp: <span style="color:#4ec9b0">Date</span> }
+  <span style="color:#c3e88d">"user:logout"</span>:  { userId: <span style="color:#4ec9b0">string</span> }
+  <span style="color:#c3e88d">"data:fetch"</span>:   { url: <span style="color:#4ec9b0">string</span>; dauer: <span style="color:#4ec9b0">number</span> }
+  <span style="color:#c3e88d">"error"</span>:        { message: <span style="color:#4ec9b0">string</span>; code?: <span style="color:#4ec9b0">number</span> }
+}
+
+<span style="color:#c792ea">const</span> emitter = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">TypedEmitter</span>&lt;<span style="color:#4ec9b0">AppEvents</span>&gt;()
+
+emitter.on(<span style="color:#c3e88d">"user:login"</span>, ({ userId, timestamp }) <span style="color:#89ddff">=&gt;</span> {
+  <span style="color:#546e7a">// userId: string, timestamp: Date – keine Typangabe noetig!</span>
+  <span style="color:#82aaff">console</span>.log(<span style="color:#c3e88d">`${userId} eingeloggt um ${timestamp.toISOString()}`</span>)
+})
+
+emitter.emit(<span style="color:#c3e88d">"user:login"</span>, {
+  userId: <span style="color:#c3e88d">"alice"</span>,
+  timestamp: <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Date</span>()
+})
+
+<span style="color:#546e7a">// emitter.emit("user:login", { userId: 42 })  // Fehler! number statt string</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Vollstaendig typsicherer HTTP-Client</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">ApiError</span> {
+  message: <span style="color:#4ec9b0">string</span>
+  code: <span style="color:#4ec9b0">number</span>
+  details?: <span style="color:#4ec9b0">unknown</span>
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ApiResult</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = <span style="color:#4ec9b0">Promise</span>&lt;
+  | { ok: <span style="color:#c792ea">true</span>;  data: <span style="color:#4ec9b0">T</span> }
+  | { ok: <span style="color:#c792ea">false</span>; error: <span style="color:#4ec9b0">ApiError</span> }
+&gt;
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ApiClient</span> {
+  constructor(
+    <span style="color:#c792ea">private</span> baseUrl: <span style="color:#4ec9b0">string</span>,
+    <span style="color:#c792ea">private</span> defaultHeaders: <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">string</span>&gt; = {}
+  ) {}
+
+  <span style="color:#c792ea">private</span> <span style="color:#c792ea">async</span> request&lt;<span style="color:#4ec9b0">T</span>&gt;(
+    path: <span style="color:#4ec9b0">string</span>,
+    options: <span style="color:#4ec9b0">RequestInit</span> = {}
+  ): <span style="color:#4ec9b0">ApiResult</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">try</span> {
+      <span style="color:#c792ea">const</span> response = <span style="color:#c792ea">await</span> <span style="color:#82aaff">fetch</span>(<span style="color:#c3e88d">`${this.baseUrl}${path}`</span>, {
+        ...options,
+        headers: {
+          <span style="color:#c3e88d">"Content-Type"</span>: <span style="color:#c3e88d">"application/json"</span>,
+          ...<span style="color:#c792ea">this</span>.defaultHeaders,
+          ...options.headers,
+        },
+      })
+
+      <span style="color:#c792ea">const</span> data = <span style="color:#c792ea">await</span> response.json()
+
+      <span style="color:#c792ea">if</span> (!response.ok) {
+        <span style="color:#c792ea">return</span> { ok: <span style="color:#c792ea">false</span>, error: { message: data.message, code: response.status } }
+      }
+
+      <span style="color:#c792ea">return</span> { ok: <span style="color:#c792ea">true</span>, data: data <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">T</span> }
+    } <span style="color:#c792ea">catch</span> (err) {
+      <span style="color:#c792ea">return</span> {
+        ok: <span style="color:#c792ea">false</span>,
+        error: { message: err <span style="color:#c792ea">instanceof</span> <span style="color:#4ec9b0">Error</span> ? err.message : <span style="color:#c3e88d">"Netzwerkfehler"</span>, code: <span style="color:#f78c6c">0</span> }
+      }
+    }
+  }
+
+  get&lt;<span style="color:#4ec9b0">T</span>&gt;(path: <span style="color:#4ec9b0">string</span>, headers?: <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">string</span>&gt;): <span style="color:#4ec9b0">ApiResult</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.request&lt;<span style="color:#4ec9b0">T</span>&gt;(path, { method: <span style="color:#c3e88d">"GET"</span>, headers })
+  }
+
+  post&lt;<span style="color:#4ec9b0">T</span>&gt;(path: <span style="color:#4ec9b0">string</span>, body: <span style="color:#4ec9b0">unknown</span>): <span style="color:#4ec9b0">ApiResult</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.request&lt;<span style="color:#4ec9b0">T</span>&gt;(path, {
+      method: <span style="color:#c3e88d">"POST"</span>,
+      body: <span style="color:#4ec9b0">JSON</span>.stringify(body),
+    })
+  }
+
+  put&lt;<span style="color:#4ec9b0">T</span>&gt;(path: <span style="color:#4ec9b0">string</span>, body: <span style="color:#4ec9b0">unknown</span>): <span style="color:#4ec9b0">ApiResult</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.request&lt;<span style="color:#4ec9b0">T</span>&gt;(path, { method: <span style="color:#c3e88d">"PUT"</span>, body: <span style="color:#4ec9b0">JSON</span>.stringify(body) })
+  }
+
+  <span style="color:#c792ea">delete</span>&lt;<span style="color:#4ec9b0">T</span>&gt;(path: <span style="color:#4ec9b0">string</span>): <span style="color:#4ec9b0">ApiResult</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>.request&lt;<span style="color:#4ec9b0">T</span>&gt;(path, { method: <span style="color:#c3e88d">"DELETE"</span> })
+  }
+}
+
+<span style="color:#546e7a">// Typen</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">User</span> { id: <span style="color:#4ec9b0">number</span>; name: <span style="color:#4ec9b0">string</span>; email: <span style="color:#4ec9b0">string</span> }
+
+<span style="color:#c792ea">const</span> api = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">ApiClient</span>(<span style="color:#c3e88d">"https://api.example.com"</span>, {
+  <span style="color:#c3e88d">"Authorization"</span>: <span style="color:#c3e88d">"Bearer mytoken"</span>
+})
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">const</span> userResult = <span style="color:#c792ea">await</span> api.get&lt;<span style="color:#4ec9b0">User</span>&gt;(<span style="color:#c3e88d">"/users/1"</span>)
+<span style="color:#c792ea">if</span> (userResult.ok) {
+  <span style="color:#82aaff">console</span>.log(userResult.data.name)  <span style="color:#546e7a">// name: string – typsicher!</span>
+} <span style="color:#c792ea">else</span> {
+  <span style="color:#82aaff">console</span>.error(<span style="color:#c3e88d">`Fehler ${userResult.error.code}: ${userResult.error.message}`</span>)
+}</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Typsichere State Machine</span>
+
+<span style="color:#546e7a">// Zustaende</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">LoadingState</span> = { status: <span style="color:#c3e88d">"idle"</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">FetchingState</span> = { status: <span style="color:#c3e88d">"loading"</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">SuccessState</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = { status: <span style="color:#c3e88d">"success"</span>; data: <span style="color:#4ec9b0">T</span>; timestamp: <span style="color:#4ec9b0">Date</span> }
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ErrorState</span> = { status: <span style="color:#c3e88d">"error"</span>; message: <span style="color:#4ec9b0">string</span>; retries: <span style="color:#4ec9b0">number</span> }
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">AsyncState</span>&lt;<span style="color:#4ec9b0">T</span>&gt; =
+  | <span style="color:#4ec9b0">LoadingState</span>
+  | <span style="color:#4ec9b0">FetchingState</span>
+  | <span style="color:#4ec9b0">SuccessState</span>&lt;<span style="color:#4ec9b0">T</span>&gt;
+  | <span style="color:#4ec9b0">ErrorState</span>
+
+<span style="color:#546e7a">// Aktionen</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Action</span>&lt;<span style="color:#4ec9b0">T</span>&gt; =
+  | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"FETCH"</span> }
+  | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"SUCCESS"</span>; data: <span style="color:#4ec9b0">T</span> }
+  | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"ERROR"</span>; message: <span style="color:#4ec9b0">string</span> }
+  | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"RESET"</span> }
+  | { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"RETRY"</span> }
+
+<span style="color:#546e7a">// Reducer – typsicher und exhaustiv</span>
+<span style="color:#c792ea">function</span> reducer&lt;<span style="color:#4ec9b0">T</span>&gt;(state: <span style="color:#4ec9b0">AsyncState</span>&lt;<span style="color:#4ec9b0">T</span>&gt;, action: <span style="color:#4ec9b0">Action</span>&lt;<span style="color:#4ec9b0">T</span>&gt;): <span style="color:#4ec9b0">AsyncState</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  <span style="color:#c792ea">switch</span> (action.<span style="color:#c792ea">type</span>) {
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"FETCH"</span>:
+      <span style="color:#c792ea">return</span> { status: <span style="color:#c3e88d">"loading"</span> }
+
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"SUCCESS"</span>:
+      <span style="color:#c792ea">return</span> { status: <span style="color:#c3e88d">"success"</span>, data: action.data, timestamp: <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Date</span>() }
+
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"ERROR"</span>:
+      <span style="color:#c792ea">return</span> {
+        status: <span style="color:#c3e88d">"error"</span>,
+        message: action.message,
+        retries: state.status === <span style="color:#c3e88d">"error"</span> ? state.retries + <span style="color:#f78c6c">1</span> : <span style="color:#f78c6c">0</span>
+      }
+
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"RESET"</span>:
+      <span style="color:#c792ea">return</span> { status: <span style="color:#c3e88d">"idle"</span> }
+
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"RETRY"</span>:
+      <span style="color:#c792ea">if</span> (state.status !== <span style="color:#c3e88d">"error"</span>) <span style="color:#c792ea">return</span> state
+      <span style="color:#c792ea">return</span> { status: <span style="color:#c3e88d">"loading"</span> }
+
+    <span style="color:#c792ea">default</span>:
+      <span style="color:#c792ea">const</span> _exhaustive: <span style="color:#c792ea">never</span> = action   <span style="color:#546e7a">// Compiler-Garantie</span>
+      <span style="color:#c792ea">return</span> state
+  }
+}
+
+<span style="color:#546e7a">// Render-Funktion mit Pattern Matching</span>
+<span style="color:#c792ea">function</span> render&lt;<span style="color:#4ec9b0">T</span>&gt;(state: <span style="color:#4ec9b0">AsyncState</span>&lt;<span style="color:#4ec9b0">T</span>&gt;): <span style="color:#4ec9b0">string</span> {
+  <span style="color:#c792ea">switch</span> (state.status) {
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"idle"</span>:    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Bereit"</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"loading"</span>: <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Laedt..."</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"success"</span>: <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`Daten geladen: ${JSON.stringify(state.data)}`</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"error"</span>:   <span style="color:#c792ea">return</span> <span style="color:#c3e88d">`Fehler: ${state.message} (Versuche: ${state.retries})`</span>
+  }
+}
+
+<span style="color:#546e7a">// Simulation</span>
+<span style="color:#c792ea">let</span> state: <span style="color:#4ec9b0">AsyncState</span>&lt;<span style="color:#4ec9b0">User</span>[]&gt; = { status: <span style="color:#c3e88d">"idle"</span> }
+state = reducer(state, { <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"FETCH"</span> })
+<span style="color:#82aaff">console</span>.log(render(state))   <span style="color:#546e7a">// "Laedt..."</span>
+
+state = reducer(state, {
+  <span style="color:#c792ea">type</span>: <span style="color:#c3e88d">"SUCCESS"</span>,
+  data: [{ id: <span style="color:#f78c6c">1</span>, name: <span style="color:#c3e88d">"Alice"</span>, email: <span style="color:#c3e88d">"a@b.de"</span> }]
+})
+<span style="color:#82aaff">console</span>.log(render(state))   <span style="color:#546e7a">// "Daten geladen: ..."</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// TypeScript-Typen fuer React-aehnliche Patterns</span>
+<span style="color:#546e7a">// (Zeigt wie man TS in modernen Frameworks nutzt)</span>
+
+<span style="color:#546e7a">// useState-Typen</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">Setter</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = (value: <span style="color:#4ec9b0">T</span> | ((prev: <span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">T</span>)) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+
+<span style="color:#546e7a">// useReducer</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Store</span>&lt;<span style="color:#4ec9b0">S</span>, <span style="color:#4ec9b0">A</span>&gt; {
+  state: <span style="color:#4ec9b0">S</span>
+  dispatch: (action: <span style="color:#4ec9b0">A</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+  subscribe: (listener: () <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>) <span style="color:#89ddff">=&gt;</span> () <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+}
+
+<span style="color:#546e7a">// Generischer Hook-Pattern</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">UseQuery</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  data:    <span style="color:#4ec9b0">T</span> | <span style="color:#c792ea">undefined</span>
+  error:   <span style="color:#4ec9b0">Error</span> | <span style="color:#c792ea">null</span>
+  loading: <span style="color:#4ec9b0">boolean</span>
+  refetch: () <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#c792ea">void</span>&gt;
+}
+
+<span style="color:#546e7a">// Fetch Hook Implementation</span>
+<span style="color:#c792ea">function</span> createUseQuery&lt;<span style="color:#4ec9b0">T</span>&gt;(fetcher: () <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">Promise</span>&lt;<span style="color:#4ec9b0">T</span>&gt;): <span style="color:#4ec9b0">UseQuery</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+  <span style="color:#c792ea">let</span> data:    <span style="color:#4ec9b0">T</span> | <span style="color:#c792ea">undefined</span> = <span style="color:#c792ea">undefined</span>
+  <span style="color:#c792ea">let</span> error:   <span style="color:#4ec9b0">Error</span> | <span style="color:#c792ea">null</span>  = <span style="color:#c792ea">null</span>
+  <span style="color:#c792ea">let</span> loading: <span style="color:#4ec9b0">boolean</span>       = <span style="color:#c792ea">false</span>
+  <span style="color:#c792ea">const</span> listeners = <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Set</span>&lt;() <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>&gt;()
+
+  <span style="color:#c792ea">async</span> <span style="color:#c792ea">function</span> refetch() {
+    loading = <span style="color:#c792ea">true</span>
+    listeners.forEach(l <span style="color:#89ddff">=&gt;</span> l())
+    <span style="color:#c792ea">try</span> {
+      data    = <span style="color:#c792ea">await</span> fetcher()
+      error   = <span style="color:#c792ea">null</span>
+    } <span style="color:#c792ea">catch</span> (e) {
+      error   = e <span style="color:#c792ea">instanceof</span> <span style="color:#4ec9b0">Error</span> ? e : <span style="color:#c792ea">new</span> <span style="color:#4ec9b0">Error</span>(<span style="color:#82aaff">String</span>(e))
+    } <span style="color:#c792ea">finally</span> {
+      loading = <span style="color:#c792ea">false</span>
+      listeners.forEach(l <span style="color:#89ddff">=&gt;</span> l())
+    }
+  }
+
+  refetch()
+
+  <span style="color:#c792ea">return</span> {
+    get data()    { <span style="color:#c792ea">return</span> data },
+    get error()   { <span style="color:#c792ea">return</span> error },
+    get loading() { <span style="color:#c792ea">return</span> loading },
+    refetch,
+    subscribe(listener: () <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>) {
+      listeners.add(listener)
+      <span style="color:#c792ea">return</span> () <span style="color:#89ddff">=&gt;</span> listeners.<span style="color:#c792ea">delete</span>(listener)
+    }
+  } <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">UseQuery</span>&lt;<span style="color:#4ec9b0">T</span>&gt; &amp; { subscribe: (l: () <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>) <span style="color:#89ddff">=&gt;</span> () <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span> }
+}
+
+<span style="color:#546e7a">// Form-Typen</span>
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">FormFields</span>&lt;<span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">unknown</span>&gt;&gt; = {
+  [<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">in</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>]: {
+    value:   <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>]
+    error?:  <span style="color:#4ec9b0">string</span>
+    touched: <span style="color:#4ec9b0">boolean</span>
+  }
+}
+
+<span style="color:#c792ea">type</span> <span style="color:#4ec9b0">ValidationRules</span>&lt;<span style="color:#4ec9b0">T</span>&gt; = {
+  [<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">in</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>]?: (value: <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>]) <span style="color:#89ddff">=&gt;</span> <span style="color:#4ec9b0">string</span> | <span style="color:#c792ea">undefined</span>
+}
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">UseForm</span>&lt;<span style="color:#4ec9b0">T</span> <span style="color:#c792ea">extends</span> <span style="color:#4ec9b0">Record</span>&lt;<span style="color:#4ec9b0">string</span>, <span style="color:#4ec9b0">unknown</span>&gt;&gt; {
+  fields:   <span style="color:#4ec9b0">FormFields</span>&lt;<span style="color:#4ec9b0">T</span>&gt;
+  errors:   <span style="color:#4ec9b0">Partial</span>&lt;<span style="color:#4ec9b0">Record</span>&lt;<span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>, <span style="color:#4ec9b0">string</span>&gt;&gt;
+  isValid:  <span style="color:#4ec9b0">boolean</span>
+  setValue: &lt;<span style="color:#4ec9b0">K</span> <span style="color:#c792ea">extends</span> <span style="color:#c792ea">keyof</span> <span style="color:#4ec9b0">T</span>&gt;(key: <span style="color:#4ec9b0">K</span>, value: <span style="color:#4ec9b0">T</span>[<span style="color:#4ec9b0">K</span>]) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+  submit:   (handler: (values: <span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>) <span style="color:#89ddff">=&gt;</span> <span style="color:#c792ea">void</span>
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#3178c60e;border:1px solid #3178c644;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#4fc3f7">Schnellstart:</strong> <code style="color:#ffb347">npm create vite@latest mein-projekt -- --template vanilla-ts</code><br>Oder einfach: <code style="color:#ffb347">bun run main.ts</code> / <code style="color:#ffb347">deno run main.ts</code> (kein Setup!)</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #3178c644;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#3178c60e">
+    <span style="display:flex;align-items:center;gap:6px;color:#3178c6">
+      <span style="display:inline-block;width:8px;height:8px;background:#3178c6;border-radius:50%;margin-right:2px"></span>⚙ TypeScript installieren
+    </span>
+    <span class="aa" style="color:#3178c6;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:230px"><code style="color:#3178c6">npm (global)</code></td><td style="color:#cdd6f4">npm</td><td style="color:#6c7a8e">npm install -g typescript
+tsc --version</td></tr><tr><td style="width:230px"><code style="color:#3178c6">npm (lokal, empf.)</code></td><td style="color:#cdd6f4">npm</td><td style="color:#6c7a8e">npm install -D typescript
+npx tsc --init</td></tr><tr><td style="width:230px"><code style="color:#3178c6">Bun</code></td><td style="color:#cdd6f4">bun</td><td style="color:#6c7a8e">bun add -d typescript
+bunx tsc --version</td></tr><tr><td style="width:230px"><code style="color:#3178c6">Deno</code></td><td style="color:#cdd6f4">deno</td><td style="color:#6c7a8e">Kein Install – TS direkt unterstuetzt!
+deno run main.ts</td></tr><tr><td style="width:230px"><code style="color:#3178c6">pnpm</code></td><td style="color:#cdd6f4">pnpm</td><td style="color:#6c7a8e">pnpm add -D typescript
+pnpx tsc --version</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ tsc – TypeScript Compiler
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:230px"><code style="color:#4fc3f7">tsc</code></td><td style="color:#cdd6f4">Kompilieren (tsconfig.json)</td><td style="color:#6c7a8e">Gibt .js Dateien aus</td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --init</code></td><td style="color:#cdd6f4">tsconfig.json erstellen</td><td style="color:#6c7a8e">Mit allen Optionen</td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --watch / -w</code></td><td style="color:#cdd6f4">Watch-Modus</td><td style="color:#6c7a8e">Neu kompilieren bei Aenderungen</td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --noEmit</code></td><td style="color:#cdd6f4">Nur Typ-Pruefung (kein Output)</td><td style="color:#6c7a8e">Fuer CI/CD</td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --strict</code></td><td style="color:#cdd6f4">Alle strict-Flags aktivieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --target ES2022</code></td><td style="color:#cdd6f4">Ziel-Version setzen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --outDir dist</code></td><td style="color:#cdd6f4">Ausgabeverzeichnis</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --declaration</code></td><td style="color:#cdd6f4">.d.ts Dateien generieren</td><td style="color:#6c7a8e">Fuer Libraries</td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --showConfig</code></td><td style="color:#cdd6f4">Aktive Konfiguration anzeigen</td><td style="color:#6c7a8e">Inkl. extends</td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --listFiles</code></td><td style="color:#cdd6f4">Alle kompilierten Dateien</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:230px"><code style="color:#4fc3f7">tsc --diagnostics</code></td><td style="color:#cdd6f4">Performance-Diagnostik</td><td style="color:#6c7a8e"></td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Build-Tools &amp; Bundler
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:230px"><code style="color:#4ec9b0">Vite</code></td><td style="color:#cdd6f4">vite</td><td style="color:#6c7a8e">npm create vite@latest
+# Schnellster Dev-Server, TS out-of-the-box</td></tr><tr><td style="width:230px"><code style="color:#4ec9b0">esbuild</code></td><td style="color:#cdd6f4">esbuild</td><td style="color:#6c7a8e">Schnellster Bundler (Go-basiert)
+esbuild src/main.ts --bundle --outfile=out.js</td></tr><tr><td style="width:230px"><code style="color:#4ec9b0">tsx</code></td><td style="color:#cdd6f4">tsx</td><td style="color:#6c7a8e">npm install -D tsx
+npx tsx main.ts  # TypeScript direkt ausfuehren</td></tr><tr><td style="width:230px"><code style="color:#4ec9b0">ts-node</code></td><td style="color:#cdd6f4">ts-node</td><td style="color:#6c7a8e">npm install -D ts-node
+npx ts-node main.ts</td></tr><tr><td style="width:230px"><code style="color:#4ec9b0">Bun</code></td><td style="color:#cdd6f4">bun</td><td style="color:#6c7a8e">bun run main.ts  # TS out-of-the-box, kein Install</td></tr><tr><td style="width:230px"><code style="color:#4ec9b0">Deno</code></td><td style="color:#cdd6f4">deno</td><td style="color:#6c7a8e">deno run main.ts  # TS out-of-the-box</td></tr><tr><td style="width:230px"><code style="color:#4ec9b0">swc</code></td><td style="color:#cdd6f4">@swc/core</td><td style="color:#6c7a8e">Rust-basierter TS-Transpiler, sehr schnell</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Linting &amp; Formatting
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:230px"><code style="color:#c792ea">ESLint + TS</code></td><td style="color:#cdd6f4">@typescript-eslint</td><td style="color:#6c7a8e">npm install -D @typescript-eslint/parser @typescript-eslint/eslint-plugin
+# + eslint.config.js konfigurieren</td></tr><tr><td style="width:230px"><code style="color:#c792ea">Prettier</code></td><td style="color:#cdd6f4">prettier</td><td style="color:#6c7a8e">npm install -D prettier
+npx prettier --write .</td></tr><tr><td style="width:230px"><code style="color:#c792ea">Biome</code></td><td style="color:#cdd6f4">@biomejs/biome</td><td style="color:#6c7a8e">npm install -D @biomejs/biome
+# ESLint + Prettier Ersatz in einem, sehr schnell!</td></tr><tr><td style="width:230px"><code style="color:#c792ea">tsd</code></td><td style="color:#cdd6f4">tsd</td><td style="color:#6c7a8e">npm install -D tsd
+# Typen von Libraries testen</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Type-Libraries
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool</th><th>Paket</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:230px"><code style="color:#ffb347">zod</code></td><td style="color:#cdd6f4">zod</td><td style="color:#6c7a8e">npm install zod
+# Runtime-Validierung mit Typ-Inferenz: z.string().min(1)</td></tr><tr><td style="width:230px"><code style="color:#ffb347">type-fest</code></td><td style="color:#cdd6f4">type-fest</td><td style="color:#6c7a8e">npm install type-fest
+# 100+ nuetzliche Utility Types</td></tr><tr><td style="width:230px"><code style="color:#ffb347">ts-pattern</code></td><td style="color:#cdd6f4">ts-pattern</td><td style="color:#6c7a8e">npm install ts-pattern
+# Pattern Matching: match(x).with(...)</td></tr><tr><td style="width:230px"><code style="color:#ffb347">neverthrow</code></td><td style="color:#cdd6f4">neverthrow</td><td style="color:#6c7a8e">npm install neverthrow
+# Result&lt;T,E&gt; fuer Fehlerbehandlung</td></tr><tr><td style="width:230px"><code style="color:#ffb347">io-ts</code></td><td style="color:#cdd6f4">io-ts</td><td style="color:#6c7a8e">Runtime-Typen kompatibel mit TypeScript</td></tr><tr><td style="width:230px"><code style="color:#ffb347">class-validator</code></td><td style="color:#cdd6f4">class-validator</td><td style="color:#6c7a8e">Decorators fuer Runtime-Validierung</td></tr><tr><td style="width:230px"><code style="color:#ffb347">typeorm</code></td><td style="color:#cdd6f4">typeorm</td><td style="color:#6c7a8e">ORM mit TS-Decorators: @Entity @Column</td></tr><tr><td style="width:230px"><code style="color:#ffb347">prisma</code></td><td style="color:#cdd6f4">prisma</td><td style="color:#6c7a8e">Best-in-class ORM mit auto-generated Types</td></tr><tr><td style="width:230px"><code style="color:#ffb347">drizzle-orm</code></td><td style="color:#cdd6f4">drizzle-orm</td><td style="color:#6c7a8e">SQL-aehnliches ORM, vollstaendig typsicher</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-mod"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#3178c6';
+      btn.style.color       = '#3178c6';
+      btn.style.background  = 'rgba(49, 120, 198, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

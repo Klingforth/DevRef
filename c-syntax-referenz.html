@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #a8b9cc;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(168,185,204,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#a8b9cc">&#x2664;</span>
+      <span style="color:#a8b9cc">C</span> Syntax
+    </div>
+    <div id="hdr-sub">C11 / C17 / C23 · Die Mutter aller Sprachen · Linux</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="types">Datentypen</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="pointers">Zeiger & Speicher</button>
+    <button class="tb" data-tab="structs">Structs & Arrays</button>
+    <button class="tb" data-tab="stdlib">I/O & Stdlib</button>
+    <button class="tb" data-tab="modern">Modernes C</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-types" class="tp active">
+
+<div style="background:#a8b9cc0e;border:1px solid #a8b9cc44;border-radius:8px;
+            padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.8">
+  <strong style="color:#a8b9cc">Wichtig:</strong>
+  Die Größen von <code>int</code>, <code>long</code> etc. sind
+  <em>plattformabhängig</em>. Für garantierte Größen:
+  <code style="color:#4ec9b0">#include &lt;stdint.h&gt;</code>
+  und <code style="color:#4ec9b0">int32_t</code>, <code style="color:#4ec9b0">uint64_t</code> etc. nutzen.
+</div>
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #a8b9cc44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a8b9cc0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#a8b9cc">
+      <span style="display:inline-block;width:8px;height:8px;background:#a8b9cc;border-radius:50%;margin-right:2px"></span>Ganzzahl-Typen
+    </span>
+    <span class="aa" style="color:#a8b9cc;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Größe</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">char</code></td>
+      <td style="color:#c3e88d;font-size:11px">1 Byte  |  -128 .. 127</td>
+      <td style="color:#6c7a8e">Kleinstmögliche adressierbare Einheit. Für Zeichen und kleine Zahlen.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">unsigned char</code></td>
+      <td style="color:#c3e88d;font-size:11px">1 Byte  |  0 .. 255</td>
+      <td style="color:#6c7a8e">Für Byte-Daten und Binärpuffer.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">short</code></td>
+      <td style="color:#c3e88d;font-size:11px">2 Byte  |  -32 768 .. 32 767</td>
+      <td style="color:#6c7a8e">Kurze Ganzzahl. Selten nötig.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">int</code></td>
+      <td style="color:#c3e88d;font-size:11px">4 Byte  |  -2,1 Mrd .. 2,1 Mrd</td>
+      <td style="color:#6c7a8e">Standard-Ganzzahl. Mindestens 16 Bit laut Standard.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">long</code></td>
+      <td style="color:#c3e88d;font-size:11px">4 oder 8 Byte (Platform)</td>
+      <td style="color:#6c7a8e">Mindestens 32 Bit. Auf 64-Bit Linux: 8 Byte.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">long long</code></td>
+      <td style="color:#c3e88d;font-size:11px">8 Byte  |  ±9,2 × 10¹⁸</td>
+      <td style="color:#6c7a8e">Garantiert 64 Bit. C99+.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">unsigned int</code></td>
+      <td style="color:#c3e88d;font-size:11px">4 Byte  |  0 .. 4,3 Mrd</td>
+      <td style="color:#6c7a8e">Vorzeichenlos. Gut für Größen und Bitfelder.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#a8b9cc">_Bool / bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">1 Byte  |  0 oder 1</td>
+      <td style="color:#6c7a8e">#include &lt;stdbool.h&gt; für bool / true / false</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Exakte Größen (stdint.h)
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Größe</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">int8_t / uint8_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">±127 / 0..255</td>
+      <td style="color:#6c7a8e">Exakt 8 Bit – immer</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">int16_t / uint16_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">±32767 / 0..65535</td>
+      <td style="color:#6c7a8e">Exakt 16 Bit</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">int32_t / uint32_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">±2,1 Mrd / 0..4,3 Mrd</td>
+      <td style="color:#6c7a8e">Exakt 32 Bit</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">int64_t / uint64_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">±9,2×10¹⁸ / 0..1,8×10¹⁹</td>
+      <td style="color:#6c7a8e">Exakt 64 Bit</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">size_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">Immer groß genug für sizeof</td>
+      <td style="color:#6c7a8e">Für Array-Indizes und Speichergrößen</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">ptrdiff_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">Differenz zweier Pointer</td>
+      <td style="color:#6c7a8e">Vorzeichenbehaftete Pointer-Arithmetik</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">intptr_t / uintptr_t</code></td>
+      <td style="color:#c3e88d;font-size:11px">Groß genug für Pointer</td>
+      <td style="color:#6c7a8e">Für Pointer ↔ Integer Konvertierung</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4ec9b0">INT_MAX / INT_MIN</code></td>
+      <td style="color:#c3e88d;font-size:11px">2147483647 / -2147483648</td>
+      <td style="color:#6c7a8e">Grenzen aus &lt;limits.h&gt;</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Float &amp; Zeiger
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Größe</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">float</code></td>
+      <td style="color:#c3e88d;font-size:11px">4 Byte  |  ~7 Dezimalstellen</td>
+      <td style="color:#6c7a8e">IEEE 754 Single Precision</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">double</code></td>
+      <td style="color:#c3e88d;font-size:11px">8 Byte  |  ~15 Dezimalstellen</td>
+      <td style="color:#6c7a8e">IEEE 754 Double Precision – Standard</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">long double</code></td>
+      <td style="color:#c3e88d;font-size:11px">10 oder 16 Byte</td>
+      <td style="color:#6c7a8e">Erweiterte Präzision (platform-abhängig)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">void *</code></td>
+      <td style="color:#c3e88d;font-size:11px">Generischer Zeiger</td>
+      <td style="color:#6c7a8e">Kann auf jeden Typ zeigen. Cast nötig.</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">char *</code></td>
+      <td style="color:#c3e88d;font-size:11px">String (null-terminiert)</td>
+      <td style="color:#6c7a8e">"Hallo" hat Typ const char *</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">NULL</code></td>
+      <td style="color:#c3e88d;font-size:11px">Null-Zeiger (0)</td>
+      <td style="color:#6c7a8e">#include &lt;stddef.h&gt; oder &lt;stdlib.h&gt;</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">T *</code></td>
+      <td style="color:#c3e88d;font-size:11px">Zeiger auf T</td>
+      <td style="color:#6c7a8e">&amp;variable gibt Adresse zurück</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">T **</code></td>
+      <td style="color:#c3e88d;font-size:11px">Zeiger auf Zeiger</td>
+      <td style="color:#6c7a8e">Für Out-Parameter und 2D-Arrays</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Variablendeklaration &amp; Qualifikatoren
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Größe</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">int x = 42;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Deklaration + Initialisierung</td>
+      <td style="color:#6c7a8e">Immer initialisieren!</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">const int MAX = 100;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Unveränderlicher Wert</td>
+      <td style="color:#6c7a8e">Bevorzuge const statt #define</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">static int count;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Bleibt zwischen Aufrufen erhalten</td>
+      <td style="color:#6c7a8e">In Funktionen: persistenter Zustand</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">extern int global;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Variable aus anderer Datei</td>
+      <td style="color:#6c7a8e">Nur Deklaration, keine Definition</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">volatile int reg;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Kein Compiler-Optimierung</td>
+      <td style="color:#6c7a8e">Für Hardware-Register, Signale</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">register int fast;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Hint: in Register speichern</td>
+      <td style="color:#6c7a8e">Heutzutage ignoriert</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">_Atomic int shared;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Atomar (C11+)</td>
+      <td style="color:#6c7a8e">Für Thread-sichere Zugriffe</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#ffb347">restrict</code></td>
+      <td style="color:#c3e88d;font-size:11px">Zeiger-Alias-Freiheit</td>
+      <td style="color:#6c7a8e">Erlaubt Optimierungen: memcpy-artige Funktionen</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / else / switch
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / else / switch">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / else / switch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Klammern um Bedingung Pflicht, {} empfohlen */
+<span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">10</span>) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"groß\n"</span>);
+} <span style="color:#c792ea">else</span> <span style="color:#c792ea">if</span> (x &gt; <span style="color:#f78c6c">5</span>) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"mittel\n"</span>);
+} <span style="color:#c792ea">else</span> {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"klein\n"</span>);
+}
+
+/* Ternärer Operator */
+<span style="color:#c792ea">int</span> max = (a &gt; b) ? a : b;
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *sign = (x &gt; <span style="color:#f78c6c">0</span>) ? <span style="color:#c3e88d">"positiv"</span> : (x &lt; <span style="color:#f78c6c">0</span>) ? <span style="color:#c3e88d">"negativ"</span> : <span style="color:#c3e88d">"null"</span>;
+
+/* <span style="color:#c792ea">switch</span> – <span style="color:#f78c6c">KEIN</span> Fall-Through by <span style="color:#c792ea">default</span>! <span style="color:#c792ea">break</span> nötig */
+<span style="color:#c792ea">switch</span> (farbe) {
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">ROT</span>:
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Rot\n"</span>);
+        <span style="color:#c792ea">break</span>;
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">GRÜN</span>:
+    <span style="color:#c792ea">case</span> <span style="color:#f78c6c">GRÜN_DUNKEL</span>:              /* Fall-through absichtlich */
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Grüntöne\n"</span>);
+        <span style="color:#c792ea">break</span>;
+    <span style="color:#c792ea">default</span>:
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Unbekannt\n"</span>);
+        <span style="color:#c792ea">break</span>;
+}
+
+/* <span style="color:#c792ea">switch</span> auf Zeichen */
+<span style="color:#c792ea">switch</span> (zeichen) {
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'a'</span>: <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'e'</span>: <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'i'</span>: <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'o'</span>: <span style="color:#c792ea">case</span> <span style="color:#c3e88d">'u'</span>:
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Vokal\n"</span>);
+        <span style="color:#c792ea">break</span>;
+    <span style="color:#c792ea">default</span>:
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Konsonant\n"</span>);
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>for / while / do-while
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for / while / do-while">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    for / while / do-while
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Klassisches <span style="color:#c792ea">for</span> */
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, i);
+}
+
+/* <span style="color:#c792ea">for</span> ohne Initialisierung oder Inkrement */
+<span style="color:#c792ea">for</span> (; bedingung; ) { /* wie <span style="color:#c792ea">while</span> */ }
+
+/* Endlosschleife */
+<span style="color:#c792ea">for</span> (;;) {
+    <span style="color:#c792ea">if</span> (fertig) <span style="color:#c792ea">break</span>;
+    tu_etwas();
+}
+
+/* <span style="color:#c792ea">while</span> */
+<span style="color:#c792ea">int</span> n = <span style="color:#f78c6c">1</span>;
+<span style="color:#c792ea">while</span> (n &lt; <span style="color:#f78c6c">100</span>) {
+    n *= <span style="color:#f78c6c">2</span>;
+}
+
+/* <span style="color:#c792ea">do</span>-<span style="color:#c792ea">while</span> – mindestens einmal */
+<span style="color:#c792ea">char</span> eingabe;
+<span style="color:#c792ea">do</span> {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Weiter? (j/n): "</span>);
+    eingabe = <span style="color:#82aaff">getchar</span>();
+    <span style="color:#82aaff">getchar</span>();   /* Newline leeren */
+} <span style="color:#c792ea">while</span> (eingabe != <span style="color:#c3e88d">'j'</span> &amp;&amp; eingabe != <span style="color:#c3e88d">'n'</span>);
+
+/* <span style="color:#c792ea">break</span> und <span style="color:#c792ea">continue</span> */
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">100</span>; i++) {
+    <span style="color:#c792ea">if</span> (i % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>) <span style="color:#c792ea">continue</span>;   /* gerade überspringen */
+    <span style="color:#c792ea">if</span> (i &gt; <span style="color:#f78c6c">10</span>)     <span style="color:#c792ea">break</span>;       /* bei <span style="color:#f78c6c">11</span> aufhören */
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, i);            /* gibt <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">5</span> <span style="color:#f78c6c">7</span> <span style="color:#f78c6c">9</span> aus */
+}
+
+/* Verschachtelte Schleifen verlassen: <span style="color:#c792ea">goto</span> */
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) {
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> j = <span style="color:#f78c6c">0</span>; j &lt; <span style="color:#f78c6c">10</span>; j++) {
+        <span style="color:#c792ea">if</span> (i * j &gt; <span style="color:#f78c6c">50</span>) <span style="color:#c792ea">goto</span> raus;
+    }
+}
+raus:
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Fertig\n"</span>);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('cf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Operatoren
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="operatoren">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Operatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* ── Arithmetik ──────────────────────────────────────── */
+<span style="color:#c792ea">int</span> a = <span style="color:#f78c6c">10</span>, b = <span style="color:#f78c6c">3</span>;
+a + b   /* <span style="color:#f78c6c">13</span> */
+a - b   /* <span style="color:#f78c6c">7</span>  */
+a * b   /* <span style="color:#f78c6c">30</span> */
+a / b   /* <span style="color:#f78c6c">3</span>  ← ganzzahlig! <span style="color:#f78c6c">10.0</span>/<span style="color:#f78c6c">3</span> = <span style="color:#f78c6c">3.33</span> */
+a % b   /* <span style="color:#f78c6c">1</span>  (Modulo) */
+-a      /* -<span style="color:#f78c6c">10</span> (unäres Minus) */
+
+/* ── Vergleich ────────────────────────────────────────── */
+a == b  /* gleich    → <span style="color:#f78c6c">0</span> oder <span style="color:#f78c6c">1</span> */
+a != b  /* ungleich              */
+a &lt;  b  /* kleiner              */
+a &lt;= b  /* kleiner gleich       */
+a &gt;  b  /* größer               */
+a &gt;= b  /* größer gleich        */
+
+/* ── Logisch ──────────────────────────────────────────── */
+a &amp;&amp; b  /* <span style="color:#f78c6c">AND</span> – <span style="color:#c792ea">short</span>-circuit */
+a || b  /* <span style="color:#f78c6c">OR</span>  – <span style="color:#c792ea">short</span>-circuit */
+!a      /* <span style="color:#f78c6c">NOT</span> */
+
+/* ── Bitweise ─────────────────────────────────────────── */
+a &amp;  b  /* <span style="color:#f78c6c">AND</span>:   <span style="color:#f78c6c">0b1010</span> &amp; <span style="color:#f78c6c">0b1100</span> = <span style="color:#f78c6c">0b1000</span> */
+a |  b  /* <span style="color:#f78c6c">OR</span>:    <span style="color:#f78c6c">0b1010</span> | <span style="color:#f78c6c">0b1100</span> = <span style="color:#f78c6c">0b1110</span> */
+a ^  b  /* <span style="color:#f78c6c">XOR</span>:   <span style="color:#f78c6c">0b1010</span> ^ <span style="color:#f78c6c">0b1100</span> = <span style="color:#f78c6c">0b0110</span> */
+~a      /* <span style="color:#f78c6c">NOT</span>:   ~<span style="color:#f78c6c">0b1010</span>        = <span style="color:#f78c6c">0b...10101</span> */
+a &lt;&lt; <span style="color:#f78c6c">2</span>  /* Left Shift:  <span style="color:#f78c6c">10</span> &lt;&lt; <span style="color:#f78c6c">2</span> = <span style="color:#f78c6c">40</span>  */
+a &gt;&gt; <span style="color:#f78c6c">1</span>  /* Right Shift: <span style="color:#f78c6c">10</span> &gt;&gt; <span style="color:#f78c6c">1</span> = <span style="color:#f78c6c">5</span>   */
+
+/* ── Zuweisung ────────────────────────────────────────── */
+a += b; a -= b; a *= b; a /= b; a %= b;
+a &amp;= b; a |= b; a ^= b; a &lt;&lt;= <span style="color:#f78c6c">2</span>; a &gt;&gt;= <span style="color:#f78c6c">1</span>;
+a++;    /* Post-Inkrement */
+++a;    /* Prä-Inkrement  */
+a--;    /* Post-Dekrement */
+
+/* ── Sonstiges ────────────────────────────────────────── */
+<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>)          /* Größe in Bytes zur Compile-Zeit */
+<span style="color:#c792ea">sizeof</span> arr / <span style="color:#c792ea">sizeof</span> arr[<span style="color:#f78c6c">0</span>]   /* Array-Länge */
+(<span style="color:#c792ea">int</span>) <span style="color:#f78c6c">3.14</span>           /* Cast: explicit Typumwandlung → <span style="color:#f78c6c">3</span> */
+x ? a : b            /* Ternär */
+a, b                 /* Komma-Operator: auswerten, letzter Wert */</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>Funktionen definieren &amp; deklarieren
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen definieren &amp; deklarieren">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen definieren &amp; deklarieren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Deklaration (Prototyp) – in Header-Datei oder vor Verwendung */
+<span style="color:#c792ea">int</span> addiere(<span style="color:#c792ea">int</span> a, <span style="color:#c792ea">int</span> b);
+<span style="color:#c792ea">void</span> drucke(<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *text);
+<span style="color:#c792ea">double</span> berechne(<span style="color:#c792ea">double</span> x, <span style="color:#c792ea">int</span> n);
+
+/* Definition */
+<span style="color:#c792ea">int</span> addiere(<span style="color:#c792ea">int</span> a, <span style="color:#c792ea">int</span> b) {
+    <span style="color:#c792ea">return</span> a + b;
+}
+
+/* <span style="color:#c792ea">void</span> = kein Rückgabewert */
+<span style="color:#c792ea">void</span> begrüsse(<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *name) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Hallo, %s!\n"</span>, name);
+}
+
+/* <span style="color:#c792ea">const</span>-Zeiger: Inhalt darf nicht geändert werden */
+<span style="color:#c792ea">int</span> string_laenge(<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *s) {
+    <span style="color:#c792ea">int</span> len = <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">while</span> (s[len] != <span style="color:#c3e88d">'\0'</span>) len++;
+    <span style="color:#c792ea">return</span> len;
+}
+
+/* Inline-Hint (<span style="color:#f78c6c">C99</span>+) */
+<span style="color:#c792ea">static</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">int</span> max(<span style="color:#c792ea">int</span> a, <span style="color:#c792ea">int</span> b) {
+    <span style="color:#c792ea">return</span> (a &gt; b) ? a : b;
+}
+
+/* Variadic Funktionen (wie <span style="color:#82aaff">printf</span>) */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdarg.h&gt;</span>
+
+<span style="color:#c792ea">int</span> summe(<span style="color:#c792ea">int</span> anzahl, ...) {
+    va_list args;
+    va_start(args, anzahl);
+    <span style="color:#c792ea">int</span> total = <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; anzahl; i++) {
+        total += va_arg(args, <span style="color:#c792ea">int</span>);
+    }
+    va_end(args);
+    <span style="color:#c792ea">return</span> total;
+}
+
+/* Aufruf */
+<span style="color:#c792ea">int</span> s = summe(<span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">40</span>);   /* <span style="color:#f78c6c">100</span> */
+
+/* Rekursiv */
+<span style="color:#c792ea">long</span> <span style="color:#c792ea">long</span> fakultaet(<span style="color:#c792ea">int</span> n) {
+    <span style="color:#c792ea">if</span> (n &lt;= <span style="color:#f78c6c">1</span>) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>;
+    <span style="color:#c792ea">return</span> n * fakultaet(n - <span style="color:#f78c6c">1</span>);
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Zeiger &amp; Out-Parameter
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="zeiger &amp; out-parameter">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Zeiger &amp; Out-Parameter
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Zeiger als Parameter – Änderungen wirken auf Original! */
+<span style="color:#c792ea">void</span> swap(<span style="color:#c792ea">int</span> *a, <span style="color:#c792ea">int</span> *b) {
+    <span style="color:#c792ea">int</span> tmp = *a;   /* dereferenzieren */
+    *a = *b;
+    *b = tmp;
+}
+
+<span style="color:#c792ea">int</span> x = <span style="color:#f78c6c">5</span>, y = <span style="color:#f78c6c">10</span>;
+swap(&amp;x, &amp;y);   /* x=<span style="color:#f78c6c">10</span>, y=<span style="color:#f78c6c">5</span> */
+
+/* Mehrere Rückgabewerte via Zeiger */
+<span style="color:#c792ea">void</span> min_max(<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span> *arr, <span style="color:#c792ea">int</span> len, <span style="color:#c792ea">int</span> *out_min, <span style="color:#c792ea">int</span> *out_max) {
+    *out_min = *out_max = arr[<span style="color:#f78c6c">0</span>];
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">1</span>; i &lt; len; i++) {
+        <span style="color:#c792ea">if</span> (arr[i] &lt; *out_min) *out_min = arr[i];
+        <span style="color:#c792ea">if</span> (arr[i] &gt; *out_max) *out_max = arr[i];
+    }
+}
+
+<span style="color:#c792ea">int</span> zahlen[] = {<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">6</span>};
+<span style="color:#c792ea">int</span> lo, hi;
+min_max(zahlen, <span style="color:#f78c6c">8</span>, &amp;lo, &amp;hi);
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"min=%d max=%d\n"</span>, lo, hi);
+
+/* Zeiger auf Zeiger – für dynamische Arrays als Parameter */
+<span style="color:#c792ea">void</span> vergroessern(<span style="color:#c792ea">int</span> **arr, <span style="color:#c792ea">int</span> *len) {
+    <span style="color:#c792ea">int</span> new_len = *len * <span style="color:#f78c6c">2</span>;
+    *arr = <span style="color:#82aaff">realloc</span>(*arr, new_len * <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+    *len = new_len;
+}
+
+/* Funktionszeiger */
+<span style="color:#c792ea">int</span> (*op)(<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>);    /* Zeiger auf Funktion die (<span style="color:#c792ea">int</span>,<span style="color:#c792ea">int</span>)<span style="color:#89ddff">-&gt;</span><span style="color:#c792ea">int</span> */
+op = addiere;
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, op(<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>));   /* <span style="color:#f78c6c">7</span> */
+
+/* Array von Funktionszeigern */
+<span style="color:#c792ea">int</span> (*ops[])(<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>) = {addiere, subtrahiere, multipliziere};
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, ops[<span style="color:#f78c6c">0</span>](<span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">3</span>));   /* <span style="color:#f78c6c">8</span> */
+
+/* <span style="color:#c792ea">typedef</span> für leserlichere Funktionszeiger */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">int</span> (*BinärOp)(<span style="color:#c792ea">int</span>, <span style="color:#c792ea">int</span>);
+BinärOp berechne = addiere;</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Präprozessor &amp; Makros
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="präprozessor &amp; makros">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Präprozessor &amp; Makros
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* ── Include Guards ─────────────────────────────────── */
+<span style="color:#ff9800">#ifndef</span><span style="color:#ff9800"> MEIN_HEADER_H</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> MEIN_HEADER_H</span>
+
+/* Inhalt der Header-Datei */
+
+<span style="color:#ff9800">#endif</span><span style="color:#ff9800"> /* MEIN_HEADER_H */</span>
+
+/* Oder moderner: */
+<span style="color:#ff9800">#pragma</span><span style="color:#ff9800"> once</span>
+
+/* ── Konstanten (bevorzuge <span style="color:#c792ea">const</span> statt #define!) ────── */
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> PI        3.14159265358979</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> MAX_SIZE  1024</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> VERSION   "1.0.0"</span>
+
+/* ── Funktionsmakros ─────────────────────────────────── */
+/* Klammern um alles! Sonst falsche Operator-Präzedenz */
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> MAX(a, b)      ((a) &gt; (b) ? (a) : (b))</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> ABS(x)         ((x) &lt; 0 ? -(x) : (x))</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> ARRAY_LEN(arr) (sizeof(arr) / sizeof((arr)[0]))</span>
+
+/* ── Debugging-Makros ────────────────────────────────── */
+<span style="color:#ff9800">#ifdef</span><span style="color:#ff9800"> DEBUG</span>
+    <span style="color:#ff9800">#define</span><span style="color:#ff9800"> LOG(fmt, ...)         fprintf(stderr, "[%s:%d] " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)</span>
+<span style="color:#ff9800">#else</span><span style="color:#ff9800"></span>
+    <span style="color:#ff9800">#define</span><span style="color:#ff9800"> LOG(fmt, ...) ((void)0)   /* nichts tun in Release */</span>
+<span style="color:#ff9800">#endif</span><span style="color:#ff9800"></span>
+
+/* Vordefinierte Makros */
+<span style="color:#f78c6c">__FILE__</span>   /* Dateiname als String */
+<span style="color:#f78c6c">__LINE__</span>   /* Aktuelle Zeilennummer */
+__func__   /* Aktueller Funktionsname (<span style="color:#f78c6c">C99</span>+) */
+<span style="color:#f78c6c">__DATE__</span>   /* Compile-Datum: <span style="color:#c3e88d">"Jan 15 2024"</span> */
+<span style="color:#f78c6c">__TIME__</span>   /* Compile-Zeit: <span style="color:#c3e88d">"14:30:00"</span> */
+<span style="color:#f78c6c">__STDC_VERSION__</span>   /* C-Standard: <span style="color:#f78c6c">201112L</span> = <span style="color:#f78c6c">C11</span> */
+
+/* ── Bedingte Kompilierung ───────────────────────────── */
+<span style="color:#ff9800">#if</span><span style="color:#ff9800"> defined(__linux__)</span>
+    <span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;unistd.h&gt;</span>
+<span style="color:#ff9800">#elif</span><span style="color:#ff9800"> defined(_WIN32)</span>
+    <span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;windows.h&gt;</span>
+<span style="color:#ff9800">#else</span><span style="color:#ff9800"></span>
+    <span style="color:#ff9800">#error</span><span style="color:#ff9800"> "Nicht unterstütztes Betriebssystem"</span>
+<span style="color:#ff9800">#endif</span><span style="color:#ff9800"></span>
+
+/* static_assert (<span style="color:#f78c6c">C11</span>+) */
+<span style="color:#c792ea">_Static_assert</span>(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>) == <span style="color:#f78c6c">4</span>, <span style="color:#c3e88d">"int muss 4 Bytes sein"</span>);
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;assert.h&gt;</span>
+static_assert(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">long</span>) &gt;= <span style="color:#f78c6c">8</span>, <span style="color:#c3e88d">"long muss mindestens 8 Bytes sein"</span>);</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-pointers" class="tp">
+
+<div class="ac open" id="ac-ptr0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ptr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Zeiger – das Herzstück von C
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="zeiger – das herzstück von c">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Zeiger – das Herzstück von C
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Zeiger-Grundlagen */
+<span style="color:#c792ea">int</span>  x  = <span style="color:#f78c6c">42</span>;
+<span style="color:#c792ea">int</span> *p  = &amp;x;       /* p zeigt auf x */
+
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>,  x);   /* <span style="color:#f78c6c">42</span>  (Wert) */
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%p\n"</span>,  p);   /* <span style="color:#f78c6c">0x7fff...</span> (Adresse) */
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, *p);   /* <span style="color:#f78c6c">42</span>  (Dereferenzierung) */
+
+*p = <span style="color:#f78c6c">99</span>;            /* x ist jetzt <span style="color:#f78c6c">99</span> */
+
+/* Zeigertypen */
+<span style="color:#c792ea">int</span>    *ip;    /* Zeiger auf <span style="color:#c792ea">int</span> */
+<span style="color:#c792ea">char</span>   *cp;    /* Zeiger auf <span style="color:#c792ea">char</span> (String!) */
+<span style="color:#c792ea">void</span>   *vp;    /* Generischer Zeiger */
+<span style="color:#c792ea">int</span>   **pp;    /* Zeiger auf Zeiger auf <span style="color:#c792ea">int</span> */
+<span style="color:#c792ea">int</span>  (*fp)(<span style="color:#c792ea">int</span>);  /* Zeiger auf Funktion */
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span> *cp2;  /* Zeiger auf konstantes <span style="color:#c792ea">int</span> */
+<span style="color:#c792ea">int</span> * <span style="color:#c792ea">const</span> cp3; /* Konstanter Zeiger auf <span style="color:#c792ea">int</span> */
+
+/* Pointer-Arithmetik */
+<span style="color:#c792ea">int</span> arr[] = {<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">40</span>, <span style="color:#f78c6c">50</span>};
+<span style="color:#c792ea">int</span> *ptr  = arr;    /* Zeigt auf arr[<span style="color:#f78c6c">0</span>] */
+
+ptr++;              /* Zeigt jetzt auf arr[<span style="color:#f78c6c">1</span>] */
+ptr += <span style="color:#f78c6c">2</span>;           /* Zeigt auf arr[<span style="color:#f78c6c">3</span>] */
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, *ptr);  /* <span style="color:#f78c6c">40</span> */
+
+/* Array-Index = Zeiger-Arithmetik */
+arr[<span style="color:#f78c6c">3</span>] == *(arr + <span style="color:#f78c6c">3</span>)   /* identisch! */
+ptr[<span style="color:#f78c6c">0</span>] == *ptr         /* identisch! */
+
+/* Zeiger vergleichen */
+<span style="color:#c792ea">if</span> (ptr == arr + <span style="color:#f78c6c">3</span>) {  /* sind an derselben Adresse */
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"gleiche Position\n"</span>);
+}
+
+/* Differenz zweier Zeiger */
+ptrdiff_t diff = ptr - arr;   /* <span style="color:#f78c6c">3</span> (Elemente, nicht Bytes) */</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ptr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ptr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Dynamische Speicherverwaltung
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="dynamische speicherverwaltung">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Dynamische Speicherverwaltung
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdlib.h&gt;</span>
+
+/* <span style="color:#82aaff">malloc</span> – gibt uninitialisierten Speicher zurück */
+<span style="color:#c792ea">int</span> *arr = <span style="color:#82aaff">malloc</span>(<span style="color:#f78c6c">10</span> * <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+<span style="color:#c792ea">if</span> (arr == <span style="color:#c792ea">NULL</span>) {     /* <span style="color:#f78c6c">IMMER</span> prüfen! */
+    <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"malloc"</span>);
+    <span style="color:#82aaff">exit</span>(<span style="color:#f78c6c">EXIT_FAILURE</span>);
+}
+
+/* <span style="color:#82aaff">calloc</span> – initialisiert mit <span style="color:#f78c6c">0</span> */
+<span style="color:#c792ea">int</span> *zeroed = <span style="color:#82aaff">calloc</span>(<span style="color:#f78c6c">10</span>, <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+
+/* <span style="color:#82aaff">realloc</span> – Größe ändern */
+arr = <span style="color:#82aaff">realloc</span>(arr, <span style="color:#f78c6c">20</span> * <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+<span style="color:#c792ea">if</span> (arr == <span style="color:#c792ea">NULL</span>) {
+    /* Achtung: Original-Zeiger ist jetzt ungültig! */
+    <span style="color:#82aaff">exit</span>(<span style="color:#f78c6c">EXIT_FAILURE</span>);
+}
+
+/* <span style="color:#82aaff">free</span> – Speicher freigeben */
+<span style="color:#82aaff">free</span>(arr);
+arr = <span style="color:#c792ea">NULL</span>;   /* Dangling Pointer vermeiden! */
+<span style="color:#82aaff">free</span>(zeroed);
+
+/* Typisches Muster: <span style="color:#c792ea">struct</span> auf Heap */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">char</span>  name[<span style="color:#f78c6c">64</span>];
+    <span style="color:#c792ea">int</span>   alter;
+} Person;
+
+Person *p = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(Person));
+<span style="color:#c792ea">if</span> (!p) { /* Fehlerbehandlung */ }
+
+<span style="color:#82aaff">snprintf</span>(p<span style="color:#89ddff">-&gt;</span>name, <span style="color:#c792ea">sizeof</span>(p<span style="color:#89ddff">-&gt;</span>name), <span style="color:#c3e88d">"Alice"</span>);
+p<span style="color:#89ddff">-&gt;</span>alter = <span style="color:#f78c6c">30</span>;
+
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%s ist %d Jahre\n"</span>, p<span style="color:#89ddff">-&gt;</span>name, p<span style="color:#89ddff">-&gt;</span>alter);
+<span style="color:#82aaff">free</span>(p);
+
+/* Array von Strings (Zeiger auf Zeiger) */
+<span style="color:#c792ea">char</span> **zeilen = <span style="color:#82aaff">malloc</span>(<span style="color:#f78c6c">100</span> * <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">char</span> *));
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">100</span>; i++) {
+    zeilen[i] = <span style="color:#82aaff">malloc</span>(<span style="color:#f78c6c">256</span>);
+    <span style="color:#82aaff">snprintf</span>(zeilen[i], <span style="color:#f78c6c">256</span>, <span style="color:#c3e88d">"Zeile %d"</span>, i);
+}
+/* Freigeben: erst Inhalte, dann Array */
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">100</span>; i++) <span style="color:#82aaff">free</span>(zeilen[i]);
+<span style="color:#82aaff">free</span>(zeilen);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ptr2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ptr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Häufige Zeiger-Fehler
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="häufige zeiger-fehler">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Häufige Zeiger-Fehler
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* ── <span style="color:#f78c6c">1.</span> <span style="color:#f78c6c">DANGLING</span> <span style="color:#f78c6c">POINTER</span> ─────────────────────────────── */
+<span style="color:#c792ea">int</span> *schlecht(<span style="color:#c792ea">void</span>) {
+    <span style="color:#c792ea">int</span> lokal = <span style="color:#f78c6c">42</span>;
+    <span style="color:#c792ea">return</span> &amp;lokal;   /* <span style="color:#f78c6c">FEHLER</span>: lokale Variable wird zerstört! */
+}
+
+/* Richtig: Heap oder <span style="color:#c792ea">static</span> */
+<span style="color:#c792ea">int</span> *gut(<span style="color:#c792ea">void</span>) {
+    <span style="color:#c792ea">int</span> *p = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+    *p = <span style="color:#f78c6c">42</span>;
+    <span style="color:#c792ea">return</span> p;   /* Aufrufer muss <span style="color:#82aaff">free</span>() aufrufen! */
+}
+
+/* ── <span style="color:#f78c6c">2.</span> <span style="color:#f78c6c">BUFFER</span> <span style="color:#f78c6c">OVERFLOW</span> ──────────────────────────────── */
+<span style="color:#c792ea">char</span> buf[<span style="color:#f78c6c">10</span>];
+<span style="color:#82aaff">strcpy</span>(buf, <span style="color:#c3e88d">"Dieser Text ist zu lang!"</span>);  /* <span style="color:#f78c6c">FEHLER</span>! */
+/* Richtig: */
+<span style="color:#82aaff">strncpy</span>(buf, text, <span style="color:#c792ea">sizeof</span>(buf) - <span style="color:#f78c6c">1</span>);
+buf[<span style="color:#c792ea">sizeof</span>(buf) - <span style="color:#f78c6c">1</span>] = <span style="color:#c3e88d">'\0'</span>;
+/* Oder: <span style="color:#82aaff">snprintf</span>(buf, <span style="color:#c792ea">sizeof</span>(buf), <span style="color:#c3e88d">"%s"</span>, text); */
+
+/* ── <span style="color:#f78c6c">3.</span> <span style="color:#f78c6c">USE</span> <span style="color:#f78c6c">AFTER</span> <span style="color:#f78c6c">FREE</span> ────────────────────────────────── */
+<span style="color:#c792ea">int</span> *p = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+<span style="color:#82aaff">free</span>(p);
+*p = <span style="color:#f78c6c">42</span>;   /* <span style="color:#f78c6c">FEHLER</span>: Undefined Behavior! */
+/* Schutz: nach <span style="color:#82aaff">free</span> immer <span style="color:#c792ea">NULL</span> setzen */
+<span style="color:#82aaff">free</span>(p); p = <span style="color:#c792ea">NULL</span>;
+<span style="color:#c792ea">if</span> (p) *p = <span style="color:#f78c6c">42</span>;   /* sicher – macht nichts */
+
+/* ── <span style="color:#f78c6c">4.</span> <span style="color:#f78c6c">DOPPELTES</span> <span style="color:#f78c6c">FREE</span> ────────────────────────────────── */
+<span style="color:#82aaff">free</span>(p);
+<span style="color:#82aaff">free</span>(p);   /* <span style="color:#f78c6c">FEHLER</span>! */
+/* Schutz: p = <span style="color:#c792ea">NULL</span> nach <span style="color:#82aaff">free</span> */
+
+/* ── <span style="color:#f78c6c">5.</span> <span style="color:#c792ea">NULL</span> <span style="color:#f78c6c">NICHT</span> <span style="color:#f78c6c">GEPRÜFT</span> ───────────────────────────── */
+<span style="color:#c792ea">int</span> *p = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+/* Ohne Prüfung: */
+*p = <span style="color:#f78c6c">42</span>;   /* Crash wenn <span style="color:#82aaff">malloc</span> fehlschlug! */
+/* Richtig: immer prüfen */
+<span style="color:#c792ea">if</span> (!p) { <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"malloc"</span>); <span style="color:#82aaff">exit</span>(<span style="color:#f78c6c">1</span>); }
+
+/* ── <span style="color:#f78c6c">6.</span> <span style="color:#f78c6c">OFF</span>-<span style="color:#f78c6c">BY</span>-<span style="color:#f78c6c">ONE</span> ────────────────────────────────────── */
+<span style="color:#c792ea">int</span> arr[<span style="color:#f78c6c">5</span>];
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt;= <span style="color:#f78c6c">5</span>; i++) {   /* <span style="color:#f78c6c">FEHLER</span>: i &lt;= <span style="color:#f78c6c">5</span> */
+    arr[i] = i;                    /* arr[<span style="color:#f78c6c">5</span>] ist außerhalb! */
+}
+/* Richtig: i &lt; <span style="color:#f78c6c">5</span> */</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-structs" class="tp">
+
+<div class="ac open" id="ac-st0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>struct, union, enum
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="struct, union, enum">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    struct, union, enum
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* ── <span style="color:#c792ea">struct</span> ─────────────────────────────────────────────── */
+<span style="color:#c792ea">struct</span> Punkt {
+    <span style="color:#c792ea">double</span> x;
+    <span style="color:#c792ea">double</span> y;
+};
+
+/* <span style="color:#c792ea">typedef</span> für einfachere Verwendung */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">char</span>  name[<span style="color:#f78c6c">64</span>];
+    <span style="color:#c792ea">int</span>   alter;
+    <span style="color:#c792ea">float</span> gehalt;
+} Person;
+
+/* Initialisierung */
+Person p1 = {<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">75000.0f</span>};
+Person p2 = {.name = <span style="color:#c3e88d">"Bob"</span>, .alter = <span style="color:#f78c6c">25</span>};   /* Designated Initializers <span style="color:#f78c6c">C99</span>+ */
+Person p3 = {<span style="color:#f78c6c">0</span>};   /* Alles auf <span style="color:#f78c6c">0</span>/<span style="color:#c792ea">NULL</span> */
+
+/* Zugriff */
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%s ist %d Jahre alt\n"</span>, p2.name, p2.alter);
+
+/* Zeiger auf <span style="color:#c792ea">struct</span> – Pfeil-Operator */
+Person *ptr = &amp;p1;
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%s\n"</span>, ptr<span style="color:#89ddff">-&gt;</span>name);   /* = (*ptr).name */
+
+/* Selbstreferenz (für verkettete Listen) */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> Knoten {
+    <span style="color:#c792ea">int</span>            wert;
+    <span style="color:#c792ea">struct</span> Knoten *naechster;   /* muss vollen Struct-Namen nutzen */
+} Knoten;
+
+/* ── <span style="color:#c792ea">union</span> ───────────────────────────────────────────────── */
+/* Alle Felder teilen denselben Speicher! */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">union</span> {
+    <span style="color:#c792ea">int</span>    i;
+    <span style="color:#c792ea">float</span>  f;
+    <span style="color:#c792ea">char</span>   bytes[<span style="color:#f78c6c">4</span>];
+} Multi;
+
+Multi m;
+m.f = <span style="color:#f78c6c">3.14f</span>;
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Float-Bits: %08x\n"</span>, m.i);   /* Bits des Floats als <span style="color:#c792ea">int</span> lesen */
+
+/* ── <span style="color:#c792ea">enum</span> ────────────────────────────────────────────────── */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#f78c6c">ROT</span>    = <span style="color:#f78c6c">0</span>,
+    <span style="color:#f78c6c">GRÜN</span>   = <span style="color:#f78c6c">1</span>,
+    <span style="color:#f78c6c">BLAU</span>   = <span style="color:#f78c6c">2</span>,
+} Farbe;
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#f78c6c">FEHLER_OK</span>          =  <span style="color:#f78c6c">0</span>,
+    <span style="color:#f78c6c">FEHLER_NICHT_GEF</span>   = -<span style="color:#f78c6c">1</span>,
+    <span style="color:#f78c6c">FEHLER_KEIN_SPEICH</span> = -<span style="color:#f78c6c">2</span>,
+    <span style="color:#f78c6c">FEHLER_IO</span>          = -<span style="color:#f78c6c">3</span>,
+} Fehler;
+
+Farbe f = <span style="color:#f78c6c">BLAU</span>;
+<span style="color:#c792ea">if</span> (f == <span style="color:#f78c6c">BLAU</span>) <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Blau!\n"</span>);
+
+/* Bit-Flags mit <span style="color:#c792ea">enum</span> */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#f78c6c">LESEN</span>     = <span style="color:#f78c6c">1</span> &lt;&lt; <span style="color:#f78c6c">0</span>,   /* <span style="color:#f78c6c">0001</span> */
+    <span style="color:#f78c6c">SCHREIBEN</span> = <span style="color:#f78c6c">1</span> &lt;&lt; <span style="color:#f78c6c">1</span>,   /* <span style="color:#f78c6c">0010</span> */
+    <span style="color:#f78c6c">AUSFÜHREN</span> = <span style="color:#f78c6c">1</span> &lt;&lt; <span style="color:#f78c6c">2</span>,   /* <span style="color:#f78c6c">0100</span> */
+} Berechtigung;
+
+<span style="color:#c792ea">int</span> rechte = <span style="color:#f78c6c">LESEN</span> | <span style="color:#f78c6c">SCHREIBEN</span>;
+<span style="color:#c792ea">if</span> (rechte &amp; <span style="color:#f78c6c">LESEN</span>) <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Darf lesen\n"</span>);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Arrays &amp; Strings
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arrays &amp; strings">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arrays &amp; Strings
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* ── Arrays ──────────────────────────────────────────────── */
+<span style="color:#c792ea">int</span> zahlen[<span style="color:#f78c6c">5</span>] = {<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">20</span>, <span style="color:#f78c6c">30</span>, <span style="color:#f78c6c">40</span>, <span style="color:#f78c6c">50</span>};
+<span style="color:#c792ea">int</span> auto_groesse[] = {<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>};      /* Größe wird inferiert */
+<span style="color:#c792ea">int</span> alle_null[<span style="color:#f78c6c">100</span>] = {<span style="color:#f78c6c">0</span>};            /* Alle auf <span style="color:#f78c6c">0</span> */
+
+/* Zugriff */
+zahlen[<span style="color:#f78c6c">0</span>] = <span style="color:#f78c6c">99</span>;
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, zahlen[<span style="color:#f78c6c">4</span>]);   /* <span style="color:#f78c6c">50</span> */
+
+/* Länge berechnen (<span style="color:#f78c6c">NICHT</span> für Zeiger!) */
+<span style="color:#c792ea">int</span> len = <span style="color:#c792ea">sizeof</span>(zahlen) / <span style="color:#c792ea">sizeof</span>(zahlen[<span style="color:#f78c6c">0</span>]);   /* <span style="color:#f78c6c">5</span> */
+
+/* Iterieren */
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; len; i++) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, zahlen[i]);
+}
+
+/* <span style="color:#f78c6c">2D</span>-Array */
+<span style="color:#c792ea">int</span> matrix[<span style="color:#f78c6c">3</span>][<span style="color:#f78c6c">4</span>] = {
+    {<span style="color:#f78c6c">1</span>,  <span style="color:#f78c6c">2</span>,  <span style="color:#f78c6c">3</span>,  <span style="color:#f78c6c">4</span>},
+    {<span style="color:#f78c6c">5</span>,  <span style="color:#f78c6c">6</span>,  <span style="color:#f78c6c">7</span>,  <span style="color:#f78c6c">8</span>},
+    {<span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">11</span>, <span style="color:#f78c6c">12</span>}
+};
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, matrix[<span style="color:#f78c6c">1</span>][<span style="color:#f78c6c">2</span>]);   /* <span style="color:#f78c6c">7</span> */
+
+/* Als Funktionsparameter: Größe mitgeben! */
+<span style="color:#c792ea">void</span> drucke_array(<span style="color:#c792ea">const</span> <span style="color:#c792ea">int</span> *arr, <span style="color:#c792ea">int</span> len) {
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; len; i++) <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, arr[i]);
+}
+
+/* ── Strings ──────────────────────────────────────────────── */
+/* Strings in C = null-terminierte <span style="color:#c792ea">char</span>-Arrays */
+<span style="color:#c792ea">char</span> gruss[] = <span style="color:#c3e88d">"Hallo"</span>;      /* {<span style="color:#c3e88d">'H'</span>,<span style="color:#c3e88d">'a'</span>,<span style="color:#c3e88d">'l'</span>,<span style="color:#c3e88d">'l'</span>,<span style="color:#c3e88d">'o'</span>,<span style="color:#c3e88d">'\0'</span>} – <span style="color:#f78c6c">6</span> Bytes! */
+<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *lit = <span style="color:#c3e88d">"Literal"</span>; /* Zeiger auf String-Literal (read-only!) */
+
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Länge: %zu\n"</span>, <span style="color:#82aaff">strlen</span>(gruss));    /* <span style="color:#f78c6c">5</span> (ohne \<span style="color:#f78c6c">0</span>) */
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Größe: %zu\n"</span>, <span style="color:#c792ea">sizeof</span>(gruss));    /* <span style="color:#f78c6c">6</span> (mit \<span style="color:#f78c6c">0</span>) */
+
+/* Sicheres Kopieren */
+<span style="color:#c792ea">char</span> ziel[<span style="color:#f78c6c">32</span>];
+<span style="color:#82aaff">snprintf</span>(ziel, <span style="color:#c792ea">sizeof</span>(ziel), <span style="color:#c3e88d">"%s!"</span>, gruss);   /* <span style="color:#c3e88d">"Hallo!"</span> */
+
+/* String-Vergleich – <span style="color:#f78c6c">NICHT</span> mit ==! */
+<span style="color:#c792ea">if</span> (<span style="color:#82aaff">strcmp</span>(gruss, <span style="color:#c3e88d">"Hallo"</span>) == <span style="color:#f78c6c">0</span>) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Gleich!\n"</span>);
+}
+
+/* String zusammensetzen */
+<span style="color:#c792ea">char</span> vollname[<span style="color:#f78c6c">64</span>];
+<span style="color:#82aaff">snprintf</span>(vollname, <span style="color:#c792ea">sizeof</span>(vollname), <span style="color:#c3e88d">"%s %s"</span>, vorname, nachname);</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-st2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('st2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Structs als Werte &amp; Zeiger
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="structs als werte &amp; zeiger">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Structs als Werte &amp; Zeiger
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* In C werden structs by-value kopiert (wie <span style="color:#c792ea">int</span>) */
+Person original = {<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>};
+Person kopie    = original;         /* Vollständige Kopie! */
+kopie.alter     = <span style="color:#f78c6c">31</span>;               /* Ändert <span style="color:#f78c6c">NICHT</span> original */
+
+/* Bei Funktionen: by-value = Kopie, by-pointer = Original */
+<span style="color:#c792ea">void</span> geburtstagsfeier_falsch(Person p) {
+    p.alter++;   /* Ändert nur die lokale Kopie! */
+}
+
+<span style="color:#c792ea">void</span> geburtstagsfeier_richtig(Person *p) {
+    p<span style="color:#89ddff">-&gt;</span>alter++;   /* Ändert das Original */
+}
+
+geburtstagsfeier_richtig(&amp;original);
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>, original.alter);   /* <span style="color:#f78c6c">31</span> */
+
+/* Große Structs: immer als Zeiger übergeben */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">double</span> matrix[<span style="color:#f78c6c">1000</span>][<span style="color:#f78c6c">1000</span>];   /* <span style="color:#f78c6c">8</span> <span style="color:#f78c6c">MB</span>! */
+} HugeStruct;
+
+<span style="color:#c792ea">void</span> verarbeite(<span style="color:#c792ea">const</span> HugeStruct *hs) {   /* Nur <span style="color:#f78c6c">8</span> Bytes: Zeiger */
+    /* statt HugeStruct hs (<span style="color:#f78c6c">8</span><span style="color:#f78c6c">MB</span> kopieren!) */
+}
+
+/* Flexible Array Members (<span style="color:#f78c6c">C99</span>+) */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">int</span>   len;
+    <span style="color:#c792ea">int</span>   daten[];   /* Muss letztes Feld sein */
+} DynArray;
+
+DynArray *arr = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(DynArray) + <span style="color:#f78c6c">10</span> * <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+arr<span style="color:#89ddff">-&gt;</span>len = <span style="color:#f78c6c">10</span>;
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) arr<span style="color:#89ddff">-&gt;</span>daten[i] = i;</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>printf &amp; scanf – Formatspezifizierer
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Format</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4ec9b0">%d / %i</code></td><td style="color:#cdd6f4">int (dezimal)</td><td style="color:#6c7a8e">printf("%d", 42)  → "42"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%u</code></td><td style="color:#cdd6f4">unsigned int</td><td style="color:#6c7a8e">printf("%u", 42u)</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%ld / %lld</code></td><td style="color:#cdd6f4">long / long long</td><td style="color:#6c7a8e">printf("%lld", 123LL)</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%f</code></td><td style="color:#cdd6f4">double (dezimal)</td><td style="color:#6c7a8e">printf("%f", 3.14)  → "3.140000"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%e</code></td><td style="color:#cdd6f4">double (wissenschaftlich)</td><td style="color:#6c7a8e">printf("%e", 3.14)  → "3.14e+00"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%g</code></td><td style="color:#cdd6f4">Kürzere von %f und %e</td><td style="color:#6c7a8e">printf("%g", 3.14)  → "3.14"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%.2f</code></td><td style="color:#cdd6f4">float mit 2 Dezimalstellen</td><td style="color:#6c7a8e">printf("%.2f", 3.14159) → "3.14"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%5d</code></td><td style="color:#cdd6f4">Mindestbreite 5 (rechtsbündig)</td><td style="color:#6c7a8e">printf("%5d", 42) → "   42"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%-5d</code></td><td style="color:#cdd6f4">Mindestbreite 5 (linksbündig)</td><td style="color:#6c7a8e">printf("%-5d", 42) → "42   "</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%05d</code></td><td style="color:#cdd6f4">Mit führenden Nullen</td><td style="color:#6c7a8e">printf("%05d", 42) → "00042"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%s</code></td><td style="color:#cdd6f4">String (null-terminiert)</td><td style="color:#6c7a8e">printf("%s", "hi")</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%c</code></td><td style="color:#cdd6f4">Einzelnes Zeichen</td><td style="color:#6c7a8e">printf("%c", 65) → "A"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%p</code></td><td style="color:#cdd6f4">Zeiger-Adresse (hex)</td><td style="color:#6c7a8e">printf("%p", &amp;x)</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%x / %X</code></td><td style="color:#cdd6f4">unsigned int (hexadezimal)</td><td style="color:#6c7a8e">printf("%x", 255) → "ff"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%o</code></td><td style="color:#cdd6f4">unsigned int (oktal)</td><td style="color:#6c7a8e">printf("%o", 8) → "10"</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%zu</code></td><td style="color:#cdd6f4">size_t</td><td style="color:#6c7a8e">printf("%zu", sizeof(int))</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">%%</code></td><td style="color:#cdd6f4">Literales Prozent-Zeichen</td><td style="color:#6c7a8e">printf("100%%")  → "100%"</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datei-I/O
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="datei-i/o">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Datei-I/O
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdio.h&gt;</span>
+
+/* Datei öffnen */
+<span style="color:#f78c6c">FILE</span> *f = <span style="color:#82aaff">fopen</span>(<span style="color:#c3e88d">"datei.txt"</span>, <span style="color:#c3e88d">"r"</span>);   /* r=lesen, w=schreiben, a=anhängen */
+<span style="color:#c792ea">if</span> (f == <span style="color:#c792ea">NULL</span>) {
+    <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"fopen"</span>);    /* gibt Fehlermeldung aus */
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>;
+}
+
+/* Zeilenweise lesen */
+<span style="color:#c792ea">char</span> zeile[<span style="color:#f78c6c">256</span>];
+<span style="color:#c792ea">while</span> (<span style="color:#82aaff">fgets</span>(zeile, <span style="color:#c792ea">sizeof</span>(zeile), f) != <span style="color:#c792ea">NULL</span>) {
+    /* Newline entfernen */
+    zeile[strcspn(zeile, <span style="color:#c3e88d">"\n"</span>)] = <span style="color:#c3e88d">'\0'</span>;
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%s\n"</span>, zeile);
+}
+
+<span style="color:#82aaff">fclose</span>(f);
+
+/* Schreiben */
+<span style="color:#f78c6c">FILE</span> *out = <span style="color:#82aaff">fopen</span>(<span style="color:#c3e88d">"ausgabe.txt"</span>, <span style="color:#c3e88d">"w"</span>);
+<span style="color:#c792ea">if</span> (!out) { <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"fopen"</span>); <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>; }
+
+<span style="color:#82aaff">fprintf</span>(out, <span style="color:#c3e88d">"Name: %s, Alter: %d\n"</span>, name, alter);
+<span style="color:#82aaff">fputs</span>(<span style="color:#c3e88d">"Letzte Zeile\n"</span>, out);
+
+<span style="color:#82aaff">fclose</span>(out);
+
+/* Binär-I/O */
+<span style="color:#f78c6c">FILE</span> *bin = <span style="color:#82aaff">fopen</span>(<span style="color:#c3e88d">"daten.bin"</span>, <span style="color:#c3e88d">"wb"</span>);
+<span style="color:#c792ea">int</span> zahlen[] = {<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>};
+<span style="color:#82aaff">fwrite</span>(zahlen, <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>), <span style="color:#f78c6c">5</span>, bin);   /* <span style="color:#f78c6c">5</span> Ints schreiben */
+<span style="color:#82aaff">fclose</span>(bin);
+
+bin = <span style="color:#82aaff">fopen</span>(<span style="color:#c3e88d">"daten.bin"</span>, <span style="color:#c3e88d">"rb"</span>);
+<span style="color:#c792ea">int</span> gelesen[<span style="color:#f78c6c">5</span>];
+<span style="color:#82aaff">fread</span>(gelesen, <span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>), <span style="color:#f78c6c">5</span>, bin);   /* <span style="color:#f78c6c">5</span> Ints lesen */
+<span style="color:#82aaff">fclose</span>(bin);
+
+/* tmpfile – temporäre Datei */
+<span style="color:#f78c6c">FILE</span> *tmp = tmpfile();   /* Wird bei <span style="color:#82aaff">fclose</span>() gelöscht */
+
+/* Datei-Position */
+<span style="color:#c792ea">long</span> pos = <span style="color:#82aaff">ftell</span>(f);          /* Aktuelle Position */
+<span style="color:#82aaff">fseek</span>(f, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">SEEK_SET</span>);        /* Zum Anfang */
+<span style="color:#82aaff">fseek</span>(f, -<span style="color:#f78c6c">10</span>, <span style="color:#f78c6c">SEEK_END</span>);      /* <span style="color:#f78c6c">10</span> Bytes vor Ende */
+<span style="color:#82aaff">rewind</span>(f);                    /* = <span style="color:#82aaff">fseek</span>(f, <span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">SEEK_SET</span>) */</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib2"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>string.h &amp; stdlib.h
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Format</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">strlen(s)</code></td><td style="color:#cdd6f4">Länge ohne \0</td><td style="color:#6c7a8e">strlen("hi") → 2</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strcpy(dst, src)</code></td><td style="color:#cdd6f4">Kopieren (gefährlich!)</td><td style="color:#6c7a8e">Nimm stattdessen strncpy oder snprintf</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strncpy(d, s, n)</code></td><td style="color:#cdd6f4">Sicheres Kopieren (max n Zeichen)</td><td style="color:#6c7a8e">Achtung: \0 nicht garantiert!</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strcat(dst, src)</code></td><td style="color:#cdd6f4">Anhängen (gefährlich!)</td><td style="color:#6c7a8e">Nimm stattdessen strncat</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strncat(d, s, n)</code></td><td style="color:#cdd6f4">Sicheres Anhängen</td><td style="color:#6c7a8e">n = max anzufügende Zeichen</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strcmp(a, b)</code></td><td style="color:#cdd6f4">Vergleich: &lt;0 / 0 / &gt;0</td><td style="color:#6c7a8e">0 = gleich. NICHT == !</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strncmp(a, b, n)</code></td><td style="color:#cdd6f4">Vergleich (max n Zeichen)</td><td style="color:#6c7a8e">Für Teilstring-Vergleich</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strchr(s, c)</code></td><td style="color:#cdd6f4">Erstes Zeichen c suchen → Zeiger</td><td style="color:#6c7a8e">NULL wenn nicht gefunden</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strrchr(s, c)</code></td><td style="color:#cdd6f4">Letztes Zeichen c suchen → Zeiger</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#ffb347">strstr(hay, needle)</code></td><td style="color:#cdd6f4">Substring suchen → Zeiger</td><td style="color:#6c7a8e">NULL wenn nicht gefunden</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strtok(s, delim)</code></td><td style="color:#cdd6f4">String tokenisieren (modifiziert!)</td><td style="color:#6c7a8e">NULL für folgende Aufrufe</td></tr><tr><td style="width:220px"><code style="color:#ffb347">memset(ptr, val, n)</code></td><td style="color:#cdd6f4">Speicher füllen</td><td style="color:#6c7a8e">memset(arr, 0, sizeof(arr))</td></tr><tr><td style="width:220px"><code style="color:#ffb347">memcpy(dst, src, n)</code></td><td style="color:#cdd6f4">Speicher kopieren (kein Overlap)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#ffb347">memmove(d, s, n)</code></td><td style="color:#cdd6f4">Wie memcpy aber Overlap-sicher</td><td style="color:#6c7a8e">Bei überlappenden Bereichen</td></tr><tr><td style="width:220px"><code style="color:#ffb347">memcmp(a, b, n)</code></td><td style="color:#cdd6f4">Speicher vergleichen</td><td style="color:#6c7a8e">0 = gleich</td></tr><tr><td style="width:220px"><code style="color:#ffb347">atoi(s)</code></td><td style="color:#cdd6f4">String → int</td><td style="color:#6c7a8e">atoi("42") → 42. Kein Fehler bei Fehler!</td></tr><tr><td style="width:220px"><code style="color:#ffb347">strtol(s, &amp;end, base)</code></td><td style="color:#cdd6f4">Sicherer als atoi</td><td style="color:#6c7a8e">Fehlerprüfung via errno und end</td></tr><tr><td style="width:220px"><code style="color:#ffb347">qsort(arr, n, sz, cmp)</code></td><td style="color:#cdd6f4">Array sortieren</td><td style="color:#6c7a8e">Eigene Vergleichsfunktion</td></tr><tr><td style="width:220px"><code style="color:#ffb347">bsearch(key, arr, n, sz, cmp)</code></td><td style="color:#cdd6f4">Binäre Suche (sortiert!)</td><td style="color:#6c7a8e">NULL wenn nicht gefunden</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-modern" class="tp">
+
+<div class="ac open" id="ac-mod0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>C99 – Wichtige Features
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="c99 – wichtige features">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    C99 – Wichtige Features
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Variable Declaration mitten im Code (nicht nur am Anfang) */
+<span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) {   /* i deklariert im <span style="color:#c792ea">for</span>! */
+    <span style="color:#c792ea">int</span> tmp = berechne(i);        /* mitten im Block */
+}
+
+/* Designated Initializers */
+<span style="color:#c792ea">int</span> arr[<span style="color:#f78c6c">10</span>] = {[<span style="color:#f78c6c">3</span>] = <span style="color:#f78c6c">42</span>, [<span style="color:#f78c6c">7</span>] = <span style="color:#f78c6c">99</span>};   /* Rest = <span style="color:#f78c6c">0</span> */
+<span style="color:#c792ea">struct</span> Punkt p = {.x = <span style="color:#f78c6c">1.0</span>, .y = <span style="color:#f78c6c">2.0</span>};
+
+/* Compound Literals */
+berechne((<span style="color:#c792ea">struct</span> Punkt){.x = <span style="color:#f78c6c">3.0</span>, .y = <span style="color:#f78c6c">4.0</span>});   /* Temporäres Struct */
+summe((<span style="color:#c792ea">int</span>[]){<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>}, <span style="color:#f78c6c">5</span>);               /* Temporäres Array */
+
+/* Variable Length Arrays (<span style="color:#f78c6c">VLA</span>) – optional in <span style="color:#f78c6c">C11</span>! */
+<span style="color:#c792ea">int</span> n = einlesen();
+<span style="color:#c792ea">int</span> arr[n];   /* Größe zur Laufzeit – Achtung: kein <span style="color:#c792ea">sizeof</span>-Kompilierzeitwert */
+
+/* <span style="color:#546e7a">// Kommentare */</span>
+<span style="color:#546e7a">// Einzeilige Kommentare sind in C99 erlaubt</span>
+
+/* <span style="color:#c792ea">bool</span> */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdbool.h&gt;</span>
+<span style="color:#c792ea">bool</span> fertig = <span style="color:#c792ea">false</span>;
+<span style="color:#c792ea">if</span> (!fertig) { /* ... */ }
+
+/* Flexible Array Members */
+<span style="color:#c792ea">struct</span> DynBuffer {
+    size_t len;
+    <span style="color:#c792ea">char</span>   daten[];   /* <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(DynBuffer) + len) */
+};
+
+/* <span style="color:#c792ea">restrict</span> – Zeiger überlappen sich nicht */
+<span style="color:#c792ea">void</span> memcpy_eigen(<span style="color:#c792ea">void</span> *<span style="color:#c792ea">restrict</span> dst, <span style="color:#c792ea">const</span> <span style="color:#c792ea">void</span> *<span style="color:#c792ea">restrict</span> src, size_t n);
+
+/* <span style="color:#c792ea">inline</span> */
+<span style="color:#c792ea">static</span> <span style="color:#c792ea">inline</span> <span style="color:#c792ea">int</span> quadrat(<span style="color:#c792ea">int</span> x) { <span style="color:#c792ea">return</span> x * x; }</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>C11 – Threads, Generics, Assert
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="c11 – threads, generics, assert">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    C11 – Threads, Generics, Assert
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* <span style="color:#c792ea">_Generic</span> – Compile-Zeit-Dispatch (wie Überladen) */
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> ABS(x) _Generic((x),     int:    abs(x),               long:   labs(x),              float:  fabsf(x),             double: fabs(x)           )</span>
+
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d\n"</span>,  <span style="color:#f78c6c">ABS</span>(-<span style="color:#f78c6c">42</span>));      /* <span style="color:#82aaff">abs</span>(-<span style="color:#f78c6c">42</span>) */
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%f\n"</span>,  <span style="color:#f78c6c">ABS</span>(-<span style="color:#f78c6c">3.14</span>));    /* <span style="color:#82aaff">fabs</span>(-<span style="color:#f78c6c">3.14</span>) */
+
+/* <span style="color:#c792ea">_Static_assert</span> */
+<span style="color:#c792ea">_Static_assert</span>(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>) == <span style="color:#f78c6c">4</span>, <span style="color:#c3e88d">"int muss 4 Bytes sein"</span>);
+<span style="color:#c792ea">_Static_assert</span>(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">long</span>) &gt;= <span style="color:#f78c6c">8</span>, <span style="color:#c3e88d">"64-Bit System erwartet"</span>);
+
+/* Threads (<span style="color:#f78c6c">C11</span>) – optional */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;threads.h&gt;</span>
+
+<span style="color:#c792ea">int</span> worker(<span style="color:#c792ea">void</span> *arg) {
+    <span style="color:#c792ea">int</span> id = *(<span style="color:#c792ea">int</span> *)arg;
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Thread %d läuft\n"</span>, id);
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;
+}
+
+thrd_t t;
+<span style="color:#c792ea">int</span> id = <span style="color:#f78c6c">1</span>;
+thrd_create(&amp;t, worker, &amp;id);
+thrd_join(t, <span style="color:#c792ea">NULL</span>);
+
+/* Atomics (<span style="color:#f78c6c">C11</span>) */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdatomic.h&gt;</span>
+atomic_int zaehler = <span style="color:#f78c6c">ATOMIC_VAR_INIT</span>(<span style="color:#f78c6c">0</span>);
+atomic_fetch_add(&amp;zaehler, <span style="color:#f78c6c">1</span>);
+<span style="color:#c792ea">int</span> val = atomic_load(&amp;zaehler);
+
+/* Anonymous structs/unions (<span style="color:#f78c6c">C11</span>) */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">union</span> {
+        <span style="color:#c792ea">struct</span> { <span style="color:#c792ea">float</span> x, y, z; };   /* Zugriff als v.x */
+        <span style="color:#c792ea">float</span> arr[<span style="color:#f78c6c">3</span>];                  /* Zugriff als v.arr[<span style="color:#f78c6c">0</span>] */
+    };
+} Vec3;
+
+Vec3 v = {.x = <span style="color:#f78c6c">1</span>, .y = <span style="color:#f78c6c">2</span>, .z = <span style="color:#f78c6c">3</span>};
+<span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%.1f\n"</span>, v.arr[<span style="color:#f78c6c">1</span>]);   /* <span style="color:#f78c6c">2.0</span> */</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>C23 – Neue Features
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="c23 – neue features">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    C23 – Neue Features
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* typeof (<span style="color:#f78c6c">C23</span>, gcc-Extension vorher) */
+typeof(<span style="color:#f78c6c">3.14</span>) x = <span style="color:#f78c6c">1.5</span>;     /* x ist <span style="color:#c792ea">double</span> */
+typeof(*ptr) val = *ptr;   /* gleicher Typ wie *ptr */
+
+/* constexpr (<span style="color:#f78c6c">C23</span>) */
+constexpr <span style="color:#c792ea">int</span> <span style="color:#f78c6c">MAX</span> = <span style="color:#f78c6c">100</span>;   /* wie <span style="color:#c792ea">const</span> aber strikter */
+
+/* <span style="color:#c792ea">auto</span> (<span style="color:#f78c6c">C23</span>) – Typ-Inferenz */
+<span style="color:#c792ea">auto</span> x = <span style="color:#f78c6c">42</span>;           /* <span style="color:#c792ea">int</span> */
+<span style="color:#c792ea">auto</span> y = <span style="color:#f78c6c">3.14</span>;         /* <span style="color:#c792ea">double</span> */
+<span style="color:#c792ea">auto</span> s = <span style="color:#c3e88d">"Hallo"</span>;      /* <span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> * */
+
+/* nullptr (<span style="color:#f78c6c">C23</span>) – wie <span style="color:#c792ea">NULL</span> aber typssicherer */
+<span style="color:#c792ea">int</span> *p = nullptr;
+
+/* <span style="color:#c792ea">bool</span>, <span style="color:#c792ea">true</span>, <span style="color:#c792ea">false</span> ohne &lt;stdbool.h&gt; (<span style="color:#f78c6c">C23</span>) */
+<span style="color:#c792ea">bool</span> fertig = <span style="color:#c792ea">true</span>;
+
+/* [[noreturn]] Attribut (<span style="color:#f78c6c">C23</span>-Stil) */
+[[noreturn]] <span style="color:#c792ea">void</span> fail(<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *msg) {
+    <span style="color:#82aaff">fprintf</span>(stderr, <span style="color:#c3e88d">"FATAL: %s\n"</span>, msg);
+    <span style="color:#82aaff">exit</span>(<span style="color:#f78c6c">1</span>);
+}
+
+/* Leere Parameterliste (<span style="color:#f78c6c">C23</span>) */
+<span style="color:#c792ea">void</span> keine_args(<span style="color:#c792ea">void</span>) { }   /* <span style="color:#f78c6c">C17</span>: explizites <span style="color:#c792ea">void</span> */
+<span style="color:#c792ea">void</span> keine_args() { }       /* <span style="color:#f78c6c">C23</span>: wie <span style="color:#c792ea">void</span>, jetzt offiziell */
+
+/* Binäre Literale (<span style="color:#f78c6c">C23</span>) */
+<span style="color:#c792ea">int</span> flags = <span style="color:#f78c6c">0b10110011</span>;     /* = <span style="color:#f78c6c">0xB3</span> = <span style="color:#f78c6c">179</span> */
+
+/* #elifdef / #elifndef (<span style="color:#f78c6c">C23</span>) */
+<span style="color:#ff9800">#ifdef</span><span style="color:#ff9800"> FEATURE_A</span>
+    /* ... */
+<span style="color:#ff9800">#elifdef FEATURE_B</span>
+    /* ... */
+<span style="color:#ff9800">#endif</span><span style="color:#ff9800"></span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-mod3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('mod3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung ohne Exceptions
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung ohne exceptions">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung ohne Exceptions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* C hat keine Exceptions – Fehler werden als Rückgabewerte behandelt */
+
+/* ── Rückgabewert-Konvention ─────────────────────────── */
+/* <span style="color:#f78c6c">0</span> = Erfolg, negative Werte = Fehler (<span style="color:#f78c6c">POSIX</span>-Konvention) */
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">enum</span> {
+    <span style="color:#f78c6c">ERR_OK</span>           =  <span style="color:#f78c6c">0</span>,
+    <span style="color:#f78c6c">ERR_NULL_PTR</span>     = -<span style="color:#f78c6c">1</span>,
+    <span style="color:#f78c6c">ERR_UNGÜLTIG</span>     = -<span style="color:#f78c6c">2</span>,
+    <span style="color:#f78c6c">ERR_KEIN_SPEICH</span>  = -<span style="color:#f78c6c">3</span>,
+    <span style="color:#f78c6c">ERR_IO</span>           = -<span style="color:#f78c6c">4</span>,
+} Fehler;
+
+Fehler verarbeite(<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *pfad, <span style="color:#c792ea">int</span> **out_daten, <span style="color:#c792ea">int</span> *out_len) {
+    <span style="color:#c792ea">if</span> (!pfad || !out_daten || !out_len) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">ERR_NULL_PTR</span>;
+
+    <span style="color:#f78c6c">FILE</span> *f = <span style="color:#82aaff">fopen</span>(pfad, <span style="color:#c3e88d">"rb"</span>);
+    <span style="color:#c792ea">if</span> (!f) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">ERR_IO</span>;
+
+    /* ... Verarbeitung ... */
+    <span style="color:#82aaff">fclose</span>(f);
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">ERR_OK</span>;
+}
+
+/* ── errno ───────────────────────────────────────────── */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;errno.h&gt;</span>
+
+<span style="color:#f78c6c">FILE</span> *f = <span style="color:#82aaff">fopen</span>(<span style="color:#c3e88d">"nicht_da.txt"</span>, <span style="color:#c3e88d">"r"</span>);
+<span style="color:#c792ea">if</span> (!f) {
+    /* errno enthält den Fehlercode (<span style="color:#f78c6c">ENOENT</span>, <span style="color:#f78c6c">EACCES</span>, etc.) */
+    <span style="color:#82aaff">fprintf</span>(stderr, <span style="color:#c3e88d">"Fehler %d: %s\n"</span>, errno, strerror(errno));
+    <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"fopen"</span>);   /* Kurzform: gibt <span style="color:#c3e88d">"fopen: No such file..."</span> aus */
+}
+
+/* ── <span style="color:#82aaff">assert</span> für Programmierfehler ────────────────────── */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;assert.h&gt;</span>
+
+<span style="color:#c792ea">void</span> setze_alter(Person *p, <span style="color:#c792ea">int</span> alter) {
+    <span style="color:#82aaff">assert</span>(p != <span style="color:#c792ea">NULL</span>);
+    <span style="color:#82aaff">assert</span>(alter &gt;= <span style="color:#f78c6c">0</span> &amp;&amp; alter &lt;= <span style="color:#f78c6c">150</span>);
+    p<span style="color:#89ddff">-&gt;</span>alter = alter;
+}
+/* <span style="color:#82aaff">assert</span> wird in Release deaktiviert: -<span style="color:#f78c6c">DNDEBUG</span> */
+
+/* ── setjmp/longjmp ──────────────────────────────────── */
+/* Für seltene <span style="color:#c3e88d">"Exception"</span>-ähnliche Strukturen */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;setjmp.h&gt;</span>
+
+jmp_buf fehler_punkt;
+
+<span style="color:#c792ea">void</span> tief_verschachtelt(<span style="color:#c792ea">void</span>) {
+    /* Fehler: direkt aus allen Ebenen springen */
+    longjmp(fehler_punkt, <span style="color:#f78c6c">1</span>);
+}
+
+<span style="color:#c792ea">if</span> (setjmp(fehler_punkt) == <span style="color:#f78c6c">0</span>) {
+    tief_verschachtelt();
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Kein Fehler\n"</span>);
+} <span style="color:#c792ea">else</span> {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Fehler aufgefangen!\n"</span>);
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #a8b9cc;color:#a8b9cc;background:rgba(168,185,204,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Verkettete Liste</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generischer Vektor (Dynamic Array)</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Hash Map</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Datei-Parser</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdio.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdlib.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string.h&gt;</span>
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> Knoten {
+    <span style="color:#c792ea">int</span>            wert;
+    <span style="color:#c792ea">struct</span> Knoten *naechster;
+} Knoten;
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    Knoten *kopf;
+    size_t  laenge;
+} Liste;
+
+/* Vorne einfügen */
+<span style="color:#c792ea">void</span> liste_push(Liste *l, <span style="color:#c792ea">int</span> wert) {
+    Knoten *neu = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(Knoten));
+    <span style="color:#c792ea">if</span> (!neu) { <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"malloc"</span>); <span style="color:#82aaff">exit</span>(<span style="color:#f78c6c">1</span>); }
+    neu<span style="color:#89ddff">-&gt;</span>wert       = wert;
+    neu<span style="color:#89ddff">-&gt;</span>naechster  = l<span style="color:#89ddff">-&gt;</span>kopf;
+    l<span style="color:#89ddff">-&gt;</span>kopf         = neu;
+    l<span style="color:#89ddff">-&gt;</span>laenge++;
+}
+
+/* Vorne entfernen */
+<span style="color:#c792ea">int</span> liste_pop(Liste *l) {
+    <span style="color:#c792ea">if</span> (!l<span style="color:#89ddff">-&gt;</span>kopf) <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;   /* Fehler: leere Liste */
+    Knoten *alt = l<span style="color:#89ddff">-&gt;</span>kopf;
+    <span style="color:#c792ea">int</span> wert    = alt<span style="color:#89ddff">-&gt;</span>wert;
+    l<span style="color:#89ddff">-&gt;</span>kopf     = alt<span style="color:#89ddff">-&gt;</span>naechster;
+    <span style="color:#82aaff">free</span>(alt);
+    l<span style="color:#89ddff">-&gt;</span>laenge--;
+    <span style="color:#c792ea">return</span> wert;
+}
+
+/* Ausgeben */
+<span style="color:#c792ea">void</span> liste_print(<span style="color:#c792ea">const</span> Liste *l) {
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"["</span>);
+    <span style="color:#c792ea">for</span> (Knoten *n = l<span style="color:#89ddff">-&gt;</span>kopf; n; n = n<span style="color:#89ddff">-&gt;</span>naechster) {
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d%s"</span>, n<span style="color:#89ddff">-&gt;</span>wert, n<span style="color:#89ddff">-&gt;</span>naechster ? <span style="color:#c3e88d">" -&gt; "</span> : <span style="color:#c3e88d">""</span>);
+    }
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"]\n"</span>);
+}
+
+/* Alle freigeben */
+<span style="color:#c792ea">void</span> liste_frei(Liste *l) {
+    <span style="color:#c792ea">while</span> (l<span style="color:#89ddff">-&gt;</span>kopf) liste_pop(l);
+}
+
+<span style="color:#c792ea">int</span> main(<span style="color:#c792ea">void</span>) {
+    Liste l = {<span style="color:#c792ea">NULL</span>, <span style="color:#f78c6c">0</span>};
+
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">1</span>; i &lt;= <span style="color:#f78c6c">5</span>; i++) liste_push(&amp;l, i * <span style="color:#f78c6c">10</span>);
+    liste_print(&amp;l);          /* [<span style="color:#f78c6c">50</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">40</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">30</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">20</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">10</span>] */
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Länge: %zu\n"</span>, l.laenge);
+
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Pop: %d\n"</span>, liste_pop(&amp;l));   /* <span style="color:#f78c6c">50</span> */
+    liste_print(&amp;l);          /* [<span style="color:#f78c6c">40</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">30</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">20</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#f78c6c">10</span>] */
+
+    liste_frei(&amp;l);
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdio.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdlib.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string.h&gt;</span>
+
+/* Generischer Vektor – speichert beliebige Typen */
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">void</span>   *daten;        /* Roher Speicher */
+    size_t  len;          /* Anzahl Elemente */
+    size_t  cap;          /* Kapazität */
+    size_t  element_size; /* Bytes pro Element */
+} Vektor;
+
+Vektor vektor_neu(size_t element_size) {
+    <span style="color:#c792ea">return</span> (Vektor){
+        .daten        = <span style="color:#c792ea">NULL</span>,
+        .len          = <span style="color:#f78c6c">0</span>,
+        .cap          = <span style="color:#f78c6c">0</span>,
+        .element_size = element_size,
+    };
+}
+
+<span style="color:#c792ea">void</span> vektor_push(Vektor *v, <span style="color:#c792ea">const</span> <span style="color:#c792ea">void</span> *element) {
+    <span style="color:#c792ea">if</span> (v<span style="color:#89ddff">-&gt;</span>len == v<span style="color:#89ddff">-&gt;</span>cap) {
+        v<span style="color:#89ddff">-&gt;</span>cap  = v<span style="color:#89ddff">-&gt;</span>cap == <span style="color:#f78c6c">0</span> ? <span style="color:#f78c6c">8</span> : v<span style="color:#89ddff">-&gt;</span>cap * <span style="color:#f78c6c">2</span>;
+        v<span style="color:#89ddff">-&gt;</span>daten = <span style="color:#82aaff">realloc</span>(v<span style="color:#89ddff">-&gt;</span>daten, v<span style="color:#89ddff">-&gt;</span>cap * v<span style="color:#89ddff">-&gt;</span>element_size);
+        <span style="color:#c792ea">if</span> (!v<span style="color:#89ddff">-&gt;</span>daten) { <span style="color:#82aaff">perror</span>(<span style="color:#c3e88d">"realloc"</span>); <span style="color:#82aaff">exit</span>(<span style="color:#f78c6c">1</span>); }
+    }
+    /* Byte-Arithmetik über <span style="color:#c792ea">char</span>* */
+    <span style="color:#c792ea">char</span> *ziel = (<span style="color:#c792ea">char</span> *)v<span style="color:#89ddff">-&gt;</span>daten + v<span style="color:#89ddff">-&gt;</span>len * v<span style="color:#89ddff">-&gt;</span>element_size;
+    <span style="color:#82aaff">memcpy</span>(ziel, element, v<span style="color:#89ddff">-&gt;</span>element_size);
+    v<span style="color:#89ddff">-&gt;</span>len++;
+}
+
+<span style="color:#c792ea">void</span> *vektor_get(<span style="color:#c792ea">const</span> Vektor *v, size_t idx) {
+    <span style="color:#c792ea">if</span> (idx &gt;= v<span style="color:#89ddff">-&gt;</span>len) <span style="color:#c792ea">return</span> <span style="color:#c792ea">NULL</span>;
+    <span style="color:#c792ea">return</span> (<span style="color:#c792ea">char</span> *)v<span style="color:#89ddff">-&gt;</span>daten + idx * v<span style="color:#89ddff">-&gt;</span>element_size;
+}
+
+<span style="color:#c792ea">void</span> vektor_frei(Vektor *v) {
+    <span style="color:#82aaff">free</span>(v<span style="color:#89ddff">-&gt;</span>daten);
+    *v = vektor_neu(v<span style="color:#89ddff">-&gt;</span>element_size);
+}
+
+/* Makros für typsichere Nutzung */
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> VEC_PUSH(v, val)  do { typeof(val) _v = (val); vektor_push((v), &amp;_v); } while(0)</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> VEC_GET(v, T, i)  (*(T *)vektor_get((v), (i)))</span>
+
+<span style="color:#c792ea">int</span> main(<span style="color:#c792ea">void</span>) {
+    Vektor v = vektor_neu(<span style="color:#c792ea">sizeof</span>(<span style="color:#c792ea">int</span>));
+
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">10</span>; i++) <span style="color:#f78c6c">VEC_PUSH</span>(&amp;v, i * i);
+
+    <span style="color:#c792ea">for</span> (size_t i = <span style="color:#f78c6c">0</span>; i &lt; v.len; i++) {
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"%d "</span>, <span style="color:#f78c6c">VEC_GET</span>(&amp;v, <span style="color:#c792ea">int</span>, i));
+    }
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"\n"</span>);   /* <span style="color:#f78c6c">0</span> <span style="color:#f78c6c">1</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">9</span> <span style="color:#f78c6c">16</span> <span style="color:#f78c6c">25</span> <span style="color:#f78c6c">36</span> <span style="color:#f78c6c">49</span> <span style="color:#f78c6c">64</span> <span style="color:#f78c6c">81</span> */
+
+    vektor_frei(&amp;v);
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;
+}</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdio.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdlib.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string.h&gt;</span>
+
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> TABELLE_GROESSE 64</span>
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> Eintrag {
+    <span style="color:#c792ea">char</span>          *key;
+    <span style="color:#c792ea">int</span>            wert;
+    <span style="color:#c792ea">struct</span> Eintrag *naechster;   /* Für Kollisions-Chaining */
+} Eintrag;
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    Eintrag *buckets[<span style="color:#f78c6c">TABELLE_GROESSE</span>];
+} HashMap;
+
+/* <span style="color:#f78c6c">DJB2</span> Hash-Funktion */
+<span style="color:#c792ea">static</span> <span style="color:#c792ea">unsigned</span> <span style="color:#c792ea">int</span> hash(<span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *key) {
+    <span style="color:#c792ea">unsigned</span> <span style="color:#c792ea">int</span> h = <span style="color:#f78c6c">5381</span>;
+    <span style="color:#c792ea">while</span> (*key) h = ((h &lt;&lt; <span style="color:#f78c6c">5</span>) + h) + (<span style="color:#c792ea">unsigned</span> <span style="color:#c792ea">char</span>)*key++;
+    <span style="color:#c792ea">return</span> h % <span style="color:#f78c6c">TABELLE_GROESSE</span>;
+}
+
+<span style="color:#c792ea">void</span> map_set(HashMap *m, <span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *key, <span style="color:#c792ea">int</span> wert) {
+    <span style="color:#c792ea">unsigned</span> <span style="color:#c792ea">int</span> idx = hash(key);
+    Eintrag *e = m<span style="color:#89ddff">-&gt;</span>buckets[idx];
+
+    /* Vorhandenen Key aktualisieren */
+    <span style="color:#c792ea">while</span> (e) {
+        <span style="color:#c792ea">if</span> (<span style="color:#82aaff">strcmp</span>(e<span style="color:#89ddff">-&gt;</span>key, key) == <span style="color:#f78c6c">0</span>) { e<span style="color:#89ddff">-&gt;</span>wert = wert; <span style="color:#c792ea">return</span>; }
+        e = e<span style="color:#89ddff">-&gt;</span>naechster;
+    }
+
+    /* Neuen Eintrag vorne einfügen */
+    Eintrag *neu    = <span style="color:#82aaff">malloc</span>(<span style="color:#c792ea">sizeof</span>(Eintrag));
+    neu<span style="color:#89ddff">-&gt;</span>key        = strdup(key);
+    neu<span style="color:#89ddff">-&gt;</span>wert       = wert;
+    neu<span style="color:#89ddff">-&gt;</span>naechster  = m<span style="color:#89ddff">-&gt;</span>buckets[idx];
+    m<span style="color:#89ddff">-&gt;</span>buckets[idx] = neu;
+}
+
+<span style="color:#c792ea">int</span> map_get(<span style="color:#c792ea">const</span> HashMap *m, <span style="color:#c792ea">const</span> <span style="color:#c792ea">char</span> *key, <span style="color:#c792ea">int</span> *out) {
+    <span style="color:#c792ea">unsigned</span> <span style="color:#c792ea">int</span> idx = hash(key);
+    <span style="color:#c792ea">for</span> (Eintrag *e = m<span style="color:#89ddff">-&gt;</span>buckets[idx]; e; e = e<span style="color:#89ddff">-&gt;</span>naechster) {
+        <span style="color:#c792ea">if</span> (<span style="color:#82aaff">strcmp</span>(e<span style="color:#89ddff">-&gt;</span>key, key) == <span style="color:#f78c6c">0</span>) { *out = e<span style="color:#89ddff">-&gt;</span>wert; <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>; }
+    }
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;   /* nicht gefunden */
+}
+
+<span style="color:#c792ea">void</span> map_frei(HashMap *m) {
+    <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; <span style="color:#f78c6c">TABELLE_GROESSE</span>; i++) {
+        Eintrag *e = m<span style="color:#89ddff">-&gt;</span>buckets[i];
+        <span style="color:#c792ea">while</span> (e) {
+            Eintrag *naechster = e<span style="color:#89ddff">-&gt;</span>naechster;
+            <span style="color:#82aaff">free</span>(e<span style="color:#89ddff">-&gt;</span>key);
+            <span style="color:#82aaff">free</span>(e);
+            e = naechster;
+        }
+    }
+}
+
+<span style="color:#c792ea">int</span> main(<span style="color:#c792ea">void</span>) {
+    HashMap m = {<span style="color:#f78c6c">0</span>};
+
+    map_set(&amp;m, <span style="color:#c3e88d">"Alice"</span>,  <span style="color:#f78c6c">30</span>);
+    map_set(&amp;m, <span style="color:#c3e88d">"Bob"</span>,    <span style="color:#f78c6c">25</span>);
+    map_set(&amp;m, <span style="color:#c3e88d">"Carol"</span>,  <span style="color:#f78c6c">35</span>);
+    map_set(&amp;m, <span style="color:#c3e88d">"Alice"</span>,  <span style="color:#f78c6c">31</span>);   /* Aktualisieren */
+
+    <span style="color:#c792ea">int</span> alter;
+    <span style="color:#c792ea">if</span> (map_get(&amp;m, <span style="color:#c3e88d">"Alice"</span>, &amp;alter)) <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Alice: %d\n"</span>, alter);   /* <span style="color:#f78c6c">31</span> */
+    <span style="color:#c792ea">if</span> (!map_get(&amp;m, <span style="color:#c3e88d">"Dave"</span>, &amp;alter)) <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Dave: nicht da\n"</span>);
+
+    map_frei(&amp;m);
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>;
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">/* Einfacher <span style="color:#f78c6c">CSV</span>-Parser mit Fehlerbehandlung */
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdio.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;stdlib.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;string.h&gt;</span>
+<span style="color:#ff9800">#include</span><span style="color:#c3e88d"> &lt;errno.h&gt;</span>
+
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> MAX_FELDER  16</span>
+<span style="color:#ff9800">#define</span><span style="color:#ff9800"> MAX_ZEILE   1024</span>
+
+<span style="color:#c792ea">typedef</span> <span style="color:#c792ea">struct</span> {
+    <span style="color:#c792ea">char</span>   felder[<span style="color:#f78c6c">MAX_FELDER</span>][<span style="color:#f78c6c">256</span>];
+    <span style="color:#c792ea">int</span>    anzahl;
+} CSV_Zeile;
+
+/* Zeile in Felder aufteilen */
+<span style="color:#c792ea">int</span> csv_parse_zeile(<span style="color:#c792ea">char</span> *zeile, <span style="color:#c792ea">char</span> trenner, CSV_Zeile *out) {
+    out<span style="color:#89ddff">-&gt;</span>anzahl = <span style="color:#f78c6c">0</span>;
+    <span style="color:#c792ea">char</span> *ptr   = zeile;
+
+    <span style="color:#c792ea">while</span> (*ptr &amp;&amp; out<span style="color:#89ddff">-&gt;</span>anzahl &lt; <span style="color:#f78c6c">MAX_FELDER</span>) {
+        <span style="color:#c792ea">char</span> *feld = out<span style="color:#89ddff">-&gt;</span>felder[out<span style="color:#89ddff">-&gt;</span>anzahl];
+        <span style="color:#c792ea">int</span>   len  = <span style="color:#f78c6c">0</span>;
+
+        /* Feld lesen bis Trenner oder Ende */
+        <span style="color:#c792ea">while</span> (*ptr &amp;&amp; *ptr != trenner &amp;&amp; *ptr != <span style="color:#c3e88d">'\n'</span> &amp;&amp; *ptr != <span style="color:#c3e88d">'\r'</span>) {
+            <span style="color:#c792ea">if</span> (len &lt; <span style="color:#f78c6c">255</span>) feld[len++] = *ptr;
+            ptr++;
+        }
+        feld[len] = <span style="color:#c3e88d">'\0'</span>;
+        out<span style="color:#89ddff">-&gt;</span>anzahl++;
+
+        <span style="color:#c792ea">if</span> (*ptr == trenner) ptr++;   /* Trenner überspringen */
+    }
+    <span style="color:#c792ea">return</span> out<span style="color:#89ddff">-&gt;</span>anzahl;
+}
+
+<span style="color:#c792ea">int</span> main(<span style="color:#c792ea">int</span> argc, <span style="color:#c792ea">char</span> *argv[]) {
+    <span style="color:#c792ea">if</span> (argc &lt; <span style="color:#f78c6c">2</span>) {
+        <span style="color:#82aaff">fprintf</span>(stderr, <span style="color:#c3e88d">"Verwendung: %s &lt;csv-datei&gt;\n"</span>, argv[<span style="color:#f78c6c">0</span>]);
+        <span style="color:#c792ea">return</span> <span style="color:#f78c6c">EXIT_FAILURE</span>;
+    }
+
+    <span style="color:#f78c6c">FILE</span> *f = <span style="color:#82aaff">fopen</span>(argv[<span style="color:#f78c6c">1</span>], <span style="color:#c3e88d">"r"</span>);
+    <span style="color:#c792ea">if</span> (!f) {
+        <span style="color:#82aaff">fprintf</span>(stderr, <span style="color:#c3e88d">"Fehler: %s: %s\n"</span>, argv[<span style="color:#f78c6c">1</span>], strerror(errno));
+        <span style="color:#c792ea">return</span> <span style="color:#f78c6c">EXIT_FAILURE</span>;
+    }
+
+    <span style="color:#c792ea">char</span> zeile[<span style="color:#f78c6c">MAX_ZEILE</span>];
+    CSV_Zeile parsed;
+    <span style="color:#c792ea">int</span> zeilen_num = <span style="color:#f78c6c">0</span>;
+
+    /* Erste Zeile als Header */
+    <span style="color:#c792ea">if</span> (<span style="color:#82aaff">fgets</span>(zeile, <span style="color:#c792ea">sizeof</span>(zeile), f)) {
+        csv_parse_zeile(zeile, <span style="color:#c3e88d">','</span>, &amp;parsed);
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Spalten (%d): "</span>, parsed.anzahl);
+        <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; parsed.anzahl; i++) {
+            <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"[%s] "</span>, parsed.felder[i]);
+        }
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"\n\n"</span>);
+    }
+
+    /* Datenzeilen */
+    <span style="color:#c792ea">while</span> (<span style="color:#82aaff">fgets</span>(zeile, <span style="color:#c792ea">sizeof</span>(zeile), f)) {
+        zeilen_num++;
+        <span style="color:#c792ea">int</span> felder = csv_parse_zeile(zeile, <span style="color:#c3e88d">','</span>, &amp;parsed);
+        <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"Zeile %d: %d Felder\n"</span>, zeilen_num, felder);
+        <span style="color:#c792ea">for</span> (<span style="color:#c792ea">int</span> i = <span style="color:#f78c6c">0</span>; i &lt; felder; i++) {
+            <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"  [%d] = %s\n"</span>, i, parsed.felder[i]);
+        }
+    }
+
+    <span style="color:#82aaff">printf</span>(<span style="color:#c3e88d">"\nGesamt: %d Zeilen\n"</span>, zeilen_num);
+    <span style="color:#82aaff">fclose</span>(f);
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">EXIT_SUCCESS</span>;
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#a8b9cc0e;border:1px solid #a8b9cc44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#a8b9cc">Arch / CachyOS:</strong> <code style="color:#ffb347">sudo pacman -S gcc clang gdb valgrind cmake</code><br><code style="color:#ffb347">sudo pacman -S clang-tools-extra  # clang-tidy, clang-format</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #a8b9cc44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#a8b9cc0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#a8b9cc">
+      <span style="display:inline-block;width:8px;height:8px;background:#a8b9cc;border-radius:50%;margin-right:2px"></span>⚙ Compiler installieren (Linux)
+    </span>
+    <span class="aa" style="color:#a8b9cc;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Option</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#a8b9cc">GCC</code></td><td style="color:#cdd6f4">gcc</td><td style="color:#6c7a8e">sudo apt/dnf/pacman -S gcc
+gcc --version</td></tr><tr><td style="width:220px"><code style="color:#a8b9cc">Clang</code></td><td style="color:#cdd6f4">clang</td><td style="color:#6c7a8e">sudo apt/dnf/pacman -S clang
+clang --version</td></tr><tr><td style="width:220px"><code style="color:#a8b9cc">Arch/CachyOS</code></td><td style="color:#cdd6f4">gcc clang</td><td style="color:#6c7a8e">sudo pacman -S gcc clang</td></tr><tr><td style="width:220px"><code style="color:#a8b9cc">Ubuntu/Debian</code></td><td style="color:#cdd6f4">build-essential</td><td style="color:#6c7a8e">sudo apt install build-essential</td></tr><tr><td style="width:220px"><code style="color:#a8b9cc">Fedora/RHEL</code></td><td style="color:#cdd6f4">gcc</td><td style="color:#6c7a8e">sudo dnf groupinstall "Development Tools"</td></tr><tr><td style="width:220px"><code style="color:#a8b9cc">Cross-Compile</code></td><td style="color:#cdd6f4">gcc-aarch64-...</td><td style="color:#6c7a8e">sudo pacman -S aarch64-linux-gnu-gcc</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ gcc / clang – wichtige Flags
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Option</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4fc3f7">gcc main.c -o main</code></td><td style="color:#cdd6f4">Kompilieren</td><td style="color:#6c7a8e">Einfachster Fall</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-Wall -Wextra -Wpedantic</code></td><td style="color:#cdd6f4">Alle Warnungen aktivieren</td><td style="color:#6c7a8e">IMMER verwenden!</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-Werror</code></td><td style="color:#cdd6f4">Warnungen als Fehler</td><td style="color:#6c7a8e">In CI/CD empfohlen</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-g</code></td><td style="color:#cdd6f4">Debug-Informationen</td><td style="color:#6c7a8e">Für GDB/LLDB</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-O0</code></td><td style="color:#cdd6f4">Keine Optimierung (Debug)</td><td style="color:#6c7a8e">Standard ohne Flag</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-O2</code></td><td style="color:#cdd6f4">Moderate Optimierung</td><td style="color:#6c7a8e">Empfohlen für Produktion</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-O3</code></td><td style="color:#cdd6f4">Maximale Optimierung</td><td style="color:#6c7a8e">Kann größer/langsamer sein</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-Os</code></td><td style="color:#cdd6f4">Auf Größe optimieren</td><td style="color:#6c7a8e">Für Embedded</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-std=c11</code></td><td style="color:#cdd6f4">C11-Standard</td><td style="color:#6c7a8e">Auch: c17, c99, c23</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-fsanitize=address</code></td><td style="color:#cdd6f4">AddressSanitizer</td><td style="color:#6c7a8e">Findet Memory-Fehler</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-fsanitize=undefined</code></td><td style="color:#cdd6f4">UndefinedBehaviorSanitizer</td><td style="color:#6c7a8e">Findet UB</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-fsanitize=thread</code></td><td style="color:#cdd6f4">ThreadSanitizer</td><td style="color:#6c7a8e">Findet Race Conditions</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-DDEBUG</code></td><td style="color:#cdd6f4">Makro definieren</td><td style="color:#6c7a8e">-DMAX_SIZE=1024</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-I./include</code></td><td style="color:#cdd6f4">Include-Pfad</td><td style="color:#6c7a8e">Für Header-Dateien</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-L./lib -lmylib</code></td><td style="color:#cdd6f4">Bibliothek linken</td><td style="color:#6c7a8e">-lm für math.h</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-shared -fPIC</code></td><td style="color:#cdd6f4">Shared Library bauen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">-static</code></td><td style="color:#cdd6f4">Statisch linken</td><td style="color:#6c7a8e">Kein .so nötig</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Debugging &amp; Analyse
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Option</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#c792ea">gdb ./programm</code></td><td style="color:#cdd6f4">Debugger starten</td><td style="color:#6c7a8e">run / break main / next / print x</td></tr><tr><td style="width:220px"><code style="color:#c792ea">gdb -tui ./programm</code></td><td style="color:#cdd6f4">GDB mit Text-UI</td><td style="color:#6c7a8e">Empfohlen für Anfänger</td></tr><tr><td style="width:220px"><code style="color:#c792ea">valgrind ./programm</code></td><td style="color:#cdd6f4">Memory-Fehler finden</td><td style="color:#6c7a8e">Langsamer aber gründlich</td></tr><tr><td style="width:220px"><code style="color:#c792ea">valgrind --leak-check=full</code></td><td style="color:#cdd6f4">Memory-Leaks anzeigen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">strace ./programm</code></td><td style="color:#cdd6f4">System-Calls beobachten</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">ltrace ./programm</code></td><td style="color:#cdd6f4">Library-Calls beobachten</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">nm ./programm</code></td><td style="color:#cdd6f4">Symbole anzeigen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">objdump -d ./programm</code></td><td style="color:#cdd6f4">Disassemblieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">ldd ./programm</code></td><td style="color:#cdd6f4">Shared Libraries anzeigen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">size ./programm</code></td><td style="color:#cdd6f4">Größe der Sektionen</td><td style="color:#6c7a8e">text / data / bss</td></tr><tr><td style="width:220px"><code style="color:#c792ea">strip ./programm</code></td><td style="color:#cdd6f4">Debug-Symbole entfernen</td><td style="color:#6c7a8e">Kleiner, nicht debuggbar</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Build-Systeme
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Option</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4ec9b0">make</code></td><td style="color:#cdd6f4">GNU Make</td><td style="color:#6c7a8e">make
+make clean
+make install</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">cmake</code></td><td style="color:#cdd6f4">CMake</td><td style="color:#6c7a8e">cmake -B build &amp;&amp; cmake --build build</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">meson</code></td><td style="color:#cdd6f4">Meson</td><td style="color:#6c7a8e">meson setup build &amp;&amp; ninja -C build</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">pkg-config</code></td><td style="color:#cdd6f4">pkg-config</td><td style="color:#6c7a8e">gcc $(pkg-config --cflags --libs glib-2.0) main.c</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">bear</code></td><td style="color:#cdd6f4">bear</td><td style="color:#6c7a8e">bear -- make  # für compile_commands.json (LSP)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Analyse &amp; Formatting
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Option</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">clang-tidy</code></td><td style="color:#cdd6f4">clang-tools</td><td style="color:#6c7a8e">clang-tidy main.c -- -std=c11</td></tr><tr><td style="width:220px"><code style="color:#ffb347">clang-format</code></td><td style="color:#cdd6f4">clang-tools</td><td style="color:#6c7a8e">clang-format -i -style=Google *.c *.h</td></tr><tr><td style="width:220px"><code style="color:#ffb347">cppcheck</code></td><td style="color:#cdd6f4">cppcheck</td><td style="color:#6c7a8e">cppcheck --enable=all --std=c11 src/</td></tr><tr><td style="width:220px"><code style="color:#ffb347">scan-build</code></td><td style="color:#cdd6f4">clang-tools</td><td style="color:#6c7a8e">scan-build make  # Statische Analyse</td></tr><tr><td style="width:220px"><code style="color:#ffb347">gcov / lcov</code></td><td style="color:#cdd6f4">gcc</td><td style="color:#6c7a8e">gcc --coverage &amp;&amp; gcov main.c  # Coverage</td></tr><tr><td style="width:220px"><code style="color:#ffb347">perf stat</code></td><td style="color:#cdd6f4">linux-tools</td><td style="color:#6c7a8e">perf stat ./programm  # Performance</td></tr><tr><td style="width:220px"><code style="color:#ffb347">heaptrack</code></td><td style="color:#cdd6f4">heaptrack</td><td style="color:#6c7a8e">heaptrack ./programm  # Heap-Profiling</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl5"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl5')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>⚙ Minimal Makefile
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Option</th><th>Beschreibung</th><th>Hinweis</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4caf50">CC = gcc</code></td><td style="color:#cdd6f4">Compiler festlegen</td><td style="color:#6c7a8e">Oder clang</td></tr><tr><td style="width:220px"><code style="color:#4caf50">CFLAGS = -Wall -Wextra -std=c11 -g</code></td><td style="color:#cdd6f4">Flags</td><td style="color:#6c7a8e">Immer so</td></tr><tr><td style="width:220px"><code style="color:#4caf50">SRC = $(wildcard src/*.c)</code></td><td style="color:#cdd6f4">Quellen finden</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#4caf50">OBJ = $(SRC:.c=.o)</code></td><td style="color:#cdd6f4">Objekte ableiten</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#4caf50">$(TARGET): $(OBJ)</code></td><td style="color:#cdd6f4">Programm linken</td><td style="color:#6c7a8e">gcc $(OBJ) -o $@ $(LDFLAGS)</td></tr><tr><td style="width:220px"><code style="color:#4caf50">%.o: %.c</code></td><td style="color:#cdd6f4">Pattern Rule</td><td style="color:#6c7a8e">gcc $(CFLAGS) -c $&lt; -o $@</td></tr><tr><td style="width:220px"><code style="color:#4caf50">clean:</code></td><td style="color:#cdd6f4">Aufräumen</td><td style="color:#6c7a8e">rm -f $(OBJ) $(TARGET)</td></tr><tr><td style="width:220px"><code style="color:#4caf50">.PHONY: clean all</code></td><td style="color:#cdd6f4">Pseudo-Targets</td><td style="color:#6c7a8e"></td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) document.querySelectorAll('[id^="ac-cf"]').forEach(function(a) {
+      a.classList.add('open');
+      a.querySelector('.ab').style.display = 'block';
+    });
+  });
+}
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#a8b9cc';
+      btn.style.color       = '#a8b9cc';
+      btn.style.background  = 'rgba(168, 185, 204, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

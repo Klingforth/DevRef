@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kotlin Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #7f52ff;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(127,82,255,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#7f52ff">&#x25C6;</span>
+      <span style="color:#7f52ff">Kotlin</span> Syntax
+    </div>
+    <div id="hdr-sub">Kotlin 2.x · Null-Safety · Coroutines · Flow · Sealed Classes · Extension Functions · JVM/JS/Native</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="klassen">Klassen & OOP</button>
+    <button class="tb" data-tab="functional">Funktional</button>
+    <button class="tb" data-tab="coroutines">Coroutines & Flow</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#7f52ff0e;border:1px solid #7f52ff44;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#7f52ff">Kotlin – Java neu gedacht.</strong>
+  100% interoperabel mit Java, läuft auf JVM/JS/Native.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">val</code> = unveränderlich &nbsp;·&nbsp;
+    <code style="color:#c3e88d">var</code> = veränderlich &nbsp;·&nbsp;
+    <code style="color:#c3e88d">String?</code> = nullable &nbsp;·&nbsp;
+    <code style="color:#c3e88d">?.</code> Safe-Call &nbsp;·&nbsp;
+    <code style="color:#c3e88d">?:</code> Elvis &nbsp;·&nbsp;
+    <code style="color:#c3e88d">!!</code> Not-null assertion
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #7f52ff44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7f52ff0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7f52ff">
+      <span style="display:inline-block;width:8px;height:8px;background:#7f52ff;border-radius:50%;margin-right:2px"></span>Kotlin-Besonderheiten auf einen Blick
+    </span>
+    <span class="aa" style="color:#7f52ff;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="kotlin-besonderheiten auf einen blick">
+  <div style="color:#7f52ff;font-weight:700;font-size:12px;margin-bottom:8px">
+    Kotlin-Besonderheiten auf einen Blick
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Kotlin = modernes Java mit vielen Verbesserungen</span>
+<span style="color:#546e7a">// Kompiliert zu JVM (jar), JS, oder Native (LLVM)</span>
+<span style="color:#546e7a">// 100% Java-interoperabel – alle Java-Bibliotheken nutzbar!</span>
+
+<span style="color:#c792ea">fun</span> main() {
+    <span style="color:#546e7a">// val = unveränderlich (wie final in Java)</span>
+    <span style="color:#c792ea">val</span> name = <span style="color:#c3e88d">"Alice"</span>          <span style="color:#546e7a">// Typ inferiert: String</span>
+    <span style="color:#c792ea">val</span> alter: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">30</span>         <span style="color:#546e7a">// Expliziter Typ</span>
+
+    <span style="color:#546e7a">// var = veränderlich</span>
+    <span style="color:#c792ea">var</span> zaehler = <span style="color:#f78c6c">0</span>
+    zaehler++
+
+    <span style="color:#546e7a">// Null-Safety ist eingebaut! Kein NullPointerException by default!</span>
+    <span style="color:#c792ea">val</span> sicher: <span style="color:#4ec9b0">String</span>  = <span style="color:#c3e88d">"nie null"</span>  <span style="color:#546e7a">// Nie null</span>
+    <span style="color:#c792ea">val</span> nullable: <span style="color:#4ec9b0">String</span>? = <span style="color:#c792ea">null</span>       <span style="color:#546e7a">// Explizit nullable</span>
+
+    <span style="color:#546e7a">// String-Templates – viel mächtiger als Java</span>
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Hallo, $name! Du bist $alter Jahre alt."</span>)
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Doppelt: ${alter * 2}"</span>)
+
+    <span style="color:#546e7a">// Alles ist ein Ausdruck in Kotlin!</span>
+    <span style="color:#c792ea">val</span> label = <span style="color:#c792ea">if</span> (alter &gt;= <span style="color:#f78c6c">18</span>) <span style="color:#c3e88d">"Erwachsen"</span> <span style="color:#c792ea">else</span> <span style="color:#c3e88d">"Minderjährig"</span>
+
+    <span style="color:#546e7a">// Kein Semikolon nötig (Optional)</span>
+    <span style="color:#82aaff">println</span>(label)
+}
+
+<span style="color:#546e7a">// Kotlin vs Java – die wichtigsten Unterschiede:</span>
+<span style="color:#546e7a">// 1. val/var statt final/var                (Immutability first!)</span>
+<span style="color:#546e7a">// 2. String? statt @Nullable                (Null-Safety im Typsystem)</span>
+<span style="color:#546e7a">// 3. data class statt DTO + Boilerplate      (Auto-generated methods)</span>
+<span style="color:#546e7a">// 4. Extension Functions                     (Klassen erweitern ohne Subtyp)</span>
+<span style="color:#546e7a">// 5. Smart Casts                             (is-Check = automatischer Cast)</span>
+<span style="color:#546e7a">// 6. Coroutines                              (Async ohne Callback-Hell)</span>
+<span style="color:#546e7a">// 7. Keine checked Exceptions               (kein throws)</span>
+<span style="color:#546e7a">// 8. Operator-Überladung sauber via fun</span>
+
+<span style="color:#546e7a">// Kompilieren:</span>
+<span style="color:#546e7a">// kotlinc main.kt -include-runtime -d main.jar &amp;&amp; java -jar main.jar</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Bereich</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Int</code></td>
+      <td style="color:#c3e88d;font-size:11px">-2147483648 .. 2147483647  |  42</td>
+      <td style="color:#6c7a8e">32-Bit. Kotlin-Int = JVM int (kein Boxen)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Long</code></td>
+      <td style="color:#c3e88d;font-size:11px">-9.2E18 .. 9.2E18  |  42L</td>
+      <td style="color:#6c7a8e">64-Bit. Literal: 42L</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Short</code></td>
+      <td style="color:#c3e88d;font-size:11px">-32768 .. 32767</td>
+      <td style="color:#6c7a8e">16-Bit (selten)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Byte</code></td>
+      <td style="color:#c3e88d;font-size:11px">-128 .. 127</td>
+      <td style="color:#6c7a8e">8-Bit (selten)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Float</code></td>
+      <td style="color:#c3e88d;font-size:11px">~7 Stellen  |  3.14f</td>
+      <td style="color:#6c7a8e">32-Bit. Literal: 3.14f oder 3.14F</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Double</code></td>
+      <td style="color:#c3e88d;font-size:11px">~15 Stellen  |  3.14</td>
+      <td style="color:#6c7a8e">64-Bit (Standard-Float)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Boolean</code></td>
+      <td style="color:#c3e88d;font-size:11px">true / false</td>
+      <td style="color:#6c7a8e">Kein truthy/falsy</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Char</code></td>
+      <td style="color:#c3e88d;font-size:11px">'A'  |  '\n'  |  '\u0041'</td>
+      <td style="color:#6c7a8e">Einzelnes Zeichen (UTF-16)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">String</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  """mehrzeilig"""</td>
+      <td style="color:#6c7a8e">Unveränderlich, UTF-16</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Unit</code></td>
+      <td style="color:#c3e88d;font-size:11px">fun f(): Unit {}</td>
+      <td style="color:#6c7a8e">Wie void. Rückgabetyp optional</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Nothing</code></td>
+      <td style="color:#c3e88d;font-size:11px">fun err(): Nothing { throw ... }</td>
+      <td style="color:#6c7a8e">Kein Wert, kehrt nie zurück</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Any</code></td>
+      <td style="color:#c3e88d;font-size:11px">val x: Any = 42</td>
+      <td style="color:#6c7a8e">Basistyp aller non-nullable Typen</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Any?</code></td>
+      <td style="color:#c3e88d;font-size:11px">val x: Any? = null</td>
+      <td style="color:#6c7a8e">Basistyp aller Typen inkl. null</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">T?</code></td>
+      <td style="color:#c3e88d;font-size:11px">String?  |  Int?</td>
+      <td style="color:#6c7a8e">Nullable: T oder null</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">T &amp; U</code></td>
+      <td style="color:#c3e88d;font-size:11px">Serializable &amp; Comparable&lt;T&gt;</td>
+      <td style="color:#6c7a8e">Intersection Type (Kotlin 1.7+)</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Variablen, Null-Safety &amp; Smart Casts
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen, null-safety &amp; smart casts">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen, Null-Safety &amp; Smart Casts
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// val – unveränderlich (nach Zuweisung nicht änderbar)</span>
+<span style="color:#c792ea">val</span> x = <span style="color:#f78c6c">42</span>
+<span style="color:#c792ea">val</span> pi = <span style="color:#f78c6c">3.14159</span>
+<span style="color:#c792ea">val</span> name = <span style="color:#c3e88d">"Alice"</span>
+
+<span style="color:#546e7a">// var – veränderlich</span>
+<span style="color:#c792ea">var</span> zaehler = <span style="color:#f78c6c">0</span>
+zaehler = zaehler + <span style="color:#f78c6c">1</span>
+zaehler++
+
+<span style="color:#546e7a">// Explizite Typen (wo nötig oder zur Klarheit)</span>
+<span style="color:#c792ea">val</span> n: <span style="color:#4ec9b0">Long</span> = <span style="color:#f78c6c">100_000_000L</span>
+<span style="color:#c792ea">val</span> f: <span style="color:#4ec9b0">Float</span> = <span style="color:#f78c6c">3.14f</span>
+
+<span style="color:#546e7a">// ── NULL-SAFETY ──────────────────────────────────────────────────</span>
+<span style="color:#c792ea">val</span> s: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"Hallo"</span>     <span style="color:#546e7a">// Nie null – Compiler-Garantie!</span>
+<span style="color:#546e7a">// s = null                 // Compile-Fehler!</span>
+
+<span style="color:#c792ea">val</span> ns: <span style="color:#4ec9b0">String</span>? = <span style="color:#c792ea">null</span>      <span style="color:#546e7a">// Explizit nullable</span>
+
+<span style="color:#546e7a">// Safe Call ?.</span>
+<span style="color:#c792ea">val</span> laenge = ns<span style="color:#89ddff">?.</span>length     <span style="color:#546e7a">// null wenn ns null (kein NPE!)</span>
+<span style="color:#c792ea">val</span> gross  = ns<span style="color:#89ddff">?.</span>uppercase()<span style="color:#89ddff">?.</span>trim()  <span style="color:#546e7a">// Chaining</span>
+
+<span style="color:#546e7a">// Elvis Operator ?: – Default wenn null</span>
+<span style="color:#c792ea">val</span> l = ns<span style="color:#89ddff">?.</span>length <span style="color:#89ddff">?:</span> <span style="color:#f78c6c">0</span>     <span style="color:#546e7a">// 0 wenn ns null</span>
+<span style="color:#c792ea">val</span> wert = holeWert() <span style="color:#89ddff">?:</span> <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">IllegalStateException</span>(<span style="color:#c3e88d">"Null!"</span>)
+
+<span style="color:#546e7a">// Not-null assertion !! (Vorsicht! Kann NPE werfen)</span>
+<span style="color:#c792ea">val</span> sicher = ns<span style="color:#89ddff">!!</span>.length    <span style="color:#546e7a">// KotlinNullPointerException wenn null!</span>
+
+<span style="color:#546e7a">// ── SMART CASTS ──────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Nach is-Check automatisch gecastet – kein explizites (String)x!</span>
+<span style="color:#c792ea">val</span> obj: <span style="color:#4ec9b0">Any</span> = <span style="color:#c3e88d">"Hallo"</span>
+
+<span style="color:#c792ea">if</span> (obj <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">String</span>) {
+    <span style="color:#82aaff">println</span>(obj.length)     <span style="color:#546e7a">// obj ist AUTOMATISCH String hier!</span>
+    <span style="color:#82aaff">println</span>(obj.uppercase())
+}
+
+<span style="color:#546e7a">// when mit Smart Cast</span>
+<span style="color:#c792ea">when</span> (obj) {
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">String</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"String: ${obj.length} Zeichen"</span>)  <span style="color:#546e7a">// Auto-cast</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Int</span>     <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Int: ${obj * 2}"</span>)
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">List</span>&lt;*&gt; <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Liste: ${obj.size} Elemente"</span>)
+    <span style="color:#c792ea">else</span>       <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Unbekannt: $obj"</span>)
+}
+
+<span style="color:#546e7a">// ── LATEINIT ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// lateinit var: Nicht sofort initialisiert (nur für var und non-nullable)</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">MeinService</span> {
+    <span style="color:#c792ea">lateinit</span> <span style="color:#c792ea">var</span> repository: <span style="color:#4ec9b0">UserRepository</span>  <span style="color:#546e7a">// Wird später gesetzt</span>
+
+    <span style="color:#c792ea">fun</span> prüfe() {
+        <span style="color:#c792ea">if</span> (<span style="color:#89ddff">::</span>repository.isInitialized) {
+            repository.suche(<span style="color:#f78c6c">1</span>)
+        }
+    }
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-klassen" class="tp">
+
+<div class="ac open" id="ac-kl0"
+     style="border:1px solid #7f52ff44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7f52ff0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7f52ff">
+      <span style="display:inline-block;width:8px;height:8px;background:#7f52ff;border-radius:50%;margin-right:2px"></span>Klassen, Data Classes &amp; Objects
+    </span>
+    <span class="aa" style="color:#7f52ff;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="klassen, data classes &amp; objects">
+  <div style="color:#7f52ff;font-weight:700;font-size:12px;margin-bottom:8px">
+    Klassen, Data Classes &amp; Objects
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── REGULÄRE KLASSE ──────────────────────────────────────────────</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Person</span>(
+    <span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>,           <span style="color:#546e7a">// Primary Constructor + Property</span>
+    <span style="color:#c792ea">var</span> alter: <span style="color:#4ec9b0">Int</span>,
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> email: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">""</span>  <span style="color:#546e7a">// Standardwert</span>
+) {
+    <span style="color:#546e7a">// Init-Block (läuft im Konstruktor)</span>
+    <span style="color:#c792ea">init</span> {
+        <span style="color:#82aaff">require</span>(alter &gt;= <span style="color:#f78c6c">0</span>) { <span style="color:#c3e88d">"Alter muss &gt;= 0 sein"</span> }
+    }
+
+    <span style="color:#546e7a">// Property mit custom getter/setter</span>
+    <span style="color:#c792ea">val</span> isErwachsen: <span style="color:#4ec9b0">Boolean</span>
+        <span style="color:#c792ea">get</span>() = alter &gt;= <span style="color:#f78c6c">18</span>
+
+    <span style="color:#c792ea">var</span> anzeigeName: <span style="color:#4ec9b0">String</span> = name
+        <span style="color:#c792ea">set</span>(<span style="color:#c792ea">value</span>) {
+            <span style="color:#c792ea">field</span> = <span style="color:#c792ea">value</span>.trim()  <span style="color:#546e7a">// field = backing field</span>
+        }
+
+    <span style="color:#546e7a">// Methode</span>
+    <span style="color:#c792ea">fun</span> vorstellen(): <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"Ich bin $name, $alter Jahre alt."</span>
+
+    <span style="color:#546e7a">// Sekundärer Konstruktor</span>
+    <span style="color:#c792ea">constructor</span>(name: <span style="color:#4ec9b0">String</span>) : <span style="color:#c792ea">this</span>(name, <span style="color:#f78c6c">0</span>)
+
+    <span style="color:#546e7a">// companion object = statische Member</span>
+    <span style="color:#c792ea">companion</span> <span style="color:#c792ea">object</span> {
+        <span style="color:#c792ea">const</span> <span style="color:#c792ea">val</span> <span style="color:#4ec9b0">MAX_ALTER</span> = <span style="color:#f78c6c">150</span>
+        <span style="color:#c792ea">fun</span> erstelle(name: <span style="color:#4ec9b0">String</span>) = <span style="color:#4ec9b0">Person</span>(name, <span style="color:#f78c6c">0</span>)
+    }
+
+    <span style="color:#c792ea">override</span> <span style="color:#c792ea">fun</span> toString() = <span style="color:#c3e88d">"Person($name, $alter)"</span>
+}
+
+<span style="color:#546e7a">// ── DATA CLASS ───────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Automatisch generiert: equals, hashCode, toString, copy, componentN</span>
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Punkt</span>(<span style="color:#c792ea">val</span> x: <span style="color:#4ec9b0">Double</span>, <span style="color:#c792ea">val</span> y: <span style="color:#4ec9b0">Double</span>) {
+    <span style="color:#c792ea">fun</span> distanzZu(andere: <span style="color:#4ec9b0">Punkt</span>) =
+        <span style="color:#4ec9b0">Math</span>.<span style="color:#82aaff">sqrt</span>((x - andere.x).<span style="color:#82aaff">pow</span>(<span style="color:#f78c6c">2</span>) + (y - andere.y).<span style="color:#82aaff">pow</span>(<span style="color:#f78c6c">2</span>))
+}
+
+<span style="color:#c792ea">val</span> p1 = <span style="color:#4ec9b0">Punkt</span>(<span style="color:#f78c6c">3.0</span>, <span style="color:#f78c6c">4.0</span>)
+<span style="color:#c792ea">val</span> p2 = p1.copy(y = <span style="color:#f78c6c">0.0</span>)   <span style="color:#546e7a">// Neue Instanz mit geändertem y</span>
+<span style="color:#c792ea">val</span> (x, y) = p1               <span style="color:#546e7a">// Destructuring!</span>
+
+<span style="color:#546e7a">// ── OBJECT ───────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Singleton – direkt eine Instanz (kein new!)</span>
+<span style="color:#c792ea">object</span> <span style="color:#4ec9b0">Konfiguration</span> {
+    <span style="color:#c792ea">val</span> host = <span style="color:#c3e88d">"localhost"</span>
+    <span style="color:#c792ea">val</span> port = <span style="color:#f78c6c">3306</span>
+    <span style="color:#c792ea">fun</span> verbindungsstring() = <span style="color:#c3e88d">"$host:$port"</span>
+}
+
+<span style="color:#82aaff">println</span>(<span style="color:#4ec9b0">Konfiguration</span>.host)           <span style="color:#546e7a">// Singleton-Zugriff</span>
+<span style="color:#82aaff">println</span>(<span style="color:#4ec9b0">Konfiguration</span>.verbindungsstring())
+
+<span style="color:#546e7a">// ── VALUE CLASS ──────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Kein Overhead zur Laufzeit (inlined!)</span>
+<span style="color:#ff9800">@JvmInline</span>
+<span style="color:#c792ea">value</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Email</span>(<span style="color:#c792ea">val</span> wert: <span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">init</span> { <span style="color:#82aaff">require</span>(<span style="color:#c3e88d">"@"</span> <span style="color:#c792ea">in</span> wert) { <span style="color:#c3e88d">"Ungültige E-Mail"</span> } }
+}
+
+<span style="color:#ff9800">@JvmInline</span>
+<span style="color:#c792ea">value</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">UserId</span>(<span style="color:#c792ea">val</span> id: <span style="color:#4ec9b0">Long</span>)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Vererbung, Interfaces &amp; Sealed Classes
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="vererbung, interfaces &amp; sealed classes">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Vererbung, Interfaces &amp; Sealed Classes
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── INTERFACE ────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Form</span> {
+    <span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>           <span style="color:#546e7a">// Abstract property</span>
+    <span style="color:#c792ea">fun</span> flaeche(): <span style="color:#4ec9b0">Double</span>
+    <span style="color:#c792ea">fun</span> umfang(): <span style="color:#4ec9b0">Double</span>
+
+    <span style="color:#546e7a">// Default-Implementierung (seit Kotlin 1.0!)</span>
+    <span style="color:#c792ea">fun</span> drucke() = <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"$name: Fläche=${flaeche():.2f}"</span>)
+}
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Serialisierbar</span> {
+    <span style="color:#c792ea">fun</span> zuJSON(): <span style="color:#4ec9b0">String</span>
+}
+
+<span style="color:#546e7a">// ── ABSTRAKTE KLASSE ─────────────────────────────────────────────</span>
+<span style="color:#c792ea">abstract</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">AbstractForm</span>(<span style="color:#c792ea">override</span> <span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>) : <span style="color:#4ec9b0">Form</span> {
+    <span style="color:#c792ea">abstract</span> <span style="color:#c792ea">override</span> <span style="color:#c792ea">fun</span> flaeche(): <span style="color:#4ec9b0">Double</span>
+    <span style="color:#c792ea">abstract</span> <span style="color:#c792ea">override</span> <span style="color:#c792ea">fun</span> umfang(): <span style="color:#4ec9b0">Double</span>
+}
+
+<span style="color:#546e7a">// ── KLASSE ERBT (open nötig! Kotlin-Klassen sind final by default) ─</span>
+<span style="color:#c792ea">open</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Tier</span>(<span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">open</span> <span style="color:#c792ea">fun</span> laut(): <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"..."</span>
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Hund</span>(name: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">val</span> rasse: <span style="color:#4ec9b0">String</span>) : <span style="color:#4ec9b0">Tier</span>(name) {
+    <span style="color:#c792ea">override</span> <span style="color:#c792ea">fun</span> laut() = <span style="color:#c3e88d">"Wuff!"</span>
+}
+
+<span style="color:#546e7a">// ── SEALED CLASS – typsichere Discriminated Unions ──────────────</span>
+<span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#c792ea">out</span> <span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Erfolg</span>&lt;<span style="color:#4ec9b0">T</span>&gt;(<span style="color:#c792ea">val</span> wert: <span style="color:#4ec9b0">T</span>) : <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">T</span>&gt;()
+    <span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Fehler</span>(<span style="color:#c792ea">val</span> meldung: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">val</span> ex: <span style="color:#4ec9b0">Exception</span>? = <span style="color:#c792ea">null</span>) : <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">Nothing</span>&gt;()
+    <span style="color:#c792ea">object</span> <span style="color:#4ec9b0">Laden</span> : <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">Nothing</span>&gt;()
+}
+
+<span style="color:#c792ea">fun</span> verarbeite(result: <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">String</span>&gt;): <span style="color:#4ec9b0">String</span> = <span style="color:#c792ea">when</span> (result) {
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Ergebnis</span>.<span style="color:#4ec9b0">Erfolg</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Wert: ${result.wert}"</span>   <span style="color:#546e7a">// Smart Cast!</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Ergebnis</span>.<span style="color:#4ec9b0">Fehler</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Fehler: ${result.meldung}"</span>
+    <span style="color:#4ec9b0">Ergebnis</span>.<span style="color:#4ec9b0">Laden</span>      <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Lädt..."</span>
+    <span style="color:#546e7a">// kein else nötig – Compiler prüft Vollständigkeit!</span>
+}
+
+<span style="color:#546e7a">// ── ENUM CLASS ───────────────────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Richtung</span>(<span style="color:#c792ea">val</span> grad: <span style="color:#4ec9b0">Int</span>) {
+    <span style="color:#4ec9b0">Nord</span>(<span style="color:#f78c6c">0</span>), <span style="color:#4ec9b0">Ost</span>(<span style="color:#f78c6c">90</span>), <span style="color:#4ec9b0">Sued</span>(<span style="color:#f78c6c">180</span>), <span style="color:#4ec9b0">West</span>(<span style="color:#f78c6c">270</span>);
+
+    <span style="color:#c792ea">fun</span> gegenteil() = <span style="color:#c792ea">when</span> (<span style="color:#c792ea">this</span>) {
+        <span style="color:#4ec9b0">Nord</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Sued</span>; <span style="color:#4ec9b0">Sued</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Nord</span>
+        <span style="color:#4ec9b0">Ost</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">West</span>; <span style="color:#4ec9b0">West</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Ost</span>
+    }
+}
+
+<span style="color:#c792ea">val</span> r = <span style="color:#4ec9b0">Richtung</span>.<span style="color:#4ec9b0">Nord</span>
+<span style="color:#82aaff">println</span>(r.grad)           <span style="color:#546e7a">// 0</span>
+<span style="color:#82aaff">println</span>(r.gegenteil())    <span style="color:#546e7a">// SUED</span>
+<span style="color:#82aaff">println</span>(<span style="color:#4ec9b0">Richtung</span>.values().<span style="color:#82aaff">map</span> { it.name })   <span style="color:#546e7a">// [NORD, OST, SUED, WEST]</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-kl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Extension Functions &amp; Properties
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="extension functions &amp; properties">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Extension Functions &amp; Properties
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Extension Functions – Methoden zu bestehenden Klassen hinzufügen</span>
+<span style="color:#546e7a">// OHNE die Klasse zu verändern oder zu erben!</span>
+
+<span style="color:#546e7a">// String erweitern</span>
+<span style="color:#c792ea">fun</span> <span style="color:#4ec9b0">String</span>.capitalize2(): <span style="color:#4ec9b0">String</span> =
+    <span style="color:#c792ea">if</span> (isEmpty()) <span style="color:#c792ea">this</span> <span style="color:#c792ea">else</span> <span style="color:#c792ea">this</span>[<span style="color:#f78c6c">0</span>].uppercaseChar() + substring(<span style="color:#f78c6c">1</span>)
+
+<span style="color:#c792ea">fun</span> <span style="color:#4ec9b0">String</span>.istEmail(): <span style="color:#4ec9b0">Boolean</span> = contains(<span style="color:#c3e88d">"@"</span>) &amp;&amp; contains(<span style="color:#c3e88d">"."</span>)
+
+<span style="color:#c792ea">fun</span> <span style="color:#4ec9b0">String</span>.wiederhole(n: <span style="color:#4ec9b0">Int</span>): <span style="color:#4ec9b0">String</span> = <span style="color:#82aaff">repeat</span>(n)
+
+<span style="color:#546e7a">// Verwendung wie normale Methoden!</span>
+<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"hallo"</span>.capitalize2())    <span style="color:#546e7a">// "Hallo"</span>
+<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"alice@example.com"</span>.istEmail())  <span style="color:#546e7a">// true</span>
+<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"ab"</span>.wiederhole(<span style="color:#f78c6c">3</span>))       <span style="color:#546e7a">// "ababab"</span>
+
+<span style="color:#546e7a">// Extension Properties</span>
+<span style="color:#c792ea">val</span> <span style="color:#4ec9b0">String</span>.letztesBuchstabe: <span style="color:#4ec9b0">Char</span>
+    <span style="color:#c792ea">get</span>() = <span style="color:#c792ea">this</span>[length - <span style="color:#f78c6c">1</span>]
+
+<span style="color:#c792ea">val</span> <span style="color:#4ec9b0">Int</span>.istGerade: <span style="color:#4ec9b0">Boolean</span>
+    <span style="color:#c792ea">get</span>() = <span style="color:#c792ea">this</span> % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>
+
+<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Hallo"</span>.letztesBuchstabe)  <span style="color:#546e7a">// 'o'</span>
+<span style="color:#82aaff">println</span>(<span style="color:#f78c6c">4.</span>istGerade)               <span style="color:#546e7a">// true</span>
+
+<span style="color:#546e7a">// Extension auf generischem Typ</span>
+<span style="color:#c792ea">fun</span> &lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">T</span>&gt;.zweitesOderNull(): <span style="color:#4ec9b0">T</span>? = <span style="color:#c792ea">if</span> (size &gt;= <span style="color:#f78c6c">2</span>) <span style="color:#c792ea">this</span>[<span style="color:#f78c6c">1</span>] <span style="color:#c792ea">else</span> <span style="color:#c792ea">null</span>
+
+<span style="color:#546e7a">// Extension als Scope-Funktion</span>
+<span style="color:#c792ea">fun</span> &lt;<span style="color:#4ec9b0">T</span>&gt; <span style="color:#4ec9b0">T</span>.auch(block: (<span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Unit</span>): <span style="color:#4ec9b0">T</span> {
+    block(<span style="color:#c792ea">this</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>
+}
+
+<span style="color:#546e7a">// Stdlib-Scope-Funktionen (immer verfügbar!)</span>
+<span style="color:#c792ea">val</span> text = <span style="color:#c3e88d">"  Hallo, Welt!  "</span>
+    .<span style="color:#82aaff">also</span> { <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Vorher: '$it'"</span>) }
+    .trim()
+    .<span style="color:#82aaff">also</span> { <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Nachher: '$it'"</span>) }
+
+<span style="color:#546e7a">// let, run, apply, also, with</span>
+<span style="color:#c792ea">val</span> ergebnis = <span style="color:#c3e88d">"hallo"</span>
+    .<span style="color:#82aaff">let</span> { it.uppercase() }    <span style="color:#546e7a">// Gibt Resultat zurück, it = receiver</span>
+    .<span style="color:#82aaff">let</span> { <span style="color:#c3e88d">"$it!"</span> }            <span style="color:#546e7a">// Verkettung</span>
+
+<span style="color:#c792ea">val</span> person = <span style="color:#4ec9b0">Person</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#f78c6c">30</span>).<span style="color:#82aaff">apply</span> {
+    <span style="color:#546e7a">// apply: this = Person, gibt Person zurück</span>
+    <span style="color:#546e7a">// Perfekt für Builder-Pattern!</span>
+}
+
+<span style="color:#82aaff">with</span>(person) {
+    <span style="color:#546e7a">// with: this = person, kein Rückgabewert erwartet</span>
+    <span style="color:#82aaff">println</span>(name)
+    <span style="color:#82aaff">println</span>(alter)
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functional" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #7f52ff44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7f52ff0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7f52ff">
+      <span style="display:inline-block;width:8px;height:8px;background:#7f52ff;border-radius:50%;margin-right:2px"></span>Lambdas &amp; Higher-Order Functions
+    </span>
+    <span class="aa" style="color:#7f52ff;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="lambdas &amp; higher-order functions">
+  <div style="color:#7f52ff;font-weight:700;font-size:12px;margin-bottom:8px">
+    Lambdas &amp; Higher-Order Functions
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Funktionen sind First-Class in Kotlin!</span>
+
+<span style="color:#546e7a">// Funktionstyp: (ParameterTypen) -&gt; RückgabeTyp</span>
+<span style="color:#c792ea">val</span> verdopple: (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = { x <span style="color:#89ddff">-&gt;</span> x * <span style="color:#f78c6c">2</span> }
+<span style="color:#c792ea">val</span> addiere: (<span style="color:#4ec9b0">Int</span>, <span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = { a, b <span style="color:#89ddff">-&gt;</span> a + b }
+
+<span style="color:#546e7a">// Einzeiler-Lambda</span>
+<span style="color:#c792ea">val</span> quadrat = { x: <span style="color:#4ec9b0">Int</span> <span style="color:#89ddff">-&gt;</span> x * x }
+
+<span style="color:#546e7a">// it = impliziter Parametername wenn nur 1 Parameter</span>
+<span style="color:#c792ea">val</span> istGerade: (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Boolean</span> = { it % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> }
+
+<span style="color:#546e7a">// Higher-Order Function</span>
+<span style="color:#c792ea">fun</span> anwende(wert: <span style="color:#4ec9b0">Int</span>, f: (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span>): <span style="color:#4ec9b0">Int</span> = f(wert)
+
+<span style="color:#82aaff">println</span>(anwende(<span style="color:#f78c6c">5</span>, verdopple))    <span style="color:#546e7a">// 10</span>
+<span style="color:#82aaff">println</span>(anwende(<span style="color:#f78c6c">5</span>) { x <span style="color:#89ddff">-&gt;</span> x * x }) <span style="color:#546e7a">// 25 – Lambda außerhalb der ()</span>
+<span style="color:#82aaff">println</span>(anwende(<span style="color:#f78c6c">5</span>) { it * <span style="color:#f78c6c">3</span> })    <span style="color:#546e7a">// 15 – it-Syntax</span>
+
+<span style="color:#546e7a">// Trailing Lambda (häufig in Kotlin!)</span>
+<span style="color:#546e7a">// Wenn letzter Parameter ein Lambda: außerhalb der Klammern</span>
+<span style="color:#82aaff">listOf</span>(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>).<span style="color:#82aaff">forEach</span> { <span style="color:#82aaff">println</span>(it) }
+<span style="color:#82aaff">listOf</span>(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>).<span style="color:#82aaff">filter</span> { it &gt; <span style="color:#f78c6c">1</span> }.<span style="color:#82aaff">map</span> { it * <span style="color:#f78c6c">2</span> }
+
+<span style="color:#546e7a">// Function References (::)</span>
+<span style="color:#c792ea">fun</span> verdopple2(x: <span style="color:#4ec9b0">Int</span>) = x * <span style="color:#f78c6c">2</span>
+<span style="color:#c792ea">val</span> ref: (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = <span style="color:#89ddff">::</span>verdopple2
+<span style="color:#c792ea">val</span> auch_ref = <span style="color:#4ec9b0">String</span><span style="color:#89ddff">::</span>uppercase     <span style="color:#546e7a">// Method reference</span>
+
+<span style="color:#82aaff">listOf</span>(<span style="color:#c3e88d">"a"</span>, <span style="color:#c3e88d">"b"</span>, <span style="color:#c3e88d">"c"</span>).<span style="color:#82aaff">map</span>(<span style="color:#4ec9b0">String</span><span style="color:#89ddff">::</span>uppercase)  <span style="color:#546e7a">// ["A", "B", "C"]</span>
+<span style="color:#82aaff">listOf</span>(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>).<span style="color:#82aaff">map</span>(<span style="color:#89ddff">::</span>verdopple2)
+
+<span style="color:#546e7a">// Closures – Variablen werden captured</span>
+<span style="color:#c792ea">var</span> counter = <span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">val</span> zähle = { counter++ }   <span style="color:#546e7a">// counter wird captured!</span>
+zähle(); zähle(); zähle()
+<span style="color:#82aaff">println</span>(counter)             <span style="color:#546e7a">// 3</span>
+
+<span style="color:#546e7a">// Inline Functions (für Performance bei HO-Functions)</span>
+<span style="color:#c792ea">inline</span> <span style="color:#c792ea">fun</span> &lt;<span style="color:#4ec9b0">T</span>&gt; messen(block: () <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">T</span>): <span style="color:#4ec9b0">T</span> {
+    <span style="color:#c792ea">val</span> start = <span style="color:#4ec9b0">System</span>.nanoTime()
+    <span style="color:#c792ea">val</span> result = block()
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"${(System.nanoTime() - start) / 1_000_000} ms"</span>)
+    <span style="color:#c792ea">return</span> result
+}
+
+<span style="color:#c792ea">val</span> ergebnis = messen {
+    (<span style="color:#f78c6c">1..1_000_000</span>).<span style="color:#82aaff">sum</span>()    <span style="color:#546e7a">// Lambda wird INLINED – kein Overhead!</span>
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Collections &amp; Funktionale API
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="collections &amp; funktionale api">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Collections &amp; Funktionale API
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Kotlin hat eine sehr reiche Collection-API!</span>
+
+<span style="color:#c792ea">val</span> zahlen = <span style="color:#82aaff">listOf</span>(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">6</span>, <span style="color:#f78c6c">7</span>, <span style="color:#f78c6c">8</span>, <span style="color:#f78c6c">9</span>, <span style="color:#f78c6c">10</span>)
+<span style="color:#c792ea">val</span> namen  = <span style="color:#82aaff">listOf</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"Bob"</span>, <span style="color:#c3e88d">"Carol"</span>, <span style="color:#c3e88d">"Dave"</span>, <span style="color:#c3e88d">"Eve"</span>)
+
+<span style="color:#546e7a">// ── TRANSFORMIEREN ───────────────────────────────────────────────</span>
+zahlen.<span style="color:#82aaff">map</span> { it * it }           <span style="color:#546e7a">// [1, 4, 9, 16, 25, ...]</span>
+zahlen.<span style="color:#82aaff">mapIndexed</span> { i, v <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"$i:$v"</span> }
+zahlen.<span style="color:#82aaff">mapNotNull</span> { <span style="color:#c792ea">if</span> (it &gt; <span style="color:#f78c6c">5</span>) it <span style="color:#c792ea">else</span> <span style="color:#c792ea">null</span> }  <span style="color:#546e7a">// Null entfernen</span>
+namen.<span style="color:#82aaff">flatMap</span> { it.<span style="color:#82aaff">toList</span>() }    <span style="color:#546e7a">// Flatten: ['A','l','i','c','e',...]</span>
+
+<span style="color:#546e7a">// ── FILTERN ──────────────────────────────────────────────────────</span>
+zahlen.<span style="color:#82aaff">filter</span> { it % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> }   <span style="color:#546e7a">// [2, 4, 6, 8, 10]</span>
+zahlen.<span style="color:#82aaff">filterNot</span> { it &gt; <span style="color:#f78c6c">5</span> }     <span style="color:#546e7a">// [1, 2, 3, 4, 5]</span>
+zahlen.<span style="color:#82aaff">filterIsInstance</span>&lt;<span style="color:#4ec9b0">Int</span>&gt;()   <span style="color:#546e7a">// Nur Ints (nützlich bei Any-Listen)</span>
+zahlen.<span style="color:#82aaff">take</span>(<span style="color:#f78c6c">3</span>)                   <span style="color:#546e7a">// [1, 2, 3]</span>
+zahlen.<span style="color:#82aaff">drop</span>(<span style="color:#f78c6c">7</span>)                   <span style="color:#546e7a">// [8, 9, 10]</span>
+zahlen.<span style="color:#82aaff">takeWhile</span> { it &lt; <span style="color:#f78c6c">5</span> }     <span style="color:#546e7a">// [1, 2, 3, 4]</span>
+zahlen.<span style="color:#82aaff">dropWhile</span> { it &lt; <span style="color:#f78c6c">5</span> }     <span style="color:#546e7a">// [5, 6, 7, 8, 9, 10]</span>
+
+<span style="color:#546e7a">// ── AGGREGIEREN ──────────────────────────────────────────────────</span>
+zahlen.<span style="color:#82aaff">sum</span>()                     <span style="color:#546e7a">// 55</span>
+zahlen.<span style="color:#82aaff">sumOf</span> { it.toLong() }     <span style="color:#546e7a">// 55L</span>
+zahlen.<span style="color:#82aaff">average</span>()                 <span style="color:#546e7a">// 5.5</span>
+zahlen.<span style="color:#82aaff">count</span> { it &gt; <span style="color:#f78c6c">5</span> }         <span style="color:#546e7a">// 5</span>
+zahlen.<span style="color:#82aaff">min</span>()                     <span style="color:#546e7a">// 1</span>
+zahlen.<span style="color:#82aaff">max</span>()                     <span style="color:#546e7a">// 10</span>
+zahlen.<span style="color:#82aaff">minOrNull</span>()               <span style="color:#546e7a">// 1 (null wenn leer)</span>
+zahlen.<span style="color:#82aaff">fold</span>(<span style="color:#f78c6c">0</span>) { acc, n <span style="color:#89ddff">-&gt;</span> acc + n }    <span style="color:#546e7a">// 55 (wie reduce mit Startwert)</span>
+zahlen.<span style="color:#82aaff">reduce</span> { acc, n <span style="color:#89ddff">-&gt;</span> acc + n }     <span style="color:#546e7a">// 55</span>
+
+<span style="color:#546e7a">// ── SORTIEREN ────────────────────────────────────────────────────</span>
+zahlen.sorted()
+zahlen.sortedDescending()
+namen.<span style="color:#82aaff">sortedBy</span> { it.length }
+namen.<span style="color:#82aaff">sortedByDescending</span> { it.length }
+
+<span style="color:#546e7a">// ── GRUPPIEREN &amp; UMFORMEN ────────────────────────────────────────</span>
+namen.<span style="color:#82aaff">groupBy</span> { it.length }
+<span style="color:#546e7a">// {5: [Alice, Carol], 3: [Bob, Eve], 4: [Dave]}</span>
+
+namen.<span style="color:#82aaff">associateBy</span> { it.lowercase() }
+<span style="color:#546e7a">// {"alice": "Alice", "bob": "Bob", ...}</span>
+
+zahlen.<span style="color:#82aaff">partition</span> { it % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> }
+<span style="color:#546e7a">// ([2,4,6,8,10], [1,3,5,7,9])</span>
+
+zahlen.<span style="color:#82aaff">chunked</span>(<span style="color:#f78c6c">3</span>)                <span style="color:#546e7a">// [[1,2,3], [4,5,6], [7,8,9], [10]]</span>
+zahlen.<span style="color:#82aaff">windowed</span>(<span style="color:#f78c6c">3</span>)               <span style="color:#546e7a">// [[1,2,3], [2,3,4], ..., [8,9,10]]</span>
+zahlen.<span style="color:#82aaff">zip</span>(namen)                <span style="color:#546e7a">// [(1,Alice), (2,Bob), ...]</span>
+
+<span style="color:#546e7a">// ── SEQUENCES – Lazy Evaluation ──────────────────────────────────</span>
+<span style="color:#546e7a">// Für große/unendliche Datenmengen: sequenceOf / asSequence()</span>
+(<span style="color:#f78c6c">1..</span><span style="color:#4ec9b0">Int</span>.<span style="color:#4ec9b0">MAX_VALUE</span>).asSequence()
+    .<span style="color:#82aaff">filter</span> { it % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> }
+    .<span style="color:#82aaff">map</span> { it * it }
+    .<span style="color:#82aaff">take</span>(<span style="color:#f78c6c">5</span>)
+    .<span style="color:#82aaff">toList</span>()    <span style="color:#546e7a">// [4, 16, 36, 64, 100]  – nur 10 Elemente berechnet!</span>
+
+<span style="color:#546e7a">// Eigene unendliche Sequence</span>
+<span style="color:#c792ea">val</span> fib = <span style="color:#82aaff">generateSequence</span>(<span style="color:#4ec9b0">Pair</span>(<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">1</span>)) { (a, b) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Pair</span>(b, a + b) }
+    .<span style="color:#82aaff">map</span> { it.<span style="color:#82aaff">first</span> }</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>when – Kotlins mächtigster Ausdruck
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="when – kotlins mächtigster ausdruck">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    when – Kotlins mächtigster Ausdruck
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// when ist if-else, switch und Pattern-Matching in einem!</span>
+
+<span style="color:#546e7a">// Einfaches when (wie switch)</span>
+<span style="color:#c792ea">val</span> tag = <span style="color:#f78c6c">3</span>
+<span style="color:#c792ea">val</span> name = <span style="color:#c792ea">when</span> (tag) {
+    <span style="color:#f78c6c">1</span>    <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Montag"</span>
+    <span style="color:#f78c6c">2</span>    <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Dienstag"</span>
+    <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Mittwoch oder Donnerstag"</span>  <span style="color:#546e7a">// Mehrere Werte!</span>
+    <span style="color:#c792ea">in</span> <span style="color:#f78c6c">5..7</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Wochentag (5-7)"</span>         <span style="color:#546e7a">// Range!</span>
+    <span style="color:#c792ea">else</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Unbekannt"</span>
+}
+
+<span style="color:#546e7a">// when als Ausdruck (IMMER einen Wert)</span>
+<span style="color:#c792ea">val</span> beschreibung = <span style="color:#c792ea">when</span> (<span style="color:#c792ea">val</span> alter = getAlter()) {
+    <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..12</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Kind"</span>
+    <span style="color:#c792ea">in</span> <span style="color:#f78c6c">13..17</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Teenager"</span>
+    <span style="color:#c792ea">in</span> <span style="color:#f78c6c">18..64</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Erwachsener ($alter)"</span>
+    <span style="color:#c792ea">else</span>       <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Senior"</span>
+}
+
+<span style="color:#546e7a">// when ohne Argument (wie if-else if)</span>
+<span style="color:#c792ea">fun</span> kategorisiere(n: <span style="color:#4ec9b0">Int</span>): <span style="color:#4ec9b0">String</span> = <span style="color:#c792ea">when</span> {
+    n &lt; <span style="color:#f78c6c">0</span>      <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"negativ"</span>
+    n == <span style="color:#f78c6c">0</span>     <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"null"</span>
+    n % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"gerade positiv"</span>
+    <span style="color:#c792ea">else</span>       <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"ungerade positiv"</span>
+}
+
+<span style="color:#546e7a">// when mit is (Smart Cast!)</span>
+<span style="color:#c792ea">fun</span> verarbeite(obj: <span style="color:#4ec9b0">Any</span>): <span style="color:#4ec9b0">String</span> = <span style="color:#c792ea">when</span> (obj) {
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Int</span>     <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Int: ${obj * 2}"</span>        <span style="color:#546e7a">// obj ist Auto-Cast zu Int</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">String</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"String: ${obj.length} Zeichen"</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">List</span>&lt;*&gt; <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Liste: ${obj.size} Elemente"</span>
+    <span style="color:#c792ea">null</span>       <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"null"</span>
+    <span style="color:#c792ea">else</span>       <span style="color:#89ddff">-&gt;</span> obj.toString()
+}
+
+<span style="color:#546e7a">// when mit sealed class (exhaustiv, kein else nötig!)</span>
+<span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">UI</span>
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Button</span>(<span style="color:#c792ea">val</span> label: <span style="color:#4ec9b0">String</span>) : <span style="color:#4ec9b0">UI</span>()
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">TextField</span>(<span style="color:#c792ea">val</span> hint: <span style="color:#4ec9b0">String</span>) : <span style="color:#4ec9b0">UI</span>()
+<span style="color:#c792ea">object</span> <span style="color:#4ec9b0">Spinner</span> : <span style="color:#4ec9b0">UI</span>()
+
+<span style="color:#c792ea">fun</span> renderUI(ui: <span style="color:#4ec9b0">UI</span>): <span style="color:#4ec9b0">String</span> = <span style="color:#c792ea">when</span> (ui) {
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Button</span>    <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"&lt;button&gt;${ui.label}&lt;/button&gt;"</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">TextField</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"&lt;input placeholder='${ui.hint}'&gt;"</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Spinner</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"&lt;spinner&gt;"</span>
+    <span style="color:#546e7a">// Kein else! Compiler prüft, dass alle Fälle abgedeckt sind</span>
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-coroutines" class="tp">
+
+<div class="ac open" id="ac-co0"
+     style="border:1px solid #7f52ff44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7f52ff0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7f52ff">
+      <span style="display:inline-block;width:8px;height:8px;background:#7f52ff;border-radius:50%;margin-right:2px"></span>Coroutines – async/await in Kotlin
+    </span>
+    <span class="aa" style="color:#7f52ff;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="coroutines – async/await in kotlin">
+  <div style="color:#7f52ff;font-weight:700;font-size:12px;margin-bottom:8px">
+    Coroutines – async/await in Kotlin
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> kotlinx.coroutines.*
+
+<span style="color:#546e7a">// Coroutines sind Kotlins Antwort auf async/await!</span>
+<span style="color:#546e7a">// Keine Callbacks, kein Blocking, leichtgewichtiger als Threads!</span>
+
+<span style="color:#546e7a">// ── GRUNDLAGEN ───────────────────────────────────────────────────</span>
+<span style="color:#c792ea">fun</span> main() = <span style="color:#82aaff">runBlocking</span> {  <span style="color:#546e7a">// runBlocking = Brücke zwischen blocking und suspending Welt</span>
+    <span style="color:#546e7a">// launch: Fire-and-forget (gibt Job zurück, kein Wert)</span>
+    <span style="color:#c792ea">val</span> job = <span style="color:#82aaff">launch</span> {
+        <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">1000</span>)          <span style="color:#546e7a">// delay ist NON-BLOCKING (suspending!)</span>
+        <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Welt!"</span>)
+    }
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Hallo,"</span>)        <span style="color:#546e7a">// Wird zuerst gedruckt</span>
+    job.<span style="color:#82aaff">join</span>()               <span style="color:#546e7a">// Warte auf Job</span>
+    <span style="color:#546e7a">// Ausgabe: "Hallo," dann "Welt!" (nach 1 Sekunde)</span>
+}
+
+<span style="color:#546e7a">// suspend fun – Funktion die pausieren kann (ohne Thread zu blockieren!)</span>
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> holeDaten(url: <span style="color:#4ec9b0">String</span>): <span style="color:#4ec9b0">String</span> {
+    <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">100</span>)               <span style="color:#546e7a">// Simuliert Netzwerkaufruf</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Daten von $url"</span>
+}
+
+<span style="color:#546e7a">// ── PARALLEL AUSFÜHREN ───────────────────────────────────────────</span>
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> ladeAlles() = <span style="color:#82aaff">coroutineScope</span> {
+    <span style="color:#546e7a">// async gibt Deferred&lt;T&gt; zurück (= Future/Promise)</span>
+    <span style="color:#c792ea">val</span> daten1 = <span style="color:#82aaff">async</span> { holeDaten(<span style="color:#c3e88d">"api1.example.com"</span>) }
+    <span style="color:#c792ea">val</span> daten2 = <span style="color:#82aaff">async</span> { holeDaten(<span style="color:#c3e88d">"api2.example.com"</span>) }
+    <span style="color:#c792ea">val</span> daten3 = <span style="color:#82aaff">async</span> { holeDaten(<span style="color:#c3e88d">"api3.example.com"</span>) }
+
+    <span style="color:#546e7a">// Alle drei laufen PARALLEL!</span>
+    <span style="color:#c792ea">val</span> alle = <span style="color:#82aaff">listOf</span>(daten1.<span style="color:#82aaff">await</span>(), daten2.<span style="color:#82aaff">await</span>(), daten3.<span style="color:#82aaff">await</span>())
+    alle.joinToString()
+}
+
+<span style="color:#546e7a">// ── DISPATCHERS – Auf welchem Thread laufen? ─────────────────────</span>
+<span style="color:#82aaff">launch</span>(<span style="color:#4ec9b0">Dispatchers</span>.<span style="color:#4ec9b0">IO</span>)     { /* <span style="color:#4ec9b0">Datei</span>, <span style="color:#4ec9b0">Netzwerk</span>, <span style="color:#4ec9b0">Datenbank</span> */ }
+<span style="color:#82aaff">launch</span>(<span style="color:#4ec9b0">Dispatchers</span>.<span style="color:#4ec9b0">Default</span>){ /* <span style="color:#4ec9b0">CPU</span>-intensive <span style="color:#4ec9b0">Berechnungen</span> */ }
+<span style="color:#82aaff">launch</span>(<span style="color:#4ec9b0">Dispatchers</span>.<span style="color:#4ec9b0">Main</span>)   { /* <span style="color:#4ec9b0">UI</span>-<span style="color:#4ec9b0">Updates</span> (<span style="color:#4ec9b0">Android</span>!)      */ }
+
+<span style="color:#546e7a">// withContext – Kontext wechseln</span>
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> verarbeiteDatei(): <span style="color:#4ec9b0">String</span> = <span style="color:#82aaff">withContext</span>(<span style="color:#4ec9b0">Dispatchers</span>.<span style="color:#4ec9b0">IO</span>) {
+    <span style="color:#546e7a">// Läuft im IO-Thread</span>
+    <span style="color:#c792ea">val</span> daten = readFile(<span style="color:#c3e88d">"gross.dat"</span>)
+    <span style="color:#82aaff">withContext</span>(<span style="color:#4ec9b0">Dispatchers</span>.<span style="color:#4ec9b0">Default</span>) {
+        <span style="color:#546e7a">// Läuft im Default-Thread für CPU-Arbeit</span>
+        berechne(daten)
+    }
+}
+
+<span style="color:#546e7a">// ── STRUCTURED CONCURRENCY ───────────────────────────────────────</span>
+<span style="color:#546e7a">// coroutineScope: Warte auf alle Kind-Coroutines</span>
+<span style="color:#546e7a">// supervisorScope: Kind-Fehler canceln nicht die anderen</span>
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> robuste() = <span style="color:#82aaff">supervisorScope</span> {
+    <span style="color:#c792ea">val</span> j1 = <span style="color:#82aaff">launch</span> { riskant1() }
+    <span style="color:#c792ea">val</span> j2 = <span style="color:#82aaff">launch</span> { riskant2() }
+    <span style="color:#546e7a">// j1 kann fehlschlagen ohne j2 zu beenden!</span>
+}
+
+<span style="color:#546e7a">// ── CANCELLATION ─────────────────────────────────────────────────</span>
+<span style="color:#c792ea">val</span> job = <span style="color:#82aaff">launch</span> {
+    <span style="color:#82aaff">repeat</span>(<span style="color:#f78c6c">100</span>) { i <span style="color:#89ddff">-&gt;</span>
+        <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Arbeite... $i"</span>)
+        <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">500</span>)            <span style="color:#546e7a">// Cancellation-Punkt!</span>
+    }
+}
+<span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">2000</span>)
+job.<span style="color:#82aaff">cancel</span>()               <span style="color:#546e7a">// Bricht die Coroutine ab</span>
+job.<span style="color:#82aaff">join</span>()</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-co1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Flow – Reaktive Streams
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="flow – reaktive streams">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Flow – Reaktive Streams
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> kotlinx.coroutines.*
+<span style="color:#c792ea">import</span> kotlinx.coroutines.<span style="color:#82aaff">flow</span>.*
+
+<span style="color:#546e7a">// Flow = asynchrone Sequence – Werte werden über Zeit emittiert</span>
+<span style="color:#546e7a">// Kalt (cold): läuft nur wenn collected</span>
+
+<span style="color:#546e7a">// ── FLOW ERSTELLEN ───────────────────────────────────────────────</span>
+<span style="color:#c792ea">fun</span> zahlenFlow(): <span style="color:#4ec9b0">Flow</span>&lt;<span style="color:#4ec9b0">Int</span>&gt; = <span style="color:#82aaff">flow</span> {
+    <span style="color:#c792ea">for</span> (i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">1..5</span>) {
+        <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">100</span>)
+        <span style="color:#82aaff">emit</span>(i)              <span style="color:#546e7a">// Wert emittieren</span>
+    }
+}
+
+<span style="color:#546e7a">// ── FLOW VERARBEITEN ─────────────────────────────────────────────</span>
+<span style="color:#c792ea">fun</span> main() = <span style="color:#82aaff">runBlocking</span> {
+    zahlenFlow()
+        .<span style="color:#82aaff">filter</span> { it % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> }
+        .<span style="color:#82aaff">map</span> { it * it }
+        .<span style="color:#82aaff">collect</span> { <span style="color:#82aaff">println</span>(it) }   <span style="color:#546e7a">// Auslöser!</span>
+    <span style="color:#546e7a">// 4, 16</span>
+}
+
+<span style="color:#546e7a">// ── FLOW-OPERATOREN ──────────────────────────────────────────────</span>
+zahlenFlow()
+    .<span style="color:#82aaff">map</span> { it * <span style="color:#f78c6c">2</span> }           <span style="color:#546e7a">// Transformieren</span>
+    .<span style="color:#82aaff">filter</span> { it &gt; <span style="color:#f78c6c">4</span> }        <span style="color:#546e7a">// Filtern</span>
+    .<span style="color:#82aaff">take</span>(<span style="color:#f78c6c">3</span>)                  <span style="color:#546e7a">// Erste 3</span>
+    .onEach { <span style="color:#82aaff">println</span>(it) }   <span style="color:#546e7a">// Side Effect</span>
+    .<span style="color:#c792ea">catch</span> { e <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">emit</span>(-<span style="color:#f78c6c">1</span>) }  <span style="color:#546e7a">// Fehler abfangen</span>
+    .<span style="color:#82aaff">collect</span> { }
+
+<span style="color:#546e7a">// Terminal Operators</span>
+zahlenFlow().<span style="color:#82aaff">toList</span>()         <span style="color:#546e7a">// [1, 2, 3, 4, 5]</span>
+zahlenFlow().<span style="color:#82aaff">first</span>()          <span style="color:#546e7a">// 1</span>
+zahlenFlow().<span style="color:#82aaff">single</span>()         <span style="color:#546e7a">// Exception wenn != 1 Element</span>
+zahlenFlow().<span style="color:#82aaff">count</span>()          <span style="color:#546e7a">// 5</span>
+zahlenFlow().<span style="color:#82aaff">fold</span>(<span style="color:#f78c6c">0</span>) { acc, v <span style="color:#89ddff">-&gt;</span> acc + v }  <span style="color:#546e7a">// 15</span>
+
+<span style="color:#546e7a">// ── STATEFLOW &amp; SHAREDFLOW ───────────────────────────────────────</span>
+<span style="color:#546e7a">// StateFlow = Observable State (wie LiveData in Android)</span>
+<span style="color:#c792ea">val</span> _zustand = <span style="color:#4ec9b0">MutableStateFlow</span>(<span style="color:#f78c6c">0</span>)
+<span style="color:#c792ea">val</span> zustand: <span style="color:#4ec9b0">StateFlow</span>&lt;<span style="color:#4ec9b0">Int</span>&gt; = _zustand.asStateFlow()
+
+<span style="color:#546e7a">// Wert ändern</span>
+_zustand.<span style="color:#c792ea">value</span> = <span style="color:#f78c6c">42</span>
+
+<span style="color:#546e7a">// Beobachten</span>
+zustand.<span style="color:#82aaff">collect</span> { <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Neuer Zustand: $it"</span>) }
+
+<span style="color:#546e7a">// SharedFlow = Hot Flow (für Events)</span>
+<span style="color:#c792ea">val</span> _events = <span style="color:#4ec9b0">MutableSharedFlow</span>&lt;<span style="color:#4ec9b0">String</span>&gt;()
+<span style="color:#c792ea">val</span> events: <span style="color:#4ec9b0">SharedFlow</span>&lt;<span style="color:#4ec9b0">String</span>&gt; = _events.asSharedFlow()
+
+<span style="color:#546e7a">// ── COMBINE &amp; MERGE ──────────────────────────────────────────────</span>
+<span style="color:#c792ea">val</span> flow1 = flowOf(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)
+<span style="color:#c792ea">val</span> flow2 = flowOf(<span style="color:#c3e88d">"a"</span>, <span style="color:#c3e88d">"b"</span>, <span style="color:#c3e88d">"c"</span>)
+
+combine(flow1, flow2) { n, s <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"$n$s"</span> }
+    .<span style="color:#82aaff">collect</span> { <span style="color:#82aaff">println</span>(it) }   <span style="color:#546e7a">// "1a", "2b", "3c"</span>
+
+merge(zahlenFlow(), andererFlow())   <span style="color:#546e7a">// Zusammenführen</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #7f52ff44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7f52ff0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7f52ff">
+      <span style="display:inline-block;width:8px;height:8px;background:#7f52ff;border-radius:50%;margin-right:2px"></span>String-Funktionen
+    </span>
+    <span class="aa" style="color:#7f52ff;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m=".length" data-d="anzahl zeichen">
+      <td style="width:230px"><code style="color:#7f52ff">.length</code></td>
+      <td style="color:#6c7a8e">Anzahl Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".length → 5</td>
+    </tr>
+    <tr class="cr" data-m=".isempty() / isnotempty()" data-d="leer prüfen">
+      <td style="width:230px"><code style="color:#7f52ff">.isEmpty() / isNotEmpty()</code></td>
+      <td style="color:#6c7a8e">Leer prüfen</td>
+      <td style="color:#c3e88d;font-size:11px">"".isEmpty() → true</td>
+    </tr>
+    <tr class="cr" data-m=".isblank() / isnotblank()" data-d="blank (nur whitespace) prüfen">
+      <td style="width:230px"><code style="color:#7f52ff">.isBlank() / isNotBlank()</code></td>
+      <td style="color:#6c7a8e">Blank (nur Whitespace) prüfen</td>
+      <td style="color:#c3e88d;font-size:11px">"  ".isBlank() → true</td>
+    </tr>
+    <tr class="cr" data-m=".uppercase() / lowercase()" data-d="groß-/kleinschreibung">
+      <td style="width:230px"><code style="color:#7f52ff">.uppercase() / lowercase()</code></td>
+      <td style="color:#6c7a8e">Groß-/Kleinschreibung</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo".uppercase() → "HALLO"</td>
+    </tr>
+    <tr class="cr" data-m=".trim() / trimstart() / trimend()" data-d="whitespace entfernen">
+      <td style="width:230px"><code style="color:#7f52ff">.trim() / trimStart() / trimEnd()</code></td>
+      <td style="color:#6c7a8e">Whitespace entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">"  hi  ".trim() → "hi"</td>
+    </tr>
+    <tr class="cr" data-m=".contains(s)" data-d="enthält?">
+      <td style="width:230px"><code style="color:#7f52ff">.contains(s)</code></td>
+      <td style="color:#6c7a8e">Enthält?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".contains("all") → true</td>
+    </tr>
+    <tr class="cr" data-m=".startswith(s)" data-d="beginnt mit?">
+      <td style="width:230px"><code style="color:#7f52ff">.startsWith(s)</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".startsWith("H") → true</td>
+    </tr>
+    <tr class="cr" data-m=".endswith(s)" data-d="endet mit?">
+      <td style="width:230px"><code style="color:#7f52ff">.endsWith(s)</code></td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".endsWith("i") → true</td>
+    </tr>
+    <tr class="cr" data-m=".indexof(s)" data-d="position (-1 wenn nicht gefunden)">
+      <td style="width:230px"><code style="color:#7f52ff">.indexOf(s)</code></td>
+      <td style="color:#6c7a8e">Position (-1 wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px">"abcabc".indexOf("b") → 1</td>
+    </tr>
+    <tr class="cr" data-m=".substring(s, e)" data-d="teilstring">
+      <td style="width:230px"><code style="color:#7f52ff">.substring(s, e)</code></td>
+      <td style="color:#6c7a8e">Teilstring</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".substring(1, 4) → "all"</td>
+    </tr>
+    <tr class="cr" data-m="[1..4]" data-d="slice via range">
+      <td style="width:230px"><code style="color:#7f52ff">[1..4]</code></td>
+      <td style="color:#6c7a8e">Slice via Range</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"[1..3] → "all"</td>
+    </tr>
+    <tr class="cr" data-m=".replace(a, b)" data-d="ersetzen">
+      <td style="width:230px"><code style="color:#7f52ff">.replace(a, b)</code></td>
+      <td style="color:#6c7a8e">Ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">"aaa".replace("a","b") → "bbb"</td>
+    </tr>
+    <tr class="cr" data-m=".split(sep)" data-d="aufteilen → list&lt;string&gt;">
+      <td style="width:230px"><code style="color:#7f52ff">.split(sep)</code></td>
+      <td style="color:#6c7a8e">Aufteilen → List&lt;String&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">"a,b".split(",") → [a, b]</td>
+    </tr>
+    <tr class="cr" data-m=".jointostring(sep)" data-d="verbinden">
+      <td style="width:230px"><code style="color:#7f52ff">.joinToString(sep)</code></td>
+      <td style="color:#6c7a8e">Verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">listOf("a","b").joinToString(",") → "a,b"</td>
+    </tr>
+    <tr class="cr" data-m=".toint() / todouble()" data-d="konvertieren">
+      <td style="width:230px"><code style="color:#7f52ff">.toInt() / toDouble()</code></td>
+      <td style="color:#6c7a8e">Konvertieren</td>
+      <td style="color:#c3e88d;font-size:11px">"42".toInt() → 42</td>
+    </tr>
+    <tr class="cr" data-m=".tointornull()" data-d="sicher konvertieren">
+      <td style="width:230px"><code style="color:#7f52ff">.toIntOrNull()</code></td>
+      <td style="color:#6c7a8e">Sicher konvertieren</td>
+      <td style="color:#c3e88d;font-size:11px">"abc".toIntOrNull() → null</td>
+    </tr>
+    <tr class="cr" data-m=".format(args)" data-d="formatieren">
+      <td style="width:230px"><code style="color:#7f52ff">.format(args)</code></td>
+      <td style="color:#6c7a8e">Formatieren</td>
+      <td style="color:#c3e88d;font-size:11px">"%.2f".format(3.14) → "3.14"</td>
+    </tr>
+    <tr class="cr" data-m=".padstart(n, c)" data-d="links auffüllen">
+      <td style="width:230px"><code style="color:#7f52ff">.padStart(n, c)</code></td>
+      <td style="color:#6c7a8e">Links auffüllen</td>
+      <td style="color:#c3e88d;font-size:11px">"42".padStart(5,'0') → "00042"</td>
+    </tr>
+    <tr class="cr" data-m=".padend(n, c)" data-d="rechts auffüllen">
+      <td style="width:230px"><code style="color:#7f52ff">.padEnd(n, c)</code></td>
+      <td style="color:#6c7a8e">Rechts auffüllen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".repeat(n)" data-d="n-mal wiederholen">
+      <td style="width:230px"><code style="color:#7f52ff">.repeat(n)</code></td>
+      <td style="color:#6c7a8e">n-mal wiederholen</td>
+      <td style="color:#c3e88d;font-size:11px">"ab".repeat(3) → "ababab"</td>
+    </tr>
+    <tr class="cr" data-m=".lines()" data-d="in zeilen aufteilen">
+      <td style="width:230px"><code style="color:#7f52ff">.lines()</code></td>
+      <td style="color:#6c7a8e">In Zeilen aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="regex(pattern)" data-d="regex erstellen">
+      <td style="width:230px"><code style="color:#7f52ff">Regex(pattern)</code></td>
+      <td style="color:#6c7a8e">Regex erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">Regex("[0-9]+").find("abc123")</td>
+    </tr>
+    <tr class="cr" data-m=".matches(regex)" data-d="vollständig passend?">
+      <td style="width:230px"><code style="color:#7f52ff">.matches(regex)</code></td>
+      <td style="color:#6c7a8e">Vollständig passend?</td>
+      <td style="color:#c3e88d;font-size:11px">"123".matches(Regex("[0-9]+"))</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Collection-Funktionen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="listof()" data-d="unveränderliche liste">
+      <td style="width:230px"><code style="color:#4fc3f7">listOf()</code></td>
+      <td style="color:#6c7a8e">Unveränderliche Liste</td>
+      <td style="color:#c3e88d;font-size:11px">listOf(1, 2, 3)</td>
+    </tr>
+    <tr class="cr" data-m="mutablelistof()" data-d="veränderliche liste">
+      <td style="width:230px"><code style="color:#4fc3f7">mutableListOf()</code></td>
+      <td style="color:#6c7a8e">Veränderliche Liste</td>
+      <td style="color:#c3e88d;font-size:11px">mutableListOf&lt;Int&gt;()</td>
+    </tr>
+    <tr class="cr" data-m="buildlist { }" data-d="builder-syntax">
+      <td style="width:230px"><code style="color:#4fc3f7">buildList { }</code></td>
+      <td style="color:#6c7a8e">Builder-Syntax</td>
+      <td style="color:#c3e88d;font-size:11px">buildList { add(1); addAll(list) }</td>
+    </tr>
+    <tr class="cr" data-m=".size" data-d="anzahl elemente">
+      <td style="width:230px"><code style="color:#4fc3f7">.size</code></td>
+      <td style="color:#6c7a8e">Anzahl Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">list.size → 3</td>
+    </tr>
+    <tr class="cr" data-m=".isempty() / isnotempty()" data-d="leer prüfen">
+      <td style="width:230px"><code style="color:#4fc3f7">.isEmpty() / isNotEmpty()</code></td>
+      <td style="color:#6c7a8e">Leer prüfen</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".get(i) / [i]" data-d="element per index">
+      <td style="width:230px"><code style="color:#4fc3f7">.get(i) / [i]</code></td>
+      <td style="color:#6c7a8e">Element per Index</td>
+      <td style="color:#c3e88d;font-size:11px">list[0]</td>
+    </tr>
+    <tr class="cr" data-m=".first() / last()" data-d="erstes/letztes (exception wenn leer)">
+      <td style="width:230px"><code style="color:#4fc3f7">.first() / last()</code></td>
+      <td style="color:#6c7a8e">Erstes/Letztes (Exception wenn leer)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".firstornull()" data-d="erstes oder null">
+      <td style="width:230px"><code style="color:#4fc3f7">.firstOrNull()</code></td>
+      <td style="color:#6c7a8e">Erstes oder null</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".contains(x)" data-d="enthält?">
+      <td style="width:230px"><code style="color:#4fc3f7">.contains(x)</code></td>
+      <td style="color:#6c7a8e">Enthält?</td>
+      <td style="color:#c3e88d;font-size:11px">list.contains(42) oder 42 in list</td>
+    </tr>
+    <tr class="cr" data-m=".indexof(x)" data-d="index (-1 wenn nicht gefunden)">
+      <td style="width:230px"><code style="color:#4fc3f7">.indexOf(x)</code></td>
+      <td style="color:#6c7a8e">Index (-1 wenn nicht gefunden)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".map { }" data-d="transformieren">
+      <td style="width:230px"><code style="color:#4fc3f7">.map { }</code></td>
+      <td style="color:#6c7a8e">Transformieren</td>
+      <td style="color:#c3e88d;font-size:11px">list.map { it * 2 }</td>
+    </tr>
+    <tr class="cr" data-m=".filter { }" data-d="filtern">
+      <td style="width:230px"><code style="color:#4fc3f7">.filter { }</code></td>
+      <td style="color:#6c7a8e">Filtern</td>
+      <td style="color:#c3e88d;font-size:11px">list.filter { it &gt; 0 }</td>
+    </tr>
+    <tr class="cr" data-m=".foreach { }" data-d="iterieren">
+      <td style="width:230px"><code style="color:#4fc3f7">.forEach { }</code></td>
+      <td style="color:#6c7a8e">Iterieren</td>
+      <td style="color:#c3e88d;font-size:11px">list.forEach { println(it) }</td>
+    </tr>
+    <tr class="cr" data-m=".foreachindexed { }" data-d="mit index iterieren">
+      <td style="width:230px"><code style="color:#4fc3f7">.forEachIndexed { }</code></td>
+      <td style="color:#6c7a8e">Mit Index iterieren</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".sorted()" data-d="aufsteigend sortiert (neue liste)">
+      <td style="width:230px"><code style="color:#4fc3f7">.sorted()</code></td>
+      <td style="color:#6c7a8e">Aufsteigend sortiert (neue Liste)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".sortedby { }" data-d="nach kriterium sortiert">
+      <td style="width:230px"><code style="color:#4fc3f7">.sortedBy { }</code></td>
+      <td style="color:#6c7a8e">Nach Kriterium sortiert</td>
+      <td style="color:#c3e88d;font-size:11px">list.sortedBy { it.name }</td>
+    </tr>
+    <tr class="cr" data-m=".groupby { }" data-d="gruppieren → map&lt;k, list&lt;v&gt;&gt;">
+      <td style="width:230px"><code style="color:#4fc3f7">.groupBy { }</code></td>
+      <td style="color:#6c7a8e">Gruppieren → Map&lt;K, List&lt;V&gt;&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">list.groupBy { it.length }</td>
+    </tr>
+    <tr class="cr" data-m=".associateby { }" data-d="zu map → map&lt;k, v&gt;">
+      <td style="width:230px"><code style="color:#4fc3f7">.associateBy { }</code></td>
+      <td style="color:#6c7a8e">Zu Map → Map&lt;K, V&gt;</td>
+      <td style="color:#c3e88d;font-size:11px">list.associateBy { it.id }</td>
+    </tr>
+    <tr class="cr" data-m=".partition { }" data-d="aufteilen → pair&lt;list, list&gt;">
+      <td style="width:230px"><code style="color:#4fc3f7">.partition { }</code></td>
+      <td style="color:#6c7a8e">Aufteilen → Pair&lt;List, List&gt;</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".distinct()" data-d="duplikate entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">.distinct()</code></td>
+      <td style="color:#6c7a8e">Duplikate entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">[1,1,2].distinct() → [1,2]</td>
+    </tr>
+    <tr class="cr" data-m=".zip(other)" data-d="reißverschluss">
+      <td style="width:230px"><code style="color:#4fc3f7">.zip(other)</code></td>
+      <td style="color:#6c7a8e">Reißverschluss</td>
+      <td style="color:#c3e88d;font-size:11px">a.zip(b) → [(a0,b0), ...]</td>
+    </tr>
+    <tr class="cr" data-m=".chunked(n)" data-d="in gruppen aufteilen">
+      <td style="width:230px"><code style="color:#4fc3f7">.chunked(n)</code></td>
+      <td style="color:#6c7a8e">In Gruppen aufteilen</td>
+      <td style="color:#c3e88d;font-size:11px">[1..10].chunked(3)</td>
+    </tr>
+    <tr class="cr" data-m=".windowed(n)" data-d="gleitendes fenster">
+      <td style="width:230px"><code style="color:#4fc3f7">.windowed(n)</code></td>
+      <td style="color:#6c7a8e">Gleitendes Fenster</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".flatten()" data-d="verschachtelt flach machen">
+      <td style="width:230px"><code style="color:#4fc3f7">.flatten()</code></td>
+      <td style="color:#6c7a8e">Verschachtelt flach machen</td>
+      <td style="color:#c3e88d;font-size:11px">[[1,2],[3]].flatten() → [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".flatmap { }" data-d="map + flatten">
+      <td style="width:230px"><code style="color:#4fc3f7">.flatMap { }</code></td>
+      <td style="color:#6c7a8e">Map + Flatten</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".sumof { }" data-d="summe nach transformation">
+      <td style="width:230px"><code style="color:#4fc3f7">.sumOf { }</code></td>
+      <td style="color:#6c7a8e">Summe nach Transformation</td>
+      <td style="color:#c3e88d;font-size:11px">list.sumOf { it.gehalt }</td>
+    </tr>
+    <tr class="cr" data-m=".maxbyornull { }" data-d="max nach kriterium oder null">
+      <td style="width:230px"><code style="color:#4fc3f7">.maxByOrNull { }</code></td>
+      <td style="color:#6c7a8e">Max nach Kriterium oder null</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".fold(init) { }" data-d="akkumulieren mit startwert">
+      <td style="width:230px"><code style="color:#4fc3f7">.fold(init) { }</code></td>
+      <td style="color:#6c7a8e">Akkumulieren mit Startwert</td>
+      <td style="color:#c3e88d;font-size:11px">list.fold(0) { acc, x -&gt; acc + x }</td>
+    </tr>
+    <tr class="cr" data-m="mapof() / mutablemapof()" data-d="map erstellen">
+      <td style="width:230px"><code style="color:#4fc3f7">mapOf() / mutableMapOf()</code></td>
+      <td style="color:#6c7a8e">Map erstellen</td>
+      <td style="color:#c3e88d;font-size:11px">mapOf("a" to 1, "b" to 2)</td>
+    </tr>
+    <tr class="cr" data-m="map.getordefault(k,d)" data-d="wert oder default">
+      <td style="width:230px"><code style="color:#4fc3f7">map.getOrDefault(k,d)</code></td>
+      <td style="color:#6c7a8e">Wert oder Default</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #7f52ff;color:#7f52ff;background:rgba(127,82,255,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Sealed Classes – State Machine</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Extension Functions &amp; DSL</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Coroutines – Parallele Datenverarbeitung</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Generics &amp; Type-Safe Builder</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> kotlinx.coroutines.*
+
+<span style="color:#546e7a">// Typsichere State Machine mit sealed classes</span>
+
+<span style="color:#c792ea">sealed</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#c792ea">out</span> <span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">object</span> <span style="color:#4ec9b0">Warten</span>  : <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#4ec9b0">Nothing</span>&gt;()
+    <span style="color:#c792ea">object</span> <span style="color:#4ec9b0">Laden</span>   : <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#4ec9b0">Nothing</span>&gt;()
+    <span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Erfolg</span>&lt;<span style="color:#4ec9b0">T</span>&gt;(<span style="color:#c792ea">val</span> daten: <span style="color:#4ec9b0">T</span>)  : <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#4ec9b0">T</span>&gt;()
+    <span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Fehler</span>(<span style="color:#c792ea">val</span> ex: <span style="color:#4ec9b0">Throwable</span>): <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#4ec9b0">Nothing</span>&gt;()
+}
+
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">User</span>(<span style="color:#c792ea">val</span> id: <span style="color:#4ec9b0">Int</span>, <span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">val</span> email: <span style="color:#4ec9b0">String</span>)
+
+<span style="color:#546e7a">// Repository</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">UserRepository</span> {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> users = <span style="color:#82aaff">mapOf</span>(
+        <span style="color:#f78c6c">1</span> <span style="color:#82aaff">to</span> <span style="color:#4ec9b0">User</span>(<span style="color:#f78c6c">1</span>, <span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"alice@example.com"</span>),
+        <span style="color:#f78c6c">2</span> <span style="color:#82aaff">to</span> <span style="color:#4ec9b0">User</span>(<span style="color:#f78c6c">2</span>, <span style="color:#c3e88d">"Bob"</span>,   <span style="color:#c3e88d">"bob@example.com"</span>),
+    )
+
+    <span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> ladeUser(id: <span style="color:#4ec9b0">Int</span>): <span style="color:#4ec9b0">User</span> =
+        users[id] <span style="color:#89ddff">?:</span> <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">NoSuchElementException</span>(<span style="color:#c3e88d">"User $id nicht gefunden"</span>)
+}
+
+<span style="color:#546e7a">// ViewModel (vereinfacht, kein Android nötig)</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">UserViewModel</span>(<span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> repo: <span style="color:#4ec9b0">UserRepository</span>) {
+    <span style="color:#c792ea">var</span> zustand: <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#4ec9b0">User</span>&gt; = <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Warten</span>
+        <span style="color:#c792ea">private</span> <span style="color:#c792ea">set</span>
+
+    <span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> ladeUser(id: <span style="color:#4ec9b0">Int</span>) {
+        zustand = <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Laden</span>
+        zustand = <span style="color:#c792ea">try</span> {
+            <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Erfolg</span>(repo.ladeUser(id))
+        } <span style="color:#c792ea">catch</span> (e: <span style="color:#4ec9b0">Exception</span>) {
+            <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Fehler</span>(e)
+        }
+    }
+}
+
+<span style="color:#546e7a">// View – exhaustiver when auf sealed class</span>
+<span style="color:#c792ea">fun</span> render(zustand: <span style="color:#4ec9b0">LadeZustand</span>&lt;<span style="color:#4ec9b0">User</span>&gt;): <span style="color:#4ec9b0">String</span> = <span style="color:#c792ea">when</span> (zustand) {
+    <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Warten</span>  <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Bereit"</span>
+    <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Laden</span>   <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Lädt..."</span>
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Erfolg</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#82aaff">with</span>(zustand.daten) {
+        <span style="color:#c3e88d">"User: $name ($email)"</span>
+    }
+    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">LadeZustand</span>.<span style="color:#4ec9b0">Fehler</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#c3e88d">"Fehler: ${zustand.ex.message}"</span>
+    <span style="color:#546e7a">// Kein else nötig! Vollständigkeit garantiert.</span>
+}
+
+<span style="color:#c792ea">fun</span> main() = <span style="color:#82aaff">runBlocking</span> {
+    <span style="color:#c792ea">val</span> vm = <span style="color:#4ec9b0">UserViewModel</span>(<span style="color:#4ec9b0">UserRepository</span>())
+
+    <span style="color:#82aaff">println</span>(render(vm.zustand))    <span style="color:#546e7a">// Bereit</span>
+
+    vm.ladeUser(<span style="color:#f78c6c">1</span>)
+    <span style="color:#82aaff">println</span>(render(vm.zustand))    <span style="color:#546e7a">// User: Alice (alice@example.com)</span>
+
+    vm.ladeUser(<span style="color:#f78c6c">99</span>)
+    <span style="color:#82aaff">println</span>(render(vm.zustand))    <span style="color:#546e7a">// Fehler: User 99 nicht gefunden</span>
+}</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Kotlin DSL (Domain Specific Language) – eigene "Sprache" erstellen!</span>
+<span style="color:#546e7a">// Genutzt von: Gradle (build.gradle.kts), Ktor, Anko, ...</span>
+
+<span style="color:#546e7a">// HTML-DSL Beispiel</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">HtmlTag</span>(<span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> attribute = <span style="color:#82aaff">mutableMapOf</span>&lt;<span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">String</span>&gt;()
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> kinder = <span style="color:#82aaff">mutableListOf</span>&lt;<span style="color:#4ec9b0">Any</span>&gt;()
+
+    <span style="color:#c792ea">operator</span> <span style="color:#c792ea">fun</span> <span style="color:#4ec9b0">String</span>.unaryPlus() { kinder.add(<span style="color:#c792ea">this</span>) }
+
+    <span style="color:#c792ea">fun</span> attr(key: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">value</span>: <span style="color:#4ec9b0">String</span>) { attribute[key] = <span style="color:#c792ea">value</span> }
+
+    <span style="color:#c792ea">fun</span> tag(name: <span style="color:#4ec9b0">String</span>, block: <span style="color:#4ec9b0">HtmlTag</span>.() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Unit</span>): <span style="color:#4ec9b0">HtmlTag</span> {
+        <span style="color:#c792ea">val</span> child = <span style="color:#4ec9b0">HtmlTag</span>(name)
+        child.block()
+        kinder.add(child)
+        <span style="color:#c792ea">return</span> child
+    }
+
+    <span style="color:#c792ea">fun</span> render(einrückung: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">0</span>): <span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">val</span> prefix = <span style="color:#c3e88d">"  "</span>.<span style="color:#82aaff">repeat</span>(einrückung)
+        <span style="color:#c792ea">val</span> attrs = <span style="color:#c792ea">if</span> (attribute.isEmpty()) <span style="color:#c3e88d">""</span>
+            <span style="color:#c792ea">else</span> <span style="color:#c3e88d">" "</span> + attribute.<span style="color:#82aaff">map</span> { <span style="color:#c3e88d">"""${it.key}="${it.value}"""</span><span style="color:#c3e88d">" }.joinToString("</span> <span style="color:#c3e88d">")</span>
+        <span style="color:#c792ea">return</span> <span style="color:#82aaff">buildString</span> {
+            appendLine(<span style="color:#c3e88d">"$prefix&lt;$name$attrs&gt;"</span>)
+            kinder.<span style="color:#82aaff">forEach</span> { kind <span style="color:#89ddff">-&gt;</span>
+                <span style="color:#c792ea">when</span> (kind) {
+                    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">HtmlTag</span> <span style="color:#89ddff">-&gt;</span> appendLine(kind.render(einrückung + <span style="color:#f78c6c">1</span>).trimEnd())
+                    <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">String</span>  <span style="color:#89ddff">-&gt;</span> appendLine(<span style="color:#c3e88d">"$prefix  $kind"</span>)
+                }
+            }
+            append(<span style="color:#c3e88d">"$prefix&lt;/$name&gt;"</span>)
+        }
+    }
+}
+
+<span style="color:#c792ea">fun</span> html(block: <span style="color:#4ec9b0">HtmlTag</span>.() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Unit</span>) = <span style="color:#4ec9b0">HtmlTag</span>(<span style="color:#c3e88d">"html"</span>).<span style="color:#82aaff">apply</span>(block)
+
+<span style="color:#546e7a">// Der DSL-Aufruf sieht aus wie echtes HTML!</span>
+<span style="color:#c792ea">val</span> dokument = html {
+    tag(<span style="color:#c3e88d">"head"</span>) {
+        tag(<span style="color:#c3e88d">"title"</span>) { +<span style="color:#c3e88d">"Meine Seite"</span> }
+    }
+    tag(<span style="color:#c3e88d">"body"</span>) {
+        attr(<span style="color:#c3e88d">"class"</span>, <span style="color:#c3e88d">"container"</span>)
+        tag(<span style="color:#c3e88d">"h1"</span>) { +<span style="color:#c3e88d">"Willkommen"</span> }
+        tag(<span style="color:#c3e88d">"p"</span>)  { +<span style="color:#c3e88d">"Das ist Kotlin-DSL!"</span> }
+        tag(<span style="color:#c3e88d">"ul"</span>) {
+            <span style="color:#82aaff">listOf</span>(<span style="color:#c3e88d">"Punkt 1"</span>, <span style="color:#c3e88d">"Punkt 2"</span>, <span style="color:#c3e88d">"Punkt 3"</span>).<span style="color:#82aaff">forEach</span> { p <span style="color:#89ddff">-&gt;</span>
+                tag(<span style="color:#c3e88d">"li"</span>) { +p }
+            }
+        }
+    }
+}
+
+<span style="color:#82aaff">println</span>(dokument.render())
+
+<span style="color:#546e7a">// Extension Functions für Builder-Pattern</span>
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">HttpRequest</span>(
+    <span style="color:#c792ea">val</span> url: <span style="color:#4ec9b0">String</span>,
+    <span style="color:#c792ea">val</span> method: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"GET"</span>,
+    <span style="color:#c792ea">val</span> headers: <span style="color:#4ec9b0">Map</span>&lt;<span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">String</span>&gt; = <span style="color:#82aaff">emptyMap</span>(),
+    <span style="color:#c792ea">val</span> body: <span style="color:#4ec9b0">String</span>? = <span style="color:#c792ea">null</span>,
+)
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">HttpRequestBuilder</span> {
+    <span style="color:#c792ea">var</span> url: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">""</span>
+    <span style="color:#c792ea">var</span> method: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"GET"</span>
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> headers = <span style="color:#82aaff">mutableMapOf</span>&lt;<span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">String</span>&gt;()
+    <span style="color:#c792ea">var</span> body: <span style="color:#4ec9b0">String</span>? = <span style="color:#c792ea">null</span>
+
+    <span style="color:#c792ea">fun</span> header(key: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">value</span>: <span style="color:#4ec9b0">String</span>) { headers[key] = <span style="color:#c792ea">value</span> }
+    <span style="color:#c792ea">fun</span> build() = <span style="color:#4ec9b0">HttpRequest</span>(url, method, headers.<span style="color:#82aaff">toMap</span>(), body)
+}
+
+<span style="color:#c792ea">fun</span> request(block: <span style="color:#4ec9b0">HttpRequestBuilder</span>.() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Unit</span>): <span style="color:#4ec9b0">HttpRequest</span> =
+    <span style="color:#4ec9b0">HttpRequestBuilder</span>().<span style="color:#82aaff">apply</span>(block).build()
+
+<span style="color:#c792ea">val</span> req = request {
+    url    = <span style="color:#c3e88d">"https://api.example.com/users"</span>
+    method = <span style="color:#c3e88d">"POST"</span>
+    header(<span style="color:#c3e88d">"Content-Type"</span>, <span style="color:#c3e88d">"application/json"</span>)
+    header(<span style="color:#c3e88d">"Authorization"</span>, <span style="color:#c3e88d">"Bearer token123"</span>)
+    body   = <span style="color:#c3e88d">"""{"name": "Alice"}"""</span>
+}
+
+<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"${req.method} ${req.url}"</span>)
+<span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Headers: ${req.headers}"</span>)</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> kotlinx.coroutines.*
+<span style="color:#c792ea">import</span> kotlinx.coroutines.<span style="color:#82aaff">flow</span>.*
+<span style="color:#c792ea">import</span> kotlin.time.measureTime
+
+<span style="color:#546e7a">// Parallele Datenverarbeitung mit Coroutines und Flow</span>
+
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Produkt</span>(<span style="color:#c792ea">val</span> id: <span style="color:#4ec9b0">Int</span>, <span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">val</span> preis: <span style="color:#4ec9b0">Double</span>)
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Lager</span>(<span style="color:#c792ea">val</span> produktId: <span style="color:#4ec9b0">Int</span>, <span style="color:#c792ea">val</span> menge: <span style="color:#4ec9b0">Int</span>)
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Bewertung</span>(<span style="color:#c792ea">val</span> produktId: <span style="color:#4ec9b0">Int</span>, <span style="color:#c792ea">val</span> sterne: <span style="color:#4ec9b0">Double</span>)
+
+<span style="color:#546e7a">// "Datenbank" simulieren</span>
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> holeProdukte(): <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">Produkt</span>&gt; {
+    <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">50</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#82aaff">listOf</span>(
+        <span style="color:#4ec9b0">Produkt</span>(<span style="color:#f78c6c">1</span>, <span style="color:#c3e88d">"Laptop"</span>,   <span style="color:#f78c6c">999.99</span>),
+        <span style="color:#4ec9b0">Produkt</span>(<span style="color:#f78c6c">2</span>, <span style="color:#c3e88d">"Maus"</span>,      <span style="color:#f78c6c">29.99</span>),
+        <span style="color:#4ec9b0">Produkt</span>(<span style="color:#f78c6c">3</span>, <span style="color:#c3e88d">"Tastatur"</span>,  <span style="color:#f78c6c">79.99</span>),
+    )
+}
+
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> holeLager(produktId: <span style="color:#4ec9b0">Int</span>): <span style="color:#4ec9b0">Lager</span> {
+    <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">30</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Lager</span>(produktId, (<span style="color:#f78c6c">10..100</span>).random())
+}
+
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> holeBewertungen(produktId: <span style="color:#4ec9b0">Int</span>): <span style="color:#4ec9b0">Bewertung</span> {
+    <span style="color:#82aaff">delay</span>(<span style="color:#f78c6c">40</span>)
+    <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Bewertung</span>(produktId, (<span style="color:#f78c6c">30..50</span>).random() / <span style="color:#f78c6c">10.0</span>)
+}
+
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ProduktDetail</span>(
+    <span style="color:#c792ea">val</span> produkt: <span style="color:#4ec9b0">Produkt</span>,
+    <span style="color:#c792ea">val</span> lager: <span style="color:#4ec9b0">Lager</span>,
+    <span style="color:#c792ea">val</span> bewertung: <span style="color:#4ec9b0">Bewertung</span>,
+)
+
+<span style="color:#c792ea">suspend</span> <span style="color:#c792ea">fun</span> ladeDetails(produkt: <span style="color:#4ec9b0">Produkt</span>): <span style="color:#4ec9b0">ProduktDetail</span> = <span style="color:#82aaff">coroutineScope</span> {
+    <span style="color:#546e7a">// Lager und Bewertung PARALLEL laden!</span>
+    <span style="color:#c792ea">val</span> lager     = <span style="color:#82aaff">async</span> { holeLager(produkt.id) }
+    <span style="color:#c792ea">val</span> bewertung = <span style="color:#82aaff">async</span> { holeBewertungen(produkt.id) }
+    <span style="color:#4ec9b0">ProduktDetail</span>(produkt, lager.<span style="color:#82aaff">await</span>(), bewertung.<span style="color:#82aaff">await</span>())
+}
+
+<span style="color:#c792ea">fun</span> main() = <span style="color:#82aaff">runBlocking</span> {
+    <span style="color:#c792ea">val</span> dauer = measureTime {
+        <span style="color:#c792ea">val</span> produkte = holeProdukte()
+
+        <span style="color:#546e7a">// ALLE Details parallel laden!</span>
+        <span style="color:#c792ea">val</span> details = produkte.<span style="color:#82aaff">map</span> { p <span style="color:#89ddff">-&gt;</span>
+            <span style="color:#82aaff">async</span> { ladeDetails(p) }
+        }.awaitAll()
+
+        <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"=== Produkt-Katalog ==="</span>)
+        details.<span style="color:#82aaff">forEach</span> { d <span style="color:#89ddff">-&gt;</span>
+            <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"${d.produkt.name.padEnd(12)} "</span> +
+                    <span style="color:#c3e88d">"${d.produkt.preis.let { "</span>%<span style="color:#f78c6c">.2f</span>€<span style="color:#c3e88d">".format(it) }.padStart(10)}  "</span> +
+                    <span style="color:#c3e88d">"Lager: ${d.lager.menge.toString().padStart(3)}  "</span> +
+                    <span style="color:#c3e88d">"⭐ ${"</span>%<span style="color:#f78c6c">.1f</span><span style="color:#c3e88d">".format(d.bewertung.sterne)}"</span>)
+        }
+
+        <span style="color:#546e7a">// Flow-basierte Verarbeitung</span>
+        <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"</span>
+=== <span style="color:#4ec9b0">Günstige</span> <span style="color:#4ec9b0">Verfügbare</span> ===<span style="color:#c3e88d">")</span>
+        produkte.asFlow()
+            .<span style="color:#82aaff">map</span> { <span style="color:#82aaff">async</span> { ladeDetails(it) } }
+            .<span style="color:#82aaff">map</span> { it.<span style="color:#82aaff">await</span>() }
+            .<span style="color:#82aaff">filter</span> { it.produkt.preis &lt; <span style="color:#f78c6c">100</span> &amp;&amp; it.lager.menge &gt; <span style="color:#f78c6c">20</span> }
+            .<span style="color:#82aaff">sortedBy</span> { it.produkt.preis }
+            .<span style="color:#82aaff">collect</span> { d <span style="color:#89ddff">-&gt;</span>
+                <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"${d.produkt.name}: ${d.produkt.preis}€"</span>)
+            }
+    }
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"</span>
+<span style="color:#4ec9b0">Gesamt</span>: $dauer (parallel statt sequenziell!)<span style="color:#c3e88d">")</span>
+}</pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Generics, Variance und Type-Safe Builder in Kotlin</span>
+
+<span style="color:#546e7a">// ── GENERICS MIT VARIANCE ────────────────────────────────────────</span>
+<span style="color:#546e7a">// out = Kovarianz (Producer, gibt T zurück)</span>
+<span style="color:#546e7a">// in  = Kontravarianz (Consumer, nimmt T entgegen)</span>
+
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Produzent</span>&lt;<span style="color:#c792ea">out</span> <span style="color:#4ec9b0">T</span>&gt; { <span style="color:#c792ea">fun</span> produziere(): <span style="color:#4ec9b0">T</span> }
+<span style="color:#c792ea">interface</span> <span style="color:#4ec9b0">Konsument</span>&lt;<span style="color:#c792ea">in</span> <span style="color:#4ec9b0">T</span>&gt;  { <span style="color:#c792ea">fun</span> konsumiere(wert: <span style="color:#4ec9b0">T</span>) }
+
+<span style="color:#546e7a">// out erlaubt: List&lt;Hund&gt; als List&lt;Tier&gt; zu verwenden</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ImmutableListe</span>&lt;<span style="color:#c792ea">out</span> <span style="color:#4ec9b0">T</span>&gt;(<span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> items: <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">T</span>&gt;) : <span style="color:#4ec9b0">Produzent</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">override</span> <span style="color:#c792ea">fun</span> produziere(): <span style="color:#4ec9b0">T</span> = items.<span style="color:#82aaff">first</span>()
+    <span style="color:#c792ea">fun</span> groesse() = items.size
+}
+
+<span style="color:#546e7a">// ── TYPE-SAFE BUILDER ────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Validator DSL (wie in production Kotlin-Projekten!)</span>
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ValidationError</span>(<span style="color:#c792ea">val</span> feld: <span style="color:#4ec9b0">String</span>, <span style="color:#c792ea">val</span> nachricht: <span style="color:#4ec9b0">String</span>)
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Validator</span>&lt;<span style="color:#4ec9b0">T</span>&gt;(<span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> wert: <span style="color:#4ec9b0">T</span>, <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> feld: <span style="color:#4ec9b0">String</span>) {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> fehler = <span style="color:#82aaff">mutableListOf</span>&lt;<span style="color:#4ec9b0">ValidationError</span>&gt;()
+
+    <span style="color:#c792ea">fun</span> istNichtNull(msg: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">"Darf nicht null sein"</span>): <span style="color:#4ec9b0">Validator</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+        <span style="color:#c792ea">if</span> (wert == <span style="color:#c792ea">null</span>) fehler.add(<span style="color:#4ec9b0">ValidationError</span>(feld, msg))
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>
+    }
+
+    <span style="color:#c792ea">fun</span> erfüllt(bedingung: (<span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Boolean</span>, msg: <span style="color:#4ec9b0">String</span>): <span style="color:#4ec9b0">Validator</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+        <span style="color:#c792ea">if</span> (!bedingung(wert)) fehler.add(<span style="color:#4ec9b0">ValidationError</span>(feld, msg))
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">this</span>
+    }
+
+    <span style="color:#c792ea">fun</span> fehler() = fehler.<span style="color:#82aaff">toList</span>()
+    <span style="color:#c792ea">fun</span> istGültig() = fehler.isEmpty()
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Formularvalidator</span> {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">val</span> alle = <span style="color:#82aaff">mutableListOf</span>&lt;<span style="color:#4ec9b0">Validator</span>&lt;*&gt;&gt;()
+
+    <span style="color:#c792ea">fun</span> &lt;<span style="color:#4ec9b0">T</span>&gt; validiere(wert: <span style="color:#4ec9b0">T</span>, feld: <span style="color:#4ec9b0">String</span>, block: <span style="color:#4ec9b0">Validator</span>&lt;<span style="color:#4ec9b0">T</span>&gt;.() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Unit</span>): <span style="color:#4ec9b0">Validator</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+        <span style="color:#c792ea">val</span> v = <span style="color:#4ec9b0">Validator</span>(wert, feld).<span style="color:#82aaff">apply</span>(block)
+        alle.add(v)
+        <span style="color:#c792ea">return</span> v
+    }
+
+    <span style="color:#c792ea">fun</span> alleGültig() = alle.<span style="color:#82aaff">all</span> { it.istGültig() }
+    <span style="color:#c792ea">fun</span> alleFehler() = alle.<span style="color:#82aaff">flatMap</span> { it.fehler() }
+}
+
+<span style="color:#c792ea">data</span> <span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Benutzer</span>(<span style="color:#c792ea">val</span> name: <span style="color:#4ec9b0">String</span>?, <span style="color:#c792ea">val</span> email: <span style="color:#4ec9b0">String</span>?, <span style="color:#c792ea">val</span> alter: <span style="color:#4ec9b0">Int</span>?)
+
+<span style="color:#c792ea">fun</span> validiereBenutzer(b: <span style="color:#4ec9b0">Benutzer</span>): <span style="color:#4ec9b0">List</span>&lt;<span style="color:#4ec9b0">ValidationError</span>&gt; {
+    <span style="color:#c792ea">val</span> form = <span style="color:#4ec9b0">Formularvalidator</span>()
+
+    form.validiere(b.name, <span style="color:#c3e88d">"name"</span>) {
+        istNichtNull()
+        erfüllt({ it != <span style="color:#c792ea">null</span> &amp;&amp; it.length &gt;= <span style="color:#f78c6c">2</span> }, <span style="color:#c3e88d">"Mindestens 2 Zeichen"</span>)
+        erfüllt({ it != <span style="color:#c792ea">null</span> &amp;&amp; it.length &lt;= <span style="color:#f78c6c">50</span> }, <span style="color:#c3e88d">"Maximal 50 Zeichen"</span>)
+    }
+
+    form.validiere(b.email, <span style="color:#c3e88d">"email"</span>) {
+        istNichtNull()
+        erfüllt({ it != <span style="color:#c792ea">null</span> &amp;&amp; <span style="color:#c3e88d">"@"</span> <span style="color:#c792ea">in</span> it }, <span style="color:#c3e88d">"Muss @ enthalten"</span>)
+        erfüllt({ it != <span style="color:#c792ea">null</span> &amp;&amp; <span style="color:#c3e88d">"."</span> <span style="color:#c792ea">in</span> it.substringAfter(<span style="color:#c3e88d">"@"</span>) }, <span style="color:#c3e88d">"Ungültige Domain"</span>)
+    }
+
+    form.validiere(b.alter, <span style="color:#c3e88d">"alter"</span>) {
+        istNichtNull(<span style="color:#c3e88d">"Alter ist erforderlich"</span>)
+        erfüllt({ it != <span style="color:#c792ea">null</span> &amp;&amp; it <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..150</span> }, <span style="color:#c3e88d">"Muss zwischen 0 und 150 sein"</span>)
+    }
+
+    <span style="color:#c792ea">return</span> form.alleFehler()
+}
+
+<span style="color:#c792ea">fun</span> main() {
+    <span style="color:#c792ea">val</span> gültig = <span style="color:#4ec9b0">Benutzer</span>(<span style="color:#c3e88d">"Alice"</span>, <span style="color:#c3e88d">"alice@example.com"</span>, <span style="color:#f78c6c">30</span>)
+    <span style="color:#c792ea">val</span> ungültig = <span style="color:#4ec9b0">Benutzer</span>(<span style="color:#c792ea">null</span>, <span style="color:#c3e88d">"keine-email"</span>, <span style="color:#f78c6c">200</span>)
+
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"=== Gültig ==="</span>)
+    validiereBenutzer(gültig).<span style="color:#82aaff">forEach</span> { <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"${it.feld}: ${it.nachricht}"</span>) }
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"Keine Fehler: ${validiereBenutzer(gültig).isEmpty()}"</span>)
+
+    <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"</span>
+=== <span style="color:#4ec9b0">Ungültig</span> ===<span style="color:#c3e88d">")</span>
+    validiereBenutzer(ungültig).<span style="color:#82aaff">forEach</span> { <span style="color:#82aaff">println</span>(<span style="color:#c3e88d">"${it.feld}: ${it.nachricht}"</span>) }
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#7f52ff0e;border:1px solid #7f52ff44;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#7f52ff">Schnellstart:</strong> <code style="color:#ffb347">sdk install kotlin</code> (SDKMAN) oder <a href="https://play.kotlinlang.org" style="color:#d4a017">play.kotlinlang.org</a><br>Gradle-Projekt: <code style="color:#ffb347">gradle init --type kotlin-application && ./gradlew run</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #7f52ff44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#7f52ff0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#7f52ff">
+      <span style="display:inline-block;width:8px;height:8px;background:#7f52ff;border-radius:50%;margin-right:2px"></span>⚙ Kotlin installieren (Linux)
+    </span>
+    <span class="aa" style="color:#7f52ff;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#7f52ff">SDKMAN (empfohlen)</code></td><td style="color:#cdd6f4">sdkman.io</td><td style="color:#6c7a8e">curl -s "https://get.sdkman.io" | bash
+sdk install kotlin
+kotlin -version</td></tr><tr><td style="width:240px"><code style="color:#7f52ff">Arch/CachyOS</code></td><td style="color:#cdd6f4">kotlin</td><td style="color:#6c7a8e">sudo pacman -S kotlin
+kotlin -version</td></tr><tr><td style="width:240px"><code style="color:#7f52ff">Ubuntu/Debian</code></td><td style="color:#cdd6f4">snap</td><td style="color:#6c7a8e">sudo snap install kotlin --classic</td></tr><tr><td style="width:240px"><code style="color:#7f52ff">Homebrew (macOS)</code></td><td style="color:#cdd6f4">brew</td><td style="color:#6c7a8e">brew install kotlin</td></tr><tr><td style="width:240px"><code style="color:#7f52ff">IntelliJ IDEA</code></td><td style="color:#cdd6f4">jetbrains.com</td><td style="color:#6c7a8e">Eingebaut! JetBrains IDE (Community kostenlos)
+kotlin-stdlib wird auto-geladen</td></tr><tr><td style="width:240px"><code style="color:#7f52ff">Kotlin Playground</code></td><td style="color:#cdd6f4">play.kotlinlang.org</td><td style="color:#6c7a8e">Direkt im Browser – kein Install!</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Kompilieren &amp; Ausführen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">kotlinc Main.kt -include-runtime -d app.jar</code></td><td style="color:#cdd6f4">Kompilieren</td><td style="color:#6c7a8e">Executable JAR mit Runtime</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">java -jar app.jar</code></td><td style="color:#cdd6f4">Ausführen</td><td style="color:#6c7a8e">Braucht JVM 11+</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">kotlinc -script skript.kts</code></td><td style="color:#cdd6f4">Script ausführen</td><td style="color:#6c7a8e">Kein Kompilieren nötig</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">kotlin Main.kt</code></td><td style="color:#cdd6f4">Direkt ausführen</td><td style="color:#6c7a8e">Wie python main.py</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">kotlinc -version</code></td><td style="color:#cdd6f4">Version anzeigen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">kotlinc Main.kt -d main.js</code></td><td style="color:#cdd6f4">Zu JavaScript</td><td style="color:#6c7a8e">Kotlin/JS</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">./gradlew build</code></td><td style="color:#cdd6f4">Gradle-Projekt bauen</td><td style="color:#6c7a8e">Standard in modernen Projekten</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">./gradlew run</code></td><td style="color:#cdd6f4">Gradle-Projekt starten</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">./gradlew test</code></td><td style="color:#cdd6f4">Tests ausführen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">./gradlew tasks</code></td><td style="color:#cdd6f4">Alle Tasks anzeigen</td><td style="color:#6c7a8e"></td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Build-Tools
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">Gradle (Kotlin DSL)</code></td><td style="color:#cdd6f4">gradle.org</td><td style="color:#6c7a8e">build.gradle.kts statt build.gradle
+plugins { kotlin("jvm") version "2.0.0" }
+kotlinOptions { jvmTarget = "17" }</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Maven</code></td><td style="color:#cdd6f4">maven.apache.org</td><td style="color:#6c7a8e">pom.xml mit kotlin-maven-plugin
+(Gradle bevorzugen für neue Projekte)</td></tr><tr><td style="width:240px"><code style="color:#c792ea">Amper</code></td><td style="color:#cdd6f4">github.com/JetBrains/amper</td><td style="color:#6c7a8e">Neues vereinfachtes Build-System von JetBrains</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Frameworks &amp; Libraries
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">Ktor</code></td><td style="color:#cdd6f4">ktor.io</td><td style="color:#6c7a8e">Kotlin-nativer Web-Server
+val app = embeddedServer(Netty, port=8080) { ... }</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Spring Boot</code></td><td style="color:#cdd6f4">spring.io</td><td style="color:#6c7a8e">Voller Enterprise-Stack, Kotlin 1st Class
+@RestController @GetMapping("/users") fun users() = ...</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Exposed</code></td><td style="color:#cdd6f4">github.com/JetBrains</td><td style="color:#6c7a8e">Leichtes ORM für SQL
+object Users: Table() { val name = varchar("name", 50) }</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Coroutines</code></td><td style="color:#cdd6f4">kotlinx.coroutines</td><td style="color:#6c7a8e">Offiziell, async/await
+implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Flow</code></td><td style="color:#cdd6f4">kotlinx.coroutines</td><td style="color:#6c7a8e">Reaktive Streams (in coroutines enthalten)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Kotlin Serialization</code></td><td style="color:#cdd6f4">github.com</td><td style="color:#6c7a8e">@Serializable data class User(val name: String)
+Json.encodeToString(user)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Arrow</code></td><td style="color:#cdd6f4">arrow-kt.io</td><td style="color:#6c7a8e">Funktionale Programmierung: Either, Option, Effect</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Koin</code></td><td style="color:#cdd6f4">insert-koin.io</td><td style="color:#6c7a8e">Leichtgewichtige Dependency Injection</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">MockK</code></td><td style="color:#cdd6f4">mockk.io</td><td style="color:#6c7a8e">Kotlin-natives Mocking-Framework</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Kotest</code></td><td style="color:#cdd6f4">kotest.io</td><td style="color:#6c7a8e">Modernes Test-Framework (BDD-Style)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Compose Multiplatform</code></td><td style="color:#cdd6f4">jetbrains.com</td><td style="color:#6c7a8e">UI für Android, Desktop, Web</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Java-Interoperabilität
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">Java nutzen</code></td><td style="color:#cdd6f4">direct</td><td style="color:#6c7a8e">Alle Java-Bibliotheken direkt nutzbar!
+val list = java.util.ArrayList&lt;String&gt;()</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Kotlin von Java</code></td><td style="color:#cdd6f4">direct</td><td style="color:#6c7a8e">@JvmStatic für companion object Methoden
+@JvmField für Properties</td></tr><tr><td style="width:240px"><code style="color:#ffb347">@JvmStatic</code></td><td style="color:#cdd6f4">Annotation</td><td style="color:#6c7a8e">Companion-Methode als echte static-Methode in Java</td></tr><tr><td style="width:240px"><code style="color:#ffb347">@JvmOverloads</code></td><td style="color:#cdd6f4">Annotation</td><td style="color:#6c7a8e">Default-Parameter → Overloaded Java-Methoden</td></tr><tr><td style="width:240px"><code style="color:#ffb347">@JvmField</code></td><td style="color:#cdd6f4">Annotation</td><td style="color:#6c7a8e">Property direkt als Java-Feld exponieren</td></tr><tr><td style="width:240px"><code style="color:#ffb347">@JvmName</code></td><td style="color:#cdd6f4">Annotation</td><td style="color:#6c7a8e">Anderen Namen für Java-Nutzung</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Null-Checks</code></td><td style="color:#cdd6f4">Interop</td><td style="color:#6c7a8e">Kotlin warnt bei Java-Typen (Platform Types T!)</td></tr><tr><td style="width:240px"><code style="color:#ffb347">SAM Conversions</code></td><td style="color:#cdd6f4">Interop</td><td style="color:#6c7a8e">Java-Interfaces mit 1 Methode als Lambda nutzen
+button.setOnClickListener { ... }</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#7f52ff';
+      btn.style.color       = '#7f52ff';
+      btn.style.background  = 'rgba(127,82,255,.1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

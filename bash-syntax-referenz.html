@@ -1,0 +1,2212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bash Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #4caf50;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+#hdr {
+  background: linear-gradient(135deg, #0f1217, #0a0c0f);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#hdr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+
+.tb {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  padding: 9px 13px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.tb.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(76, 175, 80, .07);
+}
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb {
+  width: 100%;
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sb:focus { border-color: var(--accent); }
+
+.ac   { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table   { width: 100%; border-collapse: collapse; }
+th {
+  color: var(--dim);
+  font-size: 10px;
+  text-align: left;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit;
+}
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(30, 37, 48, .4);
+  font-size: 12px;
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, .015); }
+
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.cd {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.tc {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 720px) {
+  .con { padding: 14px 12px 40px; }
+}
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#4caf50">$</span>
+      <span style="color:#4caf50">_</span>
+      <span style="margin-left:6px">Bash Syntax</span>
+    </div>
+    <div id="hdr-sub">Bash 5.x · Linux · Distro-unabhängig</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="control">Kontrollfluss</button>
+    <button class="tb" data-tab="functions">Funktionen</button>
+    <button class="tb" data-tab="strings">Strings & Text</button>
+    <button class="tb" data-tab="arrays">Arrays</button>
+    <button class="tb" data-tab="io">I/O & Prozesse</button>
+    <button class="tb" data-tab="patterns">Patterns</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools & Cheat</button>
+    
+  </div>
+</div>
+
+<div class="con">
+
+  <div id="tp-grundlagen" class="tp active">
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Shebang &amp; Grundstruktur
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="shebang &amp; grundstruktur">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Shebang &amp; Grundstruktur
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+<span style="color:#546e7a"># Empfohlen statt #!/bin/bash – funktioniert auf allen Distros</span>
+<span style="color:#546e7a"># /usr/bin/env sucht bash im $PATH</span>
+
+<span style="color:#546e7a"># Strikter Modus – immer am Anfang setzen!</span>
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-euo</span> pipefail
+<span style="color:#546e7a">#   -e  Abbruch bei Fehler (exit code != 0)</span>
+<span style="color:#546e7a">#   -u  Fehler bei ungesetzter Variable</span>
+<span style="color:#546e7a">#   -o pipefail  Fehler in Pipes weitergeben</span>
+
+<span style="color:#546e7a"># Nützliche Ergänzungen</span>
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-x</span>    <span style="color:#546e7a"># Debug: alle Befehle ausgeben (auch: bash -x skript.sh)</span>
+<span style="color:#c792ea">set</span> +x    <span style="color:#546e7a"># Debug wieder deaktivieren</span>
+
+<span style="color:#546e7a"># Skript ausführbar machen</span>
+<span style="color:#546e7a"># chmod +x skript.sh</span>
+<span style="color:#546e7a"># ./skript.sh</span>
+
+<span style="color:#546e7a"># Oder direkt starten ohne +x:</span>
+<span style="color:#546e7a"># bash skript.sh</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Variablen &amp; Typen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen &amp; typen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen &amp; Typen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Zuweisung – KEIN Leerzeichen um das =</span>
+name=<span style="color:#c3e88d">"Alice"</span>
+alter=<span style="color:#f78c6c">30</span>
+pi=<span style="color:#f78c6c">3.14</span>
+
+<span style="color:#546e7a"># Readonly – kann nicht überschrieben werden</span>
+<span style="color:#c792ea">readonly</span> MAX=<span style="color:#f78c6c">100</span>
+
+<span style="color:#546e7a"># Integer-Deklaration (kein float in Bash!)</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-i</span> zahl=<span style="color:#f78c6c">42</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-i</span> zahl=<span style="color:#f78c6c">42</span><span style="color:#89ddff">;</span> zahl+=<span style="color:#f78c6c">8</span>   <span style="color:#546e7a"># zahl = 50</span>
+
+<span style="color:#546e7a"># Array</span>
+farben=(<span style="color:#c3e88d">"rot"</span> <span style="color:#c3e88d">"grün"</span> <span style="color:#c3e88d">"blau"</span>)
+zahlen=(<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>)
+
+<span style="color:#546e7a"># Assoziatives Array (Dictionary) – Bash 4+</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-A</span> person
+person[name]=<span style="color:#c3e88d">"Alice"</span>
+person[alter]=<span style="color:#f78c6c">30</span>
+person=([name]=<span style="color:#c3e88d">"Bob"</span> [alter]=<span style="color:#f78c6c">25</span>)
+
+<span style="color:#546e7a"># Variable ausgeben</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$name"</span>         <span style="color:#546e7a"># Immer in "" – verhindert Word Splitting!</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${name}"</span>       <span style="color:#546e7a"># Mit Klammern – eindeutiger</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hallo ${name}!"</span>
+
+<span style="color:#546e7a"># Variable löschen</span>
+<span style="color:#c792ea">unset</span> name
+
+<span style="color:#546e7a"># Alle gesetzten Variablen anzeigen</span>
+<span style="color:#c792ea">set</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">head</span> <span style="color:#ffcb6b">-20</span>       <span style="color:#546e7a"># oder: declare -p</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Variable Expansion &amp; Substitution
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variable expansion &amp; substitution">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variable Expansion &amp; Substitution
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">pfad=<span style="color:#c3e88d">"/home/alice/dokumente/bericht.txt"</span>
+
+<span style="color:#546e7a"># Länge</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${#pfad}"</span>                 <span style="color:#546e7a"># 38</span>
+
+<span style="color:#546e7a"># Substring: ${var:start:länge}</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad:6:5}"</span>              <span style="color:#546e7a"># alice</span>
+
+<span style="color:#546e7a"># Standard-Wert wenn leer oder nicht gesetzt</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${name:-"</span>Anonym<span style="color:#c3e88d">"}"</span>        <span style="color:#546e7a"># "Anonym" wenn $name leer</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${name:="</span>Anonym<span style="color:#c3e88d">"}"</span>        <span style="color:#546e7a"># setzen UND zurückgeben</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${name:?"</span>Fehler!<span style="color:#c3e88d">"}"</span>       <span style="color:#546e7a"># Abbruch mit Fehlermeldung wenn leer</span>
+
+<span style="color:#546e7a"># Dateiname und Pfad extrahieren</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad##*/}"</span>              <span style="color:#546e7a"># bericht.txt  (basename)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad%/*}"</span>               <span style="color:#546e7a"># /home/alice/dokumente  (dirname)</span>
+
+<span style="color:#546e7a"># Erweiterung entfernen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad%.*}"</span>               <span style="color:#546e7a"># ...bericht  (ohne .txt)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad##*.}"</span>              <span style="color:#546e7a"># txt  (nur Extension)</span>
+
+<span style="color:#546e7a"># Ersetzen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad/alice/bob}"</span>        <span style="color:#546e7a"># erstes Vorkommen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${pfad//l/L}"</span>             <span style="color:#546e7a"># alle Vorkommen  (//  statt  /)</span>
+
+<span style="color:#546e7a"># Groß-/Kleinschreibung (Bash 4+)</span>
+wort=<span style="color:#c3e88d">"hallo"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${wort^}"</span>                 <span style="color:#546e7a"># Hallo  (erstes Zeichen)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${wort^^}"</span>                <span style="color:#546e7a"># HALLO  (alles)</span>
+gross=<span style="color:#c3e88d">"WELT"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${gross,,}"</span>               <span style="color:#546e7a"># welt   (alles klein)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('gr3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Spezialvariablen
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Syntax</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">$0</code></td><td style="color:#cdd6f4">Name des Skripts</td><td style="color:#6c7a8e">./mein_skript.sh</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$1 – $9</code></td><td style="color:#cdd6f4">Positions-Argumente</td><td style="color:#6c7a8e">$1 = erstes Argument</td></tr><tr><td style="width:220px"><code style="color:#ffb347">${10}</code></td><td style="color:#cdd6f4">Ab dem 10. Argument: Klammern nötig!</td><td style="color:#6c7a8e">${10} ${11}...</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$#</code></td><td style="color:#cdd6f4">Anzahl der Argumente</td><td style="color:#6c7a8e">if [[ $# -eq 0 ]]; then ...</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$@</code></td><td style="color:#cdd6f4">Alle Argumente als separate Strings</td><td style="color:#6c7a8e">for arg in "$@"; do ...</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$*</code></td><td style="color:#cdd6f4">Alle Argumente als ein String</td><td style="color:#6c7a8e">Selten nützlich – $@ bevorzugen</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$?</code></td><td style="color:#cdd6f4">Exit-Code des letzten Befehls</td><td style="color:#6c7a8e">0 = Erfolg, alles andere = Fehler</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$$</code></td><td style="color:#cdd6f4">PID des aktuellen Prozesses</td><td style="color:#6c7a8e">Für temporäre Dateinamen: /tmp/lock.$$</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$!</code></td><td style="color:#cdd6f4">PID des letzten Hintergrundprozesses</td><td style="color:#6c7a8e">sleep 10 &amp; echo $!</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$_</code></td><td style="color:#cdd6f4">Letztes Argument des vorherigen Befehls</td><td style="color:#6c7a8e">mkdir -p /a/b/c &amp;&amp; cd $_</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$-</code></td><td style="color:#cdd6f4">Aktive Shell-Optionen</td><td style="color:#6c7a8e">echo $-  →  himBHs</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$IFS</code></td><td style="color:#cdd6f4">Internal Field Separator (Standard: Leerzeichen, Tab, Newline)</td><td style="color:#6c7a8e">IFS=":" read -r ...</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$BASH_VERSION</code></td><td style="color:#cdd6f4">Bash-Version</td><td style="color:#6c7a8e">echo $BASH_VERSION</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$LINENO</code></td><td style="color:#cdd6f4">Aktuelle Zeilennummer</td><td style="color:#6c7a8e">Nützlich für Debug-Ausgaben</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$FUNCNAME</code></td><td style="color:#cdd6f4">Name der aktuellen Funktion</td><td style="color:#6c7a8e">echo ${FUNCNAME[0]}</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$RANDOM</code></td><td style="color:#cdd6f4">Zufallszahl 0–32767</td><td style="color:#6c7a8e">echo $((RANDOM % 100))</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$SECONDS</code></td><td style="color:#cdd6f4">Sekunden seit Shell-Start</td><td style="color:#6c7a8e">Für Zeitmessung</td></tr><tr><td style="width:220px"><code style="color:#ffb347">$PIPESTATUS</code></td><td style="color:#cdd6f4">Exit-Codes der letzten Pipe als Array</td><td style="color:#6c7a8e">echo "${PIPESTATUS[@]}"</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-control" class="tp">
+<input class="sb" id="ctrl-s" type="text" placeholder="🔍  Syntax suchen…">
+
+<div class="ac open" id="ac-cf0"
+     style="border:1px solid #e0525244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cf0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e052520e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e05252">
+      <span style="display:inline-block;width:8px;height:8px;background:#e05252;border-radius:50%;margin-right:2px"></span>if / elif / else
+    </span>
+    <span class="aa" style="color:#e05252;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="if / elif / else">
+  <div style="color:#e05252;font-weight:700;font-size:12px;margin-bottom:8px">
+    if / elif / else
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># [[ ]] ist modernes Bash – besser als [ ] oder test</span>
+<span style="color:#546e7a"># [ ] ist POSIX-kompatibel, funktioniert in jeder Shell</span>
+
+zahl=<span style="color:#f78c6c">42</span>
+
+<span style="color:#c792ea">if</span> [[ <span style="color:#f07178">$zahl</span> <span style="color:#ffcb6b">-gt</span> <span style="color:#f78c6c">10</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Groß"</span>
+<span style="color:#c792ea">elif</span> [[ <span style="color:#f07178">$zahl</span> <span style="color:#ffcb6b">-gt</span> <span style="color:#f78c6c">5</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Mittel"</span>
+<span style="color:#c792ea">else</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Klein"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># String-Vergleiche</span>
+name=<span style="color:#c3e88d">"Alice"</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#c3e88d">"$name"</span> == <span style="color:#c3e88d">"Alice"</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hallo Alice"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#c3e88d">"$name"</span> != <span style="color:#c3e88d">"Bob"</span> ]]<span style="color:#89ddff">;</span>  <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Nicht Bob"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#c3e88d">"$name"</span> =~ ^A.* ]]<span style="color:#89ddff">;</span>   <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Beginnt mit A"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>  <span style="color:#546e7a"># Regex!</span>
+
+<span style="color:#546e7a"># Datei-Tests</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-f</span> /etc/hosts ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Datei existiert"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-d</span> /tmp ]]<span style="color:#89ddff">;</span>       <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verzeichnis existiert"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-r</span> /etc/passwd ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Lesbar"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-x</span> /usr/bin/bash ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Ausführbar"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-s</span> datei.txt ]]<span style="color:#89ddff">;</span>   <span style="color:#c792ea">then</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Nicht leer"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># Logische Verknüpfung in [[ ]]</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-f</span> <span style="color:#c3e88d">"$datei"</span> <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#ffcb6b">-r</span> <span style="color:#c3e88d">"$datei"</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Datei existiert und ist lesbar"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#c792ea">if</span> [[ <span style="color:#f07178">$x</span> <span style="color:#ffcb6b">-lt</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">||</span> <span style="color:#f07178">$x</span> <span style="color:#ffcb6b">-gt</span> <span style="color:#f78c6c">100</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Außerhalb 0–100"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># Kurzform mit &amp;&amp; und ||</span>
+[[ <span style="color:#ffcb6b">-d</span> /tmp ]] <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"/tmp existiert"</span> <span style="color:#89ddff">||</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"/tmp fehlt"</span>
+[[ <span style="color:#ffcb6b">-z</span> <span style="color:#c3e88d">"$name"</span> ]] <span style="color:#89ddff">&amp;&amp;</span> name=<span style="color:#c3e88d">"Standard"</span>   <span style="color:#546e7a"># Leere Variable belegen</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cf1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>case
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="case">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    case
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+betriebssystem=<span style="color:#f07178">$(uname -s)</span>
+
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$betriebssystem"</span> <span style="color:#c792ea">in</span>
+    Linux)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Linux erkannt"</span>
+        paketmanager=<span style="color:#c3e88d">"apt"</span>
+        <span style="color:#89ddff">;;</span>
+    Darwin)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"macOS erkannt"</span>
+        paketmanager=<span style="color:#c3e88d">"brew"</span>
+        <span style="color:#89ddff">;;</span>
+    MINGW*<span style="color:#89ddff">|</span>CYGWIN*<span style="color:#89ddff">|</span>MSYS*)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Windows (WSL/MSYS) erkannt"</span>
+        <span style="color:#89ddff">;;</span>
+    *)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Unbekanntes System: $betriebssystem"</span>
+        <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#89ddff">;;</span>
+<span style="color:#c792ea">esac</span>
+
+<span style="color:#546e7a"># Muster: Glob-Ausdrücke erlaubt</span>
+aktion=<span style="color:#c3e88d">"$1"</span>
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$aktion"</span> <span style="color:#c792ea">in</span>
+    start<span style="color:#89ddff">|</span>begin<span style="color:#89ddff">|</span>go)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Starte..."</span>
+        <span style="color:#89ddff">;;</span>
+    stop<span style="color:#89ddff">|</span>end<span style="color:#89ddff">|</span>quit<span style="color:#89ddff">|</span>q)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Stoppe..."</span>
+        <span style="color:#89ddff">;;</span>
+    <span style="color:#ffcb6b">-h</span><span style="color:#89ddff">|</span>--help)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hilfe..."</span>
+        <span style="color:#89ddff">;;</span>
+    [<span style="color:#f78c6c">0</span>-<span style="color:#f78c6c">9</span>]*)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Zahl eingegeben: $aktion"</span>
+        <span style="color:#89ddff">;;</span>
+    <span style="color:#c3e88d">""</span>)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Keine Eingabe"</span>
+        <span style="color:#89ddff">;;</span>
+    *)
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Unbekannte Aktion: $aktion"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+        <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#89ddff">;;</span>
+<span style="color:#c792ea">esac</span>
+
+<span style="color:#546e7a"># ;&amp; (fall-through) und ;;&amp; (weiteres Matching) – Bash 4+</span>
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$1"</span> <span style="color:#c792ea">in</span>
+    a) <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"a"</span>
+       <span style="color:#89ddff">;;</span><span style="color:#89ddff">&amp;</span>          <span style="color:#546e7a"># weiteres Matching – kein Abbruch</span>
+    [a-c]) <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"a, b oder c"</span>
+           <span style="color:#89ddff">;;</span>
+<span style="color:#c792ea">esac</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cf2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>for / while / until
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="for / while / until">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    for / while / until
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># for – über Liste</span>
+<span style="color:#c792ea">for</span> farbe <span style="color:#c792ea">in</span> rot grün blau<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$farbe"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># for – C-Stil</span>
+<span style="color:#c792ea">for</span> ((i = <span style="color:#f78c6c">0</span><span style="color:#89ddff">;</span> i <span style="color:#89ddff">&lt;</span> <span style="color:#f78c6c">10</span><span style="color:#89ddff">;</span> i++))<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$i"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># for – über Array</span>
+dateien=(*.txt)
+<span style="color:#c792ea">for</span> datei <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${dateien[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verarbeite: $datei"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># for – über Ausgabe eines Befehls (NICHT mit ls!)</span>
+<span style="color:#c792ea">while</span> IFS= <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> zeile<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Zeile: $zeile"</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">&lt;</span> /etc/hosts
+
+<span style="color:#546e7a"># for – über Zahlen-Range</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> {<span style="color:#f78c6c">1..10</span>}<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span> <span style="color:#82aaff">echo</span> <span style="color:#f07178">$i</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">done</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> {<span style="color:#f78c6c">0..20..2</span>}<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span> <span style="color:#82aaff">echo</span> <span style="color:#f07178">$i</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">done</span>  <span style="color:#546e7a"># Schrittweite 2</span>
+
+<span style="color:#546e7a"># while – mit Bedingung</span>
+zaehler=<span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">while</span> [[ <span style="color:#f07178">$zaehler</span> <span style="color:#ffcb6b">-lt</span> <span style="color:#f78c6c">5</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Zähler: $zaehler"</span>
+    ((zaehler++))
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># while read – Datei zeilenweise lesen</span>
+<span style="color:#c792ea">while</span> IFS=<span style="color:#c3e88d">','</span> <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> name alter stadt<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$name ist $alter Jahre alt und lebt in $stadt"</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">&lt;</span> personen.csv
+
+<span style="color:#546e7a"># until – bis Bedingung wahr</span>
+<span style="color:#c792ea">until</span> ping <span style="color:#ffcb6b">-c1</span> google.com <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Warte auf Netzwerk..."</span>
+    <span style="color:#82aaff">sleep</span> <span style="color:#f78c6c">5</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># break und continue</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> {<span style="color:#f78c6c">1..10</span>}<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    ((i % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span>)) <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#c792ea">continue</span>   <span style="color:#546e7a"># gerade überspringen</span>
+    [[ <span style="color:#f07178">$i</span> <span style="color:#ffcb6b">-gt</span> <span style="color:#f78c6c">7</span> ]] <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#c792ea">break</span>       <span style="color:#546e7a"># ab 7 abbrechen</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$i"</span>                     <span style="color:#546e7a"># gibt 1 3 5 7 aus</span>
+<span style="color:#c792ea">done</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-cf3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('cf3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Vergleichsoperatoren
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="vergleichsoperatoren">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Vergleichsoperatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># ── Numerisch (in [[ ]] und (( )) ) ────────────────────────────</span>
+[[ <span style="color:#f07178">$a</span> <span style="color:#ffcb6b">-eq</span> <span style="color:#f07178">$b</span> ]]   <span style="color:#546e7a"># equal</span>
+[[ <span style="color:#f07178">$a</span> <span style="color:#ffcb6b">-ne</span> <span style="color:#f07178">$b</span> ]]   <span style="color:#546e7a"># not equal</span>
+[[ <span style="color:#f07178">$a</span> <span style="color:#ffcb6b">-lt</span> <span style="color:#f07178">$b</span> ]]   <span style="color:#546e7a"># less than</span>
+[[ <span style="color:#f07178">$a</span> <span style="color:#ffcb6b">-le</span> <span style="color:#f07178">$b</span> ]]   <span style="color:#546e7a"># less or equal</span>
+[[ <span style="color:#f07178">$a</span> <span style="color:#ffcb6b">-gt</span> <span style="color:#f07178">$b</span> ]]   <span style="color:#546e7a"># greater than</span>
+[[ <span style="color:#f07178">$a</span> <span style="color:#ffcb6b">-ge</span> <span style="color:#f07178">$b</span> ]]   <span style="color:#546e7a"># greater or equal</span>
+
+<span style="color:#546e7a"># In (( )) normale Operatoren möglich:</span>
+(( a == b ))
+(( a != b ))
+(( a <span style="color:#89ddff">&lt;</span> b ))
+(( a <span style="color:#89ddff">&gt;</span> b ))
+(( a <span style="color:#89ddff">&lt;</span>= b ))
+(( a <span style="color:#89ddff">&gt;</span>= b ))
+
+<span style="color:#546e7a"># ── Strings (in [[ ]] ) ─────────────────────────────────────────</span>
+[[ <span style="color:#c3e88d">"$a"</span> == <span style="color:#c3e88d">"$b"</span> ]]    <span style="color:#546e7a"># gleich</span>
+[[ <span style="color:#c3e88d">"$a"</span> != <span style="color:#c3e88d">"$b"</span> ]]    <span style="color:#546e7a"># ungleich</span>
+[[ <span style="color:#c3e88d">"$a"</span> <span style="color:#89ddff">&lt;</span> <span style="color:#c3e88d">"$b"</span> ]]     <span style="color:#546e7a"># lexikographisch kleiner</span>
+[[ <span style="color:#c3e88d">"$a"</span> <span style="color:#89ddff">&gt;</span> <span style="color:#c3e88d">"$b"</span> ]]     <span style="color:#546e7a"># lexikographisch größer</span>
+[[ <span style="color:#ffcb6b">-z</span> <span style="color:#c3e88d">"$a"</span> ]]         <span style="color:#546e7a"># leer (zero length)</span>
+[[ <span style="color:#ffcb6b">-n</span> <span style="color:#c3e88d">"$a"</span> ]]         <span style="color:#546e7a"># nicht leer (non-zero)</span>
+[[ <span style="color:#c3e88d">"$a"</span> =~ regex ]]   <span style="color:#546e7a"># Regex-Match (Bash 3.2+)</span>
+
+<span style="color:#546e7a"># ── Datei-Tests ─────────────────────────────────────────────────</span>
+[[ <span style="color:#ffcb6b">-e</span> pfad ]]    <span style="color:#546e7a"># existiert (exists)</span>
+[[ <span style="color:#ffcb6b">-f</span> pfad ]]    <span style="color:#546e7a"># reguläre Datei (file)</span>
+[[ <span style="color:#ffcb6b">-d</span> pfad ]]    <span style="color:#546e7a"># Verzeichnis (directory)</span>
+[[ <span style="color:#ffcb6b">-L</span> pfad ]]    <span style="color:#546e7a"># symbolischer Link</span>
+[[ <span style="color:#ffcb6b">-r</span> pfad ]]    <span style="color:#546e7a"># lesbar (readable)</span>
+[[ <span style="color:#ffcb6b">-w</span> pfad ]]    <span style="color:#546e7a"># schreibbar (writable)</span>
+[[ <span style="color:#ffcb6b">-x</span> pfad ]]    <span style="color:#546e7a"># ausführbar (executable)</span>
+[[ <span style="color:#ffcb6b">-s</span> pfad ]]    <span style="color:#546e7a"># nicht leer (size &gt; 0)</span>
+[[ <span style="color:#ffcb6b">-p</span> pfad ]]    <span style="color:#546e7a"># Named Pipe (FIFO)</span>
+[[ <span style="color:#ffcb6b">-S</span> pfad ]]    <span style="color:#546e7a"># Socket</span>
+[[ <span style="color:#ffcb6b">-b</span> pfad ]]    <span style="color:#546e7a"># Block-Gerät</span>
+[[ <span style="color:#ffcb6b">-c</span> pfad ]]    <span style="color:#546e7a"># Character-Gerät</span>
+[[ f1 <span style="color:#ffcb6b">-nt</span> f2 ]]  <span style="color:#546e7a"># f1 neuer als f2 (newer than)</span>
+[[ f1 <span style="color:#ffcb6b">-ot</span> f2 ]]  <span style="color:#546e7a"># f1 älter als f2 (older than)</span>
+[[ f1 <span style="color:#ffcb6b">-ef</span> f2 ]]  <span style="color:#546e7a"># f1 und f2 sind dasselbe Inode (equal file)</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-functions" class="tp ">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Funktionen definieren &amp; aufrufen
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen definieren &amp; aufrufen">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen definieren &amp; aufrufen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Syntax 1 – mit function Keyword</span>
+<span style="color:#c792ea">function</span> begrüsse() {
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hallo, $1!"</span>
+}
+
+<span style="color:#546e7a"># Syntax 2 – ohne Keyword (POSIX-kompatibler)</span>
+begrüsse() {
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hallo, $1!"</span>
+}
+
+<span style="color:#546e7a"># Aufruf – wie ein Befehl, KEINE Klammern!</span>
+begrüsse <span style="color:#c3e88d">"Alice"</span>    <span style="color:#546e7a"># Hallo, Alice!</span>
+begrüsse <span style="color:#c3e88d">"Welt"</span>     <span style="color:#546e7a"># Hallo, Welt!</span>
+
+<span style="color:#546e7a"># Parameter in Funktionen</span>
+funktion_demo() {
+    <span style="color:#c792ea">local</span> name=<span style="color:#c3e88d">"$1"</span>    <span style="color:#546e7a"># Erstes Argument</span>
+    <span style="color:#c792ea">local</span> alter=<span style="color:#c3e88d">"$2"</span>   <span style="color:#546e7a"># Zweites Argument</span>
+    <span style="color:#c792ea">local</span> <span style="color:#ffcb6b">-a</span> args=(<span style="color:#c3e88d">"$@"</span>)  <span style="color:#546e7a"># Alle Argumente als Array</span>
+
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Name:  $name"</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Alter: $alter"</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Alle:  ${args[*]}"</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Anzahl: $#"</span>
+}
+
+funktion_demo <span style="color:#c3e88d">"Alice"</span> <span style="color:#f78c6c">30</span> <span style="color:#c3e88d">"extra"</span> <span style="color:#c3e88d">"args"</span>
+
+<span style="color:#546e7a"># Rückgabewert via return (nur 0–255!)</span>
+ist_gerade() {
+    (( <span style="color:#f07178">$1</span> % <span style="color:#f78c6c">2</span> == <span style="color:#f78c6c">0</span> ))   <span style="color:#546e7a"># 0 = true in Bash, 1 = false</span>
+}
+
+<span style="color:#c792ea">if</span> ist_gerade <span style="color:#f78c6c">4</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"4 ist gerade"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># Werte zurückgeben via echo + Command Substitution</span>
+berechne_summe() {
+    <span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( $1 + $2 ))</span>
+}
+ergebnis=<span style="color:#f07178">$(berechne_summe 10 20)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$ergebnis"</span>    <span style="color:#546e7a"># 30</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>local &amp; Scope
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="local &amp; scope">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    local &amp; Scope
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Ohne local: Variablen sind GLOBAL!</span>
+ohne_local() {
+    x=<span style="color:#f78c6c">99</span>    <span style="color:#546e7a"># Setzt globales x!</span>
+}
+
+<span style="color:#546e7a"># Mit local: Variable ist nur in der Funktion sichtbar</span>
+mit_local() {
+    <span style="color:#c792ea">local</span> x=<span style="color:#f78c6c">42</span>
+    <span style="color:#c792ea">local</span> <span style="color:#ffcb6b">-r</span> CONST=<span style="color:#c3e88d">"unveränderlich"</span>
+    <span style="color:#c792ea">local</span> <span style="color:#ffcb6b">-i</span> zahl=<span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">local</span> <span style="color:#ffcb6b">-a</span> array=(<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span>)
+    <span style="color:#c792ea">local</span> <span style="color:#ffcb6b">-A</span> map=([key]=<span style="color:#c3e88d">"val"</span>)
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$x"</span>
+}
+
+x=<span style="color:#f78c6c">1</span>
+mit_local        <span style="color:#546e7a"># x innerhalb = 42</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$x"</span>        <span style="color:#546e7a"># x außen  = 1 (unverändert!)</span>
+
+<span style="color:#546e7a"># Funktionen können rekursiv sein</span>
+fakultät() {
+    <span style="color:#c792ea">local</span> n=<span style="color:#f07178">$1</span>
+    <span style="color:#c792ea">if</span> (( n <span style="color:#89ddff">&lt;</span>= <span style="color:#f78c6c">1</span> ))<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        <span style="color:#82aaff">echo</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#c792ea">return</span>
+    <span style="color:#c792ea">fi</span>
+    <span style="color:#c792ea">local</span> sub
+    sub=<span style="color:#f07178">$(fakultät $((n - 1)))</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( n * sub ))</span>
+}
+
+<span style="color:#82aaff">echo</span> <span style="color:#f07178">$(fakultät 5)</span>    <span style="color:#546e7a"># 120</span>
+
+<span style="color:#546e7a"># nameref – Referenz auf Variable (Bash 4.3+)</span>
+setze_wert() {
+    <span style="color:#c792ea">local</span> <span style="color:#ffcb6b">-n</span> ref=<span style="color:#f07178">$1</span>    <span style="color:#546e7a"># ref ist Alias für $1</span>
+    ref=<span style="color:#c3e88d">"neuer_wert"</span>
+}
+meine_var=<span style="color:#c3e88d">"alt"</span>
+setze_wert meine_var
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$meine_var"</span>    <span style="color:#546e7a"># neuer_wert</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('fn2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung in Funktionen
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung in funktionen">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung in Funktionen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-euo</span> pipefail
+
+<span style="color:#546e7a"># Eigene Fehlermeldungs-Funktion</span>
+fehler() {
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"[FEHLER] $*"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+    <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span>
+}
+
+warnung() {
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"[WARN]  $*"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+}
+
+info() {
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"[INFO]  $*"</span>
+}
+
+<span style="color:#546e7a"># Funktion mit Validierung</span>
+lade_datei() {
+    <span style="color:#c792ea">local</span> pfad=<span style="color:#c3e88d">"$1"</span>
+
+    [[ <span style="color:#ffcb6b">-z</span> <span style="color:#c3e88d">"$pfad"</span> ]]   <span style="color:#89ddff">&amp;&amp;</span> fehler <span style="color:#c3e88d">"Kein Pfad angegeben"</span>
+    [[ <span style="color:#ffcb6b">-f</span> <span style="color:#c3e88d">"$pfad"</span> ]]   <span style="color:#89ddff">||</span> fehler <span style="color:#c3e88d">"Datei nicht gefunden: $pfad"</span>
+    [[ <span style="color:#ffcb6b">-r</span> <span style="color:#c3e88d">"$pfad"</span> ]]   <span style="color:#89ddff">||</span> fehler <span style="color:#c3e88d">"Keine Leseberechtigung: $pfad"</span>
+
+    <span style="color:#82aaff">cat</span> <span style="color:#c3e88d">"$pfad"</span>
+}
+
+<span style="color:#546e7a"># trap – Cleanup bei Fehler oder Exit</span>
+TMP_DIR=<span style="color:#f07178">$(mktemp -d)</span>
+
+cleanup() {
+    <span style="color:#82aaff">rm</span> <span style="color:#ffcb6b">-rf</span> <span style="color:#c3e88d">"$TMP_DIR"</span>
+    info <span style="color:#c3e88d">"Aufgeräumt: $TMP_DIR"</span>
+}
+<span style="color:#c792ea">trap</span> cleanup EXIT          <span style="color:#546e7a"># immer beim Exit</span>
+<span style="color:#c792ea">trap</span> <span style="color:#c3e88d">'fehler "Abgebrochen"'</span> INT TERM  <span style="color:#546e7a"># bei Strg+C</span>
+
+<span style="color:#546e7a"># Funktion gibt Fehlercode zurück</span>
+verbinde() {
+    <span style="color:#c792ea">local</span> host=<span style="color:#c3e88d">"$1"</span>
+    ping <span style="color:#ffcb6b">-c1</span> <span style="color:#c3e88d">"$host"</span> <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null <span style="color:#89ddff">||</span> <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verbunden: $host"</span>
+}
+
+<span style="color:#c792ea">if</span> ! verbinde <span style="color:#c3e88d">"google.com"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    warnung <span style="color:#c3e88d">"Keine Verbindung zu google.com"</span>
+<span style="color:#c792ea">fi</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-strings" class="tp ">
+
+<div class="ac open" id="ac-str0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('str0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>echo &amp; printf
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="echo &amp; printf">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    echo &amp; printf
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># echo – einfach, aber Verhaltensunterschiede zwischen Distros!</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hallo Welt"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-n</span> <span style="color:#c3e88d">"Ohne Newline"</span>    <span style="color:#546e7a"># -n unterdrückt Zeilenumbruch</span>
+<span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"Tab:	 Newline:</span>
+<span style="color:#c3e88d">"  # -e interpretiert Escapes</span>
+
+<span style="color:#546e7a"># printf – konsistent, POSIX-kompatibel, empfohlen</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"Name: %s, Alter: %d\n"</span> <span style="color:#c3e88d">"Alice"</span> <span style="color:#f78c6c">30</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%-20s %5d\n"</span> <span style="color:#c3e88d">"Alice"</span> <span style="color:#f78c6c">30</span>   <span style="color:#546e7a"># linksbündig, rechtsbündig</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%05d\n"</span> <span style="color:#f78c6c">42</span>                 <span style="color:#546e7a"># mit führenden Nullen: 00042</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%.2f\n"</span> <span style="color:#f78c6c">3.14159</span>            <span style="color:#546e7a"># 2 Nachkommastellen: 3.14</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%b\n"</span> <span style="color:#c3e88d">"Tab:\t Ende"</span>       <span style="color:#546e7a"># Escape-Interpretation</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%q\n"</span> <span style="color:#c3e88d">"String mit Spaces"</span>  <span style="color:#546e7a"># Shell-quoted</span>
+
+<span style="color:#546e7a"># Farben mit ANSI-Codes</span>
+ROT=<span style="color:#c3e88d">"\033[31m"</span>
+GRÜN=<span style="color:#c3e88d">"\033[32m"</span>
+GELB=<span style="color:#c3e88d">"\033[33m"</span>
+BLAU=<span style="color:#c3e88d">"\033[34m"</span>
+FETT=<span style="color:#c3e88d">"\033[1m"</span>
+RESET=<span style="color:#c3e88d">"\033[0m"</span>
+
+<span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${GRÜN}Erfolg${RESET}"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${ROT}${FETT}Fehler!${RESET}"</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GELB}Warnung: %s${RESET}\n"</span> <span style="color:#c3e88d">"etwas ist schief"</span>
+
+<span style="color:#546e7a"># Auf Terminal prüfen bevor Farben nutzen</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-t</span> <span style="color:#f78c6c">1</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>   <span style="color:#546e7a"># stdout ist ein Terminal</span>
+    GRÜN=<span style="color:#c3e88d">"\033[32m"</span>
+<span style="color:#c792ea">else</span>
+    GRÜN=<span style="color:#c3e88d">""</span>            <span style="color:#546e7a"># keine Farben in Pipes/Dateien</span>
+<span style="color:#c792ea">fi</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-str1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('str1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>String-Operationen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="string-operationen">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    String-Operationen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre">text=<span style="color:#c3e88d">"  Hallo Welt  "</span>
+
+<span style="color:#546e7a"># Länge</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${#text}"</span>             <span style="color:#546e7a"># 16</span>
+
+<span style="color:#546e7a"># Trimmen (kein eingebautes trim in Bash!)</span>
+getrimmt=<span style="color:#c3e88d">"${text#"</span><span style="color:#f07178">${text%%[! ]*}</span><span style="color:#c3e88d">"}"</span>    <span style="color:#546e7a"># führende Leerzeichen</span>
+getrimmt=<span style="color:#c3e88d">"${text%"</span><span style="color:#f07178">${text##*[! ]}</span><span style="color:#c3e88d">"}"</span>    <span style="color:#546e7a"># nachfolgende Leerzeichen</span>
+<span style="color:#546e7a"># Einfacher mit sed:</span>
+getrimmt=<span style="color:#f07178">$(echo "$text" | sed "s/^[[:space:]]*//;s/[[:space:]]*$//")</span>
+<span style="color:#546e7a"># Oder mit xargs (aber verändert mehrfache Leerzeichen):</span>
+getrimmt=<span style="color:#f07178">$(echo "$text" | xargs)</span>
+
+<span style="color:#546e7a"># Suchen &amp; Ersetzen (Parameter-Expansion)</span>
+satz=<span style="color:#c3e88d">"der schnelle braune Fuchs"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${satz/Fuchs/Hund}"</span>     <span style="color:#546e7a"># Erstes ersetzen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${satz//e/E}"</span>            <span style="color:#546e7a"># Alle ersetzen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${satz/#der/Ein}"</span>        <span style="color:#546e7a"># Am Anfang ersetzen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${satz/%Fuchs/Hund}"</span>     <span style="color:#546e7a"># Am Ende ersetzen</span>
+
+<span style="color:#546e7a"># Groß-/Kleinschreibung</span>
+wort=<span style="color:#c3e88d">"hallo"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${wort^}"</span>     <span style="color:#546e7a"># Hallo (erstes Zeichen groß)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${wort^^}"</span>    <span style="color:#546e7a"># HALLO (alles groß)</span>
+GROSS=<span style="color:#c3e88d">"WELT"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${GROSS,}"</span>    <span style="color:#546e7a"># wELT  (erstes Zeichen klein)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${GROSS,,}"</span>   <span style="color:#546e7a"># welt  (alles klein)</span>
+
+<span style="color:#546e7a"># Teilstring prüfen</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#c3e88d">"$text"</span> == *<span style="color:#c3e88d">"Welt"</span>* ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Enthält 'Welt'"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># Regex-Match</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#c3e88d">"$text"</span> =~ [<span style="color:#f78c6c">0</span>-<span style="color:#f78c6c">9</span>]+ ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Enthält Zahlen: ${BASH_REMATCH[0]}"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># String in Array aufteilen</span>
+IFS=<span style="color:#c3e88d">','</span> <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-ra</span> teile <span style="color:#89ddff">&lt;&lt;</span><span style="color:#89ddff">&lt;</span> <span style="color:#c3e88d">"a,b,c,d"</span>
+<span style="color:#c792ea">for</span> teil <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${teile[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$teil"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Heredoc</span>
+<span style="color:#82aaff">cat</span> <span style="color:#89ddff">&lt;&lt;</span>EOF
+Mehrzeiliger Text
+Mit Variablen: <span style="color:#f07178">$text</span>
+EOF
+
+<span style="color:#546e7a"># Heredoc ohne Variablen-Expansion</span>
+<span style="color:#82aaff">cat</span> <span style="color:#89ddff">&lt;&lt;</span><span style="color:#c3e88d">'EOF'</span>
+<span style="color:#f07178">$variable</span> wird NICHT expandiert
+EOF</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-str2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('str2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Reguläre Ausdrücke &amp; sed/awk
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="reguläre ausdrücke &amp; sed/awk">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Reguläre Ausdrücke &amp; sed/awk
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># grep – suchen</span>
+<span style="color:#82aaff">grep</span> <span style="color:#c3e88d">"pattern"</span> datei.txt
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-i</span> <span style="color:#c3e88d">"pattern"</span> datei.txt    <span style="color:#546e7a"># case-insensitive</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-r</span> <span style="color:#c3e88d">"pattern"</span> /etc/        <span style="color:#546e7a"># rekursiv</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-l</span> <span style="color:#c3e88d">"pattern"</span> *.txt        <span style="color:#546e7a"># nur Dateinamen</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-v</span> <span style="color:#c3e88d">"pattern"</span> datei.txt    <span style="color:#546e7a"># invertiert (kein Match)</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-c</span> <span style="color:#c3e88d">"pattern"</span> datei.txt    <span style="color:#546e7a"># nur Zählen</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-n</span> <span style="color:#c3e88d">"pattern"</span> datei.txt    <span style="color:#546e7a"># mit Zeilennummern</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-E</span> <span style="color:#c3e88d">"pat1|pat2"</span> datei.txt  <span style="color:#546e7a"># Extended Regex (wie egrep)</span>
+<span style="color:#82aaff">grep</span> <span style="color:#ffcb6b">-P</span> <span style="color:#c3e88d">"\d+"</span> datei.txt       <span style="color:#546e7a"># Perl-Regex</span>
+
+<span style="color:#546e7a"># sed – ersetzen und transformieren</span>
+<span style="color:#82aaff">sed</span> <span style="color:#c3e88d">"s/alt/neu/"</span> datei.txt          <span style="color:#546e7a"># erste Ersetzung</span>
+<span style="color:#82aaff">sed</span> <span style="color:#c3e88d">"s/alt/neu/g"</span> datei.txt         <span style="color:#546e7a"># alle Ersetzungen</span>
+<span style="color:#82aaff">sed</span> <span style="color:#c3e88d">"s/alt/neu/gi"</span> datei.txt        <span style="color:#546e7a"># case-insensitive</span>
+<span style="color:#82aaff">sed</span> <span style="color:#ffcb6b">-i</span> <span style="color:#c3e88d">"s/alt/neu/g"</span> datei.txt      <span style="color:#546e7a"># in-place (Datei ändern!)</span>
+<span style="color:#82aaff">sed</span> <span style="color:#ffcb6b">-i</span>.bak <span style="color:#c3e88d">"s/alt/neu/g"</span> datei.txt  <span style="color:#546e7a"># mit Backup</span>
+<span style="color:#82aaff">sed</span> <span style="color:#c3e88d">"3d"</span> datei.txt                  <span style="color:#546e7a"># Zeile 3 löschen</span>
+<span style="color:#82aaff">sed</span> <span style="color:#c3e88d">"/pattern/d"</span> datei.txt          <span style="color:#546e7a"># Matching-Zeilen löschen</span>
+<span style="color:#82aaff">sed</span> <span style="color:#ffcb6b">-n</span> <span style="color:#c3e88d">"5,10p"</span> datei.txt            <span style="color:#546e7a"># Zeilen 5–10 ausgeben</span>
+<span style="color:#82aaff">sed</span> <span style="color:#c3e88d">"s/^/&gt;&gt; /"</span> datei.txt            <span style="color:#546e7a"># Präfix jeder Zeile</span>
+
+<span style="color:#546e7a"># awk – mächtiger Textprozessor</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"{print $1}"</span> datei.txt          <span style="color:#546e7a"># erste Spalte</span>
+<span style="color:#82aaff">awk</span> <span style="color:#ffcb6b">-F</span>: <span style="color:#c3e88d">"{print $1}"</span> /etc/passwd    <span style="color:#546e7a"># mit Trenner</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"NR==3{print}"</span> datei.txt        <span style="color:#546e7a"># Zeile 3</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"/pattern/{print}"</span> datei.txt    <span style="color:#546e7a"># Pattern matchen</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"{sum+=$1} END{print sum}"</span> f    <span style="color:#546e7a"># Spalte summieren</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"NF&gt;0"</span> datei.txt                <span style="color:#546e7a"># leere Zeilen entfernen</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"{print NR, $0}"</span> datei.txt      <span style="color:#546e7a"># Zeilennummern hinzufügen</span>
+
+<span style="color:#546e7a"># Mehrzeiliges awk-Programm</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"</span>
+BEGIN { print <span style="color:#c3e88d">"Start"</span> }
+/ERROR/ { fehler++ }
+END { print <span style="color:#c3e88d">"Fehler:"</span>, fehler }
+<span style="color:#c3e88d">" logfile.txt</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-arrays" class="tp">
+
+<div class="ac open" id="ac-arr0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('arr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Indexed Arrays
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="indexed arrays">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Indexed Arrays
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Erstellen</span>
+farben=(<span style="color:#c3e88d">"rot"</span> <span style="color:#c3e88d">"grün"</span> <span style="color:#c3e88d">"blau"</span>)
+zahlen=(<span style="color:#f78c6c">1</span> <span style="color:#f78c6c">2</span> <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">4</span> <span style="color:#f78c6c">5</span>)
+leer=()
+
+<span style="color:#546e7a"># Einzelnes Element</span>
+farben[<span style="color:#f78c6c">3</span>]=<span style="color:#c3e88d">"gelb"</span>        <span style="color:#546e7a"># Anhängen an Index 3</span>
+farben+=(<span style="color:#c3e88d">"lila"</span>)        <span style="color:#546e7a"># Anhängen an das Ende</span>
+
+<span style="color:#546e7a"># Zugriff</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${farben[0]}"</span>     <span style="color:#546e7a"># rot</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${farben[-1]}"</span>    <span style="color:#546e7a"># letztes Element (Bash 4.2+)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${farben[@]}"</span>     <span style="color:#546e7a"># alle Elemente</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${farben[*]}"</span>     <span style="color:#546e7a"># alle in einem String (gefährlich!)</span>
+
+<span style="color:#546e7a"># Metadaten</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${#farben[@]}"</span>    <span style="color:#546e7a"># Anzahl: 5</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${!farben[@]}"</span>    <span style="color:#546e7a"># Alle Indizes: 0 1 2 3 4</span>
+
+<span style="color:#546e7a"># Iterieren – immer "${array[@]}" mit Anführungszeichen!</span>
+<span style="color:#c792ea">for</span> farbe <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${farben[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$farbe"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Mit Index</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${!farben[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$i: ${farben[$i]}"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Slicing: ${array[@]:start:länge}</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${farben[@]:1:3}"</span>   <span style="color:#546e7a"># grün blau gelb</span>
+
+<span style="color:#546e7a"># Element entfernen</span>
+<span style="color:#c792ea">unset</span> <span style="color:#c3e88d">"farben[2]"</span>          <span style="color:#546e7a"># Index 2 entfernen (Lücke!)</span>
+farben=(<span style="color:#c3e88d">"${farben[@]}"</span>)    <span style="color:#546e7a"># Array neu indizieren</span>
+
+<span style="color:#546e7a"># Array kopieren</span>
+kopie=(<span style="color:#c3e88d">"${farben[@]}"</span>)
+
+<span style="color:#546e7a"># Aus Befehl erstellen</span>
+zeilen=(<span style="color:#f07178">$(cat datei.txt)</span>)       <span style="color:#546e7a"># Wordlitting-Problem bei Leerzeichen!</span>
+mapfile <span style="color:#ffcb6b">-t</span> zeilen <span style="color:#89ddff">&lt;</span> datei.txt   <span style="color:#546e7a"># Sicherer: eine Zeile pro Element</span>
+
+<span style="color:#546e7a"># Sortieren (kein eingebautes sort für Arrays)</span>
+sorted=(<span style="color:#f07178">$(printf '%s</span>
+<span style="color:#c3e88d">' "${farben[@]}" | sort))</span>
+
+<span style="color:#546e7a"># Enthält-Prüfung</span>
+enthält() {
+    <span style="color:#c792ea">local</span> suche=<span style="color:#c3e88d">"$1"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">shift</span>
+    <span style="color:#c792ea">for</span> element<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+        [[ <span style="color:#c3e88d">"$element"</span> == <span style="color:#c3e88d">"$suche"</span> ]] <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#c792ea">return</span> <span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">done</span>
+    <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>
+}
+enthält <span style="color:#c3e88d">"grün"</span> <span style="color:#c3e88d">"${farben[@]}"</span> <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Gefunden"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-arr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('arr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Assoziative Arrays (Bash 4+)
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="assoziative arrays (bash 4+)">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Assoziative Arrays (Bash 4+)
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Pflicht: declare -A vor erster Nutzung!</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-A</span> person
+person[name]=<span style="color:#c3e88d">"Alice"</span>
+person[alter]=<span style="color:#f78c6c">30</span>
+person[stadt]=<span style="color:#c3e88d">"Berlin"</span>
+
+<span style="color:#546e7a"># Kompakt</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-A</span> config=([host]=<span style="color:#c3e88d">"localhost"</span> [port]=<span style="color:#c3e88d">"5432"</span> [db]=<span style="color:#c3e88d">"mydb"</span>)
+
+<span style="color:#546e7a"># Zugriff</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${config[host]}"</span>       <span style="color:#546e7a"># localhost</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${config[port]}"</span>       <span style="color:#546e7a"># 5432</span>
+
+<span style="color:#546e7a"># Alle Keys</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${!config[@]}"</span>         <span style="color:#546e7a"># host port db</span>
+
+<span style="color:#546e7a"># Alle Values</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${config[@]}"</span>          <span style="color:#546e7a"># localhost 5432 mydb</span>
+
+<span style="color:#546e7a"># Anzahl</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${#config[@]}"</span>         <span style="color:#546e7a"># 3</span>
+
+<span style="color:#546e7a"># Key existiert?</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-v</span> config[host] ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"host ist gesetzt"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># Iterieren (Reihenfolge nicht garantiert!)</span>
+<span style="color:#c792ea">for</span> key <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${!config[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%-10s = %s</span>
+<span style="color:#c3e88d">" "</span><span style="color:#f07178">$key</span><span style="color:#c3e88d">" "</span><span style="color:#f07178">${config[$key]}</span><span style="color:#c3e88d">"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Löschen</span>
+<span style="color:#c792ea">unset</span> <span style="color:#c3e88d">"config[port]"</span>
+
+<span style="color:#546e7a"># Assoziatives Array als Zähler</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-A</span> wort_count
+<span style="color:#c792ea">while</span> IFS= <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> zeile<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">for</span> wort <span style="color:#c792ea">in</span> <span style="color:#f07178">$zeile</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+        ((wort_count[<span style="color:#f07178">$wort</span>]++))
+    <span style="color:#c792ea">done</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">&lt;</span> text.txt
+
+<span style="color:#546e7a"># Die 10 häufigsten Wörter</span>
+<span style="color:#c792ea">for</span> wort <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${!wort_count[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"${wort_count[$wort]} $wort"</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">sort</span> <span style="color:#ffcb6b">-rn</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">head</span> <span style="color:#ffcb6b">-10</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-io" class="tp ">
+
+<div class="ac open" id="ac-io0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('io0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Umleitungen
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="umleitungen">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Umleitungen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a"># Stdout in Datei schreiben (überschreiben)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hallo"</span> <span style="color:#89ddff">&gt;</span> ausgabe.txt
+
+<span style="color:#546e7a"># Stdout anhängen</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Welt"</span> <span style="color:#89ddff">&gt;&gt;</span> ausgabe.txt
+
+<span style="color:#546e7a"># Stderr in Datei</span>
+befehl <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span> fehler.txt
+
+<span style="color:#546e7a"># Stdout und Stderr in dieselbe Datei</span>
+befehl <span style="color:#89ddff">&gt;</span> alles.txt <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">1</span>
+befehl <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span> alles.txt          <span style="color:#546e7a"># Bash-Kurzform</span>
+
+<span style="color:#546e7a"># Stdout und Stderr trennen</span>
+befehl <span style="color:#89ddff">&gt;</span> stdout.txt <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span> stderr.txt
+
+<span style="color:#546e7a"># Ausgabe verwerfen (null device)</span>
+befehl <span style="color:#89ddff">&gt;</span> /dev/null            <span style="color:#546e7a"># stdout verwerfen</span>
+befehl <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span> /dev/null           <span style="color:#546e7a"># stderr verwerfen</span>
+befehl <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span> /dev/null           <span style="color:#546e7a"># beides verwerfen</span>
+
+<span style="color:#546e7a"># Stdin aus Datei</span>
+befehl <span style="color:#89ddff">&lt;</span> eingabe.txt
+
+<span style="color:#546e7a"># Pipe: stdout von A als stdin von B</span>
+<span style="color:#82aaff">ls</span> <span style="color:#ffcb6b">-la</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">grep</span> <span style="color:#c3e88d">".txt"</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">sort</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">head</span> <span style="color:#ffcb6b">-5</span>
+
+<span style="color:#546e7a"># tee – in Datei UND auf stdout</span>
+befehl <span style="color:#89ddff">|</span> <span style="color:#82aaff">tee</span> ausgabe.txt       <span style="color:#546e7a"># stdout + Datei</span>
+befehl <span style="color:#89ddff">|</span> <span style="color:#82aaff">tee</span> <span style="color:#ffcb6b">-a</span> ausgabe.txt    <span style="color:#546e7a"># stdout + anhängen</span>
+befehl <span style="color:#89ddff">|</span> <span style="color:#82aaff">tee</span> ausgabe.txt <span style="color:#89ddff">|</span> <span style="color:#82aaff">grep</span> <span style="color:#c3e88d">"error"</span>
+
+<span style="color:#546e7a"># Process Substitution – &lt;( ) und &gt;( )</span>
+<span style="color:#546e7a"># Ausgabe von Befehlen als Datei verwenden</span>
+<span style="color:#82aaff">diff</span> <span style="color:#89ddff">&lt;</span>(<span style="color:#82aaff">sort</span> datei1.txt) <span style="color:#89ddff">&lt;</span>(<span style="color:#82aaff">sort</span> datei2.txt)
+<span style="color:#c792ea">while</span> IFS= <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> zeile<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$zeile"</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">&lt;</span> <span style="color:#89ddff">&lt;</span>(<span style="color:#82aaff">find</span> . <span style="color:#ffcb6b">-name</span> <span style="color:#c3e88d">"*.txt"</span>)  <span style="color:#546e7a"># keine Subshell!</span>
+
+<span style="color:#546e7a"># Heredoc – mehrzeiligen Text als Stdin</span>
+<span style="color:#82aaff">cat</span> <span style="color:#89ddff">&gt;</span> neue_datei.txt <span style="color:#89ddff">&lt;&lt;</span>EOF
+Zeile <span style="color:#f78c6c">1</span>
+Zeile <span style="color:#f78c6c">2</span>: <span style="color:#f07178">$variable</span> wird expandiert
+EOF
+
+<span style="color:#546e7a"># Herestring</span>
+<span style="color:#82aaff">grep</span> <span style="color:#c3e88d">"pattern"</span> <span style="color:#89ddff">&lt;&lt;</span><span style="color:#89ddff">&lt;</span> <span style="color:#c3e88d">"$variable"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-io1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('io1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Dateien verarbeiten
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="dateien verarbeiten">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Dateien verarbeiten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Datei zeilenweise lesen (sicher!)</span>
+<span style="color:#c792ea">while</span> IFS= <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> zeile <span style="color:#89ddff">||</span> [[ <span style="color:#ffcb6b">-n</span> <span style="color:#c3e88d">"$zeile"</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Zeile: $zeile"</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">&lt;</span> datei.txt
+<span style="color:#546e7a"># IFS= verhindert Trimmen von Leerzeichen</span>
+<span style="color:#546e7a"># -r verhindert Backslash-Interpretation</span>
+<span style="color:#546e7a"># || [[ -n "$zeile" ]] behandelt letzte Zeile ohne Newline</span>
+
+<span style="color:#546e7a"># CSV mit Trennzeichen</span>
+<span style="color:#c792ea">while</span> IFS=<span style="color:#c3e88d">','</span> <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> name alter stadt<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%-15s %3s %s</span>
+<span style="color:#c3e88d">" "</span><span style="color:#f07178">$name</span><span style="color:#c3e88d">" "</span><span style="color:#f07178">$alter</span><span style="color:#c3e88d">" "</span><span style="color:#f07178">$stadt</span><span style="color:#c3e88d">"</span>
+<span style="color:#c792ea">done</span> <span style="color:#89ddff">&lt;</span> daten.csv
+
+<span style="color:#546e7a"># Datei testen</span>
+test_datei() {
+    <span style="color:#c792ea">local</span> f=<span style="color:#c3e88d">"$1"</span>
+    [[ <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"$f"</span> ]] <span style="color:#89ddff">||</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Existiert nicht: $f"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+    [[ <span style="color:#ffcb6b">-f</span> <span style="color:#c3e88d">"$f"</span> ]] <span style="color:#89ddff">||</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Kein reguläre Datei: $f"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+    [[ <span style="color:#ffcb6b">-r</span> <span style="color:#c3e88d">"$f"</span> ]] <span style="color:#89ddff">||</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Nicht lesbar: $f"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"OK: $f ($(wc -l &lt; "</span><span style="color:#f07178">$f</span><span style="color:#c3e88d">") Zeilen, $(wc -c &lt; "</span><span style="color:#f07178">$f</span><span style="color:#c3e88d">") Bytes)"</span>
+}
+
+<span style="color:#546e7a"># Temporäre Dateien (sicher!)</span>
+tmp=<span style="color:#f07178">$(mktemp)</span>                  <span style="color:#546e7a"># /tmp/tmp.XXXXXX</span>
+tmp_dir=<span style="color:#f07178">$(mktemp -d)</span>           <span style="color:#546e7a"># Verzeichnis</span>
+<span style="color:#c792ea">trap</span> <span style="color:#c3e88d">"rm -f $tmp; rm -rf $tmp_dir"</span> EXIT
+
+<span style="color:#546e7a"># Dateiname-Manipulation</span>
+pfad=<span style="color:#c3e88d">"/home/alice/daten/bericht.txt"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verzeichnis: $(dirname "</span><span style="color:#f07178">$pfad</span><span style="color:#c3e88d">")"</span>    <span style="color:#546e7a"># /home/alice/daten</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Dateiname:   $(basename "</span><span style="color:#f07178">$pfad</span><span style="color:#c3e88d">")"</span>   <span style="color:#546e7a"># bericht.txt</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Ohne Ext:    ${pfad%.*}"</span>            <span style="color:#546e7a"># .../bericht</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Nur Ext:     ${pfad##*.}"</span>           <span style="color:#546e7a"># txt</span>
+
+<span style="color:#546e7a"># Alle .log Dateien verarbeiten</span>
+<span style="color:#82aaff">find</span> /var/log <span style="color:#ffcb6b">-name</span> <span style="color:#c3e88d">"*.log"</span> <span style="color:#ffcb6b">-mtime</span> <span style="color:#ffcb6b">-7</span> <span style="color:#89ddff">|</span> <span style="color:#c792ea">while</span> IFS= <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> log<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"--- $log ---"</span>
+    <span style="color:#82aaff">tail</span> <span style="color:#ffcb6b">-5</span> <span style="color:#c3e88d">"$log"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Dateiinhalt in Variable (kleiner Dateien)</span>
+inhalt=<span style="color:#f07178">$(&lt;datei.txt)</span>
+<span style="color:#546e7a"># NICHT: inhalt=$(cat datei.txt)  – UUOC (Useless Use of Cat)</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-io2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('io2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Prozesse &amp; Jobs
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="prozesse &amp; jobs">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Prozesse &amp; Jobs
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Befehl im Hintergrund</span>
+<span style="color:#82aaff">sleep</span> <span style="color:#f78c6c">10</span> <span style="color:#89ddff">&amp;</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"PID: $!"</span>
+
+<span style="color:#546e7a"># Jobs anzeigen</span>
+<span style="color:#c792ea">jobs</span>
+<span style="color:#c792ea">jobs</span> <span style="color:#ffcb6b">-l</span>    <span style="color:#546e7a"># mit PIDs</span>
+
+<span style="color:#546e7a"># Auf Hintergrundprozess warten</span>
+pid=<span style="color:#f07178">$!</span>
+<span style="color:#c792ea">wait</span> <span style="color:#f07178">$pid</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Exit-Code: $?"</span>
+
+<span style="color:#546e7a"># Mehrere Hintergrundprozesse</span>
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> {<span style="color:#f78c6c">1..5</span>}<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    verarbeite <span style="color:#c3e88d">"$i"</span> <span style="color:#89ddff">&amp;</span>
+<span style="color:#c792ea">done</span>
+<span style="color:#c792ea">wait</span>    <span style="color:#546e7a"># auf ALLE warten</span>
+
+<span style="color:#546e7a"># Prozess-Substitution für parallele Verarbeitung</span>
+pids=()
+<span style="color:#c792ea">for</span> datei <span style="color:#c792ea">in</span> *.txt<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    verarbeite <span style="color:#c3e88d">"$datei"</span> <span style="color:#89ddff">&amp;</span>
+    pids+=(<span style="color:#f07178">$!</span>)
+<span style="color:#c792ea">done</span>
+<span style="color:#c792ea">for</span> pid <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${pids[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">wait</span> <span style="color:#c3e88d">"$pid"</span> <span style="color:#89ddff">||</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Job $pid fehlgeschlagen"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Timeout</span>
+timeout <span style="color:#f78c6c">30</span> langer_befehl <span style="color:#89ddff">||</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Timeout nach 30s"</span>
+
+<span style="color:#546e7a"># Signale fangen</span>
+<span style="color:#c792ea">trap</span> <span style="color:#c3e88d">"echo 'Strg+C gefangen!'; exit 1"</span> INT
+<span style="color:#c792ea">trap</span> <span style="color:#c3e88d">"echo 'Beende...'; cleanup"</span> EXIT
+<span style="color:#c792ea">trap</span> <span style="color:#c3e88d">"echo 'Signal HUP!'"</span> HUP
+
+<span style="color:#546e7a"># Prozesse finden und beenden</span>
+pkill <span style="color:#ffcb6b">-f</span> <span style="color:#c3e88d">"mein_prozess"</span>         <span style="color:#546e7a"># nach Name</span>
+<span style="color:#c792ea">kill</span> <span style="color:#ffcb6b">-9</span> <span style="color:#c3e88d">"$PID"</span>                  <span style="color:#546e7a"># erzwingen</span>
+<span style="color:#c792ea">kill</span> <span style="color:#ffcb6b">-TERM</span> <span style="color:#c3e88d">"$PID"</span>               <span style="color:#546e7a"># höflich (Standard)</span>
+killall prozessname
+
+<span style="color:#546e7a"># Systemd-Integration</span>
+<span style="color:#82aaff">systemctl</span> is-active nginx <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"nginx läuft"</span>
+<span style="color:#82aaff">journalctl</span> <span style="color:#ffcb6b">-u</span> nginx <span style="color:#ffcb6b">--since</span> <span style="color:#c3e88d">"1 hour ago"</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-patterns" class="tp ">
+
+<div class="ac open" id="ac-pt0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pt0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Argumente parsen
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="argumente parsen">
+  <div style="color:#4caf50;font-weight:700;font-size:12px;margin-bottom:8px">
+    Argumente parsen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Einfaches Argument-Parsing</span>
+name=<span style="color:#c3e88d">""</span>
+verbose=<span style="color:#c792ea">false</span>
+ausgabe=<span style="color:#c3e88d">"/tmp/ergebnis.txt"</span>
+
+<span style="color:#c792ea">while</span> [[ <span style="color:#f07178">$#</span> <span style="color:#ffcb6b">-gt</span> <span style="color:#f78c6c">0</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$1"</span> <span style="color:#c792ea">in</span>
+        <span style="color:#ffcb6b">-n</span><span style="color:#89ddff">|</span>--name)
+            name=<span style="color:#c3e88d">"$2"</span>
+            <span style="color:#c792ea">shift</span> <span style="color:#f78c6c">2</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#ffcb6b">-v</span><span style="color:#89ddff">|</span>--verbose)
+            verbose=<span style="color:#c792ea">true</span>
+            <span style="color:#c792ea">shift</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#ffcb6b">-o</span><span style="color:#89ddff">|</span>--output)
+            ausgabe=<span style="color:#c3e88d">"$2"</span>
+            <span style="color:#c792ea">shift</span> <span style="color:#f78c6c">2</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#ffcb6b">-h</span><span style="color:#89ddff">|</span>--help)
+            <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verwendung: $0 [-n NAME] [-v] [-o DATEI]"</span>
+            <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">0</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#ffcb6b">--</span>)
+            <span style="color:#c792ea">shift</span>
+            <span style="color:#c792ea">break</span>   <span style="color:#546e7a"># Alles danach sind Positions-Argumente</span>
+            <span style="color:#89ddff">;;</span>
+        -*)
+            <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Unbekannte Option: $1"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+            <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span>
+            <span style="color:#89ddff">;;</span>
+        *)
+            <span style="color:#c792ea">break</span>   <span style="color:#546e7a"># Positions-Argument</span>
+            <span style="color:#89ddff">;;</span>
+    <span style="color:#c792ea">esac</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Restliche Argumente (Positions-Argumente nach Optionen)</span>
+reste=(<span style="color:#c3e88d">"$@"</span>)
+
+<span style="color:#f07178">$verbose</span> <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verbose-Modus aktiv"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Name:    $name"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Ausgabe: $ausgabe"</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Reste:   ${reste[@]:-keine}"</span>
+
+<span style="color:#546e7a"># getopts – POSIX-kompatibel, nur kurze Flags</span>
+<span style="color:#c792ea">while</span> getopts <span style="color:#c3e88d">":n:vo:h"</span> opt<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">case</span> <span style="color:#f07178">$opt</span> <span style="color:#c792ea">in</span>
+        n) name=<span style="color:#c3e88d">"$OPTARG"</span> <span style="color:#89ddff">;;</span>
+        v) verbose=<span style="color:#c792ea">true</span> <span style="color:#89ddff">;;</span>
+        o) ausgabe=<span style="color:#c3e88d">"$OPTARG"</span> <span style="color:#89ddff">;;</span>
+        h) <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Hilfe"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">;;</span>
+        :) <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Option -$OPTARG braucht Argument"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span> <span style="color:#89ddff">;;</span>
+        ?) <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Unbekannt: -$OPTARG"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span> <span style="color:#89ddff">;;</span>
+    <span style="color:#c792ea">esac</span>
+<span style="color:#c792ea">done</span>
+<span style="color:#c792ea">shift</span> <span style="color:#89ddff">$((OPTIND - 1))</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pt1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pt1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Logging &amp; Debugging
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="logging &amp; debugging">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Logging &amp; Debugging
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># Log-Level definieren</span>
+LOG_LEVEL=<span style="color:#c3e88d">"${LOG_LEVEL:-INFO}"</span>
+LOG_FILE=<span style="color:#c3e88d">"${LOG_FILE:-}"</span>
+<span style="color:#c792ea">declare</span> <span style="color:#ffcb6b">-A</span> LEVEL_NUM=([DEBUG]=<span style="color:#f78c6c">0</span> [INFO]=<span style="color:#f78c6c">1</span> [WARN]=<span style="color:#f78c6c">2</span> [ERROR]=<span style="color:#f78c6c">3</span>)
+
+log() {
+    <span style="color:#c792ea">local</span> level=<span style="color:#c3e88d">"$1"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">shift</span>
+    <span style="color:#c792ea">local</span> msg=<span style="color:#c3e88d">"$*"</span>
+    <span style="color:#c792ea">local</span> timestamp
+    timestamp=<span style="color:#f07178">$(date "+%Y-%m-%d %H:%M:%S")</span>
+
+    <span style="color:#546e7a"># Level-Filter</span>
+    [[ <span style="color:#f07178">${LEVEL_NUM[$level]:-0}</span> <span style="color:#ffcb6b">-lt</span> <span style="color:#f07178">${LEVEL_NUM[$LOG_LEVEL]:-1}</span> ]] <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#c792ea">return</span>
+
+    <span style="color:#546e7a"># Farbcodes</span>
+    <span style="color:#c792ea">local</span> color=<span style="color:#c3e88d">""</span>
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$level"</span> <span style="color:#c792ea">in</span>
+        DEBUG) color=<span style="color:#c3e88d">"\033[36m"</span> <span style="color:#89ddff">;;</span>   <span style="color:#546e7a"># Cyan</span>
+        INFO)  color=<span style="color:#c3e88d">"\033[32m"</span> <span style="color:#89ddff">;;</span>   <span style="color:#546e7a"># Grün</span>
+        WARN)  color=<span style="color:#c3e88d">"\033[33m"</span> <span style="color:#89ddff">;;</span>   <span style="color:#546e7a"># Gelb</span>
+        ERROR) color=<span style="color:#c3e88d">"\033[31m"</span> <span style="color:#89ddff">;;</span>   <span style="color:#546e7a"># Rot</span>
+    <span style="color:#c792ea">esac</span>
+    <span style="color:#c792ea">local</span> reset=<span style="color:#c3e88d">"\033[0m"</span>
+
+    <span style="color:#c792ea">local</span> formatted=<span style="color:#c3e88d">"[$timestamp] [$level] $msg"</span>
+
+    <span style="color:#546e7a"># Auf Terminal: mit Farbe, sonst ohne</span>
+    <span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-t</span> <span style="color:#f78c6c">2</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${color}%s${reset}\n"</span> <span style="color:#c3e88d">"$formatted"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+    <span style="color:#c792ea">else</span>
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$formatted"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+    <span style="color:#c792ea">fi</span>
+
+    <span style="color:#546e7a"># Optional in Datei schreiben</span>
+    [[ <span style="color:#ffcb6b">-n</span> <span style="color:#c3e88d">"$LOG_FILE"</span> ]] <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$formatted"</span> <span style="color:#89ddff">&gt;&gt;</span> <span style="color:#c3e88d">"$LOG_FILE"</span>
+}
+
+<span style="color:#546e7a"># Verwendung</span>
+log DEBUG <span style="color:#c3e88d">"Detailinformation"</span>
+log INFO  <span style="color:#c3e88d">"Skript gestartet"</span>
+log WARN  <span style="color:#c3e88d">"Niedriger Speicher"</span>
+log ERROR <span style="color:#c3e88d">"Datei nicht gefunden: $datei"</span>
+
+<span style="color:#546e7a"># Debugging</span>
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-x</span>           <span style="color:#546e7a"># Alle Befehle ausgeben</span>
+befehl
+<span style="color:#c792ea">set</span> +x           <span style="color:#546e7a"># Debug aus</span>
+
+<span style="color:#546e7a"># Bash-Debugger</span>
+bash <span style="color:#ffcb6b">-x</span> skript.sh     <span style="color:#546e7a"># gesamtes Skript debuggen</span>
+bash <span style="color:#ffcb6b">-n</span> skript.sh     <span style="color:#546e7a"># nur Syntax prüfen (kein Ausführen)</span>
+bash <span style="color:#ffcb6b">-v</span> skript.sh     <span style="color:#546e7a"># Zeilen vor Ausführung ausgeben</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pt2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pt2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Nützliche Idiome
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="nützliche idiome">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Nützliche Idiome
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># ── Sicherheit ──────────────────────────────────────────────────</span>
+
+<span style="color:#546e7a"># Skript nur als root ausführen</span>
+[[ <span style="color:#f07178">$EUID</span> <span style="color:#ffcb6b">-ne</span> <span style="color:#f78c6c">0</span> ]] <span style="color:#89ddff">&amp;&amp;</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Root benötigt"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+
+<span style="color:#546e7a"># Skript nur einmal ausführen (Lockfile)</span>
+LOCKFILE=<span style="color:#c3e88d">"/tmp/${0##*/}.lock"</span>
+<span style="color:#c792ea">exec</span> <span style="color:#f78c6c">200</span><span style="color:#89ddff">&gt;</span><span style="color:#c3e88d">"$LOCKFILE"</span>
+flock <span style="color:#ffcb6b">-n</span> <span style="color:#f78c6c">200</span> <span style="color:#89ddff">||</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Läuft bereits"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+<span style="color:#c792ea">trap</span> <span style="color:#c3e88d">"rm -f $LOCKFILE"</span> EXIT
+
+<span style="color:#546e7a"># ── Qualität ────────────────────────────────────────────────────</span>
+
+<span style="color:#546e7a"># Befehl vorhanden prüfen</span>
+befehl_vorhanden() {
+    command <span style="color:#ffcb6b">-v</span> <span style="color:#c3e88d">"$1"</span> <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null
+}
+befehl_vorhanden <span style="color:#82aaff">curl</span> <span style="color:#89ddff">||</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"curl nicht gefunden"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+
+<span style="color:#546e7a"># Abhängigkeiten prüfen</span>
+<span style="color:#c792ea">for</span> cmd <span style="color:#c792ea">in</span> <span style="color:#82aaff">curl</span> jq git<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    befehl_vorhanden <span style="color:#c3e88d">"$cmd"</span> <span style="color:#89ddff">||</span> { <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Fehlt: $cmd"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># ── Nützlich ────────────────────────────────────────────────────</span>
+
+<span style="color:#546e7a"># Skript-Verzeichnis ermitteln (symlink-sicher)</span>
+SKRIPT_DIR=<span style="color:#c3e88d">"$(cd "</span><span style="color:#f07178">$(dirname "${BASH_SOURCE[0]}")</span><span style="color:#c3e88d">" &amp;&amp; pwd)"</span>
+
+<span style="color:#546e7a"># Zahl prüfen</span>
+ist_zahl() { [[ <span style="color:#c3e88d">"$1"</span> =~ ^[<span style="color:#f78c6c">0</span>-<span style="color:#f78c6c">9</span>]+<span style="color:#f07178">$</span> ]]<span style="color:#89ddff">;</span> }
+ist_zahl <span style="color:#c3e88d">"42"</span>   <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Ja"</span>
+ist_zahl <span style="color:#c3e88d">"abc"</span>  <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Nein"</span>
+
+<span style="color:#546e7a"># Retry-Funktion</span>
+retry() {
+    <span style="color:#c792ea">local</span> versuche=<span style="color:#f07178">$1</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">shift</span>
+    <span style="color:#c792ea">local</span> verzögerung=<span style="color:#f07178">$1</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">shift</span>
+    <span style="color:#c792ea">local</span> n=<span style="color:#f78c6c">0</span>
+    <span style="color:#c792ea">until</span> <span style="color:#c3e88d">"$@"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+        ((n++))
+        [[ <span style="color:#f07178">$n</span> <span style="color:#ffcb6b">-ge</span> <span style="color:#f07178">$versuche</span> ]] <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Versuch $n fehlgeschlagen, warte ${verzögerung}s..."</span>
+        <span style="color:#82aaff">sleep</span> <span style="color:#c3e88d">"$verzögerung"</span>
+    <span style="color:#c792ea">done</span>
+}
+retry <span style="color:#f78c6c">3</span> <span style="color:#f78c6c">5</span> <span style="color:#82aaff">curl</span> https://api.example.com
+
+<span style="color:#546e7a"># Ladebalken</span>
+ladebalken() {
+    <span style="color:#c792ea">local</span> aktuell=<span style="color:#f07178">$1</span>
+    <span style="color:#c792ea">local</span> gesamt=<span style="color:#f07178">$2</span>
+    <span style="color:#c792ea">local</span> breite=<span style="color:#f78c6c">40</span>
+    <span style="color:#c792ea">local</span> prozent=<span style="color:#89ddff">$(( aktuell * 100 / gesamt ))</span>
+    <span style="color:#c792ea">local</span> gefüllt=<span style="color:#89ddff">$(( aktuell * breite / gesamt ))</span>
+    <span style="color:#c792ea">local</span> leer=<span style="color:#89ddff">$(( breite - gefüllt ))</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"\r[%${gefüllt}s%${leer}s] %3d%%"</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">tr</span> <span style="color:#c3e88d">" "</span> <span style="color:#c3e88d">"="</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">tr</span> <span style="color:#ffcb6b">-s</span> <span style="color:#c3e88d">" "</span> <span style="color:#c3e88d">" "</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">" (%d/%d)"</span> <span style="color:#c3e88d">"$aktuell"</span> <span style="color:#c3e88d">"$gesamt"</span>
+}
+
+<span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> {<span style="color:#f78c6c">1..20</span>}<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    ladebalken <span style="color:#c3e88d">"$i"</span> <span style="color:#f78c6c">20</span>
+    <span style="color:#82aaff">sleep</span> <span style="color:#f78c6c">0.1</span>
+<span style="color:#c792ea">done</span>
+<span style="color:#82aaff">echo</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pt3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('pt3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Arithmetik
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="arithmetik">
+  <div style="color:#ffb347;font-weight:700;font-size:12px;margin-bottom:8px">
+    Arithmetik
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+
+<span style="color:#546e7a"># (( )) – ganzzahlige Arithmetik</span>
+a=<span style="color:#f78c6c">10</span><span style="color:#89ddff">;</span> b=<span style="color:#f78c6c">3</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( a + b ))</span>   <span style="color:#546e7a"># 13</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( a - b ))</span>   <span style="color:#546e7a"># 7</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( a * b ))</span>   <span style="color:#546e7a"># 30</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( a / b ))</span>   <span style="color:#546e7a"># 3  (ganzzahlig!)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( a % b ))</span>   <span style="color:#546e7a"># 1  (Rest)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( a ** b ))</span>  <span style="color:#546e7a"># 1000 (Potenz, Bash 2.05+)</span>
+
+<span style="color:#546e7a"># Zuweisungen</span>
+(( a++ ))           <span style="color:#546e7a"># Inkrement</span>
+(( a-- ))           <span style="color:#546e7a"># Dekrement</span>
+(( a += <span style="color:#f78c6c">5</span> ))
+(( a *= <span style="color:#f78c6c">2</span> ))
+
+<span style="color:#546e7a"># In Variablen speichern</span>
+ergebnis=<span style="color:#89ddff">$(( a * b + 10 ))</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$ergebnis"</span>
+
+<span style="color:#546e7a"># Vergleiche in (( )) – 0=true, 1=false (umgekehrt zu Befehlen!)</span>
+(( <span style="color:#f78c6c">5</span> <span style="color:#89ddff">&gt;</span> <span style="color:#f78c6c">3</span> )) <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Wahr"</span>   <span style="color:#546e7a"># gibt 0 zurück = Erfolg</span>
+(( <span style="color:#f78c6c">5</span> <span style="color:#89ddff">&lt;</span> <span style="color:#f78c6c">3</span> )) <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Wahr"</span>   <span style="color:#546e7a"># gibt 1 zurück = Fehler</span>
+
+<span style="color:#546e7a"># Bitweise Operatoren</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( 0xFF &amp; 0x0F ))</span>   <span style="color:#546e7a"># AND: 15</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( 1 &lt;&lt; 4 ))</span>        <span style="color:#546e7a"># LEFT SHIFT: 16</span>
+<span style="color:#82aaff">echo</span> <span style="color:#89ddff">$(( 255 &gt;&gt; 4 ))</span>      <span style="color:#546e7a"># RIGHT SHIFT: 15</span>
+
+<span style="color:#546e7a"># Floating Point – bash kann das NICHT!</span>
+<span style="color:#546e7a"># Stattdessen: bc, awk oder python3 nutzen</span>
+
+<span style="color:#546e7a"># bc – Beliebige Präzision</span>
+ergebnis=<span style="color:#f07178">$(echo "scale=4; 22/7" | bc)</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$ergebnis"</span>    <span style="color:#546e7a"># 3.1428</span>
+
+<span style="color:#546e7a"># awk für Floats</span>
+<span style="color:#82aaff">awk</span> <span style="color:#c3e88d">"BEGIN { printf "</span>%.<span style="color:#f78c6c">6</span>f\n<span style="color:#c3e88d">", 22/7 }"</span>
+
+<span style="color:#546e7a"># python3 als Taschenrechner</span>
+<span style="color:#82aaff">python3</span> <span style="color:#ffcb6b">-c</span> <span style="color:#c3e88d">"print(f'{22/7:.6f}')"</span>
+
+<span style="color:#546e7a"># Hex ↔ Dezimal</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%d\n"</span> <span style="color:#f78c6c">0</span>xFF      <span style="color:#546e7a"># hex → dez: 255</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"0x%X\n"</span> <span style="color:#f78c6c">255</span>     <span style="color:#546e7a"># dez → hex: 0xFF</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"obase=2; 42"</span> <span style="color:#89ddff">|</span> bc  <span style="color:#546e7a"># dez → binär: 101010</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <button id="exb0" onclick="switchEx(0)" style="border:1px solid #4caf50;color:#4caf50;background:rgba(76,175,80,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">System-Info</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Backup-Skript</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Interaktives Menü</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Parallele Verarbeitung</button>
+  
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+<span style="color:#546e7a"># Plattformunabhängiges System-Info-Skript</span>
+
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-euo</span> pipefail
+
+<span style="color:#546e7a"># Farben (nur wenn Terminal)</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-t</span> <span style="color:#f78c6c">1</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    BOLD=<span style="color:#c3e88d">"\033[1m"</span><span style="color:#89ddff">;</span> GREEN=<span style="color:#c3e88d">"\033[32m"</span><span style="color:#89ddff">;</span> BLUE=<span style="color:#c3e88d">"\033[34m"</span>
+    YELLOW=<span style="color:#c3e88d">"\033[33m"</span><span style="color:#89ddff">;</span> RESET=<span style="color:#c3e88d">"\033[0m"</span>
+<span style="color:#c792ea">else</span>
+    BOLD=<span style="color:#c3e88d">""</span> GREEN=<span style="color:#c3e88d">""</span> BLUE=<span style="color:#c3e88d">""</span> YELLOW=<span style="color:#c3e88d">""</span> RESET=<span style="color:#c3e88d">""</span>
+<span style="color:#c792ea">fi</span>
+
+trennlinie() { <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%s\n"</span> <span style="color:#c3e88d">"$(printf '─%.0s' {1..50})"</span><span style="color:#89ddff">;</span> }
+titel() { <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${BOLD}${BLUE}$1${RESET}"</span><span style="color:#89ddff">;</span> trennlinie<span style="color:#89ddff">;</span> }
+
+titel <span style="color:#c3e88d">"System-Information"</span>
+
+<span style="color:#546e7a"># OS erkennen</span>
+os=<span style="color:#f07178">$(uname -s)</span>
+<span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$os"</span> <span style="color:#c792ea">in</span>
+    Linux)
+        <span style="color:#546e7a"># Distro ermitteln (mehrere Methoden)</span>
+        <span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-f</span> /etc/os-release ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+            <span style="color:#c792ea">source</span> /etc/os-release
+            distro=<span style="color:#c3e88d">"${NAME} ${VERSION_ID:-}"</span>
+        <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> lsb_release <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+            distro=<span style="color:#f07178">$(lsb_release -d | cut -f2)</span>
+        <span style="color:#c792ea">else</span>
+            distro=<span style="color:#c3e88d">"Linux (unbekannt)"</span>
+        <span style="color:#c792ea">fi</span>
+        <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"Distro:"</span> <span style="color:#c3e88d">"$distro"</span>
+        <span style="color:#89ddff">;;</span>
+    Darwin)
+        <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"System:"</span> <span style="color:#c3e88d">"macOS $(sw_vers -productVersion)"</span>
+        <span style="color:#89ddff">;;</span>
+<span style="color:#c792ea">esac</span>
+
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"Kernel:"</span>   <span style="color:#c3e88d">"$(uname -r)"</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"Arch:"</span>     <span style="color:#c3e88d">"$(uname -m)"</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"Hostname:"</span> <span style="color:#c3e88d">"$(hostname)"</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"Uptime:"</span>   <span style="color:#c3e88d">"$(uptime -p 2&gt;/dev/null || uptime)"</span>
+
+<span style="color:#82aaff">echo</span>
+titel <span style="color:#c3e88d">"Ressourcen"</span>
+
+<span style="color:#546e7a"># CPU</span>
+cpu_kerne=<span style="color:#f07178">$(nproc 2&gt;/dev/null || sysctl -n hw.ncpu 2&gt;/dev/null || echo "?")</span>
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s\n"</span> <span style="color:#c3e88d">"CPU-Kerne:"</span> <span style="color:#c3e88d">"$cpu_kerne"</span>
+
+<span style="color:#546e7a"># Arbeitsspeicher</span>
+<span style="color:#c792ea">if</span> [[ <span style="color:#ffcb6b">-f</span> /proc/meminfo ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    mem_total=<span style="color:#f07178">$(awk '/MemTotal/ {printf "%.1f GB", $2/1024/1024}' /proc/meminfo)</span>
+    mem_frei=<span style="color:#f07178">$(awk  '/MemAvailable/ {printf "%.1f GB", $2/1024/1024}' /proc/meminfo)</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s (frei: %s)\n"</span> <span style="color:#c3e88d">"RAM:"</span> <span style="color:#c3e88d">"$mem_total"</span> <span style="color:#c3e88d">"$mem_frei"</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#546e7a"># Festplatte</span>
+<span style="color:#82aaff">df</span> <span style="color:#ffcb6b">-h</span> / <span style="color:#89ddff">|</span> <span style="color:#82aaff">awk</span> <span style="color:#c3e88d">'NR==2 {</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"\033[32m%-15s\033[0m %s (%s benutzt)\n"</span>, <span style="color:#c3e88d">"Disk /:"</span>, <span style="color:#f07178">$4</span><span style="color:#c3e88d">" frei"</span>, <span style="color:#f07178">$5</span>
+}<span style="color:#c3e88d">'</span>
+
+<span style="color:#82aaff">echo</span>
+titel <span style="color:#c3e88d">"Netzwerk"</span>
+ip <span style="color:#ffcb6b">-4</span> addr <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span>/dev/null <span style="color:#89ddff">|</span> <span style="color:#82aaff">awk</span> <span style="color:#c3e88d">'/inet / &amp;&amp; !/127.0.0.1/ {</span>
+    gsub(/\/.*/, <span style="color:#c3e88d">""</span>, <span style="color:#f07178">$2</span>)
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"  %-12s %s\n"</span>, <span style="color:#f07178">$NF</span><span style="color:#c3e88d">":"</span>, <span style="color:#f07178">$2</span>
+}<span style="color:#c3e88d">' || ifconfig 2&gt;/dev/null | awk '</span>/inet / <span style="color:#89ddff">&amp;&amp;</span> !/<span style="color:#f78c6c">127.0.0.1</span>/ {print <span style="color:#c3e88d">"  "</span><span style="color:#f07178">$2</span>}<span style="color:#c3e88d">'</span>
+
+<span style="color:#82aaff">echo</span>
+titel <span style="color:#c3e88d">"Pakete"</span>
+<span style="color:#c792ea">for</span> pm <span style="color:#c792ea">in</span> apt dnf pacman zypper brew<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">if</span> command <span style="color:#ffcb6b">-v</span> <span style="color:#c3e88d">"$pm"</span> <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$pm"</span> <span style="color:#c792ea">in</span>
+            apt)     count=<span style="color:#f07178">$(dpkg -l 2&gt;/dev/null | grep -c "^ii")</span> <span style="color:#89ddff">;;</span>
+            dnf)     count=<span style="color:#f07178">$(rpm -qa 2&gt;/dev/null | wc -l)</span> <span style="color:#89ddff">;;</span>
+            pacman)  count=<span style="color:#f07178">$(pacman -Q 2&gt;/dev/null | wc -l)</span> <span style="color:#89ddff">;;</span>
+            zypper)  count=<span style="color:#f07178">$(rpm -qa 2&gt;/dev/null | wc -l)</span> <span style="color:#89ddff">;;</span>
+            brew)    count=<span style="color:#f07178">$(brew list 2&gt;/dev/null | wc -l)</span> <span style="color:#89ddff">;;</span>
+        <span style="color:#c792ea">esac</span>
+        <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${GREEN}%-15s${RESET} %s Pakete\n"</span> <span style="color:#c3e88d">"$pm:"</span> <span style="color:#c3e88d">"$count"</span>
+        <span style="color:#c792ea">break</span>
+    <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">done</span></pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+<span style="color:#546e7a"># Inkrementelles Backup mit rsync – distro-unabhängig</span>
+
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-euo</span> pipefail
+
+<span style="color:#546e7a"># ── Konfiguration ─────────────────────────────────────────────</span>
+QUELLE=<span style="color:#c3e88d">"${HOME}"</span>
+ZIEL=<span style="color:#c3e88d">"/mnt/backup"</span>
+BEHALTE_TAGE=<span style="color:#f78c6c">30</span>
+LOG_DATEI=<span style="color:#c3e88d">"/var/log/backup.log"</span>
+AUSSCHLIESSEN=(
+    <span style="color:#c3e88d">".cache"</span>
+    <span style="color:#c3e88d">".local/share/Trash"</span>
+    <span style="color:#c3e88d">"*.tmp"</span>
+    <span style="color:#c3e88d">"node_modules"</span>
+    <span style="color:#c3e88d">"__pycache__"</span>
+    <span style="color:#c3e88d">".git"</span>
+)
+
+<span style="color:#546e7a"># ── Hilfsfunktionen ───────────────────────────────────────────</span>
+log() { <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"[%s] %s\n"</span> <span style="color:#c3e88d">"$(date '+%Y-%m-%d %H:%M:%S')"</span> <span style="color:#c3e88d">"$*"</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">tee</span> <span style="color:#ffcb6b">-a</span> <span style="color:#c3e88d">"$LOG_DATEI"</span><span style="color:#89ddff">;</span> }
+fehler() { log <span style="color:#c3e88d">"FEHLER: $*"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">1</span><span style="color:#89ddff">;</span> }
+
+<span style="color:#546e7a"># ── Voraussetzungen prüfen ────────────────────────────────────</span>
+command <span style="color:#ffcb6b">-v</span> <span style="color:#82aaff">rsync</span> <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null <span style="color:#89ddff">||</span> fehler <span style="color:#c3e88d">"rsync nicht installiert"</span>
+[[ <span style="color:#ffcb6b">-d</span> <span style="color:#c3e88d">"$QUELLE"</span> ]]           <span style="color:#89ddff">||</span> fehler <span style="color:#c3e88d">"Quelle existiert nicht: $QUELLE"</span>
+[[ <span style="color:#ffcb6b">-d</span> <span style="color:#c3e88d">"$ZIEL"</span> ]]             <span style="color:#89ddff">||</span> fehler <span style="color:#c3e88d">"Ziel existiert nicht: $ZIEL"</span>
+
+<span style="color:#546e7a"># ── Ausschluss-Argumente bauen ────────────────────────────────</span>
+ausschluss_args=()
+<span style="color:#c792ea">for</span> muster <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${AUSSCHLIESSEN[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    ausschluss_args+=(<span style="color:#c3e88d">"--exclude=$muster"</span>)
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># ── Backup durchführen ────────────────────────────────────────</span>
+datum=<span style="color:#f07178">$(date +%Y-%m-%d_%H-%M-%S)</span>
+backup_pfad=<span style="color:#c3e88d">"${ZIEL}/backup_${datum}"</span>
+
+log <span style="color:#c3e88d">"Starte Backup: $QUELLE → $backup_pfad"</span>
+
+<span style="color:#82aaff">rsync</span> <span style="color:#ffcb6b">-avz</span> <span style="color:#ffcb6b">--delete</span> \
+    <span style="color:#c3e88d">"${ausschluss_args[@]}"</span> \
+    <span style="color:#ffcb6b">--link-dest</span>=<span style="color:#c3e88d">"${ZIEL}/latest"</span> \
+    <span style="color:#c3e88d">"$QUELLE/"</span> \
+    <span style="color:#c3e88d">"$backup_pfad/"</span> \
+    <span style="color:#89ddff">&gt;&gt;</span> <span style="color:#c3e88d">"$LOG_DATEI"</span> <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">1</span>
+
+<span style="color:#546e7a"># ── Symlink aktualisieren ─────────────────────────────────────</span>
+<span style="color:#82aaff">ln</span> <span style="color:#ffcb6b">-sfn</span> <span style="color:#c3e88d">"$backup_pfad"</span> <span style="color:#c3e88d">"${ZIEL}/latest"</span>
+
+<span style="color:#546e7a"># ── Alte Backups löschen ──────────────────────────────────────</span>
+log <span style="color:#c3e88d">"Lösche Backups älter als $BEHALTE_TAGE Tage..."</span>
+<span style="color:#82aaff">find</span> <span style="color:#c3e88d">"$ZIEL"</span> <span style="color:#ffcb6b">-maxdepth</span> <span style="color:#f78c6c">1</span> <span style="color:#ffcb6b">-name</span> <span style="color:#c3e88d">"backup_*"</span> <span style="color:#ffcb6b">-type</span> d <span style="color:#ffcb6b">-mtime</span> +<span style="color:#c3e88d">"$BEHALTE_TAGE"</span> \
+    <span style="color:#ffcb6b">-exec</span> <span style="color:#82aaff">rm</span> <span style="color:#ffcb6b">-rf</span> {} + <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span>/dev/null <span style="color:#89ddff">||</span> <span style="color:#c792ea">true</span>
+
+<span style="color:#546e7a"># ── Zusammenfassung ───────────────────────────────────────────</span>
+größe=<span style="color:#f07178">$(du -sh "$backup_pfad" | cut -f1)</span>
+log <span style="color:#c3e88d">"Backup abgeschlossen: $backup_pfad ($größe)"</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+<span style="color:#546e7a"># Interaktives Auswahlmenü – distro-unabhängig</span>
+
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-euo</span> pipefail
+
+<span style="color:#546e7a"># Farben</span>
+RED=<span style="color:#c3e88d">"\033[31m"</span><span style="color:#89ddff">;</span> GREEN=<span style="color:#c3e88d">"\033[32m"</span><span style="color:#89ddff">;</span> YELLOW=<span style="color:#c3e88d">"\033[33m"</span>
+BLUE=<span style="color:#c3e88d">"\033[34m"</span><span style="color:#89ddff">;</span> CYAN=<span style="color:#c3e88d">"\033[36m"</span><span style="color:#89ddff">;</span> BOLD=<span style="color:#c3e88d">"\033[1m"</span><span style="color:#89ddff">;</span> RESET=<span style="color:#c3e88d">"\033[0m"</span>
+
+<span style="color:#546e7a"># Menü anzeigen und Auswahl zurückgeben</span>
+zeige_menü() {
+    <span style="color:#c792ea">local</span> titel=<span style="color:#c3e88d">"$1"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">shift</span>
+    <span style="color:#c792ea">local</span> optionen=(<span style="color:#c3e88d">"$@"</span>)
+
+    clear
+    <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${BOLD}${BLUE}╔══════════════════════════════════╗${RESET}"</span>
+    <span style="color:#82aaff">printf</span>  <span style="color:#c3e88d">"${BOLD}${BLUE}║  %-32s  ║${RESET}\n"</span> <span style="color:#c3e88d">"$titel"</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${BOLD}${BLUE}╚══════════════════════════════════╝${RESET}"</span>
+    <span style="color:#82aaff">echo</span>
+
+    <span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${!optionen[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+        <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"  ${CYAN}[%d]${RESET} %s\n"</span> <span style="color:#c3e88d">"$((i+1))"</span> <span style="color:#c3e88d">"${optionen[$i]}"</span>
+    <span style="color:#c792ea">done</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"  ${RED}[0]${RESET} Beenden\n"</span>
+    <span style="color:#82aaff">echo</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"  ${YELLOW}Auswahl [0-%d]: ${RESET}"</span> <span style="color:#c3e88d">"${#optionen[@]}"</span>
+    <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> auswahl
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"$auswahl"</span>
+}
+
+<span style="color:#546e7a"># Bestätigungsdialog</span>
+bestätige() {
+    <span style="color:#c792ea">local</span> frage=<span style="color:#c3e88d">"${1:-Fortfahren?}"</span>
+    <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"  ${YELLOW}%s [j/N]: ${RESET}"</span> <span style="color:#c3e88d">"$frage"</span>
+    <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> antwort
+    [[ <span style="color:#c3e88d">"${antwort,,}"</span> == <span style="color:#c3e88d">"j"</span> <span style="color:#89ddff">||</span> <span style="color:#c3e88d">"${antwort,,}"</span> == <span style="color:#c3e88d">"ja"</span> ]]
+}
+
+<span style="color:#546e7a"># Pakete installieren – erkennt Paketmanager automatisch</span>
+installiere_paket() {
+    <span style="color:#c792ea">local</span> paket=<span style="color:#c3e88d">"$1"</span>
+    <span style="color:#c792ea">if</span> command <span style="color:#ffcb6b">-v</span> apt <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        sudo apt install <span style="color:#ffcb6b">-y</span> <span style="color:#c3e88d">"$paket"</span>
+    <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> dnf <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        sudo dnf install <span style="color:#ffcb6b">-y</span> <span style="color:#c3e88d">"$paket"</span>
+    <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> pacman <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        sudo pacman <span style="color:#ffcb6b">-S</span> <span style="color:#ffcb6b">--noconfirm</span> <span style="color:#c3e88d">"$paket"</span>
+    <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> zypper <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        sudo zypper install <span style="color:#ffcb6b">-y</span> <span style="color:#c3e88d">"$paket"</span>
+    <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> brew <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        brew install <span style="color:#c3e88d">"$paket"</span>
+    <span style="color:#c792ea">else</span>
+        <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${RED}Kein Paketmanager gefunden${RESET}"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+        <span style="color:#c792ea">return</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#c792ea">fi</span>
+}
+
+<span style="color:#546e7a"># Hauptmenü</span>
+<span style="color:#c792ea">while</span> <span style="color:#c792ea">true</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    auswahl=<span style="color:#f07178">$(zeige_menü "System-Werkzeuge" \</span>
+        <span style="color:#c3e88d">"System-Info anzeigen"</span> \
+        <span style="color:#c3e88d">"Pakete aktualisieren"</span> \
+        <span style="color:#c3e88d">"Dienst verwalten"</span> \
+        <span style="color:#c3e88d">"Netzwerk prüfen"</span>)
+
+    <span style="color:#c792ea">case</span> <span style="color:#c3e88d">"$auswahl"</span> <span style="color:#c792ea">in</span>
+        <span style="color:#f78c6c">1</span>)
+            <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${GREEN}=== System-Info ===${RESET}"</span>
+            <span style="color:#82aaff">uname</span> <span style="color:#ffcb6b">-a</span>
+            uptime
+            <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-rp</span> <span style="color:#c3e88d">"Enter zum Fortfahren..."</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#f78c6c">2</span>)
+            bestätige <span style="color:#c3e88d">"Pakete aktualisieren?"</span> <span style="color:#89ddff">||</span> <span style="color:#c792ea">continue</span>
+            <span style="color:#c792ea">if</span> command <span style="color:#ffcb6b">-v</span> apt <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span>    <span style="color:#c792ea">then</span> sudo apt update <span style="color:#89ddff">&amp;&amp;</span> sudo apt upgrade <span style="color:#ffcb6b">-y</span>
+            <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> dnf <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span>  <span style="color:#c792ea">then</span> sudo dnf upgrade <span style="color:#ffcb6b">-y</span>
+            <span style="color:#c792ea">elif</span> command <span style="color:#ffcb6b">-v</span> pacman <span style="color:#89ddff">&amp;</span><span style="color:#89ddff">&gt;</span>/dev/null<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span> sudo pacman <span style="color:#ffcb6b">-Syu</span>
+            <span style="color:#c792ea">fi</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#f78c6c">3</span>)
+            <span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"${YELLOW}Dienst-Name: ${RESET}"</span>
+            <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-r</span> dienst
+            <span style="color:#82aaff">systemctl</span> status <span style="color:#c3e88d">"$dienst"</span> <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span>/dev/null <span style="color:#89ddff">||</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Dienst nicht gefunden"</span>
+            <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-rp</span> <span style="color:#c3e88d">"Enter zum Fortfahren..."</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#f78c6c">4</span>)
+            <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${GREEN}=== Netzwerk ===${RESET}"</span>
+            ping <span style="color:#ffcb6b">-c3</span> <span style="color:#f78c6c">8.8.8.8</span> <span style="color:#89ddff">&amp;&amp;</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Internet: OK"</span> <span style="color:#89ddff">||</span> <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Internet: Fehler"</span>
+            <span style="color:#82aaff">read</span> <span style="color:#ffcb6b">-rp</span> <span style="color:#c3e88d">"Enter zum Fortfahren..."</span>
+            <span style="color:#89ddff">;;</span>
+        <span style="color:#f78c6c">0</span>) <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${GREEN}Auf Wiedersehen!${RESET}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">0</span> <span style="color:#89ddff">;;</span>
+        *) <span style="color:#82aaff">echo</span> <span style="color:#ffcb6b">-e</span> <span style="color:#c3e88d">"${RED}Ungültige Auswahl${RESET}"</span><span style="color:#89ddff">;</span> <span style="color:#82aaff">sleep</span> <span style="color:#f78c6c">1</span> <span style="color:#89ddff">;;</span>
+    <span style="color:#c792ea">esac</span>
+<span style="color:#c792ea">done</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#ffb347">#!/usr/bin/env bash</span>
+<span style="color:#546e7a"># Dateien parallel verarbeiten mit Job-Control</span>
+
+<span style="color:#c792ea">set</span> <span style="color:#ffcb6b">-euo</span> pipefail
+
+MAX_JOBS=<span style="color:#c3e88d">"${MAX_JOBS:-4}"</span>   <span style="color:#546e7a"># Maximale parallele Prozesse</span>
+
+<span style="color:#546e7a"># Einfachste Methode: xargs -P</span>
+<span style="color:#546e7a"># Liste von URLs parallel herunterladen</span>
+urls=(
+    <span style="color:#c3e88d">"https://example.com/datei1.txt"</span>
+    <span style="color:#c3e88d">"https://example.com/datei2.txt"</span>
+    <span style="color:#c3e88d">"https://example.com/datei3.txt"</span>
+)
+<span style="color:#82aaff">printf</span> <span style="color:#c3e88d">"%s\n"</span> <span style="color:#c3e88d">"${urls[@]}"</span> <span style="color:#89ddff">|</span> <span style="color:#82aaff">xargs</span> <span style="color:#ffcb6b">-P</span> <span style="color:#c3e88d">"$MAX_JOBS"</span> <span style="color:#ffcb6b">-I</span>{} <span style="color:#82aaff">curl</span> <span style="color:#ffcb6b">-O</span> {}
+
+<span style="color:#546e7a"># ── Eigene parallele Verarbeitung mit Job-Control ────────────</span>
+aktive_jobs=<span style="color:#f78c6c">0</span>
+
+verarbeite() {
+    <span style="color:#c792ea">local</span> datei=<span style="color:#c3e88d">"$1"</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Starte: $datei"</span>
+    <span style="color:#546e7a"># Schwere Verarbeitung...</span>
+    <span style="color:#82aaff">sleep</span> <span style="color:#89ddff">$((RANDOM % 3 + 1))</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Fertig: $datei"</span>
+}
+
+warte_auf_freien_slot() {
+    <span style="color:#c792ea">while</span> (( aktive_jobs <span style="color:#89ddff">&gt;</span>= MAX_JOBS ))<span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+        <span style="color:#546e7a"># Auf irgendeinen Job warten</span>
+        <span style="color:#c792ea">wait</span> <span style="color:#ffcb6b">-n</span> <span style="color:#f78c6c">2</span><span style="color:#89ddff">&gt;</span>/dev/null <span style="color:#89ddff">&amp;&amp;</span> ((aktive_jobs--)) <span style="color:#89ddff">||</span> <span style="color:#c792ea">true</span>
+    <span style="color:#c792ea">done</span>
+}
+
+<span style="color:#546e7a"># Alle .log Dateien parallel komprimieren</span>
+shopt <span style="color:#ffcb6b">-s</span> nullglob
+log_dateien=(*.log)
+
+<span style="color:#c792ea">if</span> [[ <span style="color:#f07178">${#log_dateien[@]}</span> <span style="color:#ffcb6b">-eq</span> <span style="color:#f78c6c">0</span> ]]<span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Keine .log Dateien gefunden"</span>
+    <span style="color:#c792ea">exit</span> <span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">fi</span>
+
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Verarbeite ${#log_dateien[@]} Dateien mit max. $MAX_JOBS Parallel-Jobs"</span>
+
+pids=()
+<span style="color:#c792ea">for</span> datei <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${log_dateien[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    warte_auf_freien_slot
+    <span style="color:#82aaff">gzip</span> <span style="color:#ffcb6b">-k</span> <span style="color:#c3e88d">"$datei"</span> <span style="color:#89ddff">&amp;</span>   <span style="color:#546e7a"># Hintergrundprozess</span>
+    pids+=(<span style="color:#f07178">$!</span>)
+    ((aktive_jobs++))
+    <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Job gestartet: $datei (PID: ${pids[-1]})"</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#546e7a"># Auf alle ausstehenden Jobs warten</span>
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Warte auf verbleibende ${#pids[@]} Jobs..."</span>
+fehler_count=<span style="color:#f78c6c">0</span>
+<span style="color:#c792ea">for</span> pid <span style="color:#c792ea">in</span> <span style="color:#c3e88d">"${pids[@]}"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">do</span>
+    <span style="color:#c792ea">if</span> ! <span style="color:#c792ea">wait</span> <span style="color:#c3e88d">"$pid"</span><span style="color:#89ddff">;</span> <span style="color:#c792ea">then</span>
+        <span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Job $pid fehlgeschlagen!"</span> <span style="color:#89ddff">&gt;</span><span style="color:#89ddff">&amp;</span><span style="color:#f78c6c">2</span>
+        ((fehler_count++))
+    <span style="color:#c792ea">fi</span>
+<span style="color:#c792ea">done</span>
+
+<span style="color:#82aaff">echo</span> <span style="color:#c3e88d">"Fertig. Fehler: $fehler_count"</span>
+<span style="color:#c792ea">exit</span> <span style="color:#f07178">$fehler_count</span></pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+
+<div style="background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.3);
+            border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;
+            line-height:1.8">
+  <strong style="color:#4caf50">Tipp:</strong>
+  Immer <code style="color:#ffb347">shellcheck mein_skript.sh</code> ausführen
+  bevor du ein Skript in Produktion nimmst —
+  es findet Bugs die schwer zu sehen sind.
+  Installieren: <code style="color:#ffb347">apt/dnf/pacman/brew install shellcheck</code>
+</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #4caf5044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4caf500e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4caf50">
+      <span style="display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:2px"></span>Essenzielle Befehle
+    </span>
+    <span class="aa" style="color:#4caf50;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Kürzel</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4caf50">man befehl</code></td><td style="color:#cdd6f4">Handbuch-Seite anzeigen</td><td style="color:#6c7a8e">man bash  |  man 5 passwd</td></tr><tr><td style="width:220px"><code style="color:#4caf50">info befehl</code></td><td style="color:#cdd6f4">GNU Info-Dokumentation</td><td style="color:#6c7a8e">info coreutils</td></tr><tr><td style="width:220px"><code style="color:#4caf50">befehl --help</code></td><td style="color:#cdd6f4">Kurzanleitung</td><td style="color:#6c7a8e">grep --help | head</td></tr><tr><td style="width:220px"><code style="color:#4caf50">type befehl</code></td><td style="color:#cdd6f4">Typ des Befehls (builtin/file/alias)</td><td style="color:#6c7a8e">type ls  →  ls is aliased to...</td></tr><tr><td style="width:220px"><code style="color:#4caf50">which befehl</code></td><td style="color:#cdd6f4">Pfad zum Befehl</td><td style="color:#6c7a8e">which python3</td></tr><tr><td style="width:220px"><code style="color:#4caf50">command -v befehl</code></td><td style="color:#cdd6f4">Wie which, aber auch für builtins</td><td style="color:#6c7a8e">command -v cd</td></tr><tr><td style="width:220px"><code style="color:#4caf50">help builtin</code></td><td style="color:#cdd6f4">Hilfe zu Bash-Builtins</td><td style="color:#6c7a8e">help read  |  help set</td></tr><tr><td style="width:220px"><code style="color:#4caf50">apropos stichwort</code></td><td style="color:#cdd6f4">Handbücher nach Stichwort suchen</td><td style="color:#6c7a8e">apropos network</td></tr><tr><td style="width:220px"><code style="color:#4caf50">tldr befehl</code></td><td style="color:#cdd6f4">Kurze, praktische Beispiele (extern)</td><td style="color:#6c7a8e">tldr tar  |  tldr find</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Shell-Konfiguration
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Kürzel</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4fc3f7">~/.bashrc</code></td><td style="color:#cdd6f4">Interaktive Non-Login-Shells</td><td style="color:#6c7a8e">Aliasse, Funktionen, PS1</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">~/.bash_profile</code></td><td style="color:#cdd6f4">Login-Shell-Konfiguration</td><td style="color:#6c7a8e">Wird einmalig bei Login geladen</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">~/.bash_aliases</code></td><td style="color:#cdd6f4">Aliasse auslagern</td><td style="color:#6c7a8e">source ~/.bash_aliases in .bashrc</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">~/.inputrc</code></td><td style="color:#cdd6f4">Readline-Konfiguration</td><td style="color:#6c7a8e">Tastenkürzel, Vi-Modus</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">/etc/profile</code></td><td style="color:#cdd6f4">System-weite Login-Konfiguration</td><td style="color:#6c7a8e">Für alle Benutzer</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">/etc/bash.bashrc</code></td><td style="color:#cdd6f4">System-weite bashrc</td><td style="color:#6c7a8e">Debian/Ubuntu</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">/etc/bashrc</code></td><td style="color:#cdd6f4">System-weite bashrc</td><td style="color:#6c7a8e">RHEL/Fedora</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">source ~/.bashrc</code></td><td style="color:#cdd6f4">Konfiguration neu laden</td><td style="color:#6c7a8e">Oder: . ~/.bashrc</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7">bash --norc</code></td><td style="color:#cdd6f4">Ohne .bashrc starten</td><td style="color:#6c7a8e">Für Debugging</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Tastenkürzel (Readline)
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Kürzel</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#c792ea">Strg+A / Strg+E</code></td><td style="color:#cdd6f4">Zeilenanfang / Zeilenende</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+U / Strg+K</code></td><td style="color:#cdd6f4">Löschen bis Anfang / Ende</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+W</code></td><td style="color:#cdd6f4">Letztes Wort löschen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Alt+D</code></td><td style="color:#cdd6f4">Nächstes Wort löschen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+L</code></td><td style="color:#cdd6f4">Terminal leeren</td><td style="color:#6c7a8e">Wie clear</td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+R</code></td><td style="color:#cdd6f4">Rückwärts-Suche in History</td><td style="color:#6c7a8e">Nochmals: ältere Treffer</td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+G</code></td><td style="color:#cdd6f4">Suche abbrechen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+Z</code></td><td style="color:#cdd6f4">Prozess pausieren (fg zum Fortsetzen)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+C</code></td><td style="color:#cdd6f4">Prozess abbrechen (SIGINT)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Strg+D</code></td><td style="color:#cdd6f4">EOF / Shell beenden</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">Alt+.</code></td><td style="color:#cdd6f4">Letztes Argument des Vorbefehls</td><td style="color:#6c7a8e">Sehr nützlich!</td></tr><tr><td style="width:220px"><code style="color:#c792ea">!!</code></td><td style="color:#cdd6f4">Letzten Befehl wiederholen</td><td style="color:#6c7a8e">sudo !!</td></tr><tr><td style="width:220px"><code style="color:#c792ea">!$</code></td><td style="color:#cdd6f4">Letztes Argument</td><td style="color:#6c7a8e">vim !$</td></tr><tr><td style="width:220px"><code style="color:#c792ea">!*</code></td><td style="color:#cdd6f4">Alle Argumente außer dem Befehl</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#c792ea">!befehl</code></td><td style="color:#cdd6f4">Letzten Befehl mit "befehl" ausführen</td><td style="color:#6c7a8e">!git</td></tr><tr><td style="width:220px"><code style="color:#c792ea">^alt^neu</code></td><td style="color:#cdd6f4">Im letzten Befehl ersetzen</td><td style="color:#6c7a8e">^typo^richtig</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>Debugging-Tipps
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Kürzel</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#ffb347">bash -n skript.sh</code></td><td style="color:#cdd6f4">Nur Syntax prüfen (kein Ausführen)</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#ffb347">bash -x skript.sh</code></td><td style="color:#cdd6f4">Debug: alle Befehle ausgeben</td><td style="color:#6c7a8e">Oder: set -x im Skript</td></tr><tr><td style="width:220px"><code style="color:#ffb347">bash -v skript.sh</code></td><td style="color:#cdd6f4">Zeilen vor Ausführung ausgeben</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:220px"><code style="color:#ffb347">set -e</code></td><td style="color:#cdd6f4">Bei Fehler abbrechen</td><td style="color:#6c7a8e">Immer verwenden!</td></tr><tr><td style="width:220px"><code style="color:#ffb347">set -u</code></td><td style="color:#cdd6f4">Fehler bei ungesetzter Variable</td><td style="color:#6c7a8e">Verhindert stille Bugs</td></tr><tr><td style="width:220px"><code style="color:#ffb347">set -o pipefail</code></td><td style="color:#cdd6f4">Fehler in Pipes weitergeben</td><td style="color:#6c7a8e">set -euo pipefail</td></tr><tr><td style="width:220px"><code style="color:#ffb347">trap ... ERR</code></td><td style="color:#cdd6f4">Funktion bei Fehler aufrufen</td><td style="color:#6c7a8e">trap "echo Zeile: $LINENO" ERR</td></tr><tr><td style="width:220px"><code style="color:#ffb347">shellcheck skript</code></td><td style="color:#cdd6f4">Statische Analyse (extern)</td><td style="color:#6c7a8e">shellcheck mein_skript.sh</td></tr><tr><td style="width:220px"><code style="color:#ffb347">PS4="+ "</code></td><td style="color:#cdd6f4">Debug-Präfix anpassen</td><td style="color:#6c7a8e">PS4='${BASH_SOURCE}:${LINENO}: '</td></tr><tr><td style="width:220px"><code style="color:#ffb347">echo "${PIPESTATUS[@]}"</code></td><td style="color:#cdd6f4">Exit-Codes der letzten Pipe</td><td style="color:#6c7a8e"></td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Externes Tooling
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Befehl / Kürzel</th><th>Beschreibung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4ec9b0">shellcheck</code></td><td style="color:#cdd6f4">Statische Analyse für Shell-Skripte</td><td style="color:#6c7a8e">shellcheck -S warning skript.sh</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">shfmt</code></td><td style="color:#cdd6f4">Bash-Formatierer</td><td style="color:#6c7a8e">shfmt -i 2 -w skript.sh</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">bats</code></td><td style="color:#cdd6f4">Bash Automated Testing System</td><td style="color:#6c7a8e">bats tests/</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">bashdb</code></td><td style="color:#cdd6f4">Bash-Debugger (bash -x Ersatz)</td><td style="color:#6c7a8e">bashdb skript.sh</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">tldr</code></td><td style="color:#cdd6f4">Kurze Beispiele für Befehle</td><td style="color:#6c7a8e">tldr find  |  tldr git</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">fzf</code></td><td style="color:#cdd6f4">Fuzzy-Finder für Dateien &amp; History</td><td style="color:#6c7a8e">history | fzf</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0">direnv</code></td><td style="color:#cdd6f4">.envrc automatisch laden/entladen</td><td style="color:#6c7a8e">direnv allow</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    document.querySelectorAll('.tp').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+var ctrlSearch = document.getElementById('ctrl-s');
+if (ctrlSearch) {
+  ctrlSearch.addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.cd[data-s]').forEach(function(card) {
+      card.style.display = !q || card.dataset.s.includes(q) ? '' : 'none';
+    });
+    if (q) {
+      document.querySelectorAll('[id^="ac-cf"]').forEach(function(a) {
+        a.classList.add('open');
+        a.querySelector('.ab').style.display = 'block';
+      });
+    }
+  });
+}
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#4caf50';
+      btn.style.color       = '#4caf50';
+      btn.style.background  = 'rgba(76, 175, 80, .1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

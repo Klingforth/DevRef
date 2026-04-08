@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #e67e22;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f0e0a, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(230,126,34,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(230,126,34,.03); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(230,126,34,.08); padding: 1px 5px; border-radius: 3px; color: #e67e22; }
+.cd { background: rgba(0,0,0,.6); border: 1px solid rgba(230,126,34,.15); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.rx-row:last-child { border-bottom: none !important; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#e67e22">.*</span>
+      <span style="color:#e67e22">Regex</span> Syntax
+    </div>
+    <div id="hdr-sub">PCRE · Python re · JavaScript · .NET · grep/sed/awk · Lookahead · Lookbehind · ReDoS</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="meta">Metacharaktere</button>
+    <button class="tb" data-tab="gruppen">Gruppen & Look</button>
+    <button class="tb" data-tab="quant">Quantifizierer</button>
+    <button class="tb" data-tab="klassen">Zeichenklassen</button>
+    <button class="tb" data-tab="praxis">Python / JS / CLI</button>
+    <button class="tb" data-tab="patterns">Pattern-Bibliothek</button>
+    <button class="tb" data-tab="stdlib">API-Referenz</button>
+    <button class="tb" data-tab="beispiele">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-meta" class="tp active">
+
+<div style="background:#e67e220e;border:1px solid #e67e2244;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#e67e22">Regex – Muster für Text.</strong>
+  Kleene 1951, Thompson 1968. PCRE ist der Standard.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#f07178">.</code> = beliebig &nbsp;·&nbsp;
+    <code style="color:#ffcb6b">* + ? {n}</code> = Quantifizierer &nbsp;·&nbsp;
+    <code style="color:#4ec9b0">[abc] \d \w \s</code> = Klassen &nbsp;·&nbsp;
+    <code style="color:#82aaff">^ $</code> = Anker &nbsp;·&nbsp;
+    <code style="color:#c792ea">()</code> = Gruppen &nbsp;·&nbsp;
+    Testen: <a href="https://regex101.com" style="color:#d4a017">regex101.com</a>
+  </span>
+</div>
+
+<div class="ac open" id="ac-m0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('m0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>. * + ? | ^ $ – Grundsyntax
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Pattern</th>
+    <th>Bedeutung</th>
+    <th>Beispiel-Input</th>
+    <th>Treffer (fett)</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">.</td>
+      <td style="color:#cdd6f4;font-size:12px">Beliebiges Zeichen (außer Newline)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">h.llo</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">hello, hallo, hxllo</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">*</td>
+      <td style="color:#cdd6f4;font-size:12px">0 oder mehr des vorigen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">ab*c</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">ac, abc, abbc, abbbc</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">+</td>
+      <td style="color:#cdd6f4;font-size:12px">1 oder mehr des vorigen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">ab+c</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">abc, abbc (nicht: ac)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">?</td>
+      <td style="color:#cdd6f4;font-size:12px">0 oder 1 des vorigen (optional)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">colou?r</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">color, colour</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n}</td>
+      <td style="color:#cdd6f4;font-size:12px">Genau n Wiederholungen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">a{3}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">aaa</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n,}</td>
+      <td style="color:#cdd6f4;font-size:12px">Mindestens n Wiederholungen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">a{2,}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">aa, aaa, aaaa, ...</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n,m}</td>
+      <td style="color:#cdd6f4;font-size:12px">Zwischen n und m Wiederholungen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">a{2,4}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">aa, aaa, aaaa</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">|</td>
+      <td style="color:#cdd6f4;font-size:12px">Alternation: A oder B</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">cat|dog</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">cat oder dog</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">^</td>
+      <td style="color:#cdd6f4;font-size:12px">Zeilenanfang</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">^Hallo</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Hallo am Anfang</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">$</td>
+      <td style="color:#cdd6f4;font-size:12px">Zeilenende</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Ende$</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Ende am Ende</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\</td>
+      <td style="color:#cdd6f4;font-size:12px">Escape: nächstes Zeichen literal</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\.</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">. (kein Wildcard)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">()</td>
+      <td style="color:#cdd6f4;font-size:12px">Gruppe: Klammern für Gruppen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">(ab)+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">ab, abab, ababab</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">[]</td>
+      <td style="color:#cdd6f4;font-size:12px">Zeichenklasse: eines dieser Zeichen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">[aeiou]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">a, e, i, o, u</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#e67e22;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">[^]</td>
+      <td style="color:#cdd6f4;font-size:12px">Negierte Klasse: keines dieser Zeichen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">[^0-9]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Kein Digit</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-m1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('m1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>\d \w \s \b – Kurzschreibweisen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Pattern</th>
+    <th>Bedeutung</th>
+    <th>Beispiel-Input</th>
+    <th>Treffer (fett)</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\d</td>
+      <td style="color:#cdd6f4;font-size:12px">Ziffer [0-9]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d{3}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">123, 456, 789</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\D</td>
+      <td style="color:#cdd6f4;font-size:12px">Keine Ziffer [^0-9]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\D+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">abc, xyz</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\w</td>
+      <td style="color:#cdd6f4;font-size:12px">Wort-Zeichen [a-zA-Z0-9_]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\w+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">hallo, var_1, ABC</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\W</td>
+      <td style="color:#cdd6f4;font-size:12px">Kein Wort-Zeichen [^\w]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\W+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">!?, ., Leerzeichen</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\s</td>
+      <td style="color:#cdd6f4;font-size:12px">Whitespace [\t\n\r\f\v ]</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\s+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Leerzeichen, Tab, Newline</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\S</td>
+      <td style="color:#cdd6f4;font-size:12px">Kein Whitespace</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\S+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Jedes nicht-leere Wort</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\b</td>
+      <td style="color:#cdd6f4;font-size:12px">Wortgrenze (zwischen \w und \W)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\bKatze\b</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Katze (nicht Katzen!)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\B</td>
+      <td style="color:#cdd6f4;font-size:12px">Keine Wortgrenze</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\Batz\B</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Katzen (nicht am Rand)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\A</td>
+      <td style="color:#cdd6f4;font-size:12px">Absoluter String-Anfang (Python)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\AHallo</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Nur ganz am Anfang</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\Z</td>
+      <td style="color:#cdd6f4;font-size:12px">Absolutes String-Ende</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Ende\Z</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Nur ganz am Ende</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\n</td>
+      <td style="color:#cdd6f4;font-size:12px">Newline</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Zeile1\nZeile2</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Zeilenumbruch</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\t</td>
+      <td style="color:#cdd6f4;font-size:12px">Tab</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Spalte1\tSpalte2</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Tab-Zeichen</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\r</td>
+      <td style="color:#cdd6f4;font-size:12px">Carriage Return</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\r\n</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Windows-Zeilenende</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\0</td>
+      <td style="color:#cdd6f4;font-size:12px">Null-Byte</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0"></td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">ASCII 0</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\xHH</td>
+      <td style="color:#cdd6f4;font-size:12px">Hex-Zeichen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\x41</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">A (ASCII 65)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#4fc3f7;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\uHHHH</td>
+      <td style="color:#cdd6f4;font-size:12px">Unicode-Zeichen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\u00e9</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">é</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-m2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('m2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>^ $ \b \A \Z – Anker
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Pattern</th>
+    <th>Bedeutung</th>
+    <th>Beispiel-Input</th>
+    <th>Treffer (fett)</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">^</td>
+      <td style="color:#cdd6f4;font-size:12px">Zeilenanfang (mit m-Flag: jede Zeile)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">^Start</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Match am Zeilenanfang</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">$</td>
+      <td style="color:#cdd6f4;font-size:12px">Zeilenende (mit m-Flag: jede Zeile)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Ende$</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Match am Zeilenende</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\b</td>
+      <td style="color:#cdd6f4;font-size:12px">Wortgrenze</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\bWort\b</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Exaktes Wort</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\B</td>
+      <td style="color:#cdd6f4;font-size:12px">Keine Wortgrenze</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">pre\B</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">pre in prefix (nicht standalone)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\A</td>
+      <td style="color:#cdd6f4;font-size:12px">Absoluter Anfang des Strings</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\AHallo</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Nur am absoluten Anfang</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\Z</td>
+      <td style="color:#cdd6f4;font-size:12px">Absolutes Ende des Strings</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Ende\Z</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Nur am absoluten Ende</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\z</td>
+      <td style="color:#cdd6f4;font-size:12px">Absolutes Ende (ohne letztes \n)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">Ende\z</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">.NET/Ruby spezifisch</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#c792ea;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">\G</td>
+      <td style="color:#cdd6f4;font-size:12px">Ende des letzten Matches</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\G\d+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Konsekutive Matches</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-gruppen" class="tp">
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>Capture Groups &amp; Referenzen
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="capture groups &amp; referenzen">
+  <div style="color:#e67e22;font-weight:700;font-size:12px;margin-bottom:8px">
+    Capture Groups &amp; Referenzen
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a"># CAPTURE GROUPS  (...)</span>
+<span style="color:#546e7a"># Speichern den gematchten Text für Weiterverwendung</span>
+
+(\d{4})-(\d{2})-(\d{2})
+<span style="color:#546e7a"># Matched: 2024-01-15</span>
+<span style="color:#546e7a"># Gruppe 1: 2024  Gruppe 2: 01  Gruppe 3: 15</span>
+<span style="color:#546e7a">#     =  Rückwärtsreferenz in Pattern selbst</span>
+<span style="color:#546e7a"># $1 $2 $3  =  In Ersetzungsstring</span>
+
+<span style="color:#546e7a"># NAMED GROUPS  (?P&lt;name&gt;...)  oder  (?&lt;name&gt;...)</span>
+(?P&lt;jahr&gt;\d{4})-(?P&lt;monat&gt;\d{2})-(?P&lt;tag&gt;\d{2})
+<span style="color:#546e7a"># Python: match.group('jahr')</span>
+<span style="color:#546e7a"># JS:     match.groups.jahr</span>
+<span style="color:#546e7a"># .NET:   match.Groups["jahr"].Value</span>
+
+<span style="color:#546e7a"># NON-CAPTURING GROUP  (?:...)</span>
+<span style="color:#546e7a"># Gruppiert ohne Nummer zu vergeben (effizienter!)</span>
+(?:https?|ftp)://[\w./]+
+<span style="color:#546e7a"># Matched URLs, aber Schema-Gruppe wird nicht gespeichert</span>
+
+<span style="color:#546e7a"># ATOMIC GROUP  (?&gt;...)   [PCRE, nicht überall]</span>
+<span style="color:#546e7a"># Kein Backtracking innerhalb der Gruppe</span>
+
+<span style="color:#546e7a"># ALTERNATION IN GRUPPE</span>
+(cat|dog|bird)s?
+<span style="color:#546e7a"># Matched: cat, cats, dog, dogs, bird, birds</span>
+
+<span style="color:#546e7a"># VERSCHACHTELT</span>
+((a|b)(c|d))
+<span style="color:#546e7a"># Gruppe 1: ac, ad, bc, bd</span>
+<span style="color:#546e7a"># Gruppe 2: a oder b</span>
+<span style="color:#546e7a"># Gruppe 3: c oder d</span>
+
+<span style="color:#546e7a"># RÜCKWÄRTSREFERENZ IM PATTERN</span>
+<span style="color:#546e7a"># Matched wiederholte Wörter:</span>
+(\w+)\s+
+<span style="color:#546e7a"># Input:  "das das ist toll toll"</span>
+<span style="color:#546e7a"># Treffer: "das das", "toll toll"</span>
+
+<span style="color:#546e7a"># HTML-Tag schließt sich selbst:</span>
+&lt;(\w+)&gt;.*?&lt;/&gt;
+<span style="color:#546e7a"># &lt;div&gt;Inhalt&lt;/div&gt;  →  &lt;div&gt;...  &lt;/div&gt;  mit ="div"</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Lookahead &amp; Lookbehind
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="lookahead &amp; lookbehind">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Lookahead &amp; Lookbehind
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a"># LOOKAHEAD und LOOKBEHIND:</span>
+<span style="color:#546e7a"># Prüfen Kontext OHNE den Text zu konsumieren!</span>
+<span style="color:#546e7a"># Der gematchte Text enthält das Look-Teil NICHT.</span>
+
+<span style="color:#546e7a"># POSITIVER LOOKAHEAD  (?=...)</span>
+<span style="color:#546e7a"># "Was vor dem Match stehen muss"</span>
+\d+(?= Euro)
+<span style="color:#546e7a"># Input:  "100 Euro und 200 Dollar"</span>
+<span style="color:#546e7a"># Treffer: "100" (nicht "200" weil kein Euro dahinter)</span>
+
+<span style="color:#546e7a"># NEGATIVER LOOKAHEAD  (?!...)</span>
+<span style="color:#546e7a"># "Was NICHT vor dem Match stehen darf"</span>
+\d+(?! Euro)
+<span style="color:#546e7a"># Input:  "100 Euro und 200 Dollar"</span>
+<span style="color:#546e7a"># Treffer: "200" (kein Euro dahinter)</span>
+
+<span style="color:#546e7a"># POSITIVER LOOKBEHIND  (?&lt;=...)</span>
+<span style="color:#546e7a"># "Was hinter dem Match stehen muss" (davor im Text)</span>
+(?&lt;=\$)\d+
+<span style="color:#546e7a"># Input:  "$100 and €200"</span>
+<span style="color:#546e7a"># Treffer: "100" (nach $, nicht nach €)</span>
+
+<span style="color:#546e7a"># NEGATIVER LOOKBEHIND  (?&lt;!...)</span>
+(?&lt;!\$)\d+
+<span style="color:#546e7a"># Input:  "$100 and 200"</span>
+<span style="color:#546e7a"># Treffer: "200" (nicht nach $)</span>
+
+<span style="color:#546e7a"># KOMBINATION für genaue Matches</span>
+<span style="color:#546e7a"># Passwort: 8+ Zeichen, min. 1 Ziffer, 1 Großbuchstabe</span>
+^(?=.*\d)(?=.*[A-Z]).{8,}$
+<span style="color:#546e7a"># Testet drei Bedingungen ohne Position zu verändern</span>
+
+<span style="color:#546e7a"># Email-Domain ohne @</span>
+(?&lt;=@)[\w.]+
+<span style="color:#546e7a"># Input:  "user@example.com"</span>
+<span style="color:#546e7a"># Treffer: "example.com"</span>
+
+<span style="color:#546e7a"># Preis ohne Währungszeichen</span>
+(?&lt;=[$€£])\d+(?:\.\d{2})?
+<span style="color:#546e7a"># Input:  "$9.99, €14.50, £7"</span>
+<span style="color:#546e7a"># Treffer: "9.99", "14.50", "7"</span>
+
+<span style="color:#546e7a"># VARIABLE LÄNGE LOOKBEHIND (PCRE2, .NET, Python 3.x)</span>
+<span style="color:#546e7a"># Python: (?&lt;=\d{1,3})</span>
+<span style="color:#546e7a"># JS: NICHT unterstützt!  (feste Länge nötig)</span>
+<span style="color:#546e7a"># .NET: beliebige Länge erlaubt</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Flags / Modifier
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Flag</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">i (ignore case)</code></td><td style="color:#cdd6f4">Groß/Kleinschreibung ignorieren</td><td style="color:#6c7a8e">/hallo/i matched Hallo, HALLO, hAlLo</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">g (global)</code></td><td style="color:#cdd6f4">Alle Matches (nicht nur ersten)</td><td style="color:#6c7a8e">JS: "aabbcc".match(/a/g) → ["a","a"]</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">m (multiline)</code></td><td style="color:#cdd6f4">^ und $ matchen jede Zeile</td><td style="color:#6c7a8e">\n trennt Zeilen, ^ matcht nach \n</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">s (dotall)</code></td><td style="color:#cdd6f4">. matcht auch Newlines</td><td style="color:#6c7a8e">Ohne s: . matcht KEIN \n</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">x (verbose/free)</code></td><td style="color:#cdd6f4">Whitespace und # Kommentare ignorieren</td><td style="color:#6c7a8e">Lesbarerer Regex-Stil</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">u (unicode)</code></td><td style="color:#cdd6f4">Unicode-Modus (JS, Python)</td><td style="color:#6c7a8e">\w matcht Unicode-Buchstaben</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">y (sticky)</code></td><td style="color:#cdd6f4">Match muss an lastIndex beginnen (JS)</td><td style="color:#6c7a8e">Konsekutive Matches</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">d (indices)</code></td><td style="color:#cdd6f4">Start/End-Indizes jeder Gruppe (JS)</td><td style="color:#6c7a8e">JS 2021: match.indices</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">n (explicit)</code></td><td style="color:#cdd6f4">Nummerierte Gruppen nur mit (?&lt;n&gt;)</td><td style="color:#6c7a8e">.NET-spezifisch</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">A (anchored)</code></td><td style="color:#cdd6f4">Match nur am Anfang (PCRE)</td><td style="color:#6c7a8e">pcre: PCRE_ANCHORED</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">(?i)inline</code></td><td style="color:#cdd6f4">Flags inline im Pattern setzen</td><td style="color:#6c7a8e">(?i)hallo = hallo mit i-Flag</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">(?-i)aus</code></td><td style="color:#cdd6f4">Flag inline ausschalten</td><td style="color:#6c7a8e">(?i)Groß(?-i)klein</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-quant" class="tp">
+<div style="background:#ffcb6b0a;border:1px solid #ffcb6b44;border-radius:8px;
+            padding:12px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#ffcb6b">Greedy vs. Lazy vs. Possessiv:</strong><br>
+  <code style="color:#ffcb6b">*</code> greedy – nimmt so viel wie möglich &nbsp;·&nbsp;
+  <code style="color:#ffcb6b">*?</code> lazy – nimmt so wenig wie möglich &nbsp;·&nbsp;
+  <code style="color:#ffcb6b">*+</code> possessiv – nimmt alles, gibt nichts zurück (PCRE)
+</div>
+
+<div class="ac open" id="ac-q0"
+     style="border:1px solid #ffcb6b44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('q0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffcb6b0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffcb6b">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffcb6b;border-radius:50%;margin-right:2px"></span>Quantifizierer: Übersicht
+    </span>
+    <span class="aa" style="color:#ffcb6b;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr>
+    <th>Pattern</th>
+    <th>Bedeutung</th>
+    <th>Beispiel-Input</th>
+    <th>Treffer (fett)</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">*</td>
+      <td style="color:#cdd6f4;font-size:12px">Greedy: so viel wie möglich</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">&lt;.*&gt;</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">&lt;a&gt;Text&lt;/a&gt;&lt;b&gt;Tag&lt;/b&gt;  →  ganzer String!</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">*?</td>
+      <td style="color:#cdd6f4;font-size:12px">Lazy:   so wenig wie möglich</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">&lt;.*?&gt;</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">&lt;a&gt;Text&lt;/a&gt;&lt;b&gt;Tag&lt;/b&gt;  →  &lt;a&gt;, &lt;/a&gt;, &lt;b&gt;, &lt;/b&gt;</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">+</td>
+      <td style="color:#cdd6f4;font-size:12px">Greedy: 1 oder mehr</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d+</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">"12345"  →  "12345" (alles)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">+?</td>
+      <td style="color:#cdd6f4;font-size:12px">Lazy:   1 oder mehr</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d+?</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">"12345"  →  "1" (erstes)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">?</td>
+      <td style="color:#cdd6f4;font-size:12px">Greedy: 0 oder 1</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">colou?r</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">color oder colour</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">??</td>
+      <td style="color:#cdd6f4;font-size:12px">Lazy:   0 oder 1</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">colou??r</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">color (bevorzugt kurzer)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n}</td>
+      <td style="color:#cdd6f4;font-size:12px">Genau n mal</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d{4}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">2024 (genau 4 Ziffern)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n,}</td>
+      <td style="color:#cdd6f4;font-size:12px">Mindestens n mal</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d{3,}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">123, 1234, 12345, ...</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n,m}</td>
+      <td style="color:#cdd6f4;font-size:12px">Greedy: n bis m mal</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d{2,4}</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">"12345"  →  "1234" (4, greedy)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">{n,m}?</td>
+      <td style="color:#cdd6f4;font-size:12px">Lazy: n bis m mal</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d{2,4}?</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">"12345"  →  "12" (2, lazy)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">*+</td>
+      <td style="color:#cdd6f4;font-size:12px">Possessive: kein Backtracking (PCRE)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\d*+\d</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Matcht NIE (\d*+ konsumiert alles)</td>
+    </tr>
+    <tr>
+      <td style="font-family:Courier New,monospace;font-size:14px;
+                 color:#ffcb6b;font-weight:700;width:160px;
+                 background:rgba(0,0,0,.3);border-radius:4px;
+                 padding:5px 8px">++</td>
+      <td style="color:#cdd6f4;font-size:12px">Possessive: 1 oder mehr (PCRE)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#a0aec0">\w++\d</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 color:#c3e88d">Vermeidet catastrophic backtracking</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  <div id="tp-klassen" class="tp">
+
+<div class="ac open" id="ac-kl0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('kl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>Zeichenklassen im Detail
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="zeichenklassen im detail">
+  <div style="color:#e67e22;font-weight:700;font-size:12px;margin-bottom:8px">
+    Zeichenklassen im Detail
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a"># EINFACHE KLASSEN</span>
+[aeiou]          # Eines von: a, e, i, o, u (Vokal)
+[0-9]            # Ziffer 0 bis 9 (= \d)
+[a-z]            # Kleinbuchstabe
+[A-Z]            # Großbuchstabe
+[a-zA-Z]         # Jeder Buchstabe
+[a-zA-Z0-9_]     # Wort-Zeichen (= \w)
+[^aeiou]         # KEIN Vokal (^ am Anfang = Negation)
+[^0-9]           # Keine Ziffer (= \D)
+
+<span style="color:#546e7a"># RANGES kombinieren</span>
+[a-fA-F0-9]      # Hexadezimale Zeichen
+[a-z0-9_-]       # Slug-Zeichen (- am Ende! sonst Range)
+
+<span style="color:#546e7a"># SONDERZEICHEN IN KLASSEN (meist literal!)</span>
+[ ]              # Leerzeichen
+[.]              # Punkt (literal! kein Wildcard in [])
+[*+?]            # * + ? literal
+[(]              # Öffnende Klammer
+[\[]           # Eckige Klammer (escaped)
+[-]              # Minus (am Anfang oder Ende = literal)
+[^]              # ^ (nicht am Anfang = literal)
+[\^]             # ^ (mit Escape = immer literal)
+
+<span style="color:#546e7a"># POSIX-KLASSEN (in ERE/einigen PCRE-Modi)</span>
+[:alpha:]        # [a-zA-Z]  – in [[ ]] verwenden: [[:alpha:]]
+[:digit:]        # [0-9]
+[:alnum:]        # [a-zA-Z0-9]
+[:space:]        # Whitespace
+[:upper:]        # Großbuchstaben
+[:lower:]        # Kleinbuchstaben
+[:punct:]        # Interpunktionszeichen
+[:print:]        # Druckbare Zeichen
+
+<span style="color:#546e7a"># UNICODE-KATEGORIEN (PCRE / Python / .NET)</span>
+\p{L}            # Jeder Unicode-Buchstabe (Letter)
+\p{N}            # Jede Unicode-Ziffer (Number)
+\p{Z}            # Jeder Unicode-Whitespace (Separator)
+\p{P}            # Jedes Unicode-Satzzeichen (Punctuation)
+\p{Lu}           # Uppercase Letter
+\p{Ll}           # Lowercase Letter
+\p{Nd}           # Decimal Number
+\p{Latin}        # Lateinisches Script
+\p{Greek}        # Griechisches Script
+\P{L}            # KEIN Buchstabe (negiert mit \P)
+
+<span style="color:#546e7a"># INTERSECTION &amp; SUBTRACTION (Java/.NET/Ruby)</span>
+[a-z&amp;&amp;[^aeiou]] # Kleinbuchstaben OHNE Vokale (Java)
+[a-z--[aeiou]]  # Kleinbuchstaben MINUS Vokale (Ruby)</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-praxis" class="tp">
+
+<div class="ac open" id="ac-pr0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>Python – re Modul
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="python – re modul">
+  <div style="color:#e67e22;font-weight:700;font-size:12px;margin-bottom:8px">
+    Python – re Modul
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre">import re
+
+text = "Kontakt: alice@example.com, bob@test.org"
+email_rx = r"[\w.+-]+@[\w-]+\.[a-z]{2,}"
+
+<span style="color:#546e7a"># SUCHEN</span>
+m = re.search(email_rx, text)      # Erstes Match
+if m:
+    print(m.group())               # alice@example.com
+    print(m.start(), m.end())      # Position
+
+<span style="color:#546e7a"># ALLE MATCHES</span>
+alle = re.findall(email_rx, text)  # Liste: ["alice@...", "bob@..."]
+for m in re.finditer(email_rx, text):  # Iterator mit Match-Objekten
+    print(m.group(), m.span())
+
+<span style="color:#546e7a"># ERSETZEN</span>
+neu = re.sub(email_rx, "[VERSTECKT]", text)
+
+<span style="color:#546e7a"># MIT FUNKTION</span>
+neu2 = re.sub(email_rx,
+              lambda m: m.group().upper(), text)
+
+<span style="color:#546e7a"># AUFTEILEN</span>
+teile = re.split(r"\s*,\s*", "a , b , c")  # ["a","b","c"]
+
+<span style="color:#546e7a"># KOMPILIEREN (für Wiederverwendung!)</span>
+email_pattern = re.compile(email_rx, re.IGNORECASE)
+m = email_pattern.search(text)
+
+<span style="color:#546e7a"># FLAGS</span>
+re.IGNORECASE  # re.I
+re.MULTILINE   # re.M  – ^ und $ für jede Zeile
+re.DOTALL      # re.S  – . matcht auch 
+
+re.VERBOSE     # re.X  – Kommentare erlaubt
+re.UNICODE     # re.U  – Standard in Python 3
+
+<span style="color:#546e7a"># NAMED GROUPS</span>
+datum_rx = r"(?P&lt;jahr&gt;\d{4})-(?P&lt;monat&gt;\d{2})-(?P&lt;tag&gt;\d{2})"
+m = re.search(datum_rx, "Heute: 2024-01-15")
+if m:
+    print(m.group("jahr"))   # "2024"
+    print(m.groupdict())     # {"jahr":"2024","monat":"01","tag":"15"}
+
+<span style="color:#546e7a"># VERBOSE MODE (mit Kommentaren!)</span>
+email_verbose = re.compile(r"""
+    [\w.+-]+        # lokaler Teil
+    @               # @-Zeichen
+    [\w-]+          # Domain
+    \.              # Punkt
+    [a-z]{2,}       # TLD
+""", re.VERBOSE | re.IGNORECASE)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>JavaScript – RegExp
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="javascript – regexp">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    JavaScript – RegExp
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a">// JavaScript RegExp – zwei Schreibweisen</span>
+const rx1 = /\d{4}-\d{2}-\d{2}/;    // Literal
+const rx2 = new RegExp("\d{4}-\d{2}-\d{2}");  // Konstruktor
+
+const text = "Heute ist 2024-01-15 und morgen ist 2024-01-16";
+
+<span style="color:#546e7a">// TESTEN</span>
+rx1.test("2024-01-15");              // true
+rx1.test("kein datum");              // false
+
+<span style="color:#546e7a">// SUCHEN (gibt Match-Objekt oder null)</span>
+const m = text.match(/(\d{4})-(\d{2})-(\d{2})/);
+if (m) {
+    console.log(m[0]);   // "2024-01-15"  (ganzer Match)
+    console.log(m[1]);   // "2024"        (Gruppe 1)
+    console.log(m.index);// Position
+}
+
+<span style="color:#546e7a">// ALLE MATCHES (mit g-Flag!)</span>
+const alle = [...text.matchAll(/\d{4}-\d{2}-\d{2}/g)];
+alle.forEach(m =&gt; console.log(m[0]));
+
+<span style="color:#546e7a">// ERSETZEN</span>
+const neu = text.replace(/\d{4}/g, "YYYY");
+const neu2 = text.replace(
+    /(\d{4})-(\d{2})-(\d{2})/g,
+    "$3.$2.$1"    // 15.01.2024  (deutsche Schreibweise)
+);
+
+<span style="color:#546e7a">// MIT FUNKTION</span>
+const upper = text.replace(/\d+/g, n =&gt; `[${n}]`);
+
+<span style="color:#546e7a">// AUFTEILEN</span>
+"a, b; c d".split(/[,;\s]+/);  // ["a","b","c","d"]
+
+<span style="color:#546e7a">// FLAGS: g i m s u v y d</span>
+/hallo/gi       // global + case-insensitive
+/./s            // dotall: . matcht auch 
+
+
+<span style="color:#546e7a">// NAMED GROUPS (ES2018+)</span>
+const datumRx = /(?&lt;jahr&gt;\d{4})-(?&lt;monat&gt;\d{2})-(?&lt;tag&gt;\d{2})/;
+const dm = "2024-01-15".match(datumRx);
+console.log(dm.groups.jahr);   // "2024"
+
+<span style="color:#546e7a">// LOOKAHEAD/LOOKBEHIND (ES2018+)</span>
+const preise = "€9.99 und $14.50";
+preise.match(/(?&lt;=[$€])\d+\.\d{2}/g);  // ["9.99","14.50"]
+
+<span style="color:#546e7a">// INDICES (ES2022+)</span>
+const mi = "test".match(/e(s)/d);
+console.log(mi.indices[0]);   // [1,4] (ganzer Match)
+console.log(mi.indices[1]);   // [2,3] (Gruppe 1)</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>grep, sed &amp; awk
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="grep, sed &amp; awk">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    grep, sed &amp; awk
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a"># ── GREP ──────────────────────────────────────────────────────────</span>
+grep "muster" datei.txt          # BRE (Basic Regex)
+grep -E "muster+" datei.txt      # ERE (Extended Regex)
+grep -P "\d{4}" datei.txt        # PCRE
+
+grep -i "hallo" datei.txt        # Case-insensitive
+grep -v "fehler" log.txt         # Invertiert (zeige NICHT-Treffer)
+grep -n "TODO" code.py           # Mit Zeilennummern
+grep -r "import" src/            # Rekursiv
+grep -l "class" *.py             # Nur Dateinamen
+grep -c "Error" log.txt          # Anzahl Treffer
+grep -o "\d+" datei.txt          # Nur gematchten Teil
+
+<span style="color:#546e7a"># Umgebung anzeigen</span>
+grep -A 3 "Fehler" log.txt       # 3 Zeilen NACH Treffer
+grep -B 2 "Fehler" log.txt       # 2 Zeilen VOR Treffer
+grep -C 2 "Fehler" log.txt       # 2 Zeilen beidseitig
+
+<span style="color:#546e7a"># Mehrere Pattern</span>
+grep -e "Fehler" -e "Error" log.txt
+grep -f muster.txt datei.txt     # Pattern aus Datei
+
+<span style="color:#546e7a"># ── SED ───────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a"># s/pattern/ersatz/flags</span>
+sed 's/alt/neu/' datei.txt       # Erster Treffer pro Zeile
+sed 's/alt/neu/g' datei.txt      # Alle Treffer (global)
+sed 's/alt/neu/gi' datei.txt     # Case-insensitive (GNU sed)
+sed -i 's/alt/neu/g' datei.txt   # In-place ändern
+sed -i.bak 's/alt/neu/g' d.txt   # In-place mit Backup
+
+<span style="color:#546e7a"># Gruppen in sed (ERE mit -E)</span>
+sed -E 's/(\d{4})-(\d{2})-(\d{2})/../g' d.txt
+<span style="color:#546e7a"># 2024-01-15 → 15.01.2024</span>
+
+<span style="color:#546e7a"># Zeilen löschen die Pattern matchen</span>
+sed '/^#/d' datei.txt            # Kommentarzeilen löschen
+sed '/^$/d' datei.txt            # Leerzeilen löschen
+
+<span style="color:#546e7a"># ── AWK ───────────────────────────────────────────────────────────</span>
+awk '/Fehler/ {print}' log.txt           # Zeilen mit "Fehler"
+awk '/^\d{4}/ {print $1}' datei.txt     # Zeilen die mit Ziffer beginnen
+awk '$0 ~ /Error/ {print NR": "$0}'     # Mit Zeilennummer
+
+<span style="color:#546e7a"># Felder extrahieren</span>
+awk '/^\w+@/ {print $1}' emails.txt     # E-Mail-Adressen</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-pr3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('pr3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>.NET / C# Regex
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s=".net / c# regex">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    .NET / C# Regex
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre">using System.Text.RegularExpressions;
+
+var text = "E-Mail: alice@example.com";
+var rx = new Regex(@"[\w.+-]+@[\w-]+\.[a-z]{2,}",
+                   RegexOptions.IgnoreCase);
+
+<span style="color:#546e7a">// Match</span>
+var m = rx.Match(text);
+if (m.Success) {
+    Console.WriteLine(m.Value);      // alice@example.com
+    Console.WriteLine(m.Index);      // Position
+}
+
+<span style="color:#546e7a">// Alle Matches</span>
+foreach (Match match in rx.Matches(text)) {
+    Console.WriteLine(match.Value);
+}
+
+<span style="color:#546e7a">// Named Groups</span>
+var datumRx = new Regex(
+    @"(?&lt;jahr&gt;\d{4})-(?&lt;monat&gt;\d{2})-(?&lt;tag&gt;\d{2})");
+var dm = datumRx.Match("2024-01-15");
+Console.WriteLine(dm.Groups["jahr"].Value);  // 2024
+
+<span style="color:#546e7a">// Replace</span>
+var neu = rx.Replace(text, "[VERSTECKT]");
+
+<span style="color:#546e7a">// Replace mit Lambda</span>
+var neu2 = rx.Replace(text, m =&gt;
+    m.Value.ToUpper());
+
+<span style="color:#546e7a">// Split</span>
+var teile = Regex.Split("a,b;c d", @"[,;\s]+");
+
+<span style="color:#546e7a">// Compile (für Performance)</span>
+var compiled = new Regex(@"\d+",
+    RegexOptions.Compiled);
+
+<span style="color:#546e7a">// Timeout gegen ReDoS!</span>
+var safe = new Regex(@"\d+",
+    RegexOptions.None,
+    TimeSpan.FromMilliseconds(100));  // Kein Hängenbleiben!</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-patterns" class="tp">
+<div style="background:#e67e220e;border:1px solid #e67e2244;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#e67e22">Achtung:</strong> Regex für E-Mail, URL, IP etc. können nie 100% korrekt sein. Für Produktion: spezialisierte Bibliotheken nutzen!</div>
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>📚 Pattern-Bibliothek (28 Patterns)
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Name</th><th>Pattern</th><th>Hinweis</th></tr></thead><tbody>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">E-Mail (einfach)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">[\w.+-]</span><span style="color:#ffcb6b">+</span>@<span style="color:#4ec9b0">[\w-]</span><span style="color:#ffcb6b">+</span><span style="color:#c3e88d">\.</span><span style="color:#4ec9b0">[a-z]</span><span style="color:#ffcb6b">{2,}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">Basis-Validierung</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">E-Mail (RFC 5322)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">(?:</span><span style="color:#c3e88d">\.</span><span style="color:#4ec9b0">[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">*</span><span style="color:#f07178">|</span><span style="color:#c3e88d">\"</span><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[\x01-\x...</span></td>
+      <td style="color:#6c7a8e;font-size:11px">Vollständig korrekt</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">URL</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px">https<span style="color:#ffcb6b">?</span>://<span style="color:#4ec9b0">[^\s&lt;&gt;"]</span><span style="color:#ffcb6b">+</span><span style="color:#f07178">|</span>www<span style="color:#c3e88d">\.</span><span style="color:#4ec9b0">[^\s&lt;&gt;"]</span><span style="color:#ffcb6b">+</span></td>
+      <td style="color:#6c7a8e;font-size:11px">HTTP/HTTPS/www</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">IPv4</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">\b</span><span style="color:#c792ea">(?:</span><span style="color:#c792ea">(?:</span>25<span style="color:#4ec9b0">[0-5]</span><span style="color:#f07178">|</span>2<span style="color:#4ec9b0">[0-4]</span><span style="color:#4ec9b0">\d</span><span style="color:#f07178">|</span><span style="color:#4ec9b0">[01]</span><span style="color:#ffcb6b">?</span><span style="color:#4ec9b0">\d</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">?</span><span style="color:#c792ea">)</span><span style="color:#c3e88d">\.</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">{3}</span><span style="color:#c792ea">(?:</span>25<span style="color:#4ec9b0">[0-5]</span><span style="color:#f07178">|</span>2<span style="color:#4ec9b0">[0-4]</span><span style="color:#4ec9b0">\d</span><span style="color:#f07178">|</span><span style="color:#4ec9b0">[01]</span><span style="color:#ffcb6b">?</span><span style="color:#4ec9b0">\d</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">?</span><span style="color:#c792ea">)</span><span style="color:#4ec9b0">\b</span></td>
+      <td style="color:#6c7a8e;font-size:11px">Vollständige Validierung</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">IPv6</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[0-9a-fA-F]</span><span style="color:#ffcb6b">{1,4}</span>:<span style="color:#c792ea">)</span><span style="color:#ffcb6b">{7}</span><span style="color:#4ec9b0">[0-9a-fA-F]</span><span style="color:#ffcb6b">{1,4}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">Vereinfacht</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Datum ISO 8601</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">{4}</span>-<span style="color:#c792ea">(?:</span>0<span style="color:#4ec9b0">[1-9]</span><span style="color:#f07178">|</span>1<span style="color:#4ec9b0">[0-2]</span><span style="color:#c792ea">)</span>-<span style="color:#c792ea">(?:</span>0<span style="color:#4ec9b0">[1-9]</span><span style="color:#f07178">|</span><span style="color:#4ec9b0">[12]</span><span style="color:#4ec9b0">\d</span><span style="color:#f07178">|</span>3<span style="color:#4ec9b0">[01]</span><span style="color:#c792ea">)</span></td>
+      <td style="color:#6c7a8e;font-size:11px">2024-01-15</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Datum DE</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c792ea">(?:</span>0<span style="color:#4ec9b0">[1-9]</span><span style="color:#f07178">|</span><span style="color:#4ec9b0">[12]</span><span style="color:#4ec9b0">\d</span><span style="color:#f07178">|</span>3<span style="color:#4ec9b0">[01]</span><span style="color:#c792ea">)</span><span style="color:#c3e88d">\.</span><span style="color:#c792ea">(?:</span>0<span style="color:#4ec9b0">[1-9]</span><span style="color:#f07178">|</span>1<span style="color:#4ec9b0">[0-2]</span><span style="color:#c792ea">)</span><span style="color:#c3e88d">\.</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">{4}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">15.01.2024</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Uhrzeit 24h</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[01]</span><span style="color:#4ec9b0">\d</span><span style="color:#f07178">|</span>2<span style="color:#4ec9b0">[0-3]</span><span style="color:#c792ea">)</span>:<span style="color:#4ec9b0">[0-5]</span><span style="color:#4ec9b0">\d</span><span style="color:#c792ea">(?:</span>:<span style="color:#4ec9b0">[0-5]</span><span style="color:#4ec9b0">\d</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">?</span></td>
+      <td style="color:#6c7a8e;font-size:11px">14:30 oder 14:30:45</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">PLZ Deutschland</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">\b</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">{5}</span><span style="color:#4ec9b0">\b</span></td>
+      <td style="color:#6c7a8e;font-size:11px">10115, 80331</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">IBAN</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">[A-Z]</span><span style="color:#ffcb6b">{2}</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">{2}</span><span style="color:#4ec9b0">[A-Z0-9]</span><span style="color:#ffcb6b">{11,30}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">DE89 3704 0044 0532 0130 00</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Kreditkarte</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">\b</span><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">\d</span><span style="color:#4ec9b0">[ -]</span><span style="color:#ffcb6b">?</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">{13,16}</span><span style="color:#4ec9b0">\b</span></td>
+      <td style="color:#6c7a8e;font-size:11px">4111 1111 1111 1111</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Tel. DE</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c792ea">(?:</span><span style="color:#c3e88d">\+</span>49<span style="color:#f07178">|</span>0049<span style="color:#f07178">|</span>0<span style="color:#c792ea">)</span><span style="color:#4ec9b0">[ /-]</span><span style="color:#ffcb6b">?</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">{3,5}</span><span style="color:#4ec9b0">[ /-]</span><span style="color:#ffcb6b">?</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">{3,9}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">+49 170 1234567</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Hexfarbe</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#546e7a">#(?:[0-9a-fA-F]{3}){1,2}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">#fff oder #1a2b3c</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">HTML-Tag</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px">&lt;<span style="color:#c792ea">(</span><span style="color:#4ec9b0">[a-z]</span><span style="color:#4ec9b0">[a-z0-9]</span><span style="color:#ffcb6b">*</span><span style="color:#c792ea">)</span><span style="color:#4ec9b0">\b</span><span style="color:#4ec9b0">[^&gt;]</span><span style="color:#ffcb6b">*</span>&gt;<span style="color:#f07178">.</span><span style="color:#ffcb6b">*</span><span style="color:#ffcb6b">?</span>&lt;/<span style="color:#c3e88d">\1</span>&gt;</td>
+      <td style="color:#6c7a8e;font-size:11px">&lt;div&gt;Inhalt&lt;/div&gt;</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Slug (URL-safe)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#82aaff">^</span><span style="color:#4ec9b0">[a-z0-9]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">(?:</span>-<span style="color:#4ec9b0">[a-z0-9]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">*</span><span style="color:#82aaff">$</span></td>
+      <td style="color:#6c7a8e;font-size:11px">mein-toller-artikel</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Semver</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">+</span><span style="color:#c3e88d">\.</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">+</span><span style="color:#c3e88d">\.</span><span style="color:#4ec9b0">\d</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">(?:</span>-<span style="color:#4ec9b0">[a-zA-Z0-9.]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">?</span><span style="color:#c792ea">(?:</span><span style="color:#c3e88d">\+</span><span style="color:#4ec9b0">[a-zA-Z0-9.]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">?</span></td>
+      <td style="color:#6c7a8e;font-size:11px">1.2.3-beta.1</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">UUID</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">[0-9a-f]</span><span style="color:#ffcb6b">{8}</span>-<span style="color:#4ec9b0">[0-9a-f]</span><span style="color:#ffcb6b">{4}</span>-<span style="color:#4ec9b0">[0-9a-f]</span><span style="color:#ffcb6b">{4}</span>-<span style="color:#4ec9b0">[0-9a-f]</span><span style="color:#ffcb6b">{4}</span>-<span style="color:#4ec9b0">[0-9a-f]</span><span style="color:#ffcb6b">{12}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">550e8400-e29b-41d4-a716-446655440000</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Base64</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[A-Za-z0-9+/]</span><span style="color:#ffcb6b">{4}</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">*</span><span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[A-Za-z0-9+/]</span><span style="color:#ffcb6b">{2}</span>==<span style="color:#f07178">|</span><span style="color:#4ec9b0">[A-Za-z0-9+/]</span><span style="color:#ffcb6b">{3}</span>=<span style="color:#c792ea">)</span><span style="color:#ffcb6b">?</span></td>
+      <td style="color:#6c7a8e;font-size:11px"></td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Passwort (sicher)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#82aaff">^</span><span style="color:#e05252">(?=</span><span style="color:#f07178">.</span><span style="color:#ffcb6b">*</span><span style="color:#4ec9b0">[a-z]</span><span style="color:#c792ea">)</span><span style="color:#e05252">(?=</span><span style="color:#f07178">.</span><span style="color:#ffcb6b">*</span><span style="color:#4ec9b0">[A-Z]</span><span style="color:#c792ea">)</span><span style="color:#e05252">(?=</span><span style="color:#f07178">.</span><span style="color:#ffcb6b">*</span><span style="color:#4ec9b0">\d</span><span style="color:#c792ea">)</span><span style="color:#e05252">(?=</span><span style="color:#f07178">.</span><span style="color:#ffcb6b">*</span><span style="color:#4ec9b0">[@$!%*?&amp;]</span><span style="color:#c792ea">)</span><span style="color:#4ec9b0">[A-Za-z\d@$!%*?&amp;]</span><span style="color:#ffcb6b">{8,}</span><span style="color:#82aaff">$</span></td>
+      <td style="color:#6c7a8e;font-size:11px">Min. 8 Zeichen, Groß+Klein+Ziffer+Sonder</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Leerzeilen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#82aaff">^</span><span style="color:#4ec9b0">\s</span><span style="color:#ffcb6b">*</span><span style="color:#82aaff">$</span></td>
+      <td style="color:#6c7a8e;font-size:11px">Komplett leere Zeilen</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Mehrfach-Leerzeichen</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"> <span style="color:#ffcb6b">{2,}</span></td>
+      <td style="color:#6c7a8e;font-size:11px">  mehrere   Leerzeichen</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Wort wiederholt</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#4ec9b0">\b</span><span style="color:#c792ea">(</span><span style="color:#4ec9b0">\w</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#4ec9b0">\s</span><span style="color:#ffcb6b">+</span><span style="color:#c3e88d">\1</span><span style="color:#4ec9b0">\b</span></td>
+      <td style="color:#6c7a8e;font-size:11px">"die die" "the the"</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Python f-string</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px">f"<span style="color:#4ec9b0">[^"]</span><span style="color:#ffcb6b">*</span>"</td>
+      <td style="color:#6c7a8e;font-size:11px">f"Hallo {name}"</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Markdown-Link</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#c3e88d">\[</span><span style="color:#c792ea">(</span><span style="color:#4ec9b0">[^\]]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#c3e88d">\]</span><span style="color:#c3e88d">\(</span><span style="color:#c792ea">(</span><span style="color:#4ec9b0">[^)]</span><span style="color:#ffcb6b">+</span><span style="color:#c792ea">)</span><span style="color:#c3e88d">\)</span></td>
+      <td style="color:#6c7a8e;font-size:11px">[Text](url)</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Markdown-Heading</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px"><span style="color:#82aaff">^</span><span style="color:#546e7a">#{1,6}\s+.+$</span></td>
+      <td style="color:#6c7a8e;font-size:11px"># Überschrift</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">JSON-String</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px">"<span style="color:#c792ea">(?:</span><span style="color:#4ec9b0">[^"\\]</span><span style="color:#f07178">|</span><span style="color:#c3e88d">\\</span><span style="color:#f07178">.</span><span style="color:#c792ea">)</span><span style="color:#ffcb6b">*</span>"</td>
+      <td style="color:#6c7a8e;font-size:11px">"Hallo "Welt""</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Kommentar (C-Stil)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px">/<span style="color:#c3e88d">\*</span><span style="color:#4ec9b0">[\s\S]</span><span style="color:#ffcb6b">*</span><span style="color:#ffcb6b">?</span><span style="color:#c3e88d">\*</span>/</td>
+      <td style="color:#6c7a8e;font-size:11px">/* Kommentar */</td>
+    </tr>
+    <tr>
+      <td style="color:#cdd6f4;font-size:12px;width:160px">Kommentar (//)</td>
+      <td style="font-family:Courier New,monospace;font-size:11px;
+                 background:rgba(0,0,0,.4);padding:4px 6px;border-radius:3px">//<span style="color:#f07178">.</span><span style="color:#ffcb6b">*</span><span style="color:#82aaff">$</span></td>
+      <td style="color:#6c7a8e;font-size:11px">// Zeilenkommentar</td>
+    </tr></tbody></table>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>Python re-Funktionen
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Pattern / Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="re.search(p, s)" data-d="erstes match irgendwo im string">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.search(p, s)</code></td>
+      <td style="color:#6c7a8e">Erstes Match irgendwo im String</td>
+      <td style="color:#c3e88d;font-size:11px">→ Match oder None</td>
+    </tr>
+    <tr class="cr" data-m="re.match(p, s)" data-d="match nur am anfang des strings">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.match(p, s)</code></td>
+      <td style="color:#6c7a8e">Match NUR am Anfang des Strings</td>
+      <td style="color:#c3e88d;font-size:11px">→ Match oder None</td>
+    </tr>
+    <tr class="cr" data-m="re.fullmatch(p, s)" data-d="ganzer string muss matchen">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.fullmatch(p, s)</code></td>
+      <td style="color:#6c7a8e">Ganzer String muss matchen</td>
+      <td style="color:#c3e88d;font-size:11px">→ Match oder None</td>
+    </tr>
+    <tr class="cr" data-m="re.findall(p, s)" data-d="liste aller treffer">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.findall(p, s)</code></td>
+      <td style="color:#6c7a8e">Liste aller Treffer</td>
+      <td style="color:#c3e88d;font-size:11px">→ [str, ...]</td>
+    </tr>
+    <tr class="cr" data-m="re.finditer(p, s)" data-d="iterator über match-objekte">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.finditer(p, s)</code></td>
+      <td style="color:#6c7a8e">Iterator über Match-Objekte</td>
+      <td style="color:#c3e88d;font-size:11px">for m in re.finditer(...)</td>
+    </tr>
+    <tr class="cr" data-m="re.sub(p, r, s)" data-d="ersetzen (r kann funktion sein)">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.sub(p, r, s)</code></td>
+      <td style="color:#6c7a8e">Ersetzen (r kann Funktion sein)</td>
+      <td style="color:#c3e88d;font-size:11px">→ neuer String</td>
+    </tr>
+    <tr class="cr" data-m="re.subn(p, r, s)" data-d="ersetzen + anzahl ersetzungen">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.subn(p, r, s)</code></td>
+      <td style="color:#6c7a8e">Ersetzen + Anzahl Ersetzungen</td>
+      <td style="color:#c3e88d;font-size:11px">→ (str, int)</td>
+    </tr>
+    <tr class="cr" data-m="re.split(p, s)" data-d="aufteilen an pattern">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.split(p, s)</code></td>
+      <td style="color:#6c7a8e">Aufteilen an Pattern</td>
+      <td style="color:#c3e88d;font-size:11px">→ [str, ...]</td>
+    </tr>
+    <tr class="cr" data-m="re.compile(p, flags)" data-d="kompilieren für wiederverwendung">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.compile(p, flags)</code></td>
+      <td style="color:#6c7a8e">Kompilieren für Wiederverwendung</td>
+      <td style="color:#c3e88d;font-size:11px">→ Pattern-Objekt</td>
+    </tr>
+    <tr class="cr" data-m="re.escape(s)" data-d="string für regex escapen">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">re.escape(s)</code></td>
+      <td style="color:#6c7a8e">String für Regex escapen</td>
+      <td style="color:#c3e88d;font-size:11px">re.escape("a.b") → "a\.b"</td>
+    </tr>
+    <tr class="cr" data-m="m.group(n)" data-d="n-te gruppe (0 = ganzer match)">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">m.group(n)</code></td>
+      <td style="color:#6c7a8e">n-te Gruppe (0 = ganzer Match)</td>
+      <td style="color:#c3e88d;font-size:11px">m.group(1)</td>
+    </tr>
+    <tr class="cr" data-m="m.groups()" data-d="alle gruppen als tuple">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">m.groups()</code></td>
+      <td style="color:#6c7a8e">Alle Gruppen als Tuple</td>
+      <td style="color:#c3e88d;font-size:11px">m.groups() → (...)</td>
+    </tr>
+    <tr class="cr" data-m="m.groupdict()" data-d="named groups als dict">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">m.groupdict()</code></td>
+      <td style="color:#6c7a8e">Named Groups als Dict</td>
+      <td style="color:#c3e88d;font-size:11px">m.groupdict() → {...}</td>
+    </tr>
+    <tr class="cr" data-m="m.span(n)" data-d="start/ende eines matches">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">m.span(n)</code></td>
+      <td style="color:#6c7a8e">Start/Ende eines Matches</td>
+      <td style="color:#c3e88d;font-size:11px">m.span() → (0, 5)</td>
+    </tr>
+    <tr class="cr" data-m="m.start(n) m.end(n)" data-d="start bzw. ende">
+      <td style="width:240px"><code style="color:#e67e22;font-size:12px">m.start(n) m.end(n)</code></td>
+      <td style="color:#6c7a8e">Start bzw. Ende</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>JavaScript RegExp-Methoden
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Pattern / Funktion</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m="str.match(rx)" data-d="erstes match (ohne g) / alle matches (mit g)">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">str.match(rx)</code></td>
+      <td style="color:#6c7a8e">Erstes Match (ohne g) / alle Matches (mit g)</td>
+      <td style="color:#c3e88d;font-size:11px">→ Array oder null</td>
+    </tr>
+    <tr class="cr" data-m="str.matchall(rx)" data-d="iterator über alle matches (braucht /g)">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">str.matchAll(rx)</code></td>
+      <td style="color:#6c7a8e">Iterator über alle Matches (braucht /g)</td>
+      <td style="color:#c3e88d;font-size:11px">→ Iterator&lt;Match&gt;</td>
+    </tr>
+    <tr class="cr" data-m="str.search(rx)" data-d="gibt index des ersten matches zurück">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">str.search(rx)</code></td>
+      <td style="color:#6c7a8e">Gibt Index des ersten Matches zurück</td>
+      <td style="color:#c3e88d;font-size:11px">→ -1 wenn kein Match</td>
+    </tr>
+    <tr class="cr" data-m="str.replace(rx, r)" data-d="ersetzen">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">str.replace(rx, r)</code></td>
+      <td style="color:#6c7a8e">Ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">r kann Funktion sein</td>
+    </tr>
+    <tr class="cr" data-m="str.replaceall(rx, r)" data-d="alle ersetzen (literal oder /g)">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">str.replaceAll(rx, r)</code></td>
+      <td style="color:#6c7a8e">Alle ersetzen (Literal oder /g)</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m="str.split(rx)" data-d="aufteilen an pattern">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">str.split(rx)</code></td>
+      <td style="color:#6c7a8e">Aufteilen an Pattern</td>
+      <td style="color:#c3e88d;font-size:11px">→ Array&lt;string&gt;</td>
+    </tr>
+    <tr class="cr" data-m="rx.test(str)" data-d="gibt true/false zurück">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">rx.test(str)</code></td>
+      <td style="color:#6c7a8e">Gibt true/false zurück</td>
+      <td style="color:#c3e88d;font-size:11px">→ boolean</td>
+    </tr>
+    <tr class="cr" data-m="rx.exec(str)" data-d="wie match, aber mit lastindex für /g">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">rx.exec(str)</code></td>
+      <td style="color:#6c7a8e">Wie match, aber mit lastIndex für /g</td>
+      <td style="color:#c3e88d;font-size:11px">→ Array oder null</td>
+    </tr>
+    <tr class="cr" data-m="rx.source" data-d="pattern als string">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">rx.source</code></td>
+      <td style="color:#6c7a8e">Pattern als String</td>
+      <td style="color:#c3e88d;font-size:11px">/\d+/.source → "\d+"</td>
+    </tr>
+    <tr class="cr" data-m="rx.flags" data-d="aktive flags">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">rx.flags</code></td>
+      <td style="color:#6c7a8e">Aktive Flags</td>
+      <td style="color:#c3e88d;font-size:11px">/hi/gi.flags → "gi"</td>
+    </tr>
+    <tr class="cr" data-m="rx.lastindex" data-d="suchposition bei sticky/global">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">rx.lastIndex</code></td>
+      <td style="color:#6c7a8e">Suchposition bei sticky/global</td>
+      <td style="color:#c3e88d;font-size:11px">Manuell setzen möglich</td>
+    </tr>
+    <tr class="cr" data-m="$1 $2 ... $9" data-d="gruppen in replace-string">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">$1 $2 ... $9</code></td>
+      <td style="color:#6c7a8e">Gruppen in replace-String</td>
+      <td style="color:#c3e88d;font-size:11px">"a".replace(/(a)/, "$1$1")</td>
+    </tr>
+    <tr class="cr" data-m="$&amp; $` $'" data-d="&amp; = match, ` = davor, ' = danach">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">$&amp; $` $'</code></td>
+      <td style="color:#6c7a8e">&amp; = Match, ` = davor, ' = danach</td>
+      <td style="color:#c3e88d;font-size:11px">In replace-String</td>
+    </tr>
+    <tr class="cr" data-m="(?&lt;name&gt;)" data-d="named group (es2018)">
+      <td style="width:240px"><code style="color:#4fc3f7;font-size:12px">(?&lt;name&gt;)</code></td>
+      <td style="color:#6c7a8e">Named Group (ES2018)</td>
+      <td style="color:#c3e88d;font-size:11px">m.groups.name</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-beispiele" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #e67e22;color:#e67e22;background:rgba(230,126,34,.08);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Vollständige Validierungs-Bibliothek</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Text-Transformation mit Regex</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Gefährliche Regex-Patterns (ReDoS)</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a"># Python: Validierungs-Funktionen mit Regex</span>
+
+import re
+from typing import Optional
+
+<span style="color:#546e7a"># ── E-MAIL ────────────────────────────────────────────────────────</span>
+EMAIL_RX = re.compile(
+    r"""
+    ^                   # Anfang
+    (?!.*\.\.)          # Kein .. im lokalen Teil
+    [\w.!#$%&amp;'*+/=?^_`{|}~-]+   # Lokaler Teil
+    @                   # @-Zeichen
+    (?:[a-z0-9]         # Domain: erstes Zeichen
+    (?:[a-z0-9-]{0,61}[a-z0-9])?  # Domain: rest
+    \.)+                # Punkt (min. ein)
+    [a-z0-9][a-z0-9-]{0,61}[a-z0-9]  # TLD
+    $                   # Ende
+    """,
+    re.VERBOSE | re.IGNORECASE
+)
+
+def ist_email(s: str) -&gt; bool:
+    return bool(EMAIL_RX.match(s))
+
+<span style="color:#546e7a"># ── DEUTSCHE PLZ ────────────────────────────────────────────────</span>
+PLZ_RX = re.compile(r'^\d{5}$')
+
+def ist_plz(s: str) -&gt; bool:
+    return bool(PLZ_RX.match(s))
+
+<span style="color:#546e7a"># ── TELEFON (international, flexibel) ─────────────────────────</span>
+TELEFON_RX = re.compile(
+    r'^'
+    r'(?:\+|00)?'          # Optionale Ländervorwahl + oder 00
+    r'[\d\s\-\(\)]{7,20}'  # Ziffern, Leerzeichen, -, (), 7-20 Zeichen
+    r'$'
+)
+
+def ist_telefon(s: str) -&gt; bool:
+    <span style="color:#546e7a"># Erst normalisieren</span>
+    bereinigt = re.sub(r'\s+', ' ', s.strip())
+    return bool(TELEFON_RX.match(bereinigt))
+
+<span style="color:#546e7a"># ── PASSWORT-STÄRKE ──────────────────────────────────────────</span>
+def passwort_analyse(pw: str) -&gt; dict:
+    return {
+        "länge_ok":      len(pw) &gt;= 8,
+        "hat_klein":     bool(re.search(r'[a-z]', pw)),
+        "hat_gross":     bool(re.search(r'[A-Z]', pw)),
+        "hat_ziffer":    bool(re.search(r'\d', pw)),
+        "hat_sonder":    bool(re.search(r'[!@#$%^&amp;*(),.?":{}|&lt;&gt;]', pw)),
+        "kein_leerzeichen": not bool(re.search(r'\s', pw)),
+    }
+
+def ist_starkes_passwort(pw: str) -&gt; bool:
+    analyse = passwort_analyse(pw)
+    return all(analyse.values())
+
+<span style="color:#546e7a"># ── URL PARSEN ────────────────────────────────────────────────</span>
+URL_RX = re.compile(
+    r'^(?P&lt;schema&gt;https?)://'
+    r'(?P&lt;host&gt;[^/:?#]+)'
+    r'(?::(?P&lt;port&gt;\d+))?'
+    r'(?P&lt;pfad&gt;/[^?#]*)?'
+    r'(?:\?(?P&lt;query&gt;[^#]*))?'
+    r'(?:#(?P&lt;fragment&gt;.*))?$'
+)
+
+def parse_url(url: str) -&gt; Optional[dict]:
+    m = URL_RX.match(url)
+    if not m:
+        return None
+    return {k: v for k, v in m.groupdict().items() if v is not None}
+
+<span style="color:#546e7a"># ── DATUM EXTRAHIEREN ────────────────────────────────────────</span>
+DATUM_RX = re.compile(
+    r'(?P&lt;tag&gt;0[1-9]|[12]\d|3[01])'
+    r'[.\-/]'
+    r'(?P&lt;monat&gt;0[1-9]|1[0-2])'
+    r'[.\-/]'
+    r'(?P&lt;jahr&gt;\d{4})'
+)
+
+def extrahiere_datum(text: str) -&gt; list[dict]:
+    return [m.groupdict() for m in DATUM_RX.finditer(text)]
+
+<span style="color:#546e7a"># Tests</span>
+print(ist_email("alice@example.com"))     # True
+print(ist_email("keine@email"))           # False
+print(ist_plz("10115"))                   # True
+print(passwort_analyse("Abc123!@#"))
+print(parse_url("https://example.com:8080/api?q=test#top"))
+print(extrahiere_datum("Am 15.01.2024 und 31-12-2023"))</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre">import re
+
+<span style="color:#546e7a"># ── MARKDOWN ZU HTML ──────────────────────────────────────────────</span>
+def markdown_zu_html(text: str) -&gt; str:
+    <span style="color:#546e7a"># Überschriften</span>
+    text = re.sub(r'^#{6}\s+(.+)$', r'&lt;h6&gt;&lt;/h6&gt;', text, flags=re.M)
+    text = re.sub(r'^#{5}\s+(.+)$', r'&lt;h5&gt;&lt;/h5&gt;', text, flags=re.M)
+    text = re.sub(r'^#{4}\s+(.+)$', r'&lt;h4&gt;&lt;/h4&gt;', text, flags=re.M)
+    text = re.sub(r'^#{3}\s+(.+)$', r'&lt;h3&gt;&lt;/h3&gt;', text, flags=re.M)
+    text = re.sub(r'^#{2}\s+(.+)$', r'&lt;h2&gt;&lt;/h2&gt;', text, flags=re.M)
+    text = re.sub(r'^#{1}\s+(.+)$', r'&lt;h1&gt;&lt;/h1&gt;', text, flags=re.M)
+
+    <span style="color:#546e7a"># Fett und Kursiv</span>
+    text = re.sub(r'\*\*\*(.+?)\*\*\*', r'&lt;strong&gt;&lt;em&gt;&lt;/em&gt;&lt;/strong&gt;', text)
+    text = re.sub(r'\*\*(.+?)\*\*',     r'&lt;strong&gt;&lt;/strong&gt;', text)
+    text = re.sub(r'\*(.+?)\*',          r'&lt;em&gt;&lt;/em&gt;', text)
+    text = re.sub(r'__(.+?)__',          r'&lt;strong&gt;&lt;/strong&gt;', text)
+    text = re.sub(r'_(.+?)_',            r'&lt;em&gt;&lt;/em&gt;', text)
+
+    <span style="color:#546e7a"># Code (inline)</span>
+    text = re.sub(r'`(.+?)`', r'&lt;code&gt;&lt;/code&gt;', text)
+
+    <span style="color:#546e7a"># Links</span>
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'&lt;a href=""&gt;&lt;/a&gt;', text)
+
+    <span style="color:#546e7a"># Bilder</span>
+    text = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', r'&lt;img alt="" src=""&gt;', text)
+
+    <span style="color:#546e7a"># Horizontale Linie</span>
+    text = re.sub(r'^---+$', '&lt;hr&gt;', text, flags=re.M)
+
+    <span style="color:#546e7a"># Zeilenumbrüche</span>
+    text = re.sub(r'
+
+', '&lt;/p&gt;
+&lt;p&gt;', text)
+
+    return f'&lt;p&gt;{text}&lt;/p&gt;'
+
+<span style="color:#546e7a"># ── LOG-DATEI PARSEN ──────────────────────────────────────────────</span>
+LOG_RX = re.compile(
+    r'(?P&lt;timestamp&gt;\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})'
+    r'\s+\[(?P&lt;level&gt;DEBUG|INFO|WARN|ERROR|FATAL)\]'
+    r'\s+(?P&lt;logger&gt;[\w.]+):'
+    r'\s+(?P&lt;nachricht&gt;.+)'
+)
+
+def parse_logs(log_text: str) -&gt; list[dict]:
+    einträge = []
+    for m in LOG_RX.finditer(log_text):
+        einträge.append(m.groupdict())
+    return einträge
+
+log = """
+2024-01-15 14:30:01 [INFO] app.main: Server gestartet
+2024-01-15 14:30:05 [ERROR] db.pool: Verbindung fehlgeschlagen
+2024-01-15 14:30:06 [WARN] app.auth: Ungültiger Token
+"""
+
+für_level = {}
+for eintrag in parse_logs(log):
+    level = eintrag['level']
+    für_level.setdefault(level, []).append(eintrag)
+
+print(f"Fehler: {len(für_level.get('ERROR', []))}")
+
+<span style="color:#546e7a"># ── CAMELCASE ↔ SNAKE_CASE ────────────────────────────────────────</span>
+def camel_zu_snake(name: str) -&gt; str:
+    <span style="color:#546e7a"># HTTPResponseCode → http_response_code</span>
+    s1 = re.sub(r'([A-Z]+)([A-Z][a-z])', r'_', name)
+    s2 = re.sub(r'([a-z\d])([A-Z])', r'_', s1)
+    return s2.lower()
+
+def snake_zu_camel(name: str) -&gt; str:
+    return re.sub(r'_([a-z])', lambda m: m.group(1).upper(), name)
+
+print(camel_zu_snake("HTTPResponseCode"))  # http_response_code
+print(camel_zu_snake("myVariableName"))     # my_variable_name
+print(snake_zu_camel("my_variable_name"))   # myVariableName</pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.75);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.85;white-space:pre"><span style="color:#546e7a"># REDOS – Regular Expression Denial of Service</span>
+<span style="color:#546e7a"># Manche Regex-Patterns können EXPONENTIELL lange brauchen!</span>
+<span style="color:#546e7a"># Ein Angreifer schickt einen speziellen String → Server hängt</span>
+
+<span style="color:#546e7a"># ── GEFÄHRLICHE PATTERNS ─────────────────────────────────────────</span>
+<span style="color:#546e7a"># Verschachtelte Quantifizierer mit Überschneidung = ReDoS-Risiko!</span>
+
+<span style="color:#546e7a"># GEFÄHRLICH:</span>
+(a+)+          # "aaaaaaaaaaaaaaX" → exponentiell
+(a|aa)+        # Alternation mit Überlappung
+([a-zA-Z]+)*   # Verschachtelt
+(\d+.)+\d+    # Bekannte E-Mail-Validierungs-Falle!
+
+<span style="color:#546e7a"># Der Angreifer testet: "aaaaaaaaaaaaaaaaaaaaaaX"</span>
+<span style="color:#546e7a"># Der Regex versucht ALLE Kombinationen durch → hängt!</span>
+
+<span style="color:#546e7a"># ── SICHERE ALTERNATIVEN ─────────────────────────────────────────</span>
+<span style="color:#546e7a"># 1. Possessive Quantifier (PCRE) – kein Backtracking</span>
+(a++)             # ++ = possessiv: gibt einmal genommenes nicht zurück
+(?&gt;a+)            # Atomic Group
+
+<span style="color:#546e7a"># 2. Timeout setzen (Python)</span>
+import re
+import signal
+
+def mit_timeout(pattern, text, sekunden=1):
+    rx = re.compile(pattern)
+    <span style="color:#546e7a"># Besser: re2-Bibliothek (Google) nutzen!</span>
+    <span style="color:#546e7a"># import re2</span>
+    <span style="color:#546e7a"># rx = re2.compile(pattern)  # Garantiert lineare Zeit!</span>
+    return rx.search(text)
+
+<span style="color:#546e7a"># 3. Einfacher und klarer schreiben</span>
+<span style="color:#546e7a"># Statt: (a+)+</span>
+<span style="color:#546e7a"># Besser: a+  (reicht oft!)</span>
+
+<span style="color:#546e7a"># 4. RE2-Bibliothek (Python)</span>
+<span style="color:#546e7a"># pip install google-re2</span>
+<span style="color:#546e7a"># import re2</span>
+<span style="color:#546e7a"># re2 unterstützt KEIN: Lookahead, Lookbehind, Backreferences</span>
+<span style="color:#546e7a"># Aber: Garantiert O(n) Laufzeit!</span>
+
+<span style="color:#546e7a"># ── REGEX-KOMPLEXITÄT TESTEN ──────────────────────────────────────</span>
+<span style="color:#546e7a"># Tool: https://devina.io/redos-checker</span>
+<span style="color:#546e7a"># Tool: https://regex101.com/ (zeigt Schritt-Anzahl!)</span>
+<span style="color:#546e7a"># Tool: regexploit (Fuzzer für ReDoS)</span>
+
+<span style="color:#546e7a"># ── SICHERE EMAIL-VALIDIERUNG ─────────────────────────────────────</span>
+<span style="color:#546e7a"># Statt komplexem Regex: einfacher Check + Bibliothek</span>
+def sichere_email_validierung(email: str) -&gt; bool:
+    <span style="color:#546e7a"># Einfacher Basis-Check (kein ReDoS möglich)</span>
+    if len(email) &gt; 254:
+        return False
+    if email.count("@") != 1:
+        return False
+    lokal, domain = email.split("@")
+    if not lokal or not domain:
+        return False
+    if "." not in domain:
+        return False
+    <span style="color:#546e7a"># Für Produktion: email-validator Bibliothek nutzen!</span>
+    <span style="color:#546e7a"># from email_validator import validate_email</span>
+    return True</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#e67e220e;border:1px solid #e67e2244;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#e67e22">Bester Regex-Tester:</strong> <a href="https://regex101.com" style="color:#d4a017">regex101.com</a> – erklärt jeden Teil, zeigt Anzahl Schritte (ReDoS-Warnung!), PCRE/Python/JS/Go</div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #e67e2244;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#e67e220e">
+    <span style="display:flex;align-items:center;gap:6px;color:#e67e22">
+      <span style="display:inline-block;width:8px;height:8px;background:#e67e22;border-radius:50%;margin-right:2px"></span>⚙ Online-Tools &amp; Tester
+    </span>
+    <span class="aa" style="color:#e67e22;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#e67e22;font-size:13px">regex101.com</code></td><td style="color:#cdd6f4">Bester Online-Tester</td><td style="color:#6c7a8e">PCRE/Python/JS/Go – erklärt jeden Teil, zeigt Schritt-Anzahl!</td></tr><tr><td style="width:220px"><code style="color:#e67e22;font-size:13px">regexr.com</code></td><td style="color:#cdd6f4">Visueller Tester</td><td style="color:#6c7a8e">Community-Pattern, gute Erklärungen</td></tr><tr><td style="width:220px"><code style="color:#e67e22;font-size:13px">regexper.com</code></td><td style="color:#cdd6f4">Visualisiert als Eisenbahn-Diagramm</td><td style="color:#6c7a8e">Perfekt zum Verstehen komplexer Patterns</td></tr><tr><td style="width:220px"><code style="color:#e67e22;font-size:13px">debuggex.com</code></td><td style="color:#cdd6f4">Automaten-Visualisierung</td><td style="color:#6c7a8e">Zeigt NFA/DFA des Regex</td></tr><tr><td style="width:220px"><code style="color:#e67e22;font-size:13px">extendsclass.com/regex</code></td><td style="color:#cdd6f4">PHP/Python/Java/JS</td><td style="color:#6c7a8e">Mehrere Sprachen gleichzeitig testen</td></tr><tr><td style="width:220px"><code style="color:#e67e22;font-size:13px">devina.io/redos-checker</code></td><td style="color:#cdd6f4">ReDoS-Sicherheitstest</td><td style="color:#6c7a8e">Prüft auf catastrophic backtracking</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ CLI-Tools
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">grep -P "\d+"</code></td><td style="color:#cdd6f4">PCRE-Regex in grep (GNU)</td><td style="color:#6c7a8e">grep -oP "\d{4}" datei.txt</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">grep -E "a+"</code></td><td style="color:#cdd6f4">Extended Regex in grep</td><td style="color:#6c7a8e">egrep oder grep -E</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">sed "s/alt/neu/g"</code></td><td style="color:#cdd6f4">Ersetzen mit sed</td><td style="color:#6c7a8e">sed -i "s/foo/bar/g" *.py</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">awk "/muster/"</code></td><td style="color:#cdd6f4">Filter mit awk</td><td style="color:#6c7a8e">awk "/ERROR/ {print NR: $0}"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">perl -pe "s/a/b/g"</code></td><td style="color:#cdd6f4">Perl One-Liner (PCRE)</td><td style="color:#6c7a8e">perl -i -pe "s/old/new/g" *.txt</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">python -c "import re"</code></td><td style="color:#cdd6f4">Python One-Liner</td><td style="color:#6c7a8e">python -c "import re,sys; [print(re.sub(...)) for l in sys.stdin]"</td></tr><tr><td style="width:220px"><code style="color:#4fc3f7;font-size:13px">ripgrep (rg)</code></td><td style="color:#cdd6f4">Modernes grep (sehr schnell!)</td><td style="color:#6c7a8e">rg "\d{4}" --type py</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Regex-Flavors im Vergleich
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">PCRE</code></td><td style="color:#cdd6f4">Perl Compatible</td><td style="color:#6c7a8e">Lookahead, Lookbehind, Named Groups, Backreferences. Standard!</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">PCRE2</code></td><td style="color:#cdd6f4">PCRE2 (neuere Version)</td><td style="color:#6c7a8e">Variable Lookbehind-Länge, Unicode-Kategorien</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">Python re</code></td><td style="color:#cdd6f4">Python Standard-Lib</td><td style="color:#6c7a8e">PCRE-ähnlich. Kein possessiver Quantifier (re2-Paket nutzen)</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">RE2 (Google)</code></td><td style="color:#cdd6f4">Lineare Komplexität</td><td style="color:#6c7a8e">KEIN Lookahead/Lookbehind/Backreferences – aber garantiert O(n)</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">JS RegExp</code></td><td style="color:#cdd6f4">ECMAScript Regex</td><td style="color:#6c7a8e">Named Groups (ES2018), Lookbehind (ES2018), d-Flag (ES2022)</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">.NET Regex</code></td><td style="color:#cdd6f4">Sehr mächtig</td><td style="color:#6c7a8e">Balancing Groups, variable Lookbehind, sehr gut für Text-Processing</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">Java Pattern</code></td><td style="color:#cdd6f4">Java util.regex</td><td style="color:#6c7a8e">PCRE-ähnlich, gut für Named Groups und Unicode</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">POSIX ERE</code></td><td style="color:#cdd6f4">grep -E, awk</td><td style="color:#6c7a8e">Kein Lookahead, kein Backreference, portabel</td></tr><tr><td style="width:220px"><code style="color:#c792ea;font-size:13px">POSIX BRE</code></td><td style="color:#cdd6f4">grep, sed</td><td style="color:#6c7a8e">Sehr einfach: ( muss \( sein, + nicht verfügbar</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Regex lernen
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Konzept</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:220px"><code style="color:#4ec9b0;font-size:13px">regex101.com</code></td><td style="color:#cdd6f4">Bester Einstieg</td><td style="color:#6c7a8e">Tutorial eingebaut, erklärt jeden Buchstaben</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0;font-size:13px">regular-expressions.info</code></td><td style="color:#cdd6f4">Umfassendste Referenz</td><td style="color:#6c7a8e">Jan Goyvaerts – die Regex-Bibel online</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0;font-size:13px">learn regex</code></td><td style="color:#cdd6f4">github.com/ziishaned</td><td style="color:#6c7a8e">github.com/ziishaned/learn-regex – visuell</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0;font-size:13px">Mastering Regular Expressions</code></td><td style="color:#cdd6f4">Jeffrey Friedl</td><td style="color:#6c7a8e">O'Reilly-Buch – der Klassiker</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0;font-size:13px">The Regular Expression Cookbook</code></td><td style="color:#cdd6f4">Goyvaerts &amp; Levithan</td><td style="color:#6c7a8e">Viele praktische Patterns</td></tr><tr><td style="width:220px"><code style="color:#4ec9b0;font-size:13px">regexcrossword.com</code></td><td style="color:#cdd6f4">Spielend lernen</td><td style="color:#6c7a8e">Regex als Kreuzworträtsel!</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#e67e22';
+      btn.style.color       = '#e67e22';
+      btn.style.background  = 'rgba(230,126,34,.08)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swift Syntax Referenz</title>
+  <style>
+:root {
+  --bg:     #0a0c0f;
+  --border: #1e2530;
+  --text:   #cdd6f4;
+  --dim:    #6c7a8e;
+  --accent: #f05138;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; line-height: 1.5; }
+
+#hdr { background: linear-gradient(135deg, #0f1217, #0a0c0f); border-bottom: 1px solid var(--border); padding: 14px 24px 0; position: sticky; top: 0; z-index: 100; }
+#hdr-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+#hdr-title { font-size: 20px; font-weight: 900; }
+#hdr-sub   { color: var(--dim); font-size: 11px; }
+
+#tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tb { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); padding: 9px 13px; cursor: pointer; font-size: 12px; font-family: inherit; white-space: nowrap; transition: color .15s; }
+.tb.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(240,81,56,.07); }
+
+.con { max-width: 1120px; margin: 0 auto; padding: 20px 22px 60px; }
+.tp { display: none; }
+.tp.active { display: block; }
+
+.sb { width: 100%; background: rgba(0,0,0,.6); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.sb:focus { border-color: var(--accent); }
+
+.ac { border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+.ah:hover { filter: brightness(1.2); }
+.ac.open .aa { transform: rotate(180deg) !important; }
+
+table { width: 100%; border-collapse: collapse; }
+th { color: var(--dim); font-size: 10px; text-align: left; padding: 6px 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); font-family: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid rgba(30,37,48,.4); font-size: 12px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.015); }
+
+code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,.05); padding: 1px 5px; border-radius: 3px; }
+.cd { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; margin-bottom: 8px; }
+.tc { background: rgba(0,0,0,.55); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+
+@media (max-width: 720px) { .con { padding: 14px 12px 40px; } }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-top">
+    <div id="hdr-title">
+      <span style="color:#f05138">&#x2B22;</span>
+      <span style="color:#f05138">Swift</span> Syntax
+    </div>
+    <div id="hdr-sub">Swift 5.10 / 6 · Optionals · Actors · async/await · Protocols · Result Builders · SPM</div>
+  </div>
+  <div id="tabs">
+    <button class="tb active" data-tab="grundlagen">Grundlagen</button>
+    <button class="tb" data-tab="typen">Typen & OOP</button>
+    <button class="tb" data-tab="funktionen">Funktionen</button>
+    <button class="tb" data-tab="fehler">Fehler & Properties</button>
+    <button class="tb" data-tab="concurrency">Concurrency</button>
+    <button class="tb" data-tab="stdlib">Stdlib</button>
+    <button class="tb" data-tab="examples">Beispiele</button>
+    <button class="tb" data-tab="tools">Tools</button>
+    
+  </div>
+</div>
+
+<div class="con">
+  <div id="tp-grundlagen" class="tp active">
+
+<div style="background:#f051380e;border:1px solid #f0513844;border-radius:8px;
+            padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:1.9">
+  <strong style="color:#f05138">Swift – sicher, schnell, modern.</strong>
+  Protocol-Oriented Programming statt tiefer Vererbungshierarchien.<br>
+  <span style="color:#cdd6f4">
+    <code style="color:#c3e88d">let</code> = unveränderlich (bevorzugen!) &nbsp;·&nbsp;
+    <code style="color:#c3e88d">var</code> = veränderlich &nbsp;·&nbsp;
+    <code style="color:#c3e88d">T?</code> = Optional &nbsp;·&nbsp;
+    <code style="color:#c3e88d">??</code> = Nil-Coalescing &nbsp;·&nbsp;
+    <code style="color:#c3e88d">struct</code> = Value Type &nbsp;·&nbsp;
+    <code style="color:#c3e88d">class</code> = Reference Type
+  </span>
+</div>
+
+<div class="ac open" id="ac-gr0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>Swift – Besonderheiten
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="swift – besonderheiten">
+  <div style="color:#f05138;font-weight:700;font-size:12px;margin-bottom:8px">
+    Swift – Besonderheiten
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Swift – Apples Nachfolger von Objective-C (2014)</span>
+<span style="color:#546e7a">// Sicher, schnell, modern. Protocol-Oriented Programming!</span>
+<span style="color:#546e7a">// Läuft auf: macOS, iOS, watchOS, tvOS, Linux, Windows</span>
+
+<span style="color:#546e7a">// Kein Semikolon nötig (optional)</span>
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Hallo, Welt!"</span>)
+
+<span style="color:#546e7a">// let – unveränderlich (Compiler-Garantie!)</span>
+<span style="color:#c792ea">let</span> name = <span style="color:#c3e88d">"Alice"</span>          <span style="color:#546e7a">// Typ inferiert: String</span>
+<span style="color:#c792ea">let</span> alter = <span style="color:#f78c6c">30</span>              <span style="color:#546e7a">// Typ inferiert: Int</span>
+<span style="color:#c792ea">let</span> pi: <span style="color:#4ec9b0">Double</span> = <span style="color:#f78c6c">3.14159</span>
+
+<span style="color:#546e7a">// var – veränderlich</span>
+<span style="color:#c792ea">var</span> zaehler = <span style="color:#f78c6c">0</span>
+zaehler += <span style="color:#f78c6c">1</span>
+
+<span style="color:#546e7a">// String-Interpolation</span>
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Hallo, \(name)! Du bist \(alter) Jahre alt."</span>)
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Quadrat: \(alter * alter)"</span>)   <span style="color:#546e7a">// Ausdrücke erlaubt!</span>
+
+<span style="color:#546e7a">// Multi-line String</span>
+<span style="color:#c792ea">let</span> text = <span style="color:#c3e88d">"""</span>
+    <span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">1</span>
+    <span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">2</span>
+    <span style="color:#4ec9b0">Zeile</span> <span style="color:#f78c6c">3</span>
+    <span style="color:#c3e88d">"""</span>
+
+<span style="color:#546e7a">// Wichtigste Unterschiede zu anderen Sprachen:</span>
+<span style="color:#546e7a">// 1. Optionals (T?) – Null-Sicherheit im Typsystem</span>
+<span style="color:#546e7a">// 2. Value Types (struct, enum) vs Reference Types (class)</span>
+<span style="color:#546e7a">// 3. Protocol-Oriented Programming (keine Vererbungs-Hierarchien!)</span>
+<span style="color:#546e7a">// 4. Closures mit Capture Lists</span>
+<span style="color:#546e7a">// 5. Async/await + Actors für sichere Concurrency</span>
+<span style="color:#546e7a">// 6. Swift Package Manager eingebaut</span>
+
+<span style="color:#546e7a">// Swift ist CASE-SENSITIV: let und Let sind verschieden!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Datentypen
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<table>
+  <thead><tr><th>Typ</th><th>Beispiel / Bereich</th><th>Beschreibung</th></tr></thead>
+  <tbody>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Int</code></td>
+      <td style="color:#c3e88d;font-size:11px">-9223372036854775808 .. 9223372036854775807</td>
+      <td style="color:#6c7a8e">64-Bit (plattformabhängig). Int8/16/32/64 auch</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">UInt</code></td>
+      <td style="color:#c3e88d;font-size:11px">0 .. 18446744073709551615</td>
+      <td style="color:#6c7a8e">Vorzeichenlos. UInt8/16/32/64</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Float</code></td>
+      <td style="color:#c3e88d;font-size:11px">~7 Dezimalstellen  |  3.14f</td>
+      <td style="color:#6c7a8e">32-Bit. Literal: 3.14 (ohne f, aber als Float)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Double</code></td>
+      <td style="color:#c3e88d;font-size:11px">~15 Dezimalstellen  |  3.14</td>
+      <td style="color:#6c7a8e">64-Bit (Standard-Float, bevorzugen!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Bool</code></td>
+      <td style="color:#c3e88d;font-size:11px">true  /  false</td>
+      <td style="color:#6c7a8e">Kein truthy/falsy</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Character</code></td>
+      <td style="color:#c3e88d;font-size:11px">"A"  |  "\n"  |  "\u{1F600}"</td>
+      <td style="color:#6c7a8e">Unicode-Zeichen (Graphem-Cluster!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">String</code></td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo"  |  """mehrzeilig"""</td>
+      <td style="color:#6c7a8e">Unicode-korrekt, Value Type (kopiert!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">(T, U)</code></td>
+      <td style="color:#c3e88d;font-size:11px">(3, "Hallo")  |  (x: 1, y: 2)</td>
+      <td style="color:#6c7a8e">Tuple. Benannte oder positionale Felder</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">T?</code></td>
+      <td style="color:#c3e88d;font-size:11px">String?  |  Int?</td>
+      <td style="color:#6c7a8e">Optional: T oder nil</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">[T]</code></td>
+      <td style="color:#c3e88d;font-size:11px">[1, 2, 3]  |  [String]()</td>
+      <td style="color:#6c7a8e">Array (Value Type!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">[K: V]</code></td>
+      <td style="color:#c3e88d;font-size:11px">["a": 1, "b": 2]</td>
+      <td style="color:#6c7a8e">Dictionary (Value Type!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Set&lt;T&gt;</code></td>
+      <td style="color:#c3e88d;font-size:11px">Set([1, 2, 3])  |  [1, 2, 3] as Set</td>
+      <td style="color:#6c7a8e">Menge (ungeordnet, eindeutig)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Range&lt;T&gt;</code></td>
+      <td style="color:#c3e88d;font-size:11px">1..&lt;5  |  1...5</td>
+      <td style="color:#6c7a8e">Halb-offen (..&lt;) oder geschlossen (...)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Any</code></td>
+      <td style="color:#c3e88d;font-size:11px">var x: Any = 42; x = "Hallo"</td>
+      <td style="color:#6c7a8e">Beliebiger Typ (vermeiden!)</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">AnyObject</code></td>
+      <td style="color:#c3e88d;font-size:11px">Nur Referenztypen (class-Instanzen)</td>
+      <td style="color:#6c7a8e">Für @objc-Kompatibilität</td>
+    </tr>
+    <tr>
+      <td style="width:160px"><code style="color:#4fc3f7">Never</code></td>
+      <td style="color:#c3e88d;font-size:11px">func fatal() -&gt; Never { fatalError() }</td>
+      <td style="color:#6c7a8e">Kehrt nie zurück</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-gr2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('gr2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Variablen, Konstanten &amp; Operatoren
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="variablen, konstanten &amp; operatoren">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Variablen, Konstanten &amp; Operatoren
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// let – unveränderlich (IMMER bevorzugen!)</span>
+<span style="color:#c792ea">let</span> maxGröße = <span style="color:#f78c6c">1024</span>
+<span style="color:#c792ea">let</span> pi = <span style="color:#f78c6c">3.14159</span>
+<span style="color:#c792ea">let</span> begrüßung = <span style="color:#c3e88d">"Hallo"</span>
+
+<span style="color:#546e7a">// var – veränderlich</span>
+<span style="color:#c792ea">var</span> count = <span style="color:#f78c6c">0</span>
+count += <span style="color:#f78c6c">1</span>
+
+<span style="color:#546e7a">// Explizite Typen</span>
+<span style="color:#c792ea">let</span> n: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">42</span>
+<span style="color:#c792ea">let</span> f: <span style="color:#4ec9b0">Float</span> = <span style="color:#f78c6c">3.14</span>    <span style="color:#546e7a">// Float, nicht Double!</span>
+<span style="color:#c792ea">let</span> d: <span style="color:#4ec9b0">Double</span> = <span style="color:#f78c6c">3.14</span>   <span style="color:#546e7a">// Double (Standard)</span>
+
+<span style="color:#546e7a">// Typ-Annotierung nötig wenn Typ nicht klar</span>
+<span style="color:#c792ea">var</span> zahlen: [<span style="color:#4ec9b0">Int</span>] = []
+<span style="color:#c792ea">var</span> dict: [<span style="color:#4ec9b0">String</span>: <span style="color:#4ec9b0">Int</span>] = [:]
+
+<span style="color:#546e7a">// Zahlen-Literale</span>
+<span style="color:#c792ea">let</span> million = <span style="color:#f78c6c">1_000_000</span>       <span style="color:#546e7a">// Unterstriche für Lesbarkeit</span>
+<span style="color:#c792ea">let</span> hex     = <span style="color:#f78c6c">0xFF_</span><span style="color:#4ec9b0">AA_BB</span>
+<span style="color:#c792ea">let</span> binary  = <span style="color:#f78c6c">0b1111_0000</span>
+<span style="color:#c792ea">let</span> octal   = <span style="color:#f78c6c">0o777</span>
+
+<span style="color:#546e7a">// Operatoren</span>
+<span style="color:#f78c6c">5</span> + <span style="color:#f78c6c">3</span>    <span style="color:#f78c6c">5</span> - <span style="color:#f78c6c">3</span>    <span style="color:#f78c6c">5</span> * <span style="color:#f78c6c">3</span>    <span style="color:#f78c6c">5</span> / <span style="color:#f78c6c">3</span>    <span style="color:#f78c6c">5</span> % <span style="color:#f78c6c">3</span>
+<span style="color:#f78c6c">5.0</span> / <span style="color:#f78c6c">3.0</span>    <span style="color:#546e7a">// 1.666...  (kein Integer-Div bei Floats)</span>
+
+<span style="color:#546e7a">// Vergleiche</span>
+== != &lt; &lt;= &gt; &gt;=
+=== !==    <span style="color:#546e7a">// Identitätsvergleich (Referenzgleichheit, für class!)</span>
+
+<span style="color:#546e7a">// Logisch</span>
+&amp;&amp;   ||   !
+
+<span style="color:#546e7a">// Range-Operatoren</span>
+<span style="color:#f78c6c">1...5</span>          <span style="color:#546e7a">// ClosedRange: 1, 2, 3, 4, 5</span>
+<span style="color:#f78c6c">1..</span>&lt;<span style="color:#f78c6c">5</span>          <span style="color:#546e7a">// Range: 1, 2, 3, 4 (ohne 5)</span>
+<span style="color:#f78c6c">1...</span>            <span style="color:#546e7a">// PartialRangeFrom: ab 1</span>
+<span style="color:#89ddff">..<</span><span style="color:#f78c6c">5</span>           <span style="color:#546e7a">// PartialRangeUpTo: bis 4</span>
+
+<span style="color:#546e7a">// Nil-Coalescing</span>
+<span style="color:#c792ea">let</span> wert = optionalWert <span style="color:#89ddff">??</span> <span style="color:#c3e88d">"Standard"</span>
+
+<span style="color:#546e7a">// Ternär</span>
+<span style="color:#c792ea">let</span> label = alter &gt;= <span style="color:#f78c6c">18</span> ? <span style="color:#c3e88d">"Erwachsen"</span> : <span style="color:#c3e88d">"Minderjährig"</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-typen" class="tp">
+
+<div class="ac open" id="ac-ty0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>Structs &amp; Classes – Value vs. Reference
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="structs &amp; classes – value vs. reference">
+  <div style="color:#f05138;font-weight:700;font-size:12px;margin-bottom:8px">
+    Structs &amp; Classes – Value vs. Reference
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── STRUCT (Value Type) – bevorzugen! ────────────────────────────</span>
+<span style="color:#546e7a">// Kopiert beim Zuweisen/Übergeben (Copy-on-Write bei Collections)</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Punkt</span> {
+    <span style="color:#c792ea">var</span> x: <span style="color:#4ec9b0">Double</span>
+    <span style="color:#c792ea">var</span> y: <span style="color:#4ec9b0">Double</span>
+
+    <span style="color:#546e7a">// Computed Property</span>
+    <span style="color:#c792ea">var</span> länge: <span style="color:#4ec9b0">Double</span> {
+        (x*x + y*y).squareRoot()
+    }
+
+    <span style="color:#546e7a">// Mutating method (nötig bei structs!)</span>
+    <span style="color:#c792ea">mutating</span> <span style="color:#c792ea">func</span> verschiebe(dx: <span style="color:#4ec9b0">Double</span>, dy: <span style="color:#4ec9b0">Double</span>) {
+        x += dx
+        y += dy
+    }
+
+    <span style="color:#546e7a">// Static factory</span>
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">let</span> ursprung = <span style="color:#4ec9b0">Punkt</span>(x: <span style="color:#f78c6c">0</span>, y: <span style="color:#f78c6c">0</span>)
+
+    <span style="color:#546e7a">// Custom init (automatisch generiert wenn nicht definiert)</span>
+    <span style="color:#c792ea">init</span>(x: <span style="color:#4ec9b0">Double</span> = <span style="color:#f78c6c">0</span>, y: <span style="color:#4ec9b0">Double</span> = <span style="color:#f78c6c">0</span>) {
+        <span style="color:#c792ea">self</span>.x = x
+        <span style="color:#c792ea">self</span>.y = y
+    }
+}
+
+<span style="color:#c792ea">var</span> p = <span style="color:#4ec9b0">Punkt</span>(x: <span style="color:#f78c6c">3</span>, y: <span style="color:#f78c6c">4</span>)
+<span style="color:#82aaff">print</span>(p.länge)   <span style="color:#546e7a">// 5.0</span>
+p.verschiebe(dx: <span style="color:#f78c6c">1</span>, dy: <span style="color:#f78c6c">0</span>)
+
+<span style="color:#c792ea">let</span> p2 = p      <span style="color:#546e7a">// KOPIE! p2 unabhängig von p</span>
+<span style="color:#546e7a">// p2.x = 0    // Fehler wenn p2 als let!</span>
+
+<span style="color:#546e7a">// ── CLASS (Reference Type) – wenn nötig ───────────────────────────</span>
+<span style="color:#546e7a">// Teilt Referenz beim Zuweisen/Übergeben</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Tier</span> {
+    <span style="color:#c792ea">var</span> name: <span style="color:#4ec9b0">String</span>
+    <span style="color:#c792ea">weak</span> <span style="color:#c792ea">var</span> besitzer: <span style="color:#4ec9b0">Person</span>?   <span style="color:#546e7a">// weak: verhindert Retain Cycle!</span>
+
+    <span style="color:#c792ea">init</span>(name: <span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">self</span>.name = name
+    }
+
+    <span style="color:#546e7a">// deinit: wird aufgerufen wenn Objekt freigegeben wird (ARC)</span>
+    <span style="color:#c792ea">deinit</span> {
+        <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"\(name) wird freigegeben"</span>)
+    }
+
+    <span style="color:#c792ea">func</span> laut() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> { <span style="color:#c3e88d">"..."</span> }
+}
+
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">Hund</span>: <span style="color:#4ec9b0">Tier</span> {
+    <span style="color:#c792ea">let</span> rasse: <span style="color:#4ec9b0">String</span>
+
+    <span style="color:#c792ea">init</span>(name: <span style="color:#4ec9b0">String</span>, rasse: <span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">self</span>.rasse = rasse
+        <span style="color:#c792ea">super</span>.<span style="color:#c792ea">init</span>(name: name)
+    }
+
+    <span style="color:#c792ea">override</span> <span style="color:#c792ea">func</span> laut() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> { <span style="color:#c3e88d">"Wuff!"</span> }
+}
+
+<span style="color:#c792ea">let</span> rex = <span style="color:#4ec9b0">Hund</span>(name: <span style="color:#c3e88d">"Rex"</span>, rasse: <span style="color:#c3e88d">"Labrador"</span>)
+<span style="color:#c792ea">let</span> gleiches_rex = rex  <span style="color:#546e7a">// GLEICHE Referenz!</span>
+gleiches_rex.name = <span style="color:#c3e88d">"Max"</span>
+<span style="color:#82aaff">print</span>(rex.name)         <span style="color:#546e7a">// "Max" – beide zeigen auf dasselbe Objekt!</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Enums – mächtig in Swift
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="enums – mächtig in swift">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Enums – mächtig in Swift
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Swift Enums sind SEHR mächtig (kein Int-Wrap wie in anderen Sprachen!)</span>
+
+<span style="color:#546e7a">// Einfacher Enum</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Richtung</span> {
+    <span style="color:#c792ea">case</span> nord, süd, ost, west
+
+    <span style="color:#c792ea">var</span> gegenteil: <span style="color:#4ec9b0">Richtung</span> {
+        <span style="color:#c792ea">switch</span> <span style="color:#c792ea">self</span> {
+        <span style="color:#c792ea">case</span> .nord: <span style="color:#c792ea">return</span> .süd
+        <span style="color:#c792ea">case</span> .süd:  <span style="color:#c792ea">return</span> .nord
+        <span style="color:#c792ea">case</span> .ost:  <span style="color:#c792ea">return</span> .west
+        <span style="color:#c792ea">case</span> .west: <span style="color:#c792ea">return</span> .ost
+        }
+    }
+}
+
+<span style="color:#546e7a">// Raw Values (Int, String, etc.)</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Planet</span>: <span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">case</span> merkur = <span style="color:#f78c6c">1</span>, venus, erde, mars   <span style="color:#546e7a">// Auto: 2, 3, 4</span>
+}
+
+<span style="color:#c792ea">let</span> p = <span style="color:#4ec9b0">Planet</span>(rawValue: <span style="color:#f78c6c">3</span>)!   <span style="color:#546e7a">// .erde</span>
+<span style="color:#82aaff">print</span>(p.rawValue)               <span style="color:#546e7a">// 3</span>
+
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">HTTP</span>: <span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">case</span> <span style="color:#c792ea">get</span> = <span style="color:#c3e88d">"GET"</span>, post = <span style="color:#c3e88d">"POST"</span>, put = <span style="color:#c3e88d">"PUT"</span>, delete = <span style="color:#c3e88d">"DELETE"</span>
+}
+
+<span style="color:#546e7a">// ── ASSOCIATED VALUES – Algebraische Datentypen! ──────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">T</span>&gt; {
+    <span style="color:#c792ea">case</span> erfolg(<span style="color:#4ec9b0">T</span>)
+    <span style="color:#c792ea">case</span> fehler(<span style="color:#4ec9b0">String</span>, code: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">0</span>)
+
+    <span style="color:#c792ea">var</span> wert: <span style="color:#4ec9b0">T</span>? {
+        <span style="color:#c792ea">if</span> <span style="color:#c792ea">case</span> .erfolg(<span style="color:#c792ea">let</span> v) = <span style="color:#c792ea">self</span> { <span style="color:#c792ea">return</span> v }
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span>
+    }
+}
+
+<span style="color:#c792ea">let</span> r1 = <span style="color:#4ec9b0">Ergebnis</span>.erfolg(<span style="color:#f78c6c">42</span>)
+<span style="color:#c792ea">let</span> r2: <span style="color:#4ec9b0">Ergebnis</span>&lt;<span style="color:#4ec9b0">Int</span>&gt; = .fehler(<span style="color:#c3e88d">"Nicht gefunden"</span>, code: <span style="color:#f78c6c">404</span>)
+
+<span style="color:#c792ea">switch</span> r1 {
+<span style="color:#c792ea">case</span> .erfolg(<span style="color:#c792ea">let</span> val):
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Wert: \(val)"</span>)
+<span style="color:#c792ea">case</span> .fehler(<span style="color:#c792ea">let</span> msg, <span style="color:#c792ea">let</span> code):
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Fehler \(code): \(msg)"</span>)
+}
+
+<span style="color:#546e7a">// if-case Pattern (ohne switch)</span>
+<span style="color:#c792ea">if</span> <span style="color:#c792ea">case</span> .erfolg(<span style="color:#c792ea">let</span> val) = r1 {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Erfolg: \(val)"</span>)
+}
+
+<span style="color:#546e7a">// guard-case</span>
+<span style="color:#c792ea">guard</span> <span style="color:#c792ea">case</span> .erfolg(<span style="color:#c792ea">let</span> val) = r1 <span style="color:#c792ea">else</span> { <span style="color:#c792ea">return</span> }
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Wert: \(val)"</span>)
+
+<span style="color:#546e7a">// CaseIterable (alle Cases als Array)</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">Farbe</span>: <span style="color:#4ec9b0">CaseIterable</span> {
+    <span style="color:#c792ea">case</span> rot, grün, blau
+}
+<span style="color:#4ec9b0">Farbe</span>.allCases.forEach { <span style="color:#82aaff">print</span>($<span style="color:#f78c6c">0</span>) }</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>Protocols – Protocol-Oriented Programming
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="protocols – protocol-oriented programming">
+  <div style="color:#c792ea;font-weight:700;font-size:12px;margin-bottom:8px">
+    Protocols – Protocol-Oriented Programming
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Protocols in Swift = Interfaces + Default-Implementierungen</span>
+<span style="color:#546e7a">// POP (Protocol-Oriented Programming) ist Swifts Paradigma!</span>
+
+<span style="color:#c792ea">protocol</span> <span style="color:#4ec9b0">Formbar</span> {
+    <span style="color:#c792ea">var</span> fläche: <span style="color:#4ec9b0">Double</span> { <span style="color:#c792ea">get</span> }
+    <span style="color:#c792ea">var</span> umfang: <span style="color:#4ec9b0">Double</span> { <span style="color:#c792ea">get</span> }
+    <span style="color:#c792ea">func</span> beschreibe() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span>   <span style="color:#546e7a">// Keine Implementierung</span>
+}
+
+<span style="color:#546e7a">// Default-Implementierung via Extension!</span>
+<span style="color:#c792ea">extension</span> <span style="color:#4ec9b0">Formbar</span> {
+    <span style="color:#c792ea">func</span> beschreibe() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        <span style="color:#c3e88d">"\(type(of: self)): Fläche=\(String(format: "</span>%<span style="color:#f78c6c">.2f</span><span style="color:#c3e88d">", fläche))"</span>
+    }
+}
+
+<span style="color:#546e7a">// Struct konformiert zu Protocol</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Kreis</span>: <span style="color:#4ec9b0">Formbar</span> {
+    <span style="color:#c792ea">let</span> radius: <span style="color:#4ec9b0">Double</span>
+    <span style="color:#c792ea">var</span> fläche: <span style="color:#4ec9b0">Double</span> { <span style="color:#4ec9b0">Double</span>.pi * radius * radius }
+    <span style="color:#c792ea">var</span> umfang: <span style="color:#4ec9b0">Double</span> { <span style="color:#f78c6c">2</span> * <span style="color:#4ec9b0">Double</span>.pi * radius }
+}
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Rechteck</span>: <span style="color:#4ec9b0">Formbar</span> {
+    <span style="color:#c792ea">let</span> breite, höhe: <span style="color:#4ec9b0">Double</span>
+    <span style="color:#c792ea">var</span> fläche: <span style="color:#4ec9b0">Double</span> { breite * höhe }
+    <span style="color:#c792ea">var</span> umfang: <span style="color:#4ec9b0">Double</span> { <span style="color:#f78c6c">2</span> * (breite + höhe) }
+}
+
+<span style="color:#546e7a">// Protocol Composition – mehrere Protocols gleichzeitig</span>
+<span style="color:#c792ea">protocol</span> <span style="color:#4ec9b0">Benennbar</span> { <span style="color:#c792ea">var</span> name: <span style="color:#4ec9b0">String</span> { <span style="color:#c792ea">get</span> } }
+
+<span style="color:#c792ea">func</span> verarbeite(form: <span style="color:#4ec9b0">Formbar</span> &amp; <span style="color:#4ec9b0">Benennbar</span>) {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"\(form.name): \(form.fläche)"</span>)
+}
+
+<span style="color:#546e7a">// Associated Types (wie Generics in Protocols)</span>
+<span style="color:#c792ea">protocol</span> <span style="color:#4ec9b0">Behälter</span> {
+    <span style="color:#c792ea">associatedtype</span> <span style="color:#4ec9b0">Element</span>
+    <span style="color:#c792ea">mutating</span> <span style="color:#c792ea">func</span> hinzufügen(_ item: <span style="color:#4ec9b0">Element</span>)
+    <span style="color:#c792ea">var</span> anzahl: <span style="color:#4ec9b0">Int</span> { <span style="color:#c792ea">get</span> }
+    <span style="color:#c792ea">subscript</span>(i: <span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Element</span> { <span style="color:#c792ea">get</span> }
+}
+
+<span style="color:#546e7a">// some (opaque type) – Compiler kennt genauen Typ</span>
+<span style="color:#c792ea">func</span> macheForm() <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">some</span> <span style="color:#4ec9b0">Formbar</span> {
+    <span style="color:#4ec9b0">Kreis</span>(radius: <span style="color:#f78c6c">5</span>)
+}
+
+<span style="color:#546e7a">// any (existential) – Laufzeit-Dispatch</span>
+<span style="color:#c792ea">func</span> zeige(form: <span style="color:#c792ea">any</span> <span style="color:#4ec9b0">Formbar</span>) {
+    <span style="color:#82aaff">print</span>(form.fläche)
+}
+
+<span style="color:#546e7a">// Standardbibliothek-Protocols</span>
+<span style="color:#546e7a">// Equatable, Hashable, Comparable, Codable, Identifiable, CustomStringConvertible</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-ty3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('ty3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>Extensions &amp; Generics
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="extensions &amp; generics">
+  <div style="color:#4ec9b0;font-weight:700;font-size:12px;margin-bottom:8px">
+    Extensions &amp; Generics
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Extensions: Bestehende Typen OHNE Subtyp erweitern!</span>
+
+<span style="color:#c792ea">extension</span> <span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">var</span> istEmail: <span style="color:#4ec9b0">Bool</span> {
+        contains(<span style="color:#c3e88d">"@"</span>) &amp;&amp; contains(<span style="color:#c3e88d">"."</span>)
+    }
+
+    <span style="color:#c792ea">func</span> wiederholt(_ n: <span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        <span style="color:#4ec9b0">String</span>(repeating: <span style="color:#c792ea">self</span>, count: n)
+    }
+
+    <span style="color:#c792ea">var</span> ersterBuchstabeGroß: <span style="color:#4ec9b0">String</span> {
+        <span style="color:#c792ea">guard</span> <span style="color:#c792ea">let</span> first = first <span style="color:#c792ea">else</span> { <span style="color:#c792ea">return</span> <span style="color:#c792ea">self</span> }
+        <span style="color:#c792ea">return</span> first.uppercased() + dropFirst()
+    }
+}
+
+<span style="color:#c3e88d">"alice@example.com"</span>.istEmail  <span style="color:#546e7a">// true</span>
+<span style="color:#c3e88d">"ab"</span>.wiederholt(<span style="color:#f78c6c">3</span>)            <span style="color:#546e7a">// "ababab"</span>
+<span style="color:#c3e88d">"hallo"</span>.ersterBuchstabeGroß  <span style="color:#546e7a">// "Hallo"</span>
+
+<span style="color:#546e7a">// Extension auf eigene Typen</span>
+<span style="color:#c792ea">extension</span> <span style="color:#4ec9b0">Kreis</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">func</span> einheit() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Kreis</span> {
+        <span style="color:#4ec9b0">Kreis</span>(radius: <span style="color:#f78c6c">1</span>)
+    }
+}
+
+<span style="color:#546e7a">// Extension mit Bedingung (Conditional Conformance)</span>
+<span style="color:#c792ea">extension</span> <span style="color:#4ec9b0">Array</span>: <span style="color:#4ec9b0">Formbar</span> <span style="color:#c792ea">where</span> <span style="color:#4ec9b0">Element</span> == <span style="color:#4ec9b0">Kreis</span> {
+    <span style="color:#c792ea">var</span> fläche: <span style="color:#4ec9b0">Double</span> { map(\.fläche).reduce(<span style="color:#f78c6c">0</span>, +) }
+    <span style="color:#c792ea">var</span> umfang: <span style="color:#4ec9b0">Double</span> { map(\.umfang).reduce(<span style="color:#f78c6c">0</span>, +) }
+}
+
+<span style="color:#546e7a">// ── GENERICS ─────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">func</span> tausche&lt;<span style="color:#4ec9b0">T</span>&gt;(_ a: <span style="color:#c792ea">inout</span> <span style="color:#4ec9b0">T</span>, _ b: <span style="color:#c792ea">inout</span> <span style="color:#4ec9b0">T</span>) {
+    <span style="color:#c792ea">let</span> temp = a; a = b; b = temp
+}
+
+<span style="color:#c792ea">func</span> maximum&lt;<span style="color:#4ec9b0">T</span>: <span style="color:#4ec9b0">Comparable</span>&gt;(_ a: <span style="color:#4ec9b0">T</span>, _ b: <span style="color:#4ec9b0">T</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">T</span> {
+    a &gt; b ? a : b
+}
+
+<span style="color:#546e7a">// Generische Struktur</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Stack</span>&lt;<span style="color:#4ec9b0">Element</span>&gt; {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> items: [<span style="color:#4ec9b0">Element</span>] = []
+    <span style="color:#c792ea">mutating</span> <span style="color:#c792ea">func</span> push(_ item: <span style="color:#4ec9b0">Element</span>) { items.append(item) }
+    <span style="color:#c792ea">mutating</span> <span style="color:#c792ea">func</span> pop() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Element</span>? { items.popLast() }
+    <span style="color:#c792ea">var</span> top: <span style="color:#4ec9b0">Element</span>? { items.last }
+    <span style="color:#c792ea">var</span> isEmpty: <span style="color:#4ec9b0">Bool</span> { items.isEmpty }
+}
+
+<span style="color:#c792ea">var</span> stack = <span style="color:#4ec9b0">Stack</span>&lt;<span style="color:#4ec9b0">Int</span>&gt;()
+stack.push(<span style="color:#f78c6c">1</span>); stack.push(<span style="color:#f78c6c">2</span>); stack.push(<span style="color:#f78c6c">3</span>)
+<span style="color:#82aaff">print</span>(stack.pop()!)  <span style="color:#546e7a">// 3</span>
+
+<span style="color:#546e7a">// Where-Klausel (Constraints)</span>
+<span style="color:#c792ea">func</span> enthält&lt;<span style="color:#4ec9b0">T</span>: <span style="color:#4ec9b0">Collection</span>&gt;(_ c: <span style="color:#4ec9b0">T</span>, _ el: <span style="color:#4ec9b0">T</span>.<span style="color:#4ec9b0">Element</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Bool</span>
+    <span style="color:#c792ea">where</span> <span style="color:#4ec9b0">T</span>.<span style="color:#4ec9b0">Element</span>: <span style="color:#4ec9b0">Equatable</span> {
+    c.contains(el)
+}
+
+<span style="color:#546e7a">// Primary Associated Types (Swift 5.7+)</span>
+<span style="color:#c792ea">func</span> summe(_ seq: <span style="color:#c792ea">some</span> <span style="color:#4ec9b0">Sequence</span>&lt;<span style="color:#4ec9b0">Int</span>&gt;) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> {
+    seq.reduce(<span style="color:#f78c6c">0</span>, +)
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-funktionen" class="tp">
+
+<div class="ac open" id="ac-fn0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>Funktionen &amp; Closures
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="funktionen &amp; closures">
+  <div style="color:#f05138;font-weight:700;font-size:12px;margin-bottom:8px">
+    Funktionen &amp; Closures
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// ── FUNKTIONEN ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Externe und interne Parameternamen</span>
+<span style="color:#c792ea">func</span> begrüße(person name: <span style="color:#4ec9b0">String</span>, aus ort: <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+    <span style="color:#c3e88d">"Hallo, \(name) aus \(ort)!"</span>
+}
+
+begrüße(person: <span style="color:#c3e88d">"Alice"</span>, aus: <span style="color:#c3e88d">"Berlin"</span>)  <span style="color:#546e7a">// Externer Name beim Aufruf!</span>
+
+<span style="color:#546e7a">// Defaultwerte</span>
+<span style="color:#c792ea">func</span> verbinde(host: <span style="color:#4ec9b0">String</span>, port: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">80</span>, ssl: <span style="color:#4ec9b0">Bool</span> = <span style="color:#c792ea">false</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+    <span style="color:#c3e88d">"\(ssl ? "</span>https<span style="color:#c3e88d">" : "</span>http<span style="color:#c3e88d">")://\(host):\(port)"</span>
+}
+
+verbinde(host: <span style="color:#c3e88d">"example.com"</span>)                    <span style="color:#546e7a">// http://example.com:80</span>
+verbinde(host: <span style="color:#c3e88d">"example.com"</span>, port: <span style="color:#f78c6c">443</span>, ssl: <span style="color:#c792ea">true</span>)
+
+<span style="color:#546e7a">// Variadic</span>
+<span style="color:#c792ea">func</span> summe(_ zahlen: <span style="color:#4ec9b0">Int</span><span style="color:#89ddff">...</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> {
+    zahlen.reduce(<span style="color:#f78c6c">0</span>, +)
+}
+summe(<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>)   <span style="color:#546e7a">// 15</span>
+
+<span style="color:#546e7a">// inout – Referenz übergeben</span>
+<span style="color:#c792ea">func</span> verdopple(_ n: <span style="color:#c792ea">inout</span> <span style="color:#4ec9b0">Int</span>) { n *= <span style="color:#f78c6c">2</span> }
+<span style="color:#c792ea">var</span> x = <span style="color:#f78c6c">5</span>
+verdopple(&amp;x)   <span style="color:#546e7a">// x = 10</span>
+
+<span style="color:#546e7a">// Mehrere Rückgabewerte via Tuple</span>
+<span style="color:#c792ea">func</span> minMax(_ arr: [<span style="color:#4ec9b0">Int</span>]) <span style="color:#89ddff">-&gt;</span> (<span style="color:#82aaff">min</span>: <span style="color:#4ec9b0">Int</span>, <span style="color:#82aaff">max</span>: <span style="color:#4ec9b0">Int</span>)? {
+    <span style="color:#c792ea">guard</span> !arr.isEmpty <span style="color:#c792ea">else</span> { <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span> }
+    <span style="color:#c792ea">return</span> (arr.<span style="color:#82aaff">min</span>()!, arr.<span style="color:#82aaff">max</span>()!)
+}
+<span style="color:#c792ea">let</span> (lo, hi) = minMax([<span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">5</span>, <span style="color:#f78c6c">9</span>])!
+
+<span style="color:#546e7a">// ── CLOSURES ─────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Vollständige Schreibweise</span>
+<span style="color:#c792ea">let</span> multipliziere = { (a: <span style="color:#4ec9b0">Int</span>, b: <span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> <span style="color:#c792ea">in</span>
+    a * b
+}
+
+<span style="color:#546e7a">// Kurzschreibweisen (Swift macht vieles inferierbar)</span>
+<span style="color:#c792ea">let</span> verdopple = { (x: <span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> <span style="color:#c792ea">in</span> x * <span style="color:#f78c6c">2</span> }   <span style="color:#546e7a">// explizit</span>
+<span style="color:#c792ea">let</span> verdopple2: (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = { x <span style="color:#c792ea">in</span> x * <span style="color:#f78c6c">2</span> }   <span style="color:#546e7a">// Typ außen</span>
+<span style="color:#c792ea">let</span> verdopple3: (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = { $<span style="color:#f78c6c">0</span> * <span style="color:#f78c6c">2</span> }        <span style="color:#546e7a">// $0 = erster Parameter</span>
+
+<span style="color:#546e7a">// Trailing Closure (wenn letztes Argument ein Closure)</span>
+[<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>].filter { $<span style="color:#f78c6c">0</span> &gt; <span style="color:#f78c6c">2</span> }      <span style="color:#546e7a">// [3, 4]</span>
+[<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>].map { $<span style="color:#f78c6c">0</span> * $<span style="color:#f78c6c">0</span> }           <span style="color:#546e7a">// [1, 4, 9]</span>
+[<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>].reduce(<span style="color:#f78c6c">0</span>) { $<span style="color:#f78c6c">0</span> + $<span style="color:#f78c6c">1</span> }     <span style="color:#546e7a">// 6</span>
+[<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>].reduce(<span style="color:#f78c6c">0</span>, +)              <span style="color:#546e7a">// 6 (Operator als Closure!)</span>
+
+<span style="color:#546e7a">// @escaping – Closure verlässt den Stack</span>
+<span style="color:#c792ea">func</span> asyncOperation(completion: <span style="color:#ff9800">@escaping</span> (<span style="color:#4ec9b0">Int</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Void</span>) {
+    <span style="color:#4ec9b0">DispatchQueue</span>.global().<span style="color:#c792ea">async</span> {
+        completion(<span style="color:#f78c6c">42</span>)
+    }
+}
+
+<span style="color:#546e7a">// Capture List – verhindert Retain Cycles</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">MeineKlasse</span> {
+    <span style="color:#c792ea">var</span> wert = <span style="color:#f78c6c">10</span>
+    <span style="color:#c792ea">lazy</span> <span style="color:#c792ea">var</span> closure: () <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> = { [<span style="color:#c792ea">weak</span> <span style="color:#c792ea">self</span>] <span style="color:#c792ea">in</span>
+        <span style="color:#c792ea">self</span><span style="color:#89ddff">?.</span>wert <span style="color:#89ddff">??</span> <span style="color:#f78c6c">0</span>   <span style="color:#546e7a">// weak: nil wenn Objekt freigegeben</span>
+    }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fn1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fn1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Optionals &amp; Pattern Matching
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="optionals &amp; pattern matching">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Optionals &amp; Pattern Matching
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Optionals – kein nil ohne ? im Typ!</span>
+<span style="color:#c792ea">var</span> name: <span style="color:#4ec9b0">String</span>? = <span style="color:#c792ea">nil</span>
+name = <span style="color:#c3e88d">"Alice"</span>
+
+<span style="color:#546e7a">// ── AUSPACKEN ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// 1. Optional Binding (if let / guard let)</span>
+<span style="color:#c792ea">if</span> <span style="color:#c792ea">let</span> n = name {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Name: \(n)"</span>)   <span style="color:#546e7a">// n ist hier String, nicht String?</span>
+}
+
+<span style="color:#546e7a">// Neuer Name nicht nötig (Shadowing, Swift 5.7+)</span>
+<span style="color:#c792ea">if</span> <span style="color:#c792ea">let</span> name {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Name: \(name)"</span>)
+}
+
+<span style="color:#546e7a">// 2. guard let – früher Abbruch</span>
+<span style="color:#c792ea">func</span> verarbeite(_ name: <span style="color:#4ec9b0">String</span>?) {
+    <span style="color:#c792ea">guard</span> <span style="color:#c792ea">let</span> name <span style="color:#c792ea">else</span> { <span style="color:#c792ea">return</span> }   <span style="color:#546e7a">// name ist jetzt String</span>
+    <span style="color:#82aaff">print</span>(name.uppercased())
+}
+
+<span style="color:#546e7a">// 3. Nil-Coalescing ??</span>
+<span style="color:#c792ea">let</span> anzeige = name <span style="color:#89ddff">??</span> <span style="color:#c3e88d">"Anonym"</span>
+
+<span style="color:#546e7a">// 4. Optional Chaining ?.</span>
+<span style="color:#c792ea">let</span> länge = name<span style="color:#89ddff">?.</span>count   <span style="color:#546e7a">// nil wenn name nil, sonst Int</span>
+
+<span style="color:#546e7a">// 5. Forced Unwrap ! (Vorsicht! Crash wenn nil)</span>
+<span style="color:#c792ea">let</span> sicher = name!   <span style="color:#546e7a">// nur wenn SICHER nicht nil</span>
+
+<span style="color:#546e7a">// ── PATTERN MATCHING ─────────────────────────────────────────────</span>
+<span style="color:#546e7a">// switch ist SEHR mächtig in Swift!</span>
+<span style="color:#c792ea">let</span> wert: <span style="color:#c792ea">Any</span> = <span style="color:#f78c6c">42</span>
+
+<span style="color:#c792ea">switch</span> wert {
+<span style="color:#c792ea">case</span> <span style="color:#c792ea">let</span> n <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">Int</span> <span style="color:#c792ea">where</span> n &gt; <span style="color:#f78c6c">0</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Positive Int: \(n)"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#c792ea">let</span> s <span style="color:#c792ea">as</span> <span style="color:#4ec9b0">String</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"String: \(s)"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#c792ea">is</span> <span style="color:#4ec9b0">Double</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Eine Double"</span>)
+<span style="color:#c792ea">default</span>:
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Unbekannt"</span>)
+}
+
+<span style="color:#546e7a">// Ranges in switch</span>
+<span style="color:#c792ea">switch</span> alter {
+<span style="color:#c792ea">case</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#f78c6c">13</span>:    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Kind"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#f78c6c">13..</span>&lt;<span style="color:#f78c6c">18</span>:   <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Teenager"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#f78c6c">18...</span>:     <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Erwachsen"</span>)
+<span style="color:#c792ea">default</span>:        <span style="color:#c792ea">break</span>
+}
+
+<span style="color:#546e7a">// Tuple in switch</span>
+<span style="color:#c792ea">let</span> punkt = (<span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>)
+<span style="color:#c792ea">switch</span> punkt {
+<span style="color:#c792ea">case</span> (<span style="color:#f78c6c">0</span>, <span style="color:#f78c6c">0</span>):        <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Ursprung"</span>)
+<span style="color:#c792ea">case</span> (<span style="color:#c792ea">let</span> x, <span style="color:#f78c6c">0</span>):   <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"X-Achse bei \(x)"</span>)
+<span style="color:#c792ea">case</span> (<span style="color:#f78c6c">0</span>, <span style="color:#c792ea">let</span> y):   <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Y-Achse bei \(y)"</span>)
+<span style="color:#c792ea">case</span> <span style="color:#c792ea">let</span> (x, y):   <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Irgendwo: (\(x), \(y))"</span>)
+}
+
+<span style="color:#546e7a">// ── RESULT TYPE ──────────────────────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">DateiError</span>: <span style="color:#4ec9b0">Error</span> {
+    <span style="color:#c792ea">case</span> nichtGefunden
+    <span style="color:#c792ea">case</span> keineBerechtigungen
+}
+
+<span style="color:#c792ea">func</span> leseDatei(_ pfad: <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Result</span>&lt;<span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">DateiError</span>&gt; {
+    <span style="color:#c792ea">guard</span> pfad.hasPrefix(<span style="color:#c3e88d">"/"</span>) <span style="color:#c792ea">else</span> { <span style="color:#c792ea">return</span> .failure(.nichtGefunden) }
+    <span style="color:#c792ea">return</span> .success(<span style="color:#c3e88d">"Inhalt von \(pfad)"</span>)
+}
+
+<span style="color:#c792ea">switch</span> leseDatei(<span style="color:#c3e88d">"/test.txt"</span>) {
+<span style="color:#c792ea">case</span> .success(<span style="color:#c792ea">let</span> inhalt): <span style="color:#82aaff">print</span>(inhalt)
+<span style="color:#c792ea">case</span> .failure(<span style="color:#c792ea">let</span> fehler): <span style="color:#82aaff">print</span>(fehler)
+}
+
+<span style="color:#546e7a">// get() – wirft wenn failure</span>
+<span style="color:#c792ea">let</span> inhalt = <span style="color:#c792ea">try</span>? leseDatei(<span style="color:#c3e88d">"/test.txt"</span>).<span style="color:#c792ea">get</span>()</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-fehler" class="tp">
+
+<div class="ac open" id="ac-fe0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fe0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>Fehlerbehandlung – do/try/catch
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="fehlerbehandlung – do/try/catch">
+  <div style="color:#f05138;font-weight:700;font-size:12px;margin-bottom:8px">
+    Fehlerbehandlung – do/try/catch
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Swift Fehlerbehandlung ist typsicher und explizit</span>
+
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">ValidationError</span>: <span style="color:#4ec9b0">Error</span> {
+    <span style="color:#c792ea">case</span> leer
+    <span style="color:#c792ea">case</span> zuKurz(mindestens: <span style="color:#4ec9b0">Int</span>)
+    <span style="color:#c792ea">case</span> ungültigesFormat
+    <span style="color:#c792ea">case</span> ungültigesAlter(alter: <span style="color:#4ec9b0">Int</span>)
+}
+
+<span style="color:#546e7a">// throws – Funktion kann werfen</span>
+<span style="color:#c792ea">func</span> validiereAlter(_ s: <span style="color:#4ec9b0">String</span>) <span style="color:#c792ea">throws</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> {
+    <span style="color:#c792ea">guard</span> !s.isEmpty <span style="color:#c792ea">else</span> { <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">ValidationError</span>.leer }
+
+    <span style="color:#c792ea">guard</span> <span style="color:#c792ea">let</span> n = <span style="color:#4ec9b0">Int</span>(s) <span style="color:#c792ea">else</span> { <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">ValidationError</span>.ungültigesFormat }
+
+    <span style="color:#c792ea">guard</span> n &gt;= <span style="color:#f78c6c">0</span> &amp;&amp; n &lt;= <span style="color:#f78c6c">150</span> <span style="color:#c792ea">else</span> {
+        <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">ValidationError</span>.ungültigesAlter(alter: n)
+    }
+
+    <span style="color:#c792ea">return</span> n
+}
+
+<span style="color:#546e7a">// Aufrufen mit do/try/catch</span>
+<span style="color:#c792ea">do</span> {
+    <span style="color:#c792ea">let</span> alter = <span style="color:#c792ea">try</span> validiereAlter(<span style="color:#c3e88d">"250"</span>)
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Alter: \(alter)"</span>)
+} <span style="color:#c792ea">catch</span> <span style="color:#4ec9b0">ValidationError</span>.leer {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Eingabe war leer"</span>)
+} <span style="color:#c792ea">catch</span> <span style="color:#4ec9b0">ValidationError</span>.ungültigesAlter(<span style="color:#c792ea">let</span> n) {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Ungültiges Alter: \(n)"</span>)  <span style="color:#546e7a">// Associated Value!</span>
+} <span style="color:#c792ea">catch</span> {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Fehler: \(error)"</span>)       <span style="color:#546e7a">// error = alle anderen</span>
+}
+
+<span style="color:#546e7a">// try? – nil wenn Fehler (kein throw nach oben)</span>
+<span style="color:#c792ea">let</span> alter = <span style="color:#c792ea">try</span>? validiereAlter(<span style="color:#c3e88d">"30"</span>)  <span style="color:#546e7a">// Optional&lt;Int&gt;</span>
+
+<span style="color:#546e7a">// try! – Crash wenn Fehler (nur wenn sicher!)</span>
+<span style="color:#c792ea">let</span> alter2 = <span style="color:#c792ea">try</span>! validiereAlter(<span style="color:#c3e88d">"25"</span>)  <span style="color:#546e7a">// Int (kein Optional)</span>
+
+<span style="color:#546e7a">// ── DEFER ────────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Läuft IMMER am Ende des Scopes (wie Go's defer)</span>
+<span style="color:#c792ea">func</span> mitDatei() <span style="color:#c792ea">throws</span> {
+    <span style="color:#c792ea">let</span> datei = <span style="color:#c792ea">try</span> öffne(<span style="color:#c3e88d">"test.txt"</span>)
+    <span style="color:#c792ea">defer</span> { schließe(datei) }   <span style="color:#546e7a">// Wird IMMER ausgeführt</span>
+    <span style="color:#c792ea">defer</span> { <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Aufräumen"</span>) }
+    <span style="color:#546e7a">// Mehrere defers: LIFO-Reihenfolge</span>
+
+    <span style="color:#c792ea">try</span> schreibe(datei, <span style="color:#c3e88d">"Inhalt"</span>)
+    <span style="color:#546e7a">// datei wird geschlossen auch wenn Fehler!</span>
+}
+
+<span style="color:#546e7a">// ── CUSTOM ERROR MIT LOCALIZATION ─────────────────────────────────</span>
+<span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">NetzwerkFehler</span>: <span style="color:#4ec9b0">LocalizedError</span> {
+    <span style="color:#c792ea">case</span> keinInternet
+    <span style="color:#c792ea">case</span> timeout(sekunden: <span style="color:#4ec9b0">Int</span>)
+    <span style="color:#c792ea">case</span> serverFehler(code: <span style="color:#4ec9b0">Int</span>)
+
+    <span style="color:#c792ea">var</span> errorDescription: <span style="color:#4ec9b0">String</span>? {
+        <span style="color:#c792ea">switch</span> <span style="color:#c792ea">self</span> {
+        <span style="color:#c792ea">case</span> .keinInternet: <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Keine Internetverbindung"</span>
+        <span style="color:#c792ea">case</span> .timeout(<span style="color:#c792ea">let</span> s): <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Timeout nach \(s) Sekunden"</span>
+        <span style="color:#c792ea">case</span> .serverFehler(<span style="color:#c792ea">let</span> c): <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"Serverfehler: \(c)"</span>
+        }
+    }
+}</pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-fe1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('fe1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Property Observers &amp; Computed Properties
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="property observers &amp; computed properties">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Property Observers &amp; Computed Properties
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Temperatur</span> {
+    <span style="color:#546e7a">// Stored Property mit Observers</span>
+    <span style="color:#c792ea">var</span> celsius: <span style="color:#4ec9b0">Double</span> {
+        <span style="color:#c792ea">willSet</span> { <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Wird gesetzt: \(newValue)"</span>) }
+        <span style="color:#c792ea">didSet</span>  { <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"War: \(oldValue), Neu: \(celsius)"</span>) }
+    }
+
+    <span style="color:#546e7a">// Computed Properties (kein Speicher!)</span>
+    <span style="color:#c792ea">var</span> fahrenheit: <span style="color:#4ec9b0">Double</span> {
+        <span style="color:#c792ea">get</span> { celsius * <span style="color:#f78c6c">9</span>/<span style="color:#f78c6c">5</span> + <span style="color:#f78c6c">32</span> }
+        <span style="color:#c792ea">set</span> { celsius = (newValue - <span style="color:#f78c6c">32</span>) * <span style="color:#f78c6c">5</span>/<span style="color:#f78c6c">9</span> }
+    }
+
+    <span style="color:#c792ea">var</span> kelvin: <span style="color:#4ec9b0">Double</span> {
+        <span style="color:#c792ea">get</span> { celsius + <span style="color:#f78c6c">273.15</span> }
+        <span style="color:#c792ea">set</span> { celsius = newValue - <span style="color:#f78c6c">273.15</span> }
+    }
+
+    <span style="color:#546e7a">// Read-only Computed Property (nur get)</span>
+    <span style="color:#c792ea">var</span> beschreibung: <span style="color:#4ec9b0">String</span> {
+        celsius &lt; <span style="color:#f78c6c">0</span> ? <span style="color:#c3e88d">"Gefroren"</span> : celsius &lt; <span style="color:#f78c6c">20</span> ? <span style="color:#c3e88d">"Kalt"</span> : <span style="color:#c3e88d">"Warm"</span>
+    }
+
+    <span style="color:#c792ea">init</span>(celsius: <span style="color:#4ec9b0">Double</span> = <span style="color:#f78c6c">0</span>) {
+        <span style="color:#c792ea">self</span>.celsius = celsius
+    }
+}
+
+<span style="color:#c792ea">var</span> t = <span style="color:#4ec9b0">Temperatur</span>(celsius: <span style="color:#f78c6c">100</span>)
+<span style="color:#82aaff">print</span>(t.fahrenheit)    <span style="color:#546e7a">// 212.0</span>
+t.kelvin = <span style="color:#f78c6c">0</span>           <span style="color:#546e7a">// Setzt celsius auf -273.15</span>
+
+<span style="color:#546e7a">// ── LAZY PROPERTIES ──────────────────────────────────────────────</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">MeineKlasse</span> {
+    <span style="color:#c792ea">lazy</span> <span style="color:#c792ea">var</span> teurer <span style="color:#4ec9b0">Wert</span>: [<span style="color:#4ec9b0">Int</span>] = {
+        <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Wird berechnet!"</span>)
+        <span style="color:#c792ea">return</span> <span style="color:#4ec9b0">Array</span>(<span style="color:#f78c6c">1...1_000_000</span>)
+    }()
+    <span style="color:#546e7a">// Erst berechnet wenn teuerWert das erste Mal genutzt wird</span>
+}
+
+<span style="color:#546e7a">// ── PROPERTY WRAPPERS ─────────────────────────────────────────────</span>
+<span style="color:#ff9800">@propertyWrapper</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Begrenzt</span>&lt;<span style="color:#4ec9b0">T</span>: <span style="color:#4ec9b0">Comparable</span>&gt; {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> wert: <span style="color:#4ec9b0">T</span>
+    <span style="color:#c792ea">let</span> <span style="color:#82aaff">min</span>: <span style="color:#4ec9b0">T</span>, <span style="color:#82aaff">max</span>: <span style="color:#4ec9b0">T</span>
+
+    <span style="color:#c792ea">var</span> wrappedValue: <span style="color:#4ec9b0">T</span> {
+        <span style="color:#c792ea">get</span> { wert }
+        <span style="color:#c792ea">set</span> { wert = <span style="color:#4ec9b0">Swift</span>.<span style="color:#82aaff">min</span>(<span style="color:#82aaff">max</span>, <span style="color:#4ec9b0">Swift</span>.<span style="color:#82aaff">max</span>(<span style="color:#82aaff">min</span>, newValue)) }
+    }
+
+    <span style="color:#c792ea">init</span>(wrappedValue: <span style="color:#4ec9b0">T</span>, <span style="color:#82aaff">min</span>: <span style="color:#4ec9b0">T</span>, <span style="color:#82aaff">max</span>: <span style="color:#4ec9b0">T</span>) {
+        <span style="color:#c792ea">self</span>.<span style="color:#82aaff">min</span> = <span style="color:#82aaff">min</span>; <span style="color:#c792ea">self</span>.<span style="color:#82aaff">max</span> = <span style="color:#82aaff">max</span>
+        <span style="color:#c792ea">self</span>.wert = <span style="color:#4ec9b0">Swift</span>.<span style="color:#82aaff">min</span>(<span style="color:#82aaff">max</span>, <span style="color:#4ec9b0">Swift</span>.<span style="color:#82aaff">max</span>(<span style="color:#82aaff">min</span>, wrappedValue))
+    }
+}
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Einstellungen</span> {
+    <span style="color:#ff9800">@Begrenzt</span>(<span style="color:#82aaff">min</span>: <span style="color:#f78c6c">0</span>, <span style="color:#82aaff">max</span>: <span style="color:#f78c6c">100</span>) <span style="color:#c792ea">var</span> lautstärke: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">50</span>
+    <span style="color:#ff9800">@Begrenzt</span>(<span style="color:#82aaff">min</span>: <span style="color:#f78c6c">1</span>, <span style="color:#82aaff">max</span>: <span style="color:#f78c6c">10</span>)  <span style="color:#c792ea">var</span> zoom: <span style="color:#4ec9b0">Double</span> = <span style="color:#f78c6c">1.0</span>
+}
+
+<span style="color:#c792ea">var</span> e = <span style="color:#4ec9b0">Einstellungen</span>()
+e.lautstärke = <span style="color:#f78c6c">150</span>   <span style="color:#546e7a">// Automatisch begrenzt auf 100</span>
+<span style="color:#82aaff">print</span>(e.lautstärke)  <span style="color:#546e7a">// 100</span></pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-concurrency" class="tp">
+
+<div class="ac open" id="ac-co0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>async/await &amp; Structured Concurrency
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    
+<div class="cd" data-s="async/await &amp; structured concurrency">
+  <div style="color:#f05138;font-weight:700;font-size:12px;margin-bottom:8px">
+    async/await &amp; Structured Concurrency
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> <span style="color:#4ec9b0">Foundation</span>
+
+<span style="color:#546e7a">// ── ASYNC/AWAIT ───────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// async markiert eine Funktion die await verwenden kann</span>
+<span style="color:#c792ea">func</span> holeDaten(von url: <span style="color:#4ec9b0">URL</span>) <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Data</span> {
+    <span style="color:#c792ea">let</span> (data, _) = <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">URLSession</span>.shared.data(from: url)
+    <span style="color:#c792ea">return</span> data
+}
+
+<span style="color:#546e7a">// Aufruf</span>
+<span style="color:#c792ea">func</span> ladeAlles() <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> {
+    <span style="color:#c792ea">let</span> url = <span style="color:#4ec9b0">URL</span>(string: <span style="color:#c3e88d">"https://api.example.com"</span>)!
+    <span style="color:#c792ea">let</span> daten = <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> holeDaten(von: url)
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Erhalten: \(daten.count) Bytes"</span>)
+}
+
+<span style="color:#546e7a">// ── STRUCTURED CONCURRENCY ───────────────────────────────────────</span>
+<span style="color:#c792ea">func</span> parallel() <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> {
+    <span style="color:#546e7a">// async let – startet sofort, await holt Ergebnis</span>
+    <span style="color:#c792ea">async</span> <span style="color:#c792ea">let</span> bild   = ladeBild(url: bildURL)
+    <span style="color:#c792ea">async</span> <span style="color:#c792ea">let</span> profil = ladeProfil(id: <span style="color:#f78c6c">42</span>)
+    <span style="color:#c792ea">async</span> <span style="color:#c792ea">let</span> stats  = ladeStatistik()
+
+    <span style="color:#546e7a">// Alle drei laufen PARALLEL!</span>
+    <span style="color:#c792ea">let</span> (b, p, s) = <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> (bild, profil, stats)
+    <span style="color:#82aaff">print</span>(b, p, s)
+}
+
+<span style="color:#546e7a">// TaskGroup – dynamische Anzahl paralleler Tasks</span>
+<span style="color:#c792ea">func</span> ladeAlleNutzer() <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> <span style="color:#89ddff">-&gt;</span> [<span style="color:#4ec9b0">User</span>] {
+    <span style="color:#c792ea">let</span> ids = [<span style="color:#f78c6c">1</span>, <span style="color:#f78c6c">2</span>, <span style="color:#f78c6c">3</span>, <span style="color:#f78c6c">4</span>, <span style="color:#f78c6c">5</span>]
+
+    <span style="color:#c792ea">return</span> <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> withThrowingTaskGroup(of: <span style="color:#4ec9b0">User</span>.<span style="color:#c792ea">self</span>) { group <span style="color:#c792ea">in</span>
+        <span style="color:#c792ea">for</span> id <span style="color:#c792ea">in</span> ids {
+            group.addTask { <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> ladeNutzer(id: id) }
+        }
+
+        <span style="color:#c792ea">var</span> users: [<span style="color:#4ec9b0">User</span>] = []
+        <span style="color:#c792ea">for</span> <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> user <span style="color:#c792ea">in</span> group {
+            users.append(user)
+        }
+        <span style="color:#c792ea">return</span> users
+    }
+}
+
+<span style="color:#546e7a">// Task { } – nicht-async Kontext → async</span>
+<span style="color:#4ec9b0">Task</span> {
+    <span style="color:#c792ea">let</span> result = <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> ladeAlles()
+}
+
+<span style="color:#546e7a">// Task.sleep – Pause ohne Thread zu blockieren!</span>
+<span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">Task</span>.sleep(<span style="color:#c792ea">for</span>: .seconds(<span style="color:#f78c6c">1</span>))
+
+<span style="color:#546e7a">// ── CANCELLATION ─────────────────────────────────────────────────</span>
+<span style="color:#c792ea">func</span> abbruchbar() <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> {
+    <span style="color:#c792ea">for</span> i <span style="color:#c792ea">in</span> <span style="color:#f78c6c">0..</span>&lt;<span style="color:#f78c6c">100</span> {
+        <span style="color:#c792ea">try</span> <span style="color:#4ec9b0">Task</span>.checkCancellation()   <span style="color:#546e7a">// Wirft wenn abgebrochen</span>
+        <span style="color:#c792ea">await</span> verarbeite(i)
+    }
+}
+
+<span style="color:#c792ea">let</span> task = <span style="color:#4ec9b0">Task</span> { <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> abbruchbar() }
+task.cancel()   <span style="color:#546e7a">// Abbrechbar</span></pre>
+</div>
+  </div>
+</div>
+
+<div class="ac" id="ac-co1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('co1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Actors – sichere Concurrency
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    
+<div class="cd" data-s="actors – sichere concurrency">
+  <div style="color:#4fc3f7;font-weight:700;font-size:12px;margin-bottom:8px">
+    Actors – sichere Concurrency
+  </div>
+  <pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Actors schützen Mutablen State vor Data Races!</span>
+<span style="color:#546e7a">// Swift 6: Strikte Concurrency-Prüfung</span>
+
+<span style="color:#c792ea">actor</span> <span style="color:#4ec9b0">BankKonto</span> {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> kontostand: <span style="color:#4ec9b0">Double</span>
+
+    <span style="color:#c792ea">init</span>(anfangsBetrag: <span style="color:#4ec9b0">Double</span>) {
+        <span style="color:#c792ea">self</span>.kontostand = anfangsBetrag
+    }
+
+    <span style="color:#546e7a">// Alle Methoden im Actor sind automatisch isoliert!</span>
+    <span style="color:#c792ea">func</span> einzahlen(_ betrag: <span style="color:#4ec9b0">Double</span>) {
+        kontostand += betrag
+    }
+
+    <span style="color:#c792ea">func</span> abheben(_ betrag: <span style="color:#4ec9b0">Double</span>) <span style="color:#c792ea">throws</span> {
+        <span style="color:#c792ea">guard</span> kontostand &gt;= betrag <span style="color:#c792ea">else</span> {
+            <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">KontoError</span>.nichtGenugGeld
+        }
+        kontostand -= betrag
+    }
+
+    <span style="color:#546e7a">// nonisolated – kann ohne await aufgerufen werden</span>
+    <span style="color:#c792ea">nonisolated</span> <span style="color:#c792ea">var</span> beschreibung: <span style="color:#4ec9b0">String</span> {
+        <span style="color:#c3e88d">"BankKonto"</span>
+    }
+
+    <span style="color:#c792ea">var</span> aktuell: <span style="color:#4ec9b0">Double</span> { kontostand }
+}
+
+<span style="color:#546e7a">// Verwendung: IMMER await für Actor-Methoden!</span>
+<span style="color:#c792ea">let</span> konto = <span style="color:#4ec9b0">BankKonto</span>(anfangsBetrag: <span style="color:#f78c6c">1000</span>)
+<span style="color:#c792ea">await</span> konto.einzahlen(<span style="color:#f78c6c">500</span>)
+<span style="color:#c792ea">let</span> stand = <span style="color:#c792ea">await</span> konto.aktuell   <span style="color:#546e7a">// 1500</span>
+
+<span style="color:#546e7a">// ── @MainActor ────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Für UI-Updates – immer auf dem Main-Thread!</span>
+<span style="color:#ff9800">@MainActor</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ViewModel</span>: <span style="color:#4ec9b0">ObservableObject</span> {
+    <span style="color:#ff9800">@Published</span> <span style="color:#c792ea">var</span> text = <span style="color:#c3e88d">""</span>
+
+    <span style="color:#c792ea">func</span> ladeDaten() <span style="color:#c792ea">async</span> {
+        <span style="color:#c792ea">let</span> daten = <span style="color:#c792ea">await</span> holeDaten()
+        text = daten   <span style="color:#546e7a">// Auf Main-Thread – sicher!</span>
+    }
+}
+
+<span style="color:#546e7a">// Funktion auf Main-Thread ausführen</span>
+<span style="color:#ff9800">@MainActor</span>
+<span style="color:#c792ea">func</span> aktualisierUI() {
+    <span style="color:#546e7a">// Läuft auf Main-Thread</span>
+}
+
+<span style="color:#546e7a">// ── SENDABLE ─────────────────────────────────────────────────────</span>
+<span style="color:#546e7a">// Sendable = sicher zwischen Tasks zu teilen</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">SafeData</span>: <span style="color:#4ec9b0">Sendable</span> {
+    <span style="color:#c792ea">let</span> wert: <span style="color:#4ec9b0">Int</span>
+    <span style="color:#c792ea">let</span> text: <span style="color:#4ec9b0">String</span>
+}   <span style="color:#546e7a">// Automatisch Sendable wenn alle Properties Sendable sind</span>
+
+<span style="color:#546e7a">// @unchecked Sendable (nur wenn man weiß was man tut)</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">ThreadSafeCache</span>: <span style="color:#ff9800">@unchecked</span> <span style="color:#4ec9b0">Sendable</span> {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">let</span> lock = <span style="color:#4ec9b0">NSLock</span>()
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> cache: [<span style="color:#4ec9b0">String</span>: <span style="color:#c792ea">Any</span>] = [:]
+}</pre>
+</div>
+  </div>
+</div>
+</div>
+  <div id="tp-stdlib" class="tp">
+
+<div class="ac open" id="ac-lib0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>String-Methoden
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-0" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m=".count" data-d="anzahl zeichen (unicode-korrekt!)">
+      <td style="width:230px"><code style="color:#f05138">.count</code></td>
+      <td style="color:#6c7a8e">Anzahl Zeichen (Unicode-korrekt!)</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".count → 5</td>
+    </tr>
+    <tr class="cr" data-m=".isempty" data-d="leer?">
+      <td style="width:230px"><code style="color:#f05138">.isEmpty</code></td>
+      <td style="color:#6c7a8e">Leer?</td>
+      <td style="color:#c3e88d;font-size:11px">"".isEmpty → true</td>
+    </tr>
+    <tr class="cr" data-m=".uppercased()" data-d="großbuchstaben">
+      <td style="width:230px"><code style="color:#f05138">.uppercased()</code></td>
+      <td style="color:#6c7a8e">Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo".uppercased() → "HALLO"</td>
+    </tr>
+    <tr class="cr" data-m=".lowercased()" data-d="kleinbuchstaben">
+      <td style="width:230px"><code style="color:#f05138">.lowercased()</code></td>
+      <td style="color:#6c7a8e">Kleinbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".capitalized" data-d="wörter mit großbuchstaben">
+      <td style="width:230px"><code style="color:#f05138">.capitalized</code></td>
+      <td style="color:#6c7a8e">Wörter mit Großbuchstaben</td>
+      <td style="color:#c3e88d;font-size:11px">"hallo welt".capitalized → "Hallo Welt"</td>
+    </tr>
+    <tr class="cr" data-m=".contains(_:)" data-d="enthält substring?">
+      <td style="width:230px"><code style="color:#f05138">.contains(_:)</code></td>
+      <td style="color:#6c7a8e">Enthält Substring?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".contains("all") → true</td>
+    </tr>
+    <tr class="cr" data-m=".hasprefix(_:)" data-d="beginnt mit?">
+      <td style="width:230px"><code style="color:#f05138">.hasPrefix(_:)</code></td>
+      <td style="color:#6c7a8e">Beginnt mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".hasPrefix("H") → true</td>
+    </tr>
+    <tr class="cr" data-m=".hassuffix(_:)" data-d="endet mit?">
+      <td style="width:230px"><code style="color:#f05138">.hasSuffix(_:)</code></td>
+      <td style="color:#6c7a8e">Endet mit?</td>
+      <td style="color:#c3e88d;font-size:11px">"Hi".hasSuffix("i") → true</td>
+    </tr>
+    <tr class="cr" data-m=".trimmingcharacters(in:)" data-d="whitespace entfernen">
+      <td style="width:230px"><code style="color:#f05138">.trimmingCharacters(in:)</code></td>
+      <td style="color:#6c7a8e">Whitespace entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">s.trimmingCharacters(in: .whitespaces)</td>
+    </tr>
+    <tr class="cr" data-m=".components(separatedby:)" data-d="aufteilen → [string]">
+      <td style="width:230px"><code style="color:#f05138">.components(separatedBy:)</code></td>
+      <td style="color:#6c7a8e">Aufteilen → [String]</td>
+      <td style="color:#c3e88d;font-size:11px">"a,b".components(separatedBy: ",")</td>
+    </tr>
+    <tr class="cr" data-m=".joined(separator:)" data-d="verbinden">
+      <td style="width:230px"><code style="color:#f05138">.joined(separator:)</code></td>
+      <td style="color:#6c7a8e">Verbinden</td>
+      <td style="color:#c3e88d;font-size:11px">["a","b"].joined(separator: ",")</td>
+    </tr>
+    <tr class="cr" data-m=".replacingoccurrences(of:with:)" data-d="ersetzen">
+      <td style="width:230px"><code style="color:#f05138">.replacingOccurrences(of:with:)</code></td>
+      <td style="color:#6c7a8e">Ersetzen</td>
+      <td style="color:#c3e88d;font-size:11px">s.replacingOccurrences(of:"a",with:"b")</td>
+    </tr>
+    <tr class="cr" data-m=".range(of:)" data-d="range suchen">
+      <td style="width:230px"><code style="color:#f05138">.range(of:)</code></td>
+      <td style="color:#6c7a8e">Range suchen</td>
+      <td style="color:#c3e88d;font-size:11px">Optional&lt;Range&lt;String.Index&gt;&gt;</td>
+    </tr>
+    <tr class="cr" data-m=".prefix(_:)" data-d="erste n zeichen">
+      <td style="width:230px"><code style="color:#f05138">.prefix(_:)</code></td>
+      <td style="color:#6c7a8e">Erste n Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".prefix(3) → "Hal"</td>
+    </tr>
+    <tr class="cr" data-m=".suffix(_:)" data-d="letzte n zeichen">
+      <td style="width:230px"><code style="color:#f05138">.suffix(_:)</code></td>
+      <td style="color:#6c7a8e">Letzte n Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".suffix(3) → "llo"</td>
+    </tr>
+    <tr class="cr" data-m=".dropfirst() / droplast()" data-d="erste/letzte entfernen">
+      <td style="width:230px"><code style="color:#f05138">.dropFirst() / dropLast()</code></td>
+      <td style="color:#6c7a8e">Erste/Letzte entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">"Hallo".dropFirst() → "allo"</td>
+    </tr>
+    <tr class="cr" data-m="string(format:)" data-d="printf-ähnlich">
+      <td style="width:230px"><code style="color:#f05138">String(format:)</code></td>
+      <td style="color:#6c7a8e">Printf-ähnlich</td>
+      <td style="color:#c3e88d;font-size:11px">String(format: "%.2f", 3.14) → "3.14"</td>
+    </tr>
+    <tr class="cr" data-m=".split(separator:)" data-d="aufteilen nach zeichen">
+      <td style="width:230px"><code style="color:#f05138">.split(separator:)</code></td>
+      <td style="color:#6c7a8e">Aufteilen nach Zeichen</td>
+      <td style="color:#c3e88d;font-size:11px">"a b c".split(separator: " ")</td>
+    </tr>
+    <tr class="cr" data-m="character.isletter" data-d="ist buchstabe?">
+      <td style="width:230px"><code style="color:#f05138">Character.isLetter</code></td>
+      <td style="color:#6c7a8e">Ist Buchstabe?</td>
+      <td style="color:#c3e88d;font-size:11px">"A".first!.isLetter → true</td>
+    </tr>
+    <tr class="cr" data-m="character.isnumber" data-d="ist ziffer?">
+      <td style="width:230px"><code style="color:#f05138">Character.isNumber</code></td>
+      <td style="color:#6c7a8e">Ist Ziffer?</td>
+      <td style="color:#c3e88d;font-size:11px">"5".first!.isNumber → true</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+
+<div class="ac" id="ac-lib1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('lib1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>Collection-Methoden
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <input class="sb" id="coll-s-1" type="text" placeholder="🔍 suchen…" style="margin-top:4px">
+<table>
+  <thead><tr><th>Funktion / Methode</th><th>Beschreibung</th><th>Beispiel</th></tr></thead>
+  <tbody>
+    <tr class="cr" data-m=".count" data-d="anzahl elemente">
+      <td style="width:230px"><code style="color:#4fc3f7">.count</code></td>
+      <td style="color:#6c7a8e">Anzahl Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].count → 3</td>
+    </tr>
+    <tr class="cr" data-m=".isempty" data-d="leer?">
+      <td style="width:230px"><code style="color:#4fc3f7">.isEmpty</code></td>
+      <td style="color:#6c7a8e">Leer?</td>
+      <td style="color:#c3e88d;font-size:11px">[].isEmpty → true</td>
+    </tr>
+    <tr class="cr" data-m=".first / .last" data-d="erstes/letztes (optional!)">
+      <td style="width:230px"><code style="color:#4fc3f7">.first / .last</code></td>
+      <td style="color:#6c7a8e">Erstes/Letztes (Optional!)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].first → Optional(1)</td>
+    </tr>
+    <tr class="cr" data-m=".first(where:)" data-d="erstes passendes element">
+      <td style="width:230px"><code style="color:#4fc3f7">.first(where:)</code></td>
+      <td style="color:#6c7a8e">Erstes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].first { $0 &gt; 1 } → Optional(2)</td>
+    </tr>
+    <tr class="cr" data-m=".last(where:)" data-d="letztes passendes element">
+      <td style="width:230px"><code style="color:#4fc3f7">.last(where:)</code></td>
+      <td style="color:#6c7a8e">Letztes passendes Element</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".contains(_:)" data-d="enthält element?">
+      <td style="width:230px"><code style="color:#4fc3f7">.contains(_:)</code></td>
+      <td style="color:#6c7a8e">Enthält Element?</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].contains(2) → true</td>
+    </tr>
+    <tr class="cr" data-m=".contains(where:)" data-d="enthält passendes element?">
+      <td style="width:230px"><code style="color:#4fc3f7">.contains(where:)</code></td>
+      <td style="color:#6c7a8e">Enthält passendes Element?</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].contains { $0 &gt; 2 } → true</td>
+    </tr>
+    <tr class="cr" data-m=".allsatisfy(_:)" data-d="alle erfüllen bedingung?">
+      <td style="width:230px"><code style="color:#4fc3f7">.allSatisfy(_:)</code></td>
+      <td style="color:#6c7a8e">Alle erfüllen Bedingung?</td>
+      <td style="color:#c3e88d;font-size:11px">[2,4,6].allSatisfy { $0.isMultiple(of:2) }</td>
+    </tr>
+    <tr class="cr" data-m=".map(_:)" data-d="transformieren → [t]">
+      <td style="width:230px"><code style="color:#4fc3f7">.map(_:)</code></td>
+      <td style="color:#6c7a8e">Transformieren → [T]</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].map { $0 * 2 } → [2,4,6]</td>
+    </tr>
+    <tr class="cr" data-m=".compactmap(_:)" data-d="map + nil entfernen">
+      <td style="width:230px"><code style="color:#4fc3f7">.compactMap(_:)</code></td>
+      <td style="color:#6c7a8e">Map + nil entfernen</td>
+      <td style="color:#c3e88d;font-size:11px">["1","a","2"].compactMap { Int($0) }</td>
+    </tr>
+    <tr class="cr" data-m=".flatmap(_:)" data-d="map + flatten">
+      <td style="width:230px"><code style="color:#4fc3f7">.flatMap(_:)</code></td>
+      <td style="color:#6c7a8e">Map + Flatten</td>
+      <td style="color:#c3e88d;font-size:11px">[[1,2],[3]].flatMap { $0 } → [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".filter(_:)" data-d="filtern → [t]">
+      <td style="width:230px"><code style="color:#4fc3f7">.filter(_:)</code></td>
+      <td style="color:#6c7a8e">Filtern → [T]</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3,4].filter { $0 &gt; 2 } → [3,4]</td>
+    </tr>
+    <tr class="cr" data-m=".reduce(_:_:)" data-d="akkumulieren">
+      <td style="width:230px"><code style="color:#4fc3f7">.reduce(_:_:)</code></td>
+      <td style="color:#6c7a8e">Akkumulieren</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].reduce(0, +) → 6</td>
+    </tr>
+    <tr class="cr" data-m=".sorted()" data-d="aufsteigend sortiert">
+      <td style="width:230px"><code style="color:#4fc3f7">.sorted()</code></td>
+      <td style="color:#6c7a8e">Aufsteigend sortiert</td>
+      <td style="color:#c3e88d;font-size:11px">[3,1,2].sorted() → [1,2,3]</td>
+    </tr>
+    <tr class="cr" data-m=".sorted(by:)" data-d="eigene sortierung">
+      <td style="width:230px"><code style="color:#4fc3f7">.sorted(by:)</code></td>
+      <td style="color:#6c7a8e">Eigene Sortierung</td>
+      <td style="color:#c3e88d;font-size:11px">arr.sorted { $0.name &lt; $1.name }</td>
+    </tr>
+    <tr class="cr" data-m=".foreach(_:)" data-d="iterieren">
+      <td style="width:230px"><code style="color:#4fc3f7">.forEach(_:)</code></td>
+      <td style="color:#6c7a8e">Iterieren</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].forEach { print($0) }</td>
+    </tr>
+    <tr class="cr" data-m=".enumerated()" data-d="index + wert">
+      <td style="width:230px"><code style="color:#4fc3f7">.enumerated()</code></td>
+      <td style="color:#6c7a8e">Index + Wert</td>
+      <td style="color:#c3e88d;font-size:11px">for (i,v) in arr.enumerated()</td>
+    </tr>
+    <tr class="cr" data-m=".zip(_:)" data-d="reißverschluss">
+      <td style="width:230px"><code style="color:#4fc3f7">.zip(_:)</code></td>
+      <td style="color:#6c7a8e">Reißverschluss</td>
+      <td style="color:#c3e88d;font-size:11px">zip([1,2],[3,4]) → [(1,3),(2,4)]</td>
+    </tr>
+    <tr class="cr" data-m=".prefix(_:) / suffix(_:)" data-d="erste/letzte n elemente">
+      <td style="width:230px"><code style="color:#4fc3f7">.prefix(_:) / suffix(_:)</code></td>
+      <td style="color:#6c7a8e">Erste/Letzte n Elemente</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3,4].prefix(2) → [1,2]</td>
+    </tr>
+    <tr class="cr" data-m=".drop(while:)" data-d="elemente vorne weglassen">
+      <td style="width:230px"><code style="color:#4fc3f7">.drop(while:)</code></td>
+      <td style="color:#6c7a8e">Elemente vorne weglassen</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3,4].drop { $0 &lt; 3 } → [3,4]</td>
+    </tr>
+    <tr class="cr" data-m=".min() / max()" data-d="min/max (optional)">
+      <td style="width:230px"><code style="color:#4fc3f7">.min() / max()</code></td>
+      <td style="color:#6c7a8e">Min/Max (Optional)</td>
+      <td style="color:#c3e88d;font-size:11px">[3,1,2].min() → Optional(1)</td>
+    </tr>
+    <tr class="cr" data-m=".shuffled()" data-d="zufällige reihenfolge">
+      <td style="width:230px"><code style="color:#4fc3f7">.shuffled()</code></td>
+      <td style="color:#6c7a8e">Zufällige Reihenfolge</td>
+      <td style="color:#c3e88d;font-size:11px"></td>
+    </tr>
+    <tr class="cr" data-m=".reversed()" data-d="umgekehrt (lazy!)">
+      <td style="width:230px"><code style="color:#4fc3f7">.reversed()</code></td>
+      <td style="color:#6c7a8e">Umgekehrt (lazy!)</td>
+      <td style="color:#c3e88d;font-size:11px">[1,2,3].reversed() → [3,2,1]</td>
+    </tr>
+    <tr class="cr" data-m=".removeall(where:)" data-d="elemente entfernen (mutating)">
+      <td style="width:230px"><code style="color:#4fc3f7">.removeAll(where:)</code></td>
+      <td style="color:#6c7a8e">Elemente entfernen (mutating)</td>
+      <td style="color:#c3e88d;font-size:11px">arr.removeAll { $0 &lt; 0 }</td>
+    </tr>
+    <tr class="cr" data-m="[keypath:]" data-d="keypath-zugriff">
+      <td style="width:230px"><code style="color:#4fc3f7">[keyPath:]</code></td>
+      <td style="color:#6c7a8e">KeyPath-Zugriff</td>
+      <td style="color:#c3e88d;font-size:11px">arr.map(\.name)  statt  arr.map { $0.name }</td>
+    </tr></tbody>
+</table>
+  </div>
+</div>
+</div>
+  
+<div id="tp-examples" class="tp">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><button id="exb0" onclick="switchEx(0)" style="border:1px solid #f05138;color:#f05138;background:rgba(240,81,56,.1);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Protocol + Generics: JSON-Serialisierung</button>
+  <button id="exb1" onclick="switchEx(1)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Resultat-Builder: HTML-DSL</button>
+  <button id="exb2" onclick="switchEx(2)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Actors &amp; Structured Concurrency</button>
+  <button id="exb3" onclick="switchEx(3)" style="border:1px solid #1e2530;color:#6c7a8e;background:transparent;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:11px">Protocol Composition &amp; KeyPaths</button>
+  </div>
+  <div id="exp0" style="">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> <span style="color:#4ec9b0">Foundation</span>
+
+<span style="color:#546e7a">// ── CODABLE – Automatisches JSON-Encoding/Decoding ────────────────</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Nutzer</span>: <span style="color:#4ec9b0">Codable</span> {
+    <span style="color:#c792ea">let</span> id: <span style="color:#4ec9b0">Int</span>
+    <span style="color:#c792ea">var</span> name: <span style="color:#4ec9b0">String</span>
+    <span style="color:#c792ea">var</span> email: <span style="color:#4ec9b0">String</span>
+    <span style="color:#c792ea">var</span> alter: <span style="color:#4ec9b0">Int</span>?
+
+    <span style="color:#546e7a">// Custom CodingKeys (wenn JSON-Keys anders heißen)</span>
+    <span style="color:#c792ea">enum</span> <span style="color:#4ec9b0">CodingKeys</span>: <span style="color:#4ec9b0">String</span>, <span style="color:#4ec9b0">CodingKey</span> {
+        <span style="color:#c792ea">case</span> id
+        <span style="color:#c792ea">case</span> name
+        <span style="color:#c792ea">case</span> email
+        <span style="color:#c792ea">case</span> alter = <span style="color:#c3e88d">"age"</span>   <span style="color:#546e7a">// JSON nutzt "age", Swift nutzt "alter"</span>
+    }
+}
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">ApiAntwort</span>&lt;<span style="color:#4ec9b0">T</span>: <span style="color:#4ec9b0">Codable</span>&gt;: <span style="color:#4ec9b0">Codable</span> {
+    <span style="color:#c792ea">let</span> daten: <span style="color:#4ec9b0">T</span>
+    <span style="color:#c792ea">let</span> statusCode: <span style="color:#4ec9b0">Int</span>
+    <span style="color:#c792ea">let</span> nachricht: <span style="color:#4ec9b0">String</span>
+}
+
+<span style="color:#546e7a">// Encoding</span>
+<span style="color:#c792ea">let</span> nutzer = <span style="color:#4ec9b0">Nutzer</span>(id: <span style="color:#f78c6c">1</span>, name: <span style="color:#c3e88d">"Alice"</span>, email: <span style="color:#c3e88d">"alice@example.com"</span>, alter: <span style="color:#f78c6c">30</span>)
+<span style="color:#c792ea">let</span> encoder = <span style="color:#4ec9b0">JSONEncoder</span>()
+encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+<span style="color:#c792ea">let</span> json = <span style="color:#c792ea">try</span>! encoder.encode(nutzer)
+<span style="color:#82aaff">print</span>(<span style="color:#4ec9b0">String</span>(data: json, encoding: .utf8)!)
+
+<span style="color:#546e7a">// Decoding</span>
+<span style="color:#c792ea">let</span> decoder = <span style="color:#4ec9b0">JSONDecoder</span>()
+<span style="color:#c792ea">let</span> jsonString = <span style="color:#c3e88d">"""</span>
+    {<span style="color:#c3e88d">"id"</span>: <span style="color:#f78c6c">2</span>, <span style="color:#c3e88d">"name"</span>: <span style="color:#c3e88d">"Bob"</span>, <span style="color:#c3e88d">"email"</span>: <span style="color:#c3e88d">"bob@example.com"</span>, <span style="color:#c3e88d">"age"</span>: null}
+    <span style="color:#c3e88d">"""</span>
+<span style="color:#c792ea">let</span> bob = <span style="color:#c792ea">try</span>! decoder.decode(<span style="color:#4ec9b0">Nutzer</span>.<span style="color:#c792ea">self</span>, from: jsonString.data(using: .utf8)!)
+<span style="color:#82aaff">print</span>(bob.name)   <span style="color:#546e7a">// "Bob"</span>
+<span style="color:#82aaff">print</span>(bob.alter <span style="color:#c792ea">as</span> <span style="color:#c792ea">Any</span>)  <span style="color:#546e7a">// nil</span>
+
+<span style="color:#546e7a">// Generic API Client</span>
+<span style="color:#c792ea">class</span> <span style="color:#4ec9b0">APIClient</span> {
+    <span style="color:#c792ea">let</span> baseURL: <span style="color:#4ec9b0">URL</span>
+    <span style="color:#c792ea">let</span> session = <span style="color:#4ec9b0">URLSession</span>.shared
+    <span style="color:#c792ea">let</span> decoder = <span style="color:#4ec9b0">JSONDecoder</span>()
+
+    <span style="color:#c792ea">init</span>(baseURL: <span style="color:#4ec9b0">URL</span>) {
+        <span style="color:#c792ea">self</span>.baseURL = baseURL
+    }
+
+    <span style="color:#c792ea">func</span> lade&lt;<span style="color:#4ec9b0">T</span>: <span style="color:#4ec9b0">Decodable</span>&gt;(_ pfad: <span style="color:#4ec9b0">String</span>) <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">T</span> {
+        <span style="color:#c792ea">let</span> url = baseURL.appendingPathComponent(pfad)
+        <span style="color:#c792ea">let</span> (data, response) = <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> session.data(from: url)
+
+        <span style="color:#c792ea">guard</span> <span style="color:#c792ea">let</span> http = response <span style="color:#c792ea">as</span>? <span style="color:#4ec9b0">HTTPURLResponse</span>,
+              (<span style="color:#f78c6c">200...299</span>).contains(http.statusCode) <span style="color:#c792ea">else</span> {
+            <span style="color:#c792ea">throw</span> <span style="color:#4ec9b0">URLError</span>(.badServerResponse)
+        }
+
+        <span style="color:#c792ea">return</span> <span style="color:#c792ea">try</span> decoder.decode(<span style="color:#4ec9b0">T</span>.<span style="color:#c792ea">self</span>, from: data)
+    }
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">let</span> client = <span style="color:#4ec9b0">APIClient</span>(baseURL: <span style="color:#4ec9b0">URL</span>(string: <span style="color:#c3e88d">"https://api.example.com"</span>)!)
+<span style="color:#c792ea">let</span> nutzer2: <span style="color:#4ec9b0">Nutzer</span> = <span style="color:#c792ea">try</span> <span style="color:#c792ea">await</span> client.lade(<span style="color:#c3e88d">"/users/1"</span>)
+<span style="color:#82aaff">print</span>(nutzer2.name)</pre>
+</div>
+<div id="exp1" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// @resultBuilder – Swifts DSL-Fähigkeit</span>
+<span style="color:#546e7a">// Basis von SwiftUI! Erstellt komplexe Objekte aus Ausdrücken</span>
+
+<span style="color:#ff9800">@resultBuilder</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">HTMLBuilder</span> {
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">func</span> buildBlock(_ components: <span style="color:#4ec9b0">String</span><span style="color:#89ddff">...</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        components.joined(separator: <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">")</span>
+    }
+
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">func</span> buildOptional(_ component: <span style="color:#4ec9b0">String</span>?) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        component <span style="color:#89ddff">??</span> <span style="color:#c3e88d">""</span>
+    }
+
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">func</span> buildEither(first component: <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        component
+    }
+
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">func</span> buildEither(second component: <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        component
+    }
+
+    <span style="color:#c792ea">static</span> <span style="color:#c792ea">func</span> buildArray(_ components: [<span style="color:#4ec9b0">String</span>]) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+        components.joined(separator: <span style="color:#c3e88d">"</span>
+<span style="color:#c3e88d">")</span>
+    }
+}
+
+<span style="color:#c792ea">func</span> tag(_ name: <span style="color:#4ec9b0">String</span>, attrs: <span style="color:#4ec9b0">String</span> = <span style="color:#c3e88d">""</span>,
+         <span style="color:#ff9800">@HTMLBuilder</span> content: () <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+    <span style="color:#c792ea">let</span> a = attrs.isEmpty ? <span style="color:#c3e88d">""</span> : <span style="color:#c3e88d">" \(attrs)"</span>
+    <span style="color:#c792ea">return</span> <span style="color:#c3e88d">"&lt;\(name)\(a)&gt;\n\(content())\n&lt;/\(name)&gt;"</span>
+}
+
+<span style="color:#c792ea">func</span> html(<span style="color:#ff9800">@HTMLBuilder</span> content: () <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">String</span> {
+    <span style="color:#c3e88d">"&lt;!DOCTYPE html&gt;</span>
+<span style="color:#c3e88d">" + tag("</span>html<span style="color:#c3e88d">") { content() }</span>
+}
+
+<span style="color:#546e7a">// DSL-Aufruf – sieht aus wie echtes HTML!</span>
+<span style="color:#c792ea">let</span> seite = html {
+    tag(<span style="color:#c3e88d">"head"</span>) {
+        tag(<span style="color:#c3e88d">"title"</span>) { <span style="color:#c3e88d">"Meine Seite"</span> }
+    }
+    tag(<span style="color:#c3e88d">"body"</span>, attrs: <span style="color:#c3e88d">"class=\"container\""</span>) {
+        tag(<span style="color:#c3e88d">"h1"</span>) { <span style="color:#c3e88d">"Willkommen"</span> }
+        tag(<span style="color:#c3e88d">"p"</span>) { <span style="color:#c3e88d">"Swift Result Builders sind mächtig!"</span> }
+
+        <span style="color:#c792ea">let</span> items = [<span style="color:#c3e88d">"Punkt 1"</span>, <span style="color:#c3e88d">"Punkt 2"</span>, <span style="color:#c3e88d">"Punkt 3"</span>]
+        tag(<span style="color:#c3e88d">"ul"</span>) {
+            <span style="color:#c792ea">for</span> item <span style="color:#c792ea">in</span> items {
+                tag(<span style="color:#c3e88d">"li"</span>) { item }
+            }
+        }
+    }
+}
+
+<span style="color:#82aaff">print</span>(seite)
+
+<span style="color:#546e7a">// So funktioniert auch SwiftUI:</span>
+<span style="color:#546e7a">// var body: some View {</span>
+<span style="color:#546e7a">//     VStack {          ← ViewBuilder sammelt Views</span>
+<span style="color:#546e7a">//         Text("Hallo")</span>
+<span style="color:#546e7a">//         Image("foto")</span>
+<span style="color:#546e7a">//         Button("OK") { ... }</span>
+<span style="color:#546e7a">//     }</span>
+<span style="color:#546e7a">// }</span></pre>
+</div>
+<div id="exp2" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#c792ea">import</span> <span style="color:#4ec9b0">Foundation</span>
+
+<span style="color:#546e7a">// Einkaufsliste mit Actor (Thread-safe)</span>
+<span style="color:#c792ea">actor</span> <span style="color:#4ec9b0">Einkaufsliste</span> {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> artikel: [<span style="color:#4ec9b0">String</span>: <span style="color:#4ec9b0">Int</span>] = [:]   <span style="color:#546e7a">// Artikel: Menge</span>
+
+    <span style="color:#c792ea">func</span> hinzufügen(_ artikel: <span style="color:#4ec9b0">String</span>, menge: <span style="color:#4ec9b0">Int</span> = <span style="color:#f78c6c">1</span>) {
+        <span style="color:#c792ea">self</span>.artikel[artikel, <span style="color:#c792ea">default</span>: <span style="color:#f78c6c">0</span>] += menge
+    }
+
+    <span style="color:#c792ea">func</span> entfernen(_ artikel: <span style="color:#4ec9b0">String</span>) {
+        <span style="color:#c792ea">self</span>.artikel.removeValue(forKey: artikel)
+    }
+
+    <span style="color:#c792ea">func</span> menge(von artikel: <span style="color:#4ec9b0">String</span>) <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span> {
+        <span style="color:#c792ea">self</span>.artikel[artikel] <span style="color:#89ddff">??</span> <span style="color:#f78c6c">0</span>
+    }
+
+    <span style="color:#c792ea">var</span> alle: [(artikel: <span style="color:#4ec9b0">String</span>, menge: <span style="color:#4ec9b0">Int</span>)] {
+        <span style="color:#c792ea">self</span>.artikel.map { ($<span style="color:#f78c6c">0.</span>key, $<span style="color:#f78c6c">0.</span>value) }
+            .sorted { $<span style="color:#f78c6c">0.</span>artikel &lt; $<span style="color:#f78c6c">1.</span>artikel }
+    }
+
+    <span style="color:#c792ea">var</span> gesamtArtikel: <span style="color:#4ec9b0">Int</span> {
+        <span style="color:#c792ea">self</span>.artikel.values.reduce(<span style="color:#f78c6c">0</span>, +)
+    }
+}
+
+<span style="color:#546e7a">// Parallel von mehreren Tasks befüllen (sicher durch Actor!)</span>
+<span style="color:#c792ea">func</span> befülle(_ liste: <span style="color:#4ec9b0">Einkaufsliste</span>) <span style="color:#c792ea">async</span> {
+    <span style="color:#c792ea">await</span> withTaskGroup(of: <span style="color:#4ec9b0">Void</span>.<span style="color:#c792ea">self</span>) { gruppe <span style="color:#c792ea">in</span>
+        <span style="color:#c792ea">let</span> einkäufe = [
+            (<span style="color:#c3e88d">"Äpfel"</span>, <span style="color:#f78c6c">5</span>), (<span style="color:#c3e88d">"Bananen"</span>, <span style="color:#f78c6c">3</span>), (<span style="color:#c3e88d">"Milch"</span>, <span style="color:#f78c6c">2</span>),
+            (<span style="color:#c3e88d">"Brot"</span>, <span style="color:#f78c6c">1</span>), (<span style="color:#c3e88d">"Äpfel"</span>, <span style="color:#f78c6c">3</span>),   <span style="color:#546e7a">// Äpfel nochmal!</span>
+        ]
+
+        <span style="color:#c792ea">for</span> (artikel, menge) <span style="color:#c792ea">in</span> einkäufe {
+            gruppe.addTask {
+                <span style="color:#c792ea">await</span> liste.hinzufügen(artikel, menge: menge)
+            }
+        }
+    }
+}
+
+<span style="color:#546e7a">// AsyncSequence – eigene async Sequenz</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">ZählerSequenz</span>: <span style="color:#4ec9b0">AsyncSequence</span> {
+    <span style="color:#c792ea">typealias</span> <span style="color:#4ec9b0">Element</span> = <span style="color:#4ec9b0">Int</span>
+    <span style="color:#c792ea">let</span> bis: <span style="color:#4ec9b0">Int</span>
+
+    <span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Iterator</span>: <span style="color:#4ec9b0">AsyncIteratorProtocol</span> {
+        <span style="color:#c792ea">var</span> aktuell: <span style="color:#4ec9b0">Int</span>
+        <span style="color:#c792ea">let</span> bis: <span style="color:#4ec9b0">Int</span>
+
+        <span style="color:#c792ea">mutating</span> <span style="color:#c792ea">func</span> next() <span style="color:#c792ea">async</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Int</span>? {
+            <span style="color:#c792ea">guard</span> aktuell &lt;= bis <span style="color:#c792ea">else</span> { <span style="color:#c792ea">return</span> <span style="color:#c792ea">nil</span> }
+            <span style="color:#546e7a">// Simuliertes async Delay</span>
+            <span style="color:#c792ea">try</span>? <span style="color:#c792ea">await</span> <span style="color:#4ec9b0">Task</span>.sleep(<span style="color:#c792ea">for</span>: .milliseconds(<span style="color:#f78c6c">10</span>))
+            <span style="color:#c792ea">defer</span> { aktuell += <span style="color:#f78c6c">1</span> }
+            <span style="color:#c792ea">return</span> aktuell
+        }
+    }
+
+    <span style="color:#c792ea">func</span> makeAsyncIterator() <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Iterator</span> {
+        <span style="color:#4ec9b0">Iterator</span>(aktuell: <span style="color:#f78c6c">1</span>, bis: bis)
+    }
+}
+
+<span style="color:#546e7a">// Verwendung</span>
+<span style="color:#c792ea">let</span> liste = <span style="color:#4ec9b0">Einkaufsliste</span>()
+<span style="color:#c792ea">await</span> befülle(liste)
+
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Einkaufsliste:"</span>)
+<span style="color:#c792ea">for</span> (artikel, menge) <span style="color:#c792ea">in</span> <span style="color:#c792ea">await</span> liste.alle {
+    <span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"  \(artikel.padding(toLength: 12, withPad: "</span> <span style="color:#c3e88d">", startingAt: 0)): \(menge)x"</span>)
+}
+<span style="color:#82aaff">print</span>(<span style="color:#c3e88d">"Gesamt: \(await liste.gesamtArtikel) Artikel"</span>)
+
+<span style="color:#546e7a">// AsyncSequence nutzen</span>
+<span style="color:#c792ea">for</span> <span style="color:#c792ea">await</span> n <span style="color:#c792ea">in</span> <span style="color:#4ec9b0">ZählerSequenz</span>(bis: <span style="color:#f78c6c">5</span>) {
+    <span style="color:#82aaff">print</span>(n, terminator: <span style="color:#c3e88d">" "</span>)
+}   <span style="color:#546e7a">// 1 2 3 4 5</span></pre>
+</div>
+<div id="exp3" style="display:none">
+<pre style="font-family:Courier New,monospace;font-size:12px;color:#cdd6f4;background:rgba(0,0,0,.7);border:1px solid #1e2530;border-radius:6px;padding:15px;overflow-x:auto;line-height:1.8;white-space:pre"><span style="color:#546e7a">// Fortgeschrittene Swift-Features</span>
+
+<span style="color:#546e7a">// ── KEYPATHS ──────────────────────────────────────────────────────</span>
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Person</span> {
+    <span style="color:#c792ea">var</span> name: <span style="color:#4ec9b0">String</span>
+    <span style="color:#c792ea">var</span> alter: <span style="color:#4ec9b0">Int</span>
+    <span style="color:#c792ea">var</span> email: <span style="color:#4ec9b0">String</span>
+}
+
+<span style="color:#c792ea">let</span> leute = [
+    <span style="color:#4ec9b0">Person</span>(name: <span style="color:#c3e88d">"Charlie"</span>, alter: <span style="color:#f78c6c">30</span>, email: <span style="color:#c3e88d">"c@c.de"</span>),
+    <span style="color:#4ec9b0">Person</span>(name: <span style="color:#c3e88d">"Alice"</span>,   alter: <span style="color:#f78c6c">25</span>, email: <span style="color:#c3e88d">"a@a.de"</span>),
+    <span style="color:#4ec9b0">Person</span>(name: <span style="color:#c3e88d">"Bob"</span>,     alter: <span style="color:#f78c6c">35</span>, email: <span style="color:#c3e88d">"b@b.de"</span>),
+]
+
+<span style="color:#546e7a">// KeyPath als Argument – typsicher!</span>
+<span style="color:#c792ea">let</span> namen = leute.map(\.name)        <span style="color:#546e7a">// ["Charlie", "Alice", "Bob"]</span>
+<span style="color:#c792ea">let</span> alter = leute.map(\.alter)       <span style="color:#546e7a">// [30, 25, 35]</span>
+<span style="color:#c792ea">let</span> sortiert = leute.sorted(by: { $<span style="color:#f78c6c">0.</span>alter &lt; $<span style="color:#f78c6c">1.</span>alter })
+
+<span style="color:#546e7a">// KeyPath-Subscript</span>
+<span style="color:#c792ea">let</span> p = <span style="color:#4ec9b0">Person</span>(name: <span style="color:#c3e88d">"Alice"</span>, alter: <span style="color:#f78c6c">30</span>, email: <span style="color:#c3e88d">"alice@test.de"</span>)
+<span style="color:#c792ea">let</span> namePfad = \.name
+<span style="color:#82aaff">print</span>(p[keyPath: namePfad])    <span style="color:#546e7a">// "Alice"</span>
+
+<span style="color:#546e7a">// Writeable KeyPath</span>
+<span style="color:#c792ea">var</span> mutableP = p
+<span style="color:#c792ea">let</span> alterPfad: <span style="color:#4ec9b0">WritableKeyPath</span>&lt;<span style="color:#4ec9b0">Person</span>, <span style="color:#4ec9b0">Int</span>&gt; = \.alter
+mutableP[keyPath: alterPfad] = <span style="color:#f78c6c">31</span>
+
+<span style="color:#546e7a">// ── PROTOCOL MIT ASSOCIATED TYPE ─────────────────────────────────</span>
+<span style="color:#c792ea">protocol</span> <span style="color:#4ec9b0">Repository</span> {
+    <span style="color:#c792ea">associatedtype</span> <span style="color:#4ec9b0">Entität</span>: <span style="color:#4ec9b0">Identifiable</span>
+    <span style="color:#c792ea">func</span> lade(id: <span style="color:#4ec9b0">Entität</span>.<span style="color:#4ec9b0">ID</span>) <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Entität</span>?
+    <span style="color:#c792ea">func</span> speichere(_ entität: <span style="color:#4ec9b0">Entität</span>) <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span>
+    <span style="color:#c792ea">func</span> alle() <span style="color:#c792ea">async</span> <span style="color:#c792ea">throws</span> <span style="color:#89ddff">-&gt;</span> [<span style="color:#4ec9b0">Entität</span>]
+}
+
+<span style="color:#c792ea">struct</span> <span style="color:#4ec9b0">Nutzer</span>: <span style="color:#4ec9b0">Identifiable</span> {
+    <span style="color:#c792ea">let</span> id: <span style="color:#4ec9b0">UUID</span>
+    <span style="color:#c792ea">var</span> name: <span style="color:#4ec9b0">String</span>
+}
+
+<span style="color:#c792ea">actor</span> <span style="color:#4ec9b0">NutzerRepository</span>: <span style="color:#4ec9b0">Repository</span> {
+    <span style="color:#c792ea">private</span> <span style="color:#c792ea">var</span> store: [<span style="color:#4ec9b0">UUID</span>: <span style="color:#4ec9b0">Nutzer</span>] = [:]
+
+    <span style="color:#c792ea">func</span> lade(id: <span style="color:#4ec9b0">UUID</span>) <span style="color:#c792ea">async</span> <span style="color:#89ddff">-&gt;</span> <span style="color:#4ec9b0">Nutzer</span>? { store[id] }
+
+    <span style="color:#c792ea">func</span> speichere(_ nutzer: <span style="color:#4ec9b0">Nutzer</span>) <span style="color:#c792ea">async</span> {
+        store[nutzer.id] = nutzer
+    }
+
+    <span style="color:#c792ea">func</span> alle() <span style="color:#c792ea">async</span> <span style="color:#89ddff">-&gt;</span> [<span style="color:#4ec9b0">Nutzer</span>] {
+        <span style="color:#4ec9b0">Array</span>(store.values).sorted { $<span style="color:#f78c6c">0.</span>name &lt; $<span style="color:#f78c6c">1.</span>name }
+    }
+}
+
+<span style="color:#546e7a">// some Protocol – Opaque Type</span>
+<span style="color:#c792ea">func</span> machRepository() <span style="color:#89ddff">-&gt;</span> <span style="color:#c792ea">some</span> <span style="color:#4ec9b0">Repository</span> {
+    <span style="color:#4ec9b0">NutzerRepository</span>()
+}
+
+<span style="color:#546e7a">// any Protocol – Existential Type (wenn Typ zur Laufzeit unbekannt)</span>
+<span style="color:#c792ea">var</span> repos: [<span style="color:#c792ea">any</span> <span style="color:#4ec9b0">Repository</span>] = []   <span style="color:#546e7a">// Swift 5.7+</span>
+
+<span style="color:#546e7a">// ── CONDITIONAL CONFORMANCE ───────────────────────────────────────</span>
+<span style="color:#c792ea">extension</span> <span style="color:#4ec9b0">Array</span>: <span style="color:#4ec9b0">CustomStringConvertible</span>
+    <span style="color:#c792ea">where</span> <span style="color:#4ec9b0">Element</span>: <span style="color:#4ec9b0">CustomStringConvertible</span> {
+    <span style="color:#c792ea">public</span> <span style="color:#c792ea">var</span> description: <span style="color:#4ec9b0">String</span> {
+        <span style="color:#c3e88d">"["</span> + map(\. description).joined(separator: <span style="color:#c3e88d">", "</span>) + <span style="color:#c3e88d">"]"</span>
+    }
+}</pre>
+</div>
+
+</div>
+  <div id="tp-tools" class="tp">
+<div style="background:#f051380e;border:1px solid #f0513844;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"><strong style="color:#f05138">macOS Schnellstart:</strong> Xcode aus dem App Store (kostenlos) – Swift ist dabei enthalten.<br>Linux: <code style="color:#ffb347">swiftly install latest && swift repl</code></div>
+
+<div class="ac open" id="ac-tl0"
+     style="border:1px solid #f0513844;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl0')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#f051380e">
+    <span style="display:flex;align-items:center;gap:6px;color:#f05138">
+      <span style="display:inline-block;width:8px;height:8px;background:#f05138;border-radius:50%;margin-right:2px"></span>⚙ Swift installieren (Linux)
+    </span>
+    <span class="aa" style="color:#f05138;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:block;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#f05138">Swift.org</code></td><td style="color:#cdd6f4">swift.org/download</td><td style="color:#6c7a8e">wget https://download.swift.org/swift-5.10-release/...
+tar xf swift-*.tar.gz &amp;&amp; export PATH=$PATH:swift*/usr/bin</td></tr><tr><td style="width:240px"><code style="color:#f05138">Arch/CachyOS</code></td><td style="color:#cdd6f4">swift-bin (AUR)</td><td style="color:#6c7a8e">yay -S swift-bin
+swift --version</td></tr><tr><td style="width:240px"><code style="color:#f05138">Ubuntu 22.04</code></td><td style="color:#cdd6f4">swift.org</td><td style="color:#6c7a8e">curl -fsSL https://swift.org/install.sh | bash -s -- --platform ubuntu2204</td></tr><tr><td style="width:240px"><code style="color:#f05138">Swiftly (Versions-Mgr)</code></td><td style="color:#cdd6f4">swift.org</td><td style="color:#6c7a8e">curl -L get.swiftly.swift.org | bash
+swiftly install latest</td></tr><tr><td style="width:240px"><code style="color:#f05138">Docker</code></td><td style="color:#cdd6f4">swift (DockerHub)</td><td style="color:#6c7a8e">docker run -it swift:5.10 swift</td></tr><tr><td style="width:240px"><code style="color:#f05138">Playground (macOS)</code></td><td style="color:#cdd6f4">Xcode</td><td style="color:#6c7a8e">Xcode → File → New → Playground (interaktiv!)</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl1"
+     style="border:1px solid #4fc3f744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl1')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4fc3f70e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4fc3f7">
+      <span style="display:inline-block;width:8px;height:8px;background:#4fc3f7;border-radius:50%;margin-right:2px"></span>⚙ Swift CLI &amp; Tools
+    </span>
+    <span class="aa" style="color:#4fc3f7;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4fc3f7">swift run</code></td><td style="color:#cdd6f4">Swift-Script ausführen</td><td style="color:#6c7a8e">swift run main.swift</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swift build</code></td><td style="color:#cdd6f4">Projekt bauen (SPM)</td><td style="color:#6c7a8e">Im Package-Verzeichnis</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swift test</code></td><td style="color:#cdd6f4">Tests ausführen</td><td style="color:#6c7a8e">swift test</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swift package init</code></td><td style="color:#cdd6f4">Neues Paket erstellen</td><td style="color:#6c7a8e">swift package init --type executable</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swift package resolve</code></td><td style="color:#cdd6f4">Abhängigkeiten auflösen</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swift package update</code></td><td style="color:#cdd6f4">Abhängigkeiten aktualisieren</td><td style="color:#6c7a8e"></td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swift repl</code></td><td style="color:#cdd6f4">Interaktive REPL</td><td style="color:#6c7a8e">Ausprobieren ohne Datei</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swiftlint</code></td><td style="color:#cdd6f4">Linting</td><td style="color:#6c7a8e">brew install swiftlint  /  swiftlint</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">swiftformat</code></td><td style="color:#cdd6f4">Formatierung</td><td style="color:#6c7a8e">swiftformat --swiftversion 5.10 .</td></tr><tr><td style="width:240px"><code style="color:#4fc3f7">sourcekit-lsp</code></td><td style="color:#cdd6f4">Language Server Protocol</td><td style="color:#6c7a8e">Für VS Code, Neovim, Emacs</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl2"
+     style="border:1px solid #c792ea44;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl2')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#c792ea0e">
+    <span style="display:flex;align-items:center;gap:6px;color:#c792ea">
+      <span style="display:inline-block;width:8px;height:8px;background:#c792ea;border-radius:50%;margin-right:2px"></span>⚙ Package.swift – SPM
+    </span>
+    <span class="aa" style="color:#c792ea;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#c792ea">Package.swift</code></td><td style="color:#cdd6f4">Paket-Definition</td><td style="color:#6c7a8e">swift package init --type library
+# erstellt Package.swift</td></tr><tr><td style="width:240px"><code style="color:#c792ea">.package(url:from:)</code></td><td style="color:#cdd6f4">Abhängigkeit</td><td style="color:#6c7a8e">.package(url: "https://github.com/...", from: "1.0.0")</td></tr><tr><td style="width:240px"><code style="color:#c792ea">.product(name:pkg:)</code></td><td style="color:#cdd6f4">Produkt referenzieren</td><td style="color:#6c7a8e">.product(name: "Alamofire", package: "Alamofire")</td></tr><tr><td style="width:240px"><code style="color:#c792ea">swift package show-dependencies</code></td><td style="color:#cdd6f4">Abhängigkeiten</td><td style="color:#6c7a8e">Als Baum</td></tr><tr><td style="width:240px"><code style="color:#c792ea">swift package generate-xcodeproj</code></td><td style="color:#cdd6f4">Xcode-Projekt</td><td style="color:#6c7a8e">Für Xcode generieren</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl3"
+     style="border:1px solid #4ec9b044;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl3')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#4ec9b00e">
+    <span style="display:flex;align-items:center;gap:6px;color:#4ec9b0">
+      <span style="display:inline-block;width:8px;height:8px;background:#4ec9b0;border-radius:50%;margin-right:2px"></span>⚙ Wichtige Libraries
+    </span>
+    <span class="aa" style="color:#4ec9b0;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#4ec9b0">Alamofire</code></td><td style="color:#cdd6f4">github.com/Alamofire</td><td style="color:#6c7a8e">HTTP-Netzwerk
+URL(..).get().responseDecodable(of: T.self)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">AsyncAlgorithms</code></td><td style="color:#cdd6f4">github.com/apple</td><td style="color:#6c7a8e">Async Sequenz-Operationen
+zip, merge, throttle, debounce</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">swift-collections</code></td><td style="color:#cdd6f4">github.com/apple</td><td style="color:#6c7a8e">OrderedDictionary, Deque, TreeDictionary</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Vapor</code></td><td style="color:#cdd6f4">vapor.codes</td><td style="color:#6c7a8e">Web-Framework für Swift auf Linux/macOS
+vapor new MeinProjekt</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Hummingbird</code></td><td style="color:#cdd6f4">github.com/hummingbird-project</td><td style="color:#6c7a8e">Lightweight HTTP server</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">SwiftNIO</code></td><td style="color:#cdd6f4">github.com/apple/swift-nio</td><td style="color:#6c7a8e">Async event-driven network framework (von Apple)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">swift-argument-parser</code></td><td style="color:#cdd6f4">github.com/apple</td><td style="color:#6c7a8e">CLI-Argumente parsen
+@Argument var datei: String</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">SwiftyJSON</code></td><td style="color:#cdd6f4">github.com/SwiftyJSON</td><td style="color:#6c7a8e">Einfaches JSON-Parsing</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">PointFree Composable Architecture</code></td><td style="color:#cdd6f4">pointfree.co</td><td style="color:#6c7a8e">The Composable Architecture (TCA)</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">XCTest</code></td><td style="color:#cdd6f4">Apple Built-in</td><td style="color:#6c7a8e">Test-Framework eingebaut
+func testBeispiel() throws { XCTAssertEqual(...) }</td></tr><tr><td style="width:240px"><code style="color:#4ec9b0">Swift Testing</code></td><td style="color:#cdd6f4">github.com/apple/swift-testing</td><td style="color:#6c7a8e">@Test func berechnung() { #expect(1+1 == 2) }</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="ac" id="ac-tl4"
+     style="border:1px solid #ffb34744;border-radius:8px;overflow:hidden;margin-bottom:10px">
+  <button class="ah" onclick="tA('tl4')"
+          style="width:100%;text-align:left;border:none;padding:11px 16px;
+                 cursor:pointer;display:flex;align-items:center;
+                 justify-content:space-between;font-family:inherit;
+                 font-weight:700;font-size:13px;background:#ffb3470e">
+    <span style="display:flex;align-items:center;gap:6px;color:#ffb347">
+      <span style="display:inline-block;width:8px;height:8px;background:#ffb347;border-radius:50%;margin-right:2px"></span>⚙ Xcode &amp; Editoren (macOS)
+    </span>
+    <span class="aa" style="color:#ffb347;font-size:10px;transition:transform .2s">▼</span>
+  </button>
+  <div class="ab" style="display:none;padding:4px 12px 14px">
+    <table><thead><tr><th>Tool / Library</th><th>Quelle</th><th>Beschreibung</th></tr></thead><tbody><tr><td style="width:240px"><code style="color:#ffb347">Xcode</code></td><td style="color:#cdd6f4">developer.apple.com</td><td style="color:#6c7a8e">Offiziell, gratis, für iOS/macOS unerlässlich
+IOS Simulator, Instruments, Interface Builder</td></tr><tr><td style="width:240px"><code style="color:#ffb347">VS Code</code></td><td style="color:#cdd6f4">marketplace</td><td style="color:#6c7a8e">Extension: sswg.swift-lang + sourcekit-lsp
+Gut für Server-side Swift</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Neovim</code></td><td style="color:#cdd6f4">nvim-lspconfig</td><td style="color:#6c7a8e">require("lspconfig").sourcekit.setup{}
+sourcekit-lsp muss installiert sein</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Zed</code></td><td style="color:#cdd6f4">zed.dev</td><td style="color:#6c7a8e">Swift-Unterstützung native eingebaut</td></tr><tr><td style="width:240px"><code style="color:#ffb347">AppCode</code></td><td style="color:#cdd6f4">JetBrains</td><td style="color:#6c7a8e">Veraltet, JetBrains hat EOL angekündigt</td></tr><tr><td style="width:240px"><code style="color:#ffb347">Swift Playgrounds</code></td><td style="color:#cdd6f4">App Store</td><td style="color:#6c7a8e">iPad/Mac, interaktives Lernen</td></tr></tbody></table>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+function tA(id) {
+  var el   = document.getElementById('ac-' + id);
+  var body = el.querySelector('.ab');
+  var open = el.classList.toggle('open');
+  body.style.display = open ? 'block' : 'none';
+}
+
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[id^="coll-s-"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    var q     = this.value.toLowerCase();
+    var tbody = this.parentElement.querySelector('tbody');
+    tbody.querySelectorAll('tr.cr').forEach(function(row) {
+      row.style.display = !q || row.dataset.m.includes(q) || row.dataset.d.includes(q) ? '' : 'none';
+    });
+  });
+});
+
+function switchEx(index) {
+  document.querySelectorAll('[id^="exp"]').forEach(function(panel, j) {
+    panel.style.display = j === index ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="exb"]').forEach(function(btn, j) {
+    if (j === index) {
+      btn.style.borderColor = '#f05138';
+      btn.style.color       = '#f05138';
+      btn.style.background  = 'rgba(240,81,56,.1)';
+    } else {
+      btn.style.borderColor = '#1e2530';
+      btn.style.color       = '#6c7a8e';
+      btn.style.background  = 'transparent';
+    }
+  });
+}
+</script>
+
+</body>
+</html>
