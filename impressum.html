@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impressum & Haftung – DevRef</title>
+  <style>
+    :root {
+      --bg:     #0a0c0f;
+      --border: #1e2530;
+      --text:   #cdd6f4;
+      --dim:    #6c7a8e;
+      --accent: #4fc3f7;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ── */
+    #hdr {
+      background: linear-gradient(135deg, #0f1217, #0a0c0f);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #hdr-title { font-size: 20px; font-weight: 900; }
+    #hdr-back {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--dim);
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    #hdr-back:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── LAYOUT ── */
+    .con {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── TABS ── */
+    #tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tb {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--dim);
+      padding: 9px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: color .15s;
+      margin-bottom: -1px;
+    }
+    .tb.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tp { display: none; }
+    .tp.active { display: block; }
+
+    /* ── SEKTIONEN ── */
+    .section {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .section-header {
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .section-body { padding: 18px 20px; }
+
+    /* ── FELDER ── */
+    .field-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 8px 16px;
+      margin-bottom: 10px;
+      align-items: start;
+    }
+    .field-label {
+      color: var(--dim);
+      font-size: 11px;
+      padding-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .field-value {
+      color: var(--text);
+      font-size: 13px;
+    }
+    .field-value.placeholder {
+      color: #e05252;
+      background: rgba(224,82,82,.08);
+      border: 1px dashed rgba(224,82,82,.4);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .field-value a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .field-value a:hover { text-decoration: underline; }
+
+    /* ── PROSE ── */
+    .prose { font-size: 13px; color: #a0aec0; line-height: 1.8; }
+    .prose + .prose { margin-top: 12px; }
+    .prose strong { color: var(--text); font-weight: 700; }
+    .prose a { color: var(--accent); text-decoration: none; }
+    .prose a:hover { text-decoration: underline; }
+
+    /* ── HINWEIS-BOX ── */
+    .hint {
+      background: rgba(255,203,107,.06);
+      border: 1px solid rgba(255,203,107,.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #ffcb6b;
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .hint strong { color: #ffd966; }
+
+    .warn {
+      background: rgba(224,82,82,.06);
+      border: 1px solid rgba(224,82,82,.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #e05252;
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .warn strong { color: #ff6b6b; }
+
+    /* ── TRENNLINIE ── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* ── H2 / H3 ── */
+    h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 16px 0 8px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      color: var(--dim);
+      font-size: 11px;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    @media (max-width: 640px) {
+      .field-row { grid-template-columns: 1fr; }
+      .field-label { margin-bottom: 2px; }
+      .con { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <a href="index.html" id="hdr-back">← Zurück</a>
+  <div id="hdr-title">
+    <span style="color:var(--accent)">§</span>
+    <span style="color:var(--accent)">DevRef</span>
+    <span style="color:var(--dim);font-size:14px;font-weight:400"> – Impressum & Datenschutz</span>
+  </div>
+</div>
+
+<div class="con">
+
+  <!-- TABS -->
+  <div id="tabs">
+    <button class="tb active" data-tab="impressum">§ Impressum</button>
+    <button class="tb"        data-tab="haftung">⚖ Haftung</button>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TAB: IMPRESSUM
+  ═══════════════════════════════════════════════════════════ -->
+  <div id="tp-impressum" class="tp active">
+    <h2>Impressum (§ 5 TMG)</h2>
+
+
+    <!-- Verantwortlich -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#c792ea"></span>
+        <span class="section-title">Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</span>
+      </div>
+      <div class="section-body">
+        <div class="field-row">
+          <span class="field-label">Name</span>
+          <span class="field-value placeholder">Patrick Bruno Klingforth</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Email</span>
+          <span class="field-value placeholder">p.klingforth@web.de</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Telefon Nr</span>
+          <span class="field-value placeholder">015256841008</span>
+        </div>
+        <div class="prose" style="margin-top:8px">
+        </div>
+      </div>
+    </div>
+
+  </div><!-- Ende Tab Impressum -->
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TAB: HAFTUNG
+  ═══════════════════════════════════════════════════════════ -->
+  <div id="tp-haftung" class="tp">
+    <h2>Haftungsausschluss</h2>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#4fc3f7"></span>
+        <span class="section-title">Haftung für Inhalte</span>
+      </div>
+      <div class="section-body">
+        <div class="prose">
+          Die Inhalte dieser Website wurden mit größter Sorgfalt erstellt.
+          Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch
+          keine Gewähr übernommen werden. Als Diensteanbieter bin ich gemäß § 7 Abs. 1 TMG
+          für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich.
+        </div>
+        <div class="prose">
+          Die Informationen auf DevRef dienen als Syntax-Referenz und Lernhilfe.
+          Sie ersetzen keine offizielle Dokumentation der jeweiligen Sprache oder Plattform.
+          Die Nutzung der Inhalte erfolgt auf eigene Verantwortung.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#c3e88d"></span>
+        <span class="section-title">Haftung für Links</span>
+      </div>
+      <div class="section-body">
+        <div class="prose">
+          Diese Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte
+          ich keinen Einfluss habe. Deshalb kann für diese fremden Inhalte auch keine
+          Gewähr übernommen werden. Für die Inhalte der verlinkten Seiten ist stets
+          der jeweilige Anbieter oder Betreiber verantwortlich.
+          Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche
+          Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zu diesem Zeitpunkt
+          nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten
+          ist ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar.
+          Bei Bekanntwerden von Rechtsverletzungen werden derartige Links umgehend entfernt.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#c792ea"></span>
+        <span class="section-title">Urheberrecht</span>
+      </div>
+      <div class="section-body">
+        <div class="prose">
+          Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten
+          unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung,
+          Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes
+          bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+          Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen
+          Gebrauch gestattet.
+        </div>
+        <div class="prose">
+          Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden,
+          werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter
+          als solche gekennzeichnet. Solltest du trotzdem auf eine Urheberrechtsverletzung
+          aufmerksam werden, bitte ich um einen entsprechenden Hinweis.
+          Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Inhalte umgehend entfernen.
+        </div>
+        <div class="field-row" style="margin-top:12px">
+          <span class="field-label">Lizenz DevRef</span>
+          <span class="field-value placeholder">
+            [z.B. MIT License / CC BY 4.0 / Alle Rechte vorbehalten]
+          </span>
+        </div>
+        <div class="hint" style="margin:10px 0 0">
+          <strong>Empfehlung:</strong> Für Open-Source-Referenzseiten eignet sich die
+          <strong>MIT-Lizenz</strong> oder <strong>CC BY 4.0</strong>.
+          Das signalisiert, dass andere den Code lernen und verwenden dürfen.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- Ende Tab Haftung -->
+
+</div><!-- Ende .con -->
+
+<footer>
+  DevRef – Offline Syntax-Referenz &nbsp;·&nbsp;
+</footer>
+
+<script>
+document.querySelectorAll('.tb[data-tab]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tb[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tp').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
