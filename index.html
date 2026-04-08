@@ -112,8 +112,8 @@ a.lcard:hover .ci{transform:scale(1.1) rotate(-3deg)}
 #load-bar.done{display:none}
 
 /* Statusbar */
-#statusbar{height:22px;flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:18px;font-size:10px;color:var(--dim2)}
-.sb-dot{width:6px;height:6px;border-radius:50%;background:#00ff88;display:inline-block;margin-right:5px}
+#statusbar{height:30px;flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:18px;font-size:12px;color:var(--dim2)}
+.sb-dot{width:6px;height:6px;border-radius:50%;background:#00ff88;display:inline-block;margin-right:px}
 
 @media(max-width:680px){
   .cgrid{grid-template-columns:1fr 1fr}
@@ -151,9 +151,15 @@ a.lcard:hover .ci{transform:scale(1.1) rotate(-3deg)}
   <div id="sidebar">
     <div id="sb-body">
 
+      <button class="lb" id="btn-impressum" style="--lc:#4fc3f7" onclick="loadLang('impressum')">
+        <div class="li">Imp</div>
+        <div class="linfo"><div class="lname">Impressum</div><div class="lver"></div></div>
+      </button>
 
-
-
+      <button class="lb" id="btn-own" style="--lc:#4fc3f7" onclick="loadLang('own')">
+        <div class="li">PK</div>
+        <div class="linfo"><div class="lname">Über mich</div><div class="lver"></div></div>
+      </button>
 
       <div class="sb-sec">____Skriptsprachen____</div>
 
@@ -524,11 +530,8 @@ const LANGS = {
   regex:      { file:'regex-syntax-referenz.html', color:'#e67e22', label:'Regex' },
   brainfuck:  { file:'brainfuck-syntax-referenz.html', color:'#e91e8c', label:'Brainfuck' },
   ascii:      { file:'ascii-unicode-referenz.html', color:'#4fc3f7', label:'ascii' },
-
-  // Neue Sprache:
-  fsharp:     { file:'fsharp-syntax-referenz.html', color:'#6c9fe8', label:'Typescript 1.24.0' },
-  purebasic:  { file:'fsharp-syntax-referenz.html', color:'#6c9fe8', label:'Typescript 1.24.0' },
-
+  impressum:  { file:'impressum.html', color:'#4fc3f7', label:'impressum' },
+  own:        { file:'impressum.html', color:'#4fc3f7', label:'own' },
 };
 
 // ─── State ────────────────────────────────────────────
